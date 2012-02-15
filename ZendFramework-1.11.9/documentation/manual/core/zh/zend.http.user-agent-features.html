@@ -1,0 +1,185 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <title>The UserAgent Features Adapter - Zend Framework Manual</title>
+
+</head>
+<body>
+<table width="100%">
+    <tr valign="top">
+        <td width="85%">
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.http.user-agent-device.html">The UserAgent Device Interface</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.http.html">Zend_Http</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.http.user-agent-features-wurfl.html">The WURFL UserAgent Features Adapter</a></div>
+                    </td>
+                </tr>
+            </table>
+<hr />
+<div id="zend.http.user-agent-features" class="section"><div class="info"><h1 class="title">The UserAgent Features Adapter</h1></div>
+    
+
+    <div class="section" id="zend.http.user-agent-features.intro" name="zend.http.user-agent-features.intro"><div class="info"><h1 class="title">Overview</h1></div>
+        
+
+        <p class="para">
+            A variety of databases exist that define browser device features and capabilities.
+            <span class="classname">Zend_Http_UserAgent</span> provides the ability to utilize the database
+            of your choice via a features adapter interface.
+        </p>
+
+        <p class="para">
+            The features adapter is passed a request array that contains the User-Agent string and
+            any other relevant HTTP headers and environment pertinent to detecting the device in
+            use. Additionally, if any adapter-specific configuration might be needed, an additional
+            configuration array will be provided. The adapter must then return an array of device
+            capabilities.
+        </p>
+    </div>
+
+    <div class="section" id="zend.http.user-agent-features.quick-start" name="zend.http.user-agent-features.quick-start"><div class="info"><h1 class="title">Quick Start</h1></div>
+        
+
+        <p class="para">
+            The adapter interface is quite simple, defining but the single static method
+             <span class="methodname">getFromRequest()</span>.
+        </p>
+
+        <div class="programlisting php"><div class="phpcode"><div class="php" style="font-family: monospace;"><ol><li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #000000; font-weight: bold;">interface</span> Zend_Http_UserAgent_Features_Adapter</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #66cc66;">&#123;</span></div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; <span style="color: #808080; font-style: italic;">/**</span></div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #808080; font-style: italic;">&nbsp; &nbsp; &nbsp;* Retrieve the browser's features from a given request object ($_SERVER)</span></div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #808080; font-style: italic;">&nbsp; &nbsp; &nbsp;*</span></div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #808080; font-style: italic;">&nbsp; &nbsp; &nbsp;* @return array</span></div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #808080; font-style: italic;">&nbsp; &nbsp; &nbsp;*/</span></div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; <span style="color: #000000; font-weight: bold;">public</span> <a href="http://www.php.net/static"><span style="color: #000066;">static</span></a> <span style="color: #000000; font-weight: bold;">function</span> getFromRequest<span style="color: #66cc66;">&#40;</span><span style="color: #0000ff;">$request</span>, <a href="http://www.php.net/array"><span style="color: #000066;">array</span></a> <span style="color: #0000ff;">$config</span><span style="color: #66cc66;">&#41;</span>;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #66cc66;">&#125;</span></div></li></ol></div></div></div>
+
+    </div>
+
+    <div class="section" id="zend.http.user-agent-features.options" name="zend.http.user-agent-features.options"><div class="info"><h1 class="title">Configuration Options</h1></div>
+        
+
+        <p class="para">
+            Options are defined on a per-adapter basis.
+        </p>
+    </div>
+
+    <div class="section" id="zend.http.user-agent-features.methods" name="zend.http.user-agent-features.methods"><div class="info"><h1 class="title">Available Methods</h1></div>
+        
+
+        <dl>
+
+            <dt id="zend.http.user-agent-features.methods.get-from-request">
+                <dt class="term">
+                    <div class="methodsynopsis dc-description">
+                         <span class="methodname">getFromRequest</span>
+                        <span class="methodparam">( 
+                            <code_funcparams class="funcparams">array $request, array $config</code_funcparams>
+                         )</span>
+                    </div>
+
+                </dt>
+
+                <dd>
+
+                    <p class="para">
+                        Decompose the request in order to return an array of device capabilities.
+                    </p>
+                </dd>
+
+            </dt>
+
+        </dl>
+
+    </div>
+</div>
+        <hr />
+
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.http.user-agent-device.html">The UserAgent Device Interface</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.http.html">Zend_Http</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.http.user-agent-features-wurfl.html">The WURFL UserAgent Features Adapter</a></div>
+                    </td>
+                </tr>
+            </table>
+</td>
+        <td style="font-size: smaller;" width="15%"> <style type="text/css">
+#leftbar {
+	float: left;
+	width: 186px;
+	padding: 5px;
+	font-size: smaller;
+}
+ul.toc {
+	margin: 0px 5px 5px 5px;
+	padding: 0px;
+}
+ul.toc li {
+	font-size: 85%;
+	margin: 1px 0 1px 1px;
+	padding: 1px 0 1px 11px;
+	list-style-type: none;
+	background-repeat: no-repeat;
+	background-position: center left;
+}
+ul.toc li.header {
+	font-size: 115%;
+	padding: 5px 0px 5px 11px;
+	border-bottom: 1px solid #cccccc;
+	margin-bottom: 5px;
+}
+ul.toc li.active {
+	font-weight: bold;
+}
+ul.toc li a {
+	text-decoration: none;
+}
+ul.toc li a:hover {
+	text-decoration: underline;
+}
+</style>
+ <ul class="toc">
+  <li class="header home"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="reference.html">Zend Framework Reference</a></li>
+  <li class="header up"><a href="zend.http.html">Zend_Http</a></li>
+  <li><a href="zend.http.client.html">Zend_Http_Client - 介绍</a></li>
+  <li><a href="zend.http.client.advanced.html">Zend_Http_Client - Advanced Usage</a></li>
+  <li><a href="zend.http.client.adapters.html">Zend_Http_Client - Connection Adapters</a></li>
+  <li><a href="zend.http.cookies.html">Zend_Http_Cookie and Zend_Http_CookieJar</a></li>
+  <li><a href="zend.http.response.html">Zend_Http_Response</a></li>
+  <li><a href="zend.http.user-agent.html">Zend_Http_UserAgent</a></li>
+  <li><a href="zend.http.user-agent-device.html">The UserAgent Device Interface</a></li>
+  <li class="active"><a href="zend.http.user-agent-features.html">The UserAgent Features Adapter</a></li>
+  <li><a href="zend.http.user-agent-features-wurfl.html">The WURFL UserAgent Features Adapter</a></li>
+  <li><a href="zend.http.user-agent-features-device-atlas.html">The DeviceAtlas UserAgent Features Adapter</a></li>
+  <li><a href="zend.http.user-agent-features-tera-wurfl.html">The TeraWurfl UserAgent Features Adapter</a></li>
+  <li><a href="zend.http.user-agent-storage.html">The UserAgent Storage Interface</a></li>
+  <li><a href="zend.http.user-agent-storage-session.html">The Session UserAgent Storage Adapter</a></li>
+ </ul>
+ </td>
+    </tr>
+</table>
+</body>
+</html>

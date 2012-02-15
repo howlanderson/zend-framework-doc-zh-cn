@@ -1,0 +1,271 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <title>动态加载文件和类 - Zend Framework Manual</title>
+
+</head>
+<body>
+<table width="100%">
+    <tr valign="top">
+        <td width="85%">
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.loader.html">Zend_Loader</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.loader.html">Zend_Loader</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.loader.autoloader.html">The Autoloader</a></div>
+                    </td>
+                </tr>
+            </table>
+<hr />
+<div id="zend.loader.load" class="section"><div class="info"><h1 class="title"> 动态加载文件和类 </h1></div>
+
+    
+
+    <p class="para">
+        Zend_Loader类可以帮助你动态加载文件。
+    </p>
+
+    <div class="tip"><b class="tip">Tip</b><div class="info"><h1 class="title">Zend_Loader vs. require_once()</h1></div>
+        
+        <p class="para">
+            <code class="code">Zend_Loader</code> 最适合于加载的文件名是变量的情况（例如你要加载的文件的名称来自于用户的输入或者某个方法的参数）。如果你加载的文件名或类名是一个常量（即确定的文件，如/lib/test.php），则使用 <code class="code">Zend_Loader</code> 并不比传统的PHP函数 <a href="http://php.net/require_once" class="link external">&raquo; <code class="code">require_once()</code></a>有什么优势。
+        </p>
+    </div>
+
+    <div class="section" id="zend.loader.load.file" name="zend.loader.load.file"><div class="info"><h1 class="title"> 加载文件 </h1></div>
+
+        
+
+        <p class="para">
+            静态方法 <code class="code">Zend_Loader::loadFile()</code> 加载PHP文件，被加载的文件可包含任何 PHP 代码。它其实是将PHP的<a href="http://php.net/include" class="link external">&raquo; <code class="code">include()</code></a>函数封装而成的一个静态方法。当包含文件失败时，会抛出异常Zend_Exception，例如指定的文件不存在。
+        </p>
+
+        <div class="example"><div class="info"><p><b>Example #1 loadFile() 方法范例 </b></p></div>
+            
+            <div class="programlisting"><div class="cdata"><pre>
+Zend_Loader::loadFile($filename, $dirs=null, $once=false);
+
+            </pre></div></div>
+
+    </div>
+
+        <p class="para">
+            <code class="code">$filename</code>参数指定需要加载的文件，注意<code class="code">$filename</code>不需要指定任何路径，只需要文件名即可。ZF会对文件作安全性检查。<code class="code">$filename</code> 只能由字母，数字，连接符-,下划线_及英文句号.组成(半角)。<code class="code">$dirs</code>参数则不限，可以使用中文等。
+        </p>
+
+        <p class="para">
+            <code class="code">$dirs</code> 参数用来指定文件所在目录，可以是一个字符串或者数组。如果为 <code class="code">NULL</code>，则程序将会到系统的 <code class="code">include_path</code> 下寻找文件是否存在（include_path可在php.ini中设置--Haohappy注），如果是字符串或数组，则会到指定的目录下去找，然后才是 <code class="code">include_path</code>。
+        </p>
+
+        <p class="para">
+            <code class="code">$once</code> 参数为布尔类型，如果为 <code class="code">TRUE</code>，<code class="code">Zend_Loader::loadFile()</code> 使用 PHP 函数 <a href="http://php.net/include" class="link external">&raquo; <code class="code">include_once()</code></a> 加载文件，否则就是 PHP 函数 <a href="http://php.net/include_once" class="link external">&raquo; <code class="code">include()</code></a>。（本参数只能是true或false，两者区别就和include()和include_once()的区别一样。）
+        </p>
+
+    </div>
+
+    <div class="section" id="zend.loader.load.class" name="zend.loader.load.class"><div class="info"><h1 class="title"> 加载类 </h1></div>
+
+        
+
+        <p class="para">
+            静态方法<code class="code">Zend_Loader::loadClass($class, $dirs)</code>用来加载一个 PHP 类文件，该文件名格式为“$className.php”（也就是说加载的文件名称必须和文件中的类同名）。loadClass()会检查文件中的类是否存在。
+        </p>
+
+        <div class="example"><div class="info"><p><b>Example #2 Example of loadClass() method</b></p></div>
+            
+            <div class="programlisting"><div class="cdata"><pre>
+Zend_Loader::loadClass(&#039;Container_Tree&#039;,
+    array(
+        &#039;/home/production/mylib&#039;,
+        &#039;/home/production/myapp&#039;
+    )
+);
+
+            </pre></div></div>
+
+        </div>
+
+        <p class="para">
+            类名将会根据下划线（作为目录分隔线）对应到相应目录下的PHP文件，并加上&#039;.php&#039;，比如Container_Tree会指向Container\\Tree.php。
+        </p>
+
+        <p class="para">
+            如果<code class="code">$dirs</code>是一个字符串或数组， <code class="code">Zend_Loader::loadClass()</code>会根据顺序查找相应目录，并加载第一个匹配的文件。如果文件不存在，则会查找 <code class="code">inculde_path</code> 指定的目录。
+        </p>
+
+        <p class="para">
+            如果文件不存在或者文件中相应的类不存在，那么 <code class="code">Zend_Loader::loadClass()</code> 就会抛出一个 <code class="code">Zend_Exception</code> 异常。
+        </p>
+
+        <p class="para">
+            <code class="code">Zend_Loader::loadFile()</code> 用来加载文件，所以类名中只能包含字母数字、连接符(&#039;-&#039;)、下划线(&#039;_&#039;)和句点(&#039;.&#039;)。
+        </p>
+
+    </div>
+
+    <div class="section" id="zend.loader.load.isreadable" name="zend.loader.load.isreadable"><div class="info"><h1 class="title"> 判定某个文件是否可读 </h1></div>
+
+        
+
+        <p class="para">
+            静态方法<code class="code">Zend_Loader::isReadable($pathname)</code>判定某个文件是否存在并可读，可读则返回 <code class="code">TRUE</code> ，否则返回 <code class="code">FALSE</code>。
+        </p>
+
+        <div class="example"><div class="info"><p><b>Example #3 isReadable()示例：</b></p></div>
+            
+            <div class="programlisting"><div class="cdata"><pre>
+if (Zend_Loader::isReadable($filename)) {
+    // do something with $filename
+}
+
+            </pre></div></div>
+
+        </div>
+
+        <p class="para">
+            <code class="code">$filename</code>参数指定了要检查的文件名，包括路径信息。这个方法是将 PHP 函数<a href="http://php.net/is_readable" class="link external">&raquo; <code class="code">is_readable()</code></a>封装而成的，<code class="code">is_readable()</code> 不会自动查找 <code class="code">include_path</code> 下的文件，而 <code class="code">Zend::isReadable()</code> 可以。
+        </p>
+
+    </div>
+
+    <div class="section" id="zend.loader.load.autoload" name="zend.loader.load.autoload"><div class="info"><h1 class="title"> 使用 Autoloader</h1></div>
+
+        
+
+        <p class="para">
+            <code class="code">Zend_Loader</code> 类包括一个可以用 PHP SPL autoloader 注册的方法。<code class="code">Zend_Loader::autoload()</code> 是 callback 方法。为方便起见，<code class="code">Zend_Loader</code> 提供 <code class="code">registerAutoload()</code> 函数注册它的 <code class="code">autoload()</code> 方法。如果 <code class="code">spl_autoload</code> 扩展不在你的 PHP 环境中，那么 <code class="code">registerAutoload()</code> 方法将抛出 <code class="code">Zend_Exception</code>。
+        </p>
+
+        <div class="example"><div class="info"><p><b>Example #4  注册 autoloader callback 方法范例 </b></p></div>
+            
+            <div class="programlisting"><div class="cdata"><pre>
+Zend_Loader::registerAutoload();
+
+            </pre></div></div>
+
+        </div>
+
+        <p class="para">
+            注册 Zend Framework autoload callback 后，可以不需要显式加载就可以从 Zend Framework 引用那些类。当应用一个类，<code class="code">autoload()</code> 方法自动地使用 <code class="code">Zend_Loader::loadClass()</code> 。
+        </p>
+
+        <p class="para">
+            如果继承 <code class="code">Zend_Loader</code> 类，可以给 <code class="code">registerAutoload()</code> 一个可选的参数通过注册一个 <code class="code">autoload()</code> 方法来指定类。
+        </p>
+
+        <div class="example"><div class="info"><p><b>Example #5  从继承类注册 autoload callback 方法范例 </b></p></div>
+            
+            <div class="example-contents"><p>
+                因为在 PHP 中静态函数引用的语义，你必须实现 <code class="code">loadClass()</code> 和 <code class="code">autoload()</code>，<code class="code">autoload()</code> 必须调用 <code class="code">self::loadClass()</code>。如果 <code class="code">autoload()</code> 方法代表它的父类调用 <code class="code">self::loadClass()</code>，那么它调用在父类中的方法，而不是子类中。
+            </p></div>
+            <div class="programlisting"><div class="cdata"><pre>
+class My_Loader extends Zend_Loader
+{
+    public static function loadClass($class, $dirs = null)
+    {
+        parent::loadClass($class, $dirs);
+    }
+
+    public static function autoload($class)
+    {
+        try {
+            self::loadClass($class);
+            return $class;
+        } catch (Exception $e) {
+            return false;
+        }
+    }
+}
+
+Zend_Loader::registerAutoload(&#039;My_Loader&#039;);
+
+            </pre></div></div>
+
+        </div>
+
+        <p class="para">
+            你可以删除 autoload callback，<code class="code">registerAutoload()</code> 有个可选的第二个参数，缺省为 <code class="code">true</code> 。如果这个参数是 <code class="code">false</code>， 那么 autoload callback 从 SPL autoload 栈里 unregistered 掉而不是注册。
+        </p>
+
+    </div>
+
+</div>
+        <hr />
+
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.loader.html">Zend_Loader</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.loader.html">Zend_Loader</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.loader.autoloader.html">The Autoloader</a></div>
+                    </td>
+                </tr>
+            </table>
+</td>
+        <td style="font-size: smaller;" width="15%"> <style type="text/css">
+#leftbar {
+	float: left;
+	width: 186px;
+	padding: 5px;
+	font-size: smaller;
+}
+ul.toc {
+	margin: 0px 5px 5px 5px;
+	padding: 0px;
+}
+ul.toc li {
+	font-size: 85%;
+	margin: 1px 0 1px 1px;
+	padding: 1px 0 1px 11px;
+	list-style-type: none;
+	background-repeat: no-repeat;
+	background-position: center left;
+}
+ul.toc li.header {
+	font-size: 115%;
+	padding: 5px 0px 5px 11px;
+	border-bottom: 1px solid #cccccc;
+	margin-bottom: 5px;
+}
+ul.toc li.active {
+	font-weight: bold;
+}
+ul.toc li a {
+	text-decoration: none;
+}
+ul.toc li a:hover {
+	text-decoration: underline;
+}
+</style>
+ <ul class="toc">
+  <li class="header home"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="reference.html">Zend Framework Reference</a></li>
+  <li class="header up"><a href="zend.loader.html">Zend_Loader</a></li>
+  <li class="active"><a href="zend.loader.load.html">动态加载文件和类</a></li>
+  <li><a href="zend.loader.autoloader.html">The Autoloader</a></li>
+  <li><a href="zend.loader.autoloader-resource.html">Resource Autoloaders</a></li>
+  <li><a href="zend.loader.pluginloader.html">加载插件</a></li>
+ </ul>
+ </td>
+    </tr>
+</table>
+</body>
+</html>

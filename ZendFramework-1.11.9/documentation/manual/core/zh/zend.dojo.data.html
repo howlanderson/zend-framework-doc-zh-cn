@@ -1,0 +1,406 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <title>Zend_Dojo_Data: dojo.data Envelopes - Zend Framework Manual</title>
+
+</head>
+<body>
+<table width="100%">
+    <tr valign="top">
+        <td width="85%">
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.dojo.introduction.html">简介</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.dojo.html">Zend_Dojo</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.dojo.view.html">Dojo 视图助手</a></div>
+                    </td>
+                </tr>
+            </table>
+<hr />
+<div id="zend.dojo.data" class="section"><div class="info"><h1 class="title">Zend_Dojo_Data: dojo.data Envelopes</h1></div>
+    
+
+    <p class="para">
+        Dojo 通过它的 dojo.data 组件为 data-enabled 小部件提供数据抽象。
+        该组件提供附加数据存储的能力，提供一些关于身份字段和可选的标签字段的元数据以及
+        从数据存储查询、排序和获取记录和一组记录的 API。
+    </p>
+
+    <p class="para">
+        dojo.data 常和XmlHttpRequest一起使用来从服务器取出动态数据。
+        它的基本机制是扩展 QueryReadStore 来指向一个 URL 并指定查询信息，服务器端就用
+        下列 JSON 格式来返回数据：
+    </p>
+
+    <div class="programlisting"><div class="cdata"><pre>
+{
+    identifier: &#039;&lt;name&gt;&#039;,
+    &lt;label: &#039;&lt;label&gt;&#039;,&gt;
+    items: [
+        { name: &#039;...&#039;, label: &#039;...&#039;, someKey: &#039;...&#039; },
+        ...
+    ]
+}
+
+</pre></div></div>
+
+
+    <p class="para">
+        <code class="code">Zend_Dojo_Data</code> 提供一个简单的接口通过程序来构造这样的结构，
+        交互并系列化成一个数组或 JSON。
+    </p>
+
+    <div class="section" id="zend.dojo.data.usage" name="zend.dojo.data.usage"><div class="info"><h1 class="title">Zend_Dojo_Data 用法</h1></div>
+        
+
+        <p class="para">
+            很简单，dojo.data 要求你在每个条目和一组条目（数据）中提供标识符字段的名字。
+            你可以通过构造函数或 mutators 来传递它们：
+        </p>
+
+        <div class="example"><div class="info"><p><b>Example #1 通过构造函数初始化 Zend_Dojo_Data</b></p></div>
+            
+
+            <div class="programlisting"><div class="cdata"><pre>
+$data = new Zend_Dojo_Data(&#039;id&#039;, $items);
+
+            </pre></div></div>
+
+        </div>
+
+        <div class="example"><div class="info"><p><b>Example #2 通过 mutators 初始化 Zend_Dojo_Data</b></p></div>
+            
+
+            <div class="programlisting"><div class="cdata"><pre>
+$data = new Zend_Dojo_Data();
+$data-&gt;setIdentifier(&#039;id&#039;)
+     -&gt;addItems($items);
+
+            </pre></div></div>
+
+        </div>
+
+        <p class="para">
+            用 <code class="code">addItem()</code> 和 <code class="code">addItems()</code> 添加一个单个条目或追加多个条目。
+        </p>
+
+        <div class="example"><div class="info"><p><b>Example #3 追加数据到 Zend_Dojo_Data</b></p></div>
+            
+
+            <div class="programlisting"><div class="cdata"><pre>
+$data = new Zend_Dojo_Data($identifier, $items);
+$data-&gt;addItem($someItem);
+
+$data-&gt;addItems($someMoreItems);
+
+            </pre></div></div>
+
+        </div>
+
+        <blockquote><p><b class="note">Note</b>: <span class="info"><b> 永远使用标识符！</b><br /></span>
+            
+
+            
+                每个 dojo.data 数据存储要求以元数据来提供标识符列，<code class="code">Zend_Dojo_Data</code> 也一样。
+                实际上，如果不用标识符添加条目，将会抛出异常。
+            <br />
+        </p></blockquote>
+
+        <p class="para">
+            条目可以是下列其中之一：
+        </p>
+
+        <ul class="itemizedlist">
+            <li class="listitem"><p class="para">
+                联合数组
+            </p></li>
+
+            <li class="listitem"><p class="para">
+                实现 <code class="code">toArray()</code> 方法的对象
+            </p></li>
+
+            <li class="listitem"><p class="para">
+                任何其它对象（将通过 get_object_vars() 系列化 ）
+            </p></li>
+        </ul>
+
+        <p class="para">
+            你可以通过 <code class="code">addItems()</code> 或 <code class="code">setItems()</code>（覆盖先前的条目） 附加上述条目的集合；
+            用的时候，你可以传递一个参数：
+        </p>
+
+        <ul class="itemizedlist">
+            <li class="listitem"><p class="para">
+                数组
+            </p></li>
+
+            <li class="listitem"><p class="para">
+                实现<code class="code">Traversable</code>接口的对象（包括 <code class="code">Iterator</code> 和 <code class="code">ArrayAccess</code> 接口）。
+            </p></li>
+        </ul>
+
+        <p class="para">
+            如果想为条目指定一个用作标签的字段，调用<code class="code">setLabel()</code>:
+        </p>
+
+        <div class="example"><div class="info"><p><b>Example #4 在 Zend_Dojo_Data 里指定一个标签字段 </b></p></div>
+            
+
+            <div class="programlisting"><div class="cdata"><pre>
+$data-&gt;setLabel(&#039;name&#039;);
+
+            </pre></div></div>
+
+        </div>
+
+        <p class="para">
+            最后，你也可以用 <code class="code">fromJson()</code> 方法从 dojo.data JSON 数组加载一个 <code class="code">Zend_Dojo_Data</code> 条目，
+        </p>
+
+        <div class="example"><div class="info"><p><b>Example #5  从 JSON 组装 Zend_Dojo_Data </b></p></div>
+            
+
+            <div class="programlisting"><div class="cdata"><pre>
+$data-&gt;fromJson($json);
+
+            </pre></div></div>
+
+        </div>
+    </div>
+
+    <div class="section" id="zend.dojo.data.advanced" name="zend.dojo.data.advanced"><div class="info"><h1 class="title">高级用例</h1></div>
+        
+
+        <p class="para">
+            除了可以作为可系列化的数据容器，<code class="code">Zend_Dojo_Data</code> 也可以用各种各样的方法处理和疏导（traverse）数据。
+        </p>
+
+        <p class="para">
+            <code class="code">Zend_Dojo_Data</code> 实现 <code class="code">ArrayAccess</code>、 <code class="code">Iterator</code> 和 <code class="code">Countable</code> 的接口。
+            这意味着你可以使用数据集合几乎就像使用数组一样。
+        </p>
+
+        <p class="para">
+            所有的条目通过标识符字段来引用。因为表示符必须是独一无二的，你可用它的值来取出每个记录。
+            有两个方法可以做这个：通过 <code class="code">getItem()</code> 方法，或通过数组符号。
+        </p>
+
+        <div class="programlisting"><div class="cdata"><pre>
+// Using getItem():
+$item = $data-&gt;getItem(&#039;foo&#039;);
+
+// Or use array notation:
+$item = $data[&#039;foo&#039;];
+
+        </pre></div></div>
+
+
+        <p class="para">
+            如果你知道标识符，你可以用它来读取、更新、删除、创建或测试条目：
+        </p>
+
+        <div class="programlisting"><div class="cdata"><pre>
+// Update or create an item:
+$data[&#039;foo&#039;] = array(&#039;title&#039; =&gt; &#039;Foo&#039;, &#039;email&#039; =&gt; &#039;foo@foo.com&#039;);
+
+// Delete an item:
+unset($data[&#039;foo&#039;]);
+
+// Test for an item:
+if (isset($data[foo])) {
+}
+
+       </pre></div></div>
+
+
+        <p class="para">
+            你也可以遍历所有条目，在内部，所有的条目以数组形式存储。
+        </p>
+
+        <div class="programlisting"><div class="cdata"><pre>
+foreach ($data as $item) {
+    echo $item[&#039;title&#039;] . &#039;: &#039; . $item[&#039;description&#039;] . &quot;\n&quot;;
+}
+
+        </pre></div></div>
+
+
+        <p class="para">
+            甚至还可以数出你有多少条目：
+        </p>
+
+        <div class="programlisting"><div class="cdata"><pre>
+echo count($data), &quot; items found!&quot;;
+
+        </pre></div></div>
+
+
+        <p class="para">
+            最后，因为这个类实现 <code class="code">__toString()</code>， 你也可以通过 echo 它把它传给 JSON 或 字符串：
+        </p>
+
+        <div class="programlisting"><div class="cdata"><pre>
+echo $data; // echo as JSON string
+
+$json = (string) $data; // cast to string == cast to JSON
+
+        </pre></div></div>
+
+
+        <div class="section" id="zend.dojo.data.advanced.methods" name="zend.dojo.data.advanced.methods"><div class="info"><h1 class="title"> 可用的方法 </h1></div>
+            
+
+            <p class="para">
+                除了上述实现接口必须的方法外，下列方法也可用。
+            </p>
+
+            <ul class="itemizedlist">
+                <li class="listitem"><p class="para">
+                    <code class="code">setItems($items)</code>: 一次设置多个条目，覆盖在对象里先前的任何条目。
+                    <code class="code">$items</code> 是一个数组或一个 <code class="code">Traversable</code> 对象。
+                </p></li>
+
+                <li class="listitem"><p class="para">
+                    <code class="code">setItem($item, $id = null)</code>: 设置一个条目，可选地传递一个显式标识符。
+                    如果有的话，覆盖先前在集合里的条目。有效的条目包括联合数组，实现 <code class="code">toArray()</code> 的对象或任何有 public 属性的对象。
+                </p></li>
+
+                <li class="listitem"><p class="para">
+                    <code class="code">addItem($item, $id = null)</code>: 添加一个条目，可选地传递一个显式标识符。
+                    如果在集合理已经存在该条目，将产生异常。有效的条目包括联合数组，实现 <code class="code">toArray()</code> 的对象或任何有 public 属性的对象。
+                </p></li>
+
+                <li class="listitem"><p class="para">
+                    <code class="code">addItems($items)</code>: 一次添加多个条目，追加到任何当前条目。如果新条目的标识符在集合理已经存在，将产生异常。
+                    <code class="code">$items</code> 是一个数组或一个 <code class="code">Traversable</code> 对象。
+                </p></li>
+
+                <li class="listitem"><p class="para">
+                    <code class="code">getItems()</code>: 以数组的数组（array of arrays）的形式获取所有条目。
+                </p></li>
+
+                <li class="listitem"><p class="para">
+                    <code class="code">hasItem($id)</code>: 确定一个条目的标识符是否在集合理存在。
+                </p></li>
+
+                <li class="listitem"><p class="para">
+                    <code class="code">getItem($id)</code>: 从集合里按给定的标识符获取一个条目；返回一个联合数组。
+                    如果没有条目匹配，返回 null。
+                </p></li>
+
+                <li class="listitem"><p class="para">
+                    <code class="code">removeItem($id)</code>: 从集合里按给定的标识符删除一个条目。
+                </p></li>
+
+                <li class="listitem"><p class="para">
+                    <code class="code">clearItems()</code>: 从集合里删除所有条目。
+                </p></li>
+
+                <li class="listitem"><p class="para">
+                    <code class="code">setIdentifier($identifier)</code>: 为集合里的每个条目设置表示独一无二的标识符的字段名。
+                </p></li>
+
+                <li class="listitem"><p class="para">
+                    <code class="code">getIdentifier()</code>: 获取标识符字段的名字。
+                </p></li>
+
+                <li class="listitem"><p class="para">
+                    <code class="code">setLabel($label)</code>: 设置用于为条目显示标签的字段的名字。
+                </p></li>
+
+                <li class="listitem"><p class="para">
+                    <code class="code">getLabel()</code>: 读取标签字段名。
+                </p></li>
+
+                <li class="listitem"><p class="para">
+                    <code class="code">toArray()</code>: 传递对象到一个数组。数组里最少包含键 &#039;identifier&#039; 和 &#039;items&#039;，
+                    如果在对象里设置了标签，也要包含 &#039;label&#039;。
+                </p></li>
+
+                <li class="listitem"><p class="para">
+                    <code class="code">toJson()</code>: 传递对象给一个JSON 表达。
+                </p></li>
+            </ul>
+        </div>
+    </div>
+</div>
+        <hr />
+
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.dojo.introduction.html">简介</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.dojo.html">Zend_Dojo</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.dojo.view.html">Dojo 视图助手</a></div>
+                    </td>
+                </tr>
+            </table>
+</td>
+        <td style="font-size: smaller;" width="15%"> <style type="text/css">
+#leftbar {
+	float: left;
+	width: 186px;
+	padding: 5px;
+	font-size: smaller;
+}
+ul.toc {
+	margin: 0px 5px 5px 5px;
+	padding: 0px;
+}
+ul.toc li {
+	font-size: 85%;
+	margin: 1px 0 1px 1px;
+	padding: 1px 0 1px 11px;
+	list-style-type: none;
+	background-repeat: no-repeat;
+	background-position: center left;
+}
+ul.toc li.header {
+	font-size: 115%;
+	padding: 5px 0px 5px 11px;
+	border-bottom: 1px solid #cccccc;
+	margin-bottom: 5px;
+}
+ul.toc li.active {
+	font-weight: bold;
+}
+ul.toc li a {
+	text-decoration: none;
+}
+ul.toc li a:hover {
+	text-decoration: underline;
+}
+</style>
+ <ul class="toc">
+  <li class="header home"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="reference.html">Zend Framework Reference</a></li>
+  <li class="header up"><a href="zend.dojo.html">Zend_Dojo</a></li>
+  <li><a href="zend.dojo.introduction.html">简介</a></li>
+  <li class="active"><a href="zend.dojo.data.html">Zend_Dojo_Data: dojo.data Envelopes</a></li>
+  <li><a href="zend.dojo.view.html">Dojo 视图助手</a></li>
+  <li><a href="zend.dojo.form.html">Dojo 表单元素和装饰器</a></li>
+  <li><a href="zend.dojo.build-layers.html">Zend_Dojo build layer support</a></li>
+ </ul>
+ </td>
+    </tr>
+</table>
+</body>
+</html>

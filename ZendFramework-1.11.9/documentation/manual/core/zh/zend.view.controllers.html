@@ -1,0 +1,226 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <title>控制器脚本 - Zend Framework Manual</title>
+
+</head>
+<body>
+<table width="100%">
+    <tr valign="top">
+        <td width="85%">
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.view.introduction.html">简介</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.view.html">Zend_View</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.view.scripts.html">视图脚本</a></div>
+                    </td>
+                </tr>
+            </table>
+<hr />
+<div id="zend.view.controllers" class="section"><div class="info"><h1 class="title">控制器脚本</h1></div>
+    
+
+    <p class="para">
+        控制器是你实例化和配置Zend_View的地方。你可以分配变量给view，并让view使用某个特定的模板来输出。
+    </p>
+
+    <div class="section" id="zend.view.controllers.assign" name="zend.view.controllers.assign"><div class="info"><h1 class="title">变量赋值</h1></div>
+
+        
+
+        <p class="para">
+            控制器需要向视图传递必要的变量，在它处理view的代码之前。通常你可以一次一个地完成变量赋值的工作。
+        </p>
+
+        <div class="programlisting"><div class="cdata"><pre>
+$view = new Zend_View();
+$view-&gt;a = &quot;Hay&quot;;
+$view-&gt;b = &quot;Bee&quot;;
+$view-&gt;c = &quot;Sea&quot;;
+
+        </pre></div></div>
+
+
+        <p class="para">
+           然而这样比较麻烦，那么你可以将它们放进一个数组或对象中去。assign()方法允许你通过数组或对象进行赋值。下面这个例子和上例（一次一个赋值）的结果是一样的：
+        </p>
+
+        <div class="programlisting"><div class="cdata"><pre>
+$view = new Zend_View();
+
+//以数组的形式进行赋值，键名为View的变量名，键值为变量值
+
+$array = array(
+    &#039;a&#039; =&gt; &quot;Hay&quot;,
+    &#039;b&#039; =&gt; &quot;Bee&quot;,
+    &#039;c&#039; =&gt; &quot;Sea&quot;,
+);
+$view-&gt;assign($array);
+
+//也可以通过对象来赋值，但要先把对象转型为数组
+$obj = new StdClass;
+$obj-&gt;a = &quot;Hay&quot;;
+$obj-&gt;b = &quot;Bee&quot;;
+$obj-&gt;c = &quot;Sea&quot;;
+$view-&gt;assign((array) $obj);
+
+        </pre></div></div>
+
+
+        <p class="para">
+            另外，你也可使用这样的方法： 第一个参数是变量名，第二个是变量的值。
+        </p>
+
+        <div class="programlisting"><div class="cdata"><pre>
+$view = new Zend_View();
+$view-&gt;assign(&#039;a&#039;, &quot;Hay&quot;);
+$view-&gt;assign(&#039;b&#039;, &quot;Bee&quot;);
+$view-&gt;assign(&#039;c&#039;, &quot;Sea&quot;);
+
+        </pre></div></div>
+
+
+    </div>
+
+    <div class="section" id="zend.view.controllers.render" name="zend.view.controllers.render"><div class="info"><h1 class="title">调用视图脚本并打印输出</h1></div>
+
+        
+
+        <p class="para">
+            完成所有变量赋值后，Controller通知Zend_View通过render()调用一段特定的视图代码。注意，这个方法将只返回处理后的视图，而不直接输出，所以你要用print或echo来打印输出。
+        </p>
+
+        <div class="programlisting"><div class="cdata"><pre>
+$view = new Zend_View();
+$view-&gt;a = &quot;Hay&quot;;
+$view-&gt;b = &quot;Bee&quot;;
+$view-&gt;c = &quot;Sea&quot;;
+echo $view-&gt;render(&#039;someView.php&#039;);
+
+        </pre></div></div>
+
+
+    </div>
+
+    <div class="section" id="zend.view.controllers.script-paths" name="zend.view.controllers.script-paths"><div class="info"><h1 class="title">视图脚本的路径</h1></div>
+
+        
+
+        <p class="para">
+        默认地， Zend_View希望你的View脚本和Controller脚本在同一目录下。比如说，如果你的Controller文件在 “/path/to/app/controllers”目录下，并调用$view-&gt;render(&#039;someView.php&#039;)，则Zend_View会查找&quot;/path/to/app/controllers/someVire.php&quot;文件。
+        </p>
+
+        <p class="para">
+            显然，你的View代码很可能放在其它地方，那么需要告诉 Zend_View去哪里找，可使用 setScriptPath()方法。
+        </p>
+
+        <div class="programlisting"><div class="cdata"><pre>
+$view = new Zend_View();
+$view-&gt;setScriptPath(&#039;/path/to/app/views&#039;);
+
+        </pre></div></div>
+
+
+        <p class="para">
+            现在当你调用$view-&gt;render(&#039;someView.php&#039;)，它会去找&quot;/path/to/app/views/someView.php&quot;。
+        </p>
+
+        <p class="para">
+            事实上，你可以通过addScriptPath()增加路径。Zend_View会到最近增加的路径目录下找View脚本。这样你可以改变默认的外观，通过定制和使用自己的皮肤或主题。
+        </p>
+
+        <div class="programlisting"><div class="cdata"><pre>
+$view = new Zend_View();
+$view-&gt;addScriptPath(&#039;/path/to/app/views&#039;);
+$view-&gt;addScriptPath(&#039;/path/to/custom/&#039;);
+
+// 现在如果你调用 $view-&gt;render(&#039;booklist.php&#039;), Zend_View 将
+// 首先查找 &quot;/path/to/custom/booklist.php&quot;, 找不到再找
+// &quot;/path/to/app/views/booklist.php&quot;, 如果还找不到，最后查找当前目录下//的&quot;booklist.php&quot;.
+
+        </pre></div></div>
+
+
+    </div>
+
+</div>
+        <hr />
+
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.view.introduction.html">简介</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.view.html">Zend_View</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.view.scripts.html">视图脚本</a></div>
+                    </td>
+                </tr>
+            </table>
+</td>
+        <td style="font-size: smaller;" width="15%"> <style type="text/css">
+#leftbar {
+	float: left;
+	width: 186px;
+	padding: 5px;
+	font-size: smaller;
+}
+ul.toc {
+	margin: 0px 5px 5px 5px;
+	padding: 0px;
+}
+ul.toc li {
+	font-size: 85%;
+	margin: 1px 0 1px 1px;
+	padding: 1px 0 1px 11px;
+	list-style-type: none;
+	background-repeat: no-repeat;
+	background-position: center left;
+}
+ul.toc li.header {
+	font-size: 115%;
+	padding: 5px 0px 5px 11px;
+	border-bottom: 1px solid #cccccc;
+	margin-bottom: 5px;
+}
+ul.toc li.active {
+	font-weight: bold;
+}
+ul.toc li a {
+	text-decoration: none;
+}
+ul.toc li a:hover {
+	text-decoration: underline;
+}
+</style>
+ <ul class="toc">
+  <li class="header home"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="reference.html">Zend Framework Reference</a></li>
+  <li class="header up"><a href="zend.view.html">Zend_View</a></li>
+  <li><a href="zend.view.introduction.html">简介</a></li>
+  <li class="active"><a href="zend.view.controllers.html">控制器脚本</a></li>
+  <li><a href="zend.view.scripts.html">视图脚本</a></li>
+  <li><a href="zend.view.helpers.html">视图助手（View Helper）</a></li>
+  <li><a href="zend.view.abstract.html">Zend_View_Abstract</a></li>
+ </ul>
+ </td>
+    </tr>
+</table>
+</body>
+</html>

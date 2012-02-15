@@ -1,0 +1,512 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <title>标准校验类 - Zend Framework Manual</title>
+
+</head>
+<body>
+<table width="100%">
+    <tr valign="top">
+        <td width="85%">
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.validate.introduction.html">简介</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.validate.html">Zend_Validate</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.validate.validator_chains.html">校验器链</a></div>
+                    </td>
+                </tr>
+            </table>
+<hr />
+<div id="zend.validate.set" class="section"><div class="info"><h1 class="title">标准校验类</h1></div>
+
+    
+
+    <p class="para">
+        Zend Framework 带有一组标准的校验类供你使用。
+    </p>
+
+    <div class="section" id="zend.validate.set.alnum" name="zend.validate.set.alnum"><div class="info"><h1 class="title">Alnum</h1></div>
+        
+        <p class="para">
+            当且仅当<code class="code">$value</code>只包含字母和数字字符，返回 <code class="code">true</code>。这个校验器包括一个考虑空白字符是否有效的选项。
+        </p>
+    </div>
+
+    <div class="section" id="zend.validate.set.alpha" name="zend.validate.set.alpha"><div class="info"><h1 class="title">Alpha</h1></div>
+        
+        <p class="para">
+            当且仅当<code class="code">$value</code>只包含字母字符，返回 <code class="code">true</code>。这个校验器包括一个考虑空白字符是否有效的选项。
+        </p>
+    </div>
+
+    <div class="section" id="zend.validate.set.barcode" name="zend.validate.set.barcode"><div class="info"><h1 class="title">Barcode</h1></div>
+        
+        <p class="para">
+            这个校验器是个带有条码类型的实例，条码类型是根据你希望用来校验条码值而定。它目前支持 &quot;<code class="code">UPC-A</code>&quot;  （通用产品码）和 &quot;<code class="code">EAN-13</code>&quot;  （欧洲商品码）条码类型，当且仅当输入成功通过条码校验算法的校验，<code class="code">isValid()</code>  返回 true。你应该从输入中删除除了数字0到9（0-9）以外的其它字符，然后传递给校验器。
+         </p>
+    </div>
+
+    <div class="section" id="zend.validate.set.between" name="zend.validate.set.between"><div class="info"><h1 class="title">Between</h1></div>
+        
+        <p class="para">
+            当且仅当<code class="code">$value</code>在最小值和最大值之间，返回<code class="code">true</code>。缺省地，比较包含边界值（<code class="code">$value</code>可以等于边界值），尽管为了做精确地比较这个可以被覆盖。所谓精确地比较，就是<code class="code">$value</code>必须大于最小值和小于最大值。
+        </p>
+    </div>
+
+    <div class="section" id="zend.validate.set.ccnum" name="zend.validate.set.ccnum"><div class="info"><h1 class="title">Ccnum</h1></div>
+        
+        <p class="para">
+            当且仅当<code class="code">$value</code>遵循Luhn(mod-10 checksum)算法，返回<code class="code">true</code> 。
+        </p>
+    </div>
+
+    <div class="section" id="zend.validate.set.date" name="zend.validate.set.date"><div class="info"><h1 class="title">日期</h1></div>
+        
+        <p class="para">
+            当<code class="code">$value</code>是一个格式为<code class="code">YYYY-MM-DD</code>的有效日期，返回<code class="code">true</code> 。如果<code class="code">locale</code> 选项被设置那么日期将根据locale来校验，如果<code class="code">format</code> 选项被设置成这个格式用来校验。关于选项参数的细节参见<a href="zend.date.overview.html#zend.date.others.comparison.table" class="link">Zend_Date::isDate()</a>。
+        </p>
+    </div>
+
+    <div class="section" id="zend.validate.set.digits" name="zend.validate.set.digits"><div class="info"><h1 class="title">数字</h1></div>
+        
+        <p class="para">
+            当且仅当<code class="code">$value</code>只包含数字字符，返回 <code class="code">true</code>。
+        </p>
+    </div>
+
+    <div class="section" id="zend.validate.set.email_addresses" name="zend.validate.set.email_addresses"><div class="info"><h1 class="title"> Email 地址</h1></div>
+
+    
+
+    <p class="para">
+        <code class="code">Zend_Validate_EmailAddress</code>允许你校验一个email地址。首先校验器把email地址分成local-part和@hostname并试图按照email地址和主机名的规范来匹配它。
+    </p>
+
+    <p class="para">
+        <em class="emphasis">基本用法</em>
+    </p>
+
+    <p class="para">
+        一个基本用法的例子如下：
+
+        <div class="programlisting"><div class="cdata"><pre>
+$validator = new Zend_Validate_EmailAddress();
+if ($validator-&gt;isValid($email)) {
+    // email appears to be valid
+} else {
+    // email is invalid; print the reasons
+    foreach ($validator-&gt;getMessages() as $message) {
+        echo &quot;$message\n&quot;;
+    }
+}
+
+        </pre></div></div>
+
+
+        这个例子匹配email地址<code class="code">$email</code>并在匹配失败的时候用<code class="code">$validator-&gt;getMessages()</code>来获得有用的错误信息。
+
+    </p>
+
+
+    <p class="para">
+        <em class="emphasis">复杂的local parts</em>
+    </p>
+
+    <p class="para">
+        <code class="code">Zend_Validate_EmailAddress</code>根据RFC2822来匹配任何有效的email地址。例如，有效的email地址包括<code class="code">bob@domain.com</code>, <code class="code">bob+jones@domain.us</code>, <code class="code">&quot;bob@jones&quot;@domain.com</code> 和 <code class="code">&quot;bob jones&quot;@domain.com</code>。一些过时的email格式目前不再校验（例如email地址中的回车符或&quot;\&quot;符）。
+    </p>
+
+    <p class="para">
+        <em class="emphasis">校验不同类型的主机名</em>
+    </p>
+
+    <p class="para">
+        Email地址中的主机名部分依靠<a href="zend.validate.set.html#zend.validate.set.hostnames" class="link"><code class="code">Zend_Validate_Hostname</code></a>来校验。尽管你希望IP地址和本地主机名也被接受，但缺省地只有像<code class="code">domain.com</code>格式的DNS主机名被接受。
+        当然如果你想如愿，需要实例化<code class="code">Zend_Validate_EmailAddress</code>并传递一个参数来指明哪种主机名你想接受。更多的细节包含在<code class="code">Zend_Validate_Hostname</code>中。
+        下面的例子显示如何同时接受DNS和本地主机名：
+        <div class="programlisting"><div class="cdata"><pre>
+$validator = new Zend_Validate_EmailAddress(Zend_Validate_Hostname::ALLOW_DNS | Zend_Validate_Hostname::ALLOW_LOCAL);
+if ($validator-&gt;isValid($email)) {
+    // email appears to be valid
+} else {
+    // email is invalid; print the reasons
+    foreach ($validator-&gt;getMessages() as $message) {
+        echo &quot;$message\n&quot;;
+    }
+}
+
+        </pre></div></div>
+
+
+    </p>
+    <p class="para">
+        <em class="emphasis">检查主机名是否确实接受email</em>
+    </p>
+
+    <p class="para">
+        email地址的格式正确并不意味着这个email地址确实存在。为解决这个问题，你可以用MX校验来检查一个MX(email)条目的主机名是否存在于DNS的纪录里。这将告诉你这个主机名接受email，但并不告诉你确切的email地址是有效的。
+    </p>
+
+    <p class="para">
+        MX 检查不是缺省地激活的，并且目前只支持UNIX平台。为激活MX检查，你可以传递第二个参数给<code class="code">Zend_Validate_EmailAddress</code>构造器。
+        <div class="programlisting"><div class="cdata"><pre>
+$validator = new Zend_Validate_EmailAddress(Zend_Validate_Hostname::ALLOW_DNS, true);
+
+        </pre></div></div>
+
+
+        另外你可以传递 <code class="code">true</code> 或 <code class="code">false</code> 给<code class="code">$validator-&gt;setValidateMx()</code> 来激活或禁止 MX 校验。
+    </p>
+
+    <p class="para">
+        用激活这个设置的网络函数将用来为你所想校验的email地址的主机名中的MX记录的存在做检查。请注意这将可能把你的脚本变慢。
+    </p>
+
+    <p class="para">
+        <em class="emphasis">校验国际域名</em>
+    </p>
+
+    <p class="para">
+        <code class="code">Zend_Validate_EmailAddress</code> 也将匹配存在于某些域名中的国际字符。这就是国际域名（IDN）支持。这个是缺省激活，你可以通过用存在于 <code class="code">Zend_Validate_EmailAddress</code> 中的内部的 <code class="code">Zend_Validate_Hostname</code> 对象来改变设置来禁止。
+
+    <div class="programlisting"><div class="cdata"><pre>
+$validator-&gt;hostnameValidator-&gt;setValidateIdn(false);
+
+    </pre></div></div>
+
+
+        关于 <code class="code">setValidateIdn()</code> 更多的信息在<code class="code">Zend_Validate_Hostname</code> 文档中。
+    </p>
+
+    <p class="para">
+        请注意你有你允许DNS 主机名被校验，国际域名（IDNs）才被校验。
+    </p>
+
+    <p class="para">
+        <em class="emphasis">校验顶级域名</em>
+    </p>
+
+    <p class="para">
+       缺省地用已知的TLDs列表来检查主机名。你可以通过用存在于<code class="code">Zend_Validate_EmailAddress</code> 中的内部的 <code class="code">Zend_Validate_Hostname</code> 对象来改变设置来禁止。
+    <div class="programlisting"><div class="cdata"><pre>
+$validator-&gt;hostnameValidator-&gt;setValidateTld(false);
+
+    </pre></div></div>
+
+
+        关于 <code class="code">setValidateTld()</code> 更多的信息在<code class="code">Zend_Validate_Hostname</code> 文档中。
+    </p>
+
+    <p class="para">
+        请注意你有你允许DNS 主机名被校验，顶级域名（TLDs）才被校验。
+    </p>
+
+</div>
+
+    <div class="section" id="zend.validate.set.float" name="zend.validate.set.float"><div class="info"><h1 class="title">浮点数</h1></div>
+        
+        <p class="para">
+            当且仅当<code class="code">$value</code>是一个浮点数值，返回 <code class="code">true</code>。
+        </p>
+    </div>
+
+    <div class="section" id="zend.validate.set.greater_than" name="zend.validate.set.greater_than"><div class="info"><h1 class="title">GreaterThan</h1></div>
+        
+        <p class="para">
+            当且仅当<code class="code">$value</code>大于最小值，返回 <code class="code">true</code>。
+        </p>
+    </div>
+
+    <div class="section" id="zend.validate.set.hex" name="zend.validate.set.hex"><div class="info"><h1 class="title">十六进制数</h1></div>
+        
+        <p class="para">
+            当且仅当<code class="code">$value</code>只包含十六进制的数字字符，返回 <code class="code">true</code>。
+        </p>
+    </div>
+
+    <div class="section" id="zend.validate.set.hostnames" name="zend.validate.set.hostnames"><div class="info"><h1 class="title">主机名</h1></div>
+
+    
+
+    <p class="para">
+        Zend_Validate_Hostname允许你根据一组已知的规范来校验主机名。它检查三种不同的主机名：DNS主机名（例如domain.com），IP地址（例如1.2.3.4），和本地主机名（例如localhost）。缺省地，只有DNS主机名被匹配。
+    </p>
+
+    <p class="para">
+        <em class="emphasis">基本用法</em>
+    </p>
+
+    <p class="para">
+        一个基本用法的例子如下：
+
+        <div class="programlisting"><div class="cdata"><pre>&lt;?php
+require_once &#039;Zend/Validate/Hostname.php&#039;;
+$validator = new Zend_Validate_Hostname();
+if ($validator-&gt;isValid($hostname)) {
+    // hostname appears to be valid
+} else {
+    // hostname is invalid; print the reasons
+    foreach ($validator-&gt;getMessages() as $message) {
+        echo &quot;$message\n&quot;;
+    }
+}
+
+
+        </pre></div></div>
+
+
+        这个例子匹配主机名<code class="code">$hostname</code>并在匹配失败的时候用<code class="code">$validator-&gt;getMessages()</code>来获得有用的错误信息。
+
+    </p>
+
+    <p class="para">
+        <em class="emphasis">校验不同类型的主机名</em>
+    </p>
+
+    <p class="para">
+        你可能发现你也想匹配IP地址，本地主机名，或者是所有允许类型的组合。这个可以在当你实例化它的时候通过传递参数给Zend_Validate_Hostname来实现。 参数应该是一个整型数，它来决定哪种主机名被允许。我们鼓励你使用常量。
+    </p>
+
+    <p class="para">
+        Zend_Validate_Hostname 常量是： <code class="code">ALLOW_DNS</code> 允许DNS主机名，
+        <code class="code">ALLOW_IP</code> 允许IP地址， <code class="code">ALLOW_LOCAL</code> 允许本地网络名，和<code class="code">ALLOW_ALL</code> 允许所有三种类型。 你可以用下面的例子仅仅检查IP地址：
+
+        <div class="programlisting"><div class="cdata"><pre>&lt;?php
+require_once &#039;Zend/Validate/Hostname.php&#039;;
+$validator = new Zend_Validate_Hostname(Zend_Validate_Hostname::ALLOW_IP);
+if ($validator-&gt;isValid($hostname)) {
+    // hostname appears to be valid
+} else {
+    // hostname is invalid; print the reasons
+    foreach ($validator-&gt;getMessages() as $message) {
+        echo &quot;$message\n&quot;;
+    }
+}
+
+
+        </pre></div></div>
+
+    </p>
+
+    <p class="para">
+        你可以用这些类型的组合，也可以用<code class="code">ALLOW_ALL</code>来接受所有主机名类型。例如，你可以通过如下例子实例化Zend_Validate_Hostname对象来接受DNS和本地主机名:
+        <div class="programlisting"><div class="cdata"><pre>&lt;?php
+
+$validator = new Zend_Validate_Hostname(Zend_Validate_Hostname::ALLOW_DNS | Zend_Validate_Hostname::ALLOW_LOCAL);}
+        </pre></div></div>
+
+
+    </p>
+
+    <p class="para">
+        <em class="emphasis">校验国际域名</em>
+    </p>
+
+    <p class="para">
+        一些国家代码顶级域名（ccTLDs），例如&#039;de&#039;（德国），在域名中支持国际字符。这些就是大家所知的国际域名（IDN）。这些域名可以用Zend_Validate_Hostname通过用于校验处理的扩展字符来匹配。
+    </p>
+
+    <p class="para">
+        目前支持ccTLDs的有：
+
+        <ul class="itemizedlist">
+                <li class="listitem">
+                    <p class="para">at (Austria)</p>
+                </li>
+                <li class="listitem">
+                    <p class="para">ch (Switzerland)</p>
+                </li>
+                <li class="listitem">
+                    <p class="para">li (Liechtenstein)</p>
+                </li>
+                <li class="listitem">
+                    <p class="para">de (Germany)</p>
+                </li>
+                <li class="listitem">
+                    <p class="para">fi (Finland)</p>
+                </li>
+                <li class="listitem">
+                    <p class="para">hu (Hungary)</p>
+                </li>
+                <li class="listitem">
+                    <p class="para">no (Norway)</p>
+                </li>
+                <li class="listitem">
+                    <p class="para">se (Sweden)</p>
+                </li>
+        </ul>
+
+    </p>
+
+    <p class="para">
+        匹配IDN域名就像使用标准主机名校验器一样简单，因为IDN匹配是缺省激活的。如果你想禁止IDN校验，可以通过传递参数给Zend_validate_Hostname构造器或通过<code class="code">$validator-&gt;setValidateIdn()</code>方法来实现。
+    </p>
+
+    <p class="para">
+        你可以象下面通过传递第二个参数给Zend_Validate_Hostname构造器来禁止IDN校验。
+        <div class="programlisting"><div class="cdata"><pre>&lt;?php
+
+$validator = new Zend_Validate_Hostname(Zend_Validate_Hostname::ALLOW_DNS, false);
+        </pre></div></div>
+
+
+        另外你可以通过传递 TRUE 或 FALSE 给 <code class="code">$validator-&gt;setValidateIdn()</code> 来激活或者禁止 IDN 校验。如果你试图匹配一个当前不被支持的IDN主机名，并且如果有国际字符在其中，校验很可能会失败。当指定附加字符的ccTLD文件在Zend/Validate/Hostname下不存在时，一个正常的主机名校验将被执行。（这就是在解释上句话中为什么校验会失败，Jason 注）
+    </p>
+
+    <p class="para">
+        请注意只有当你允许DNS主机名被校验，IDNs才能被校验。
+    </p>
+
+    <p class="para">
+        <em class="emphasis">校验顶级域名</em>
+    </p>
+
+    <p class="para">
+        缺省地主机名通过已知的TLDs列表来检查。如果不需要这个功能，它可以被禁止，就像禁止IDN支持一样。你可以通过传递第三个参数给Zend_Validate_Hostname构造器来禁止TLD校验。在下面的例子中，我们通过第二个参数来支持IDN校验。
+
+        <div class="programlisting"><div class="cdata"><pre>&lt;?php
+
+$validator = new Zend_Validate_Hostname(Zend_Validate_Hostname::ALLOW_DNS, true, false);
+        </pre></div></div>
+
+
+        另外，你可以通过传递 TRUE 或 FALSE 给
+        <code class="code">$validator-&gt;setValidateTld()</code> 来激活或禁止 TLD 校验。
+    </p>
+
+    <p class="para">
+        请注意只有当你允许DNS主机名被校验，TLDs才能被校验。
+    </p>
+
+</div>
+
+    <div class="section" id="zend.validate.set.in_array" name="zend.validate.set.in_array"><div class="info"><h1 class="title">InArray</h1></div>
+        
+        <p class="para">
+            当且仅当一个&quot;needle&quot;<code class="code">$value</code>包含在一个&quot;haystack&quot;数组，返回 <code class="code">true</code>。如果精确选项是<code class="code">true</code>，那么<code class="code">$value</code>的类型也被检查。
+        </p>
+    </div>
+
+    <div class="section" id="zend.validate.set.int" name="zend.validate.set.int"><div class="info"><h1 class="title">整数</h1></div>
+        
+        <p class="para">
+            当且仅当<code class="code">$value</code>是一个有效的整数，返回 <code class="code">true</code>。
+        </p>
+    </div>
+
+    <div class="section" id="zend.validate.set.ip" name="zend.validate.set.ip"><div class="info"><h1 class="title">Ip</h1></div>
+        
+        <p class="para">
+            当且仅当<code class="code">$value</code>是一个有效的IP地址，返回 <code class="code">true</code>。
+        </p>
+    </div>
+
+    <div class="section" id="zend.validate.set.less_than" name="zend.validate.set.less_than"><div class="info"><h1 class="title">LessThan</h1></div>
+        
+        <p class="para">
+            当且仅当<code class="code">$value</code>小于最大值，返回 <code class="code">true</code>。
+        </p>
+    </div>
+
+    <div class="section" id="zend.validate.set.not_empty" name="zend.validate.set.not_empty"><div class="info"><h1 class="title">NotEmpty</h1></div>
+        
+        <p class="para">
+            当且仅当<code class="code">$value</code>非空，返回 <code class="code">true</code>。
+        </p>
+    </div>
+
+    <div class="section" id="zend.validate.set.regex" name="zend.validate.set.regex"><div class="info"><h1 class="title">Regex</h1></div>
+        
+        <p class="para">
+            当且仅当<code class="code">$value</code>匹配一个正则表达式，返回 <code class="code">true</code>。
+        </p>
+    </div>
+
+    <div class="section" id="zend.validate.set.string_length" name="zend.validate.set.string_length"><div class="info"><h1 class="title">StringLength</h1></div>
+        
+        <p class="para">
+            当且仅当字串长度值<code class="code">$value</code>至少是最小值并不大于最大值（当max选项不是<code class="code">null</code>），返回 <code class="code">true</code>。从1.5.0版开始，如果最小长度被设置为一个大于已设定的最大长度的值，<code class="code">setMin()</code>方法抛出一个异常，并且如果最大长度值被设置为小于一个已设定的最小长度的值，<code class="code">setMax()</code>方法抛出一个异常。从1.0.2版开始，基于<a href="http://www.php.net/manual/en/ref.iconv.php#iconv.configuration" class="link external">&raquo; <code class="code">iconv.internal_encoding</code></a> 的当前值，这个类支持UTF-8和其它字符编码。
+        </p>
+    </div>
+
+</div>
+        <hr />
+
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.validate.introduction.html">简介</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.validate.html">Zend_Validate</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.validate.validator_chains.html">校验器链</a></div>
+                    </td>
+                </tr>
+            </table>
+</td>
+        <td style="font-size: smaller;" width="15%"> <style type="text/css">
+#leftbar {
+	float: left;
+	width: 186px;
+	padding: 5px;
+	font-size: smaller;
+}
+ul.toc {
+	margin: 0px 5px 5px 5px;
+	padding: 0px;
+}
+ul.toc li {
+	font-size: 85%;
+	margin: 1px 0 1px 1px;
+	padding: 1px 0 1px 11px;
+	list-style-type: none;
+	background-repeat: no-repeat;
+	background-position: center left;
+}
+ul.toc li.header {
+	font-size: 115%;
+	padding: 5px 0px 5px 11px;
+	border-bottom: 1px solid #cccccc;
+	margin-bottom: 5px;
+}
+ul.toc li.active {
+	font-weight: bold;
+}
+ul.toc li a {
+	text-decoration: none;
+}
+ul.toc li a:hover {
+	text-decoration: underline;
+}
+</style>
+ <ul class="toc">
+  <li class="header home"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="reference.html">Zend Framework Reference</a></li>
+  <li class="header up"><a href="zend.validate.html">Zend_Validate</a></li>
+  <li><a href="zend.validate.introduction.html">简介</a></li>
+  <li class="active"><a href="zend.validate.set.html">标准校验类</a></li>
+  <li><a href="zend.validate.validator_chains.html">校验器链</a></li>
+  <li><a href="zend.validate.writing_validators.html">编写校验器</a></li>
+  <li><a href="zend.validate.messages.html">Validation Messages</a></li>
+ </ul>
+ </td>
+    </tr>
+</table>
+</body>
+</html>

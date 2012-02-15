@@ -1,0 +1,182 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <title>声明 Getopt 规则 - Zend Framework Manual</title>
+
+</head>
+<body>
+<table width="100%">
+    <tr valign="top">
+        <td width="85%">
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.console.getopt.introduction.html">Getopt 简介</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.console.getopt.html">Zend_Console_Getopt</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.console.getopt.fetching.html">读取（Fetching）选项和参数</a></div>
+                    </td>
+                </tr>
+            </table>
+<hr />
+<div id="zend.console.getopt.rules" class="section"><div class="info"><h1 class="title"> 声明 Getopt 规则 </h1></div>
+    
+    <p class="para">
+        <code class="code">Zend_Console_Getopt</code> 类的构造器带有一到三个参数。第一个参数声明哪个选项被应用程序支持。这个类支持交替（alternative）语法形式来声明选项。参见下面的章节关于这些语法形式的格式和用法。
+    </p>
+    <p class="para">
+        构造器带有的另外两个参数都是可选的。第二个参数可以包含命令行参数，缺省为 <code class="code">$_SERVER[&#039;argv&#039;]</code> 。
+    </p>
+    <p class="para">
+        第三个参数包含一个配置选项来定制 <code class="code">Zend_Console_Getopt</code> 的行为（behavior）。关于可用选项的引用（reference），参见 <a href="zend.console.getopt.configuration.html#zend.console.getopt.configuration.config" class="link"> 添加配置 </a>
+    </p>
+
+    <div class="section" id="zend.console.getopt.rules.short" name="zend.console.getopt.rules.short"><div class="info"><h1 class="title"> 用短语法声明选项 </h1></div>
+        
+        <p class="para">
+            <code class="code">Zend_Console_Getopt</code> 支持紧凑的语法 （类似用于 GNU Getopt的语法，参见 <a href="http://www.gnu.org/software/libc/manual/html_node/Getopt.html" class="link external">&raquo; http://www.gnu.org/software/libc/manual/html_node/Getopt.html</a> ）。这个语法只支持单字符 flag 。在一个单个的字符串中，每个字母对应于被程序支持的 flag。字母后跟着冒号 (&quot;<code class="code">:</code>&quot;) 表示这个 flag 需要参数。
+        </p>
+        <div class="example"><div class="info"><p><b>Example #1  使用短语法 </b></p></div>
+            
+            <div class="programlisting"><div class="cdata"><pre>
+$opts = new Zend_Console_Getopt(&#039;abp:&#039;);
+
+            </pre></div></div>
+
+        </div>
+        <p class="para">
+            上面的例子示例使用 <code class="code">Zend_Console_Getopt</code> 来声明选项，这个选项也可以以 &quot;<code class="code">-a</code>&quot;、&quot;<code class="code">-b</code>&quot; 或 &quot;<code class="code">-p</code>&quot;的形式给出。后面的 flag 需要一个参数。
+        </p>
+        <p class="para">
+            短语法限于单个字符的flag。别名，参数类型和帮助字符串不被短语法支持。
+        </p>
+    </div>
+
+    <div class="section" id="zend.console.getopt.rules.long" name="zend.console.getopt.rules.long"><div class="info"><h1 class="title"> 用长语法声明选项 </h1></div>
+        
+        <p class="para">
+            带有更多功能的不同的语法也是可用的。这个语法允许为 flag 指定别名、选项参数的类型和用来描述用法的帮助字符串。在短语法中使用单字符串来声明选项，而在常语法中使用联合数组作为构造器的第一个参数。
+        </p>
+        <p class="para">
+            联合数组的每个元素的键是一个字符串，这个字符串带有给flag命名的格式，用管道符号(&quot;<code class="code">|</code>&quot;)来隔离每个别名。在这些别名后面，如果选项需要参数，则用等号(&quot;<code class="code">=</code>&quot;)和紧跟一个字母来表示参数的<em class="emphasis"> 类型 </em>：
+        </p>
+        <ul class="itemizedlist">
+            <li class="listitem">
+                <p class="para">
+                    &quot;<code class="code">=s</code>&quot; 表示字符串参数
+                </p>
+            </li>
+            <li class="listitem">
+                <p class="para">
+                    &quot;<code class="code">=w</code>&quot; 表示一个字的参数（不包含空白的字符串）
+                </p>
+            </li>
+            <li class="listitem">
+                <p class="para">
+                    &quot;<code class="code">=i</code>&quot; 表示整数参数
+                </p>
+            </li>
+        </ul>
+        <p class="para">
+            如果参数是可选的，使用短横线 (&quot;<code class="code">-</code>&quot;)而不使用等号。
+        </p>
+        <p class="para">
+            在联合数组中的每个元素的值是帮助字符串，用来描述如何使用程序。
+        </p>
+        <div class="example"><div class="info"><p><b>Example #2  使用长语法 </b></p></div>
+            
+            <div class="programlisting"><div class="cdata"><pre>
+$opts = new Zend_Console_Getopt(
+  array(
+    &#039;apple|a&#039;    =&gt; &#039;apple option, with no parameter&#039;,
+    &#039;banana|b=i&#039; =&gt; &#039;banana option, with required integer parameter&#039;,
+    &#039;pear|p-s&#039;   =&gt; &#039;pear option, with optional string parameter&#039;
+  )
+);
+
+            </pre></div></div>
+
+        </div>
+        <p class="para">
+            在上面的声明例子中，有三个选项：&quot;<code class="code">--apple</code>&quot; 和 &quot;<code class="code">-a</code>&quot; 互为别名，不带参数；&quot;<code class="code">--banana</code>&quot; and &quot;<code class="code">-b</code>&quot; 互为别名，带有强制的整形参数；最后，&quot;<code class="code">--pear</code>&quot; and &quot;<code class="code">-p</code>&quot; 互为别名，带有可选的字符串参数。
+        </p>
+    </div>
+
+</div>
+        <hr />
+
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.console.getopt.introduction.html">Getopt 简介</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.console.getopt.html">Zend_Console_Getopt</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.console.getopt.fetching.html">读取（Fetching）选项和参数</a></div>
+                    </td>
+                </tr>
+            </table>
+</td>
+        <td style="font-size: smaller;" width="15%"> <style type="text/css">
+#leftbar {
+	float: left;
+	width: 186px;
+	padding: 5px;
+	font-size: smaller;
+}
+ul.toc {
+	margin: 0px 5px 5px 5px;
+	padding: 0px;
+}
+ul.toc li {
+	font-size: 85%;
+	margin: 1px 0 1px 1px;
+	padding: 1px 0 1px 11px;
+	list-style-type: none;
+	background-repeat: no-repeat;
+	background-position: center left;
+}
+ul.toc li.header {
+	font-size: 115%;
+	padding: 5px 0px 5px 11px;
+	border-bottom: 1px solid #cccccc;
+	margin-bottom: 5px;
+}
+ul.toc li.active {
+	font-weight: bold;
+}
+ul.toc li a {
+	text-decoration: none;
+}
+ul.toc li a:hover {
+	text-decoration: underline;
+}
+</style>
+ <ul class="toc">
+  <li class="header home"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="reference.html">Zend Framework Reference</a></li>
+  <li class="header up"><a href="zend.console.getopt.html">Zend_Console_Getopt</a></li>
+  <li><a href="zend.console.getopt.introduction.html">Getopt 简介</a></li>
+  <li class="active"><a href="zend.console.getopt.rules.html">声明 Getopt 规则</a></li>
+  <li><a href="zend.console.getopt.fetching.html">读取（Fetching）选项和参数</a></li>
+  <li><a href="zend.console.getopt.configuration.html">配置 Zend_Console_Getopt</a></li>
+ </ul>
+ </td>
+    </tr>
+</table>
+</body>
+</html>

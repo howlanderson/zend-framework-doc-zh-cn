@@ -1,0 +1,348 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <title>数据库表认证 - Zend Framework Manual</title>
+
+</head>
+<body>
+<table width="100%">
+    <tr valign="top">
+        <td width="85%">
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.auth.introduction.html">简介</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.auth.html">Zend_Auth</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.auth.adapter.digest.html">摘要式认证</a></div>
+                    </td>
+                </tr>
+            </table>
+<hr />
+<div id="zend.auth.adapter.dbtable" class="section"><div class="info"><h1 class="title">数据库表认证</h1></div>
+    
+    <div class="section" id="zend.auth.adapter.dbtable.introduction" name="zend.auth.adapter.dbtable.introduction"><div class="info"><h1 class="title">简介</h1></div>
+        
+        <p class="para">
+            <code class="code">Zend_Auth_Adapter_DbTable</code>提供依靠存储在数据库表中的证书来认证的能力。因为<code class="code">Zend_Auth_Adapter_DbTable</code>需要<code class="code">Zend_Db_Adapter_Abstract</code>的实例来传递给它的构造器，所以每个实例要和特定的数据库连接绑定。其它配置选项可以通过构造器和实例方法设置，每个选项有一个配置。
+        </p>
+        <p class="para">
+            可用的配置选项包括：
+            <ul class="itemizedlist">
+                <li class="listitem">
+                    <p class="para">
+                        <code class="code">tableName</code>: 包含认证证书的数据库表名，执行数据库认证查询需要依靠这个证书。
+                    </p>
+                </li>
+                <li class="listitem">
+                    <p class="para">
+                        <code class="code">identityColumn</code>: 数据库表的列的名称，用来表示身份。身份列必须包含唯一的值，例如用户名或者e-mail地址。
+                    </p>
+                </li>
+                <li class="listitem">
+                    <p class="para">
+                        <code class="code">credentialColumn</code>: 数据库表的列的名称，用来表示证书。在一个简单的身份和密码认证scheme下，证书的值对应为密码。参见 <code class="code">credentialTreatment</code> 选项。
+                    </p>
+                </li>
+                <li class="listitem">
+                    <p class="para">
+                        <code class="code">credentialTreatment</code>: 在许多情况下，密码和其他敏感数据是加密的（encrypted, hashed, encoded, obscured,salted 或者通过以下函数或算法来加工）。通过指定参数化的字串来使用这个方法，例如<code class="code">&#039;MD5(?)&#039;</code> 或者 <code class="code">&#039;PASSWORD(?)&#039;</code>，开发者可以在输入证书数据时使用任意的SQL。因为这些函数对其下面的RDBMS是专用的， 请查看数据库手册来确保你所用的数据库的函数的可用性。
+                    </p>
+                </li>
+            </ul>
+        </p>
+        <div class="example"><div class="info"><p><b>Example #1 基本用法</b></p></div>
+            
+            <div class="example-contents"><p>
+                正如在简介中所解释的，<code class="code">Zend_Auth_Adapter_DbTable</code>构造器需要一个<code class="code">Zend_Db_Adapter_Abstract</code>的实例，这个实例用做数据库连结，并且认证适配器实例绑定到这个数据库连接。首先，应该创建数据库连接。
+            </p></div>
+            <div class="example-contents"><p>
+                下面的代码为in-memory数据库创建一个适配器，创建一个简单的表schema，并插入我们将来可以执行认证查询的一行（数据）。这个例子需要PDO SQLite extension可用：
+            </p></div>
+            <div class="programlisting"><div class="cdata"><pre>
+// 创建一个 in-memory SQLite 数据库连接
+$dbAdapter = new Zend_Db_Adapter_Pdo_Sqlite(array(&#039;dbname&#039; =&gt;
+                                                  &#039;:memory:&#039;));
+
+// 构造一个简单表的创建语句
+$sqlCreate = &#039;CREATE TABLE [users] (&#039;
+           . &#039;[id] INTEGER  NOT NULL PRIMARY KEY, &#039;
+           . &#039;[username] VARCHAR(50) UNIQUE NOT NULL, &#039;
+           . &#039;[password] VARCHAR(32) NULL, &#039;
+           . &#039;[real_name] VARCHAR(150) NULL)&#039;;
+
+// 创建认证证书表
+$dbAdapter-&gt;query($sqlCreate);
+
+// 构造用来插入一行可以成功认证的数据的语句
+$sqlInsert = &quot;INSERT INTO users (username, password, real_name) &quot;
+           . &quot;VALUES (&#039;my_username&#039;, &#039;my_password&#039;, &#039;My Real Name&#039;)&quot;;
+
+// 插入数据
+$dbAdapter-&gt;query($sqlInsert);
+
+            </pre></div></div>
+
+            <div class="example-contents"><p>
+                随着数据库连接和表数据已经可用，<code class="code">Zend_Auth_Adapter_DbTable</code>可以被创建。配置选项的值可以传递给构造器或者延后在实例化以后用做setter方法的参数:
+            </p></div>
+            <div class="programlisting"><div class="cdata"><pre>
+// 用构造器参数来配置实例...
+$authAdapter = new Zend_Auth_Adapter_DbTable(
+    $dbAdapter,
+    &#039;users&#039;,
+    &#039;username&#039;,
+    &#039;password&#039;
+);
+
+// 用构造器参数来配置实例...
+$authAdapter = new Zend_Auth_Adapter_DbTable($dbAdapter);
+
+$authAdapter
+    -&gt;setTableName(&#039;users&#039;)
+    -&gt;setIdentityColumn(&#039;username&#039;)
+    -&gt;setCredentialColumn(&#039;password&#039;)
+;
+
+            </pre></div></div>
+
+            <div class="example-contents"><p>
+                在这点上，认证适配器实例已经可以接受认证查询。为了合成一个认证查询，在调用<code class="code">authenticate()</code>方法之前，输入的证书的值要传递给适配器：
+            </p></div>
+            <div class="programlisting"><div class="cdata"><pre>
+// 设置输入的证书的值（例如，从登陆的表单）
+$authAdapter
+    -&gt;setIdentity(&#039;my_username&#039;)
+    -&gt;setCredential(&#039;my_password&#039;)
+;
+
+// 执行认证查询，并保存结果
+$result = $authAdapter-&gt;authenticate();
+
+            </pre></div></div>
+
+            <div class="example-contents"><p>
+                除了基于认证结果对象的 <code class="code">getIdentity()</code> 方法的可用性之外，<code class="code">Zend_Auth_Adapter_DbTable</code>也支持从认证成功的表中读取一行数据：
+            </p></div>
+            <div class="programlisting"><div class="cdata"><pre>
+// 输出身份
+echo $result-&gt;getIdentity() . &quot;\n\n&quot;;
+
+// 输出结果行
+print_r($authAdapter-&gt;getResultRowObject());
+
+/* Output:
+my_username
+
+Array
+(
+    [id] =&gt; 1
+    [username] =&gt; my_username
+    [password] =&gt; my_password
+    [real_name] =&gt; My Real Name
+)
+*/
+
+            </pre></div></div>
+
+            <div class="example-contents"><p>
+                因为表行里包含证书值，通过防止无意识地访问来安全化这个值很重要。
+            </p></div>
+        </div>
+    </div>
+    <div class="section" id="zend.auth.adapter.dbtable.advanced.storing_result_row" name="zend.auth.adapter.dbtable.advanced.storing_result_row"><div class="info"><h1 class="title">高级使用：持久一个 DbTable 结果对象</h1></div>
+        
+        <p class="para">
+            缺省地，基于成功的认证<code class="code">Zend_Auth_Adapter_DbTable</code> 返回提供给auth对象的身份。对于其他用例情景，如开发者想给<code class="code">Zend_Auth</code> 的持久存储机制存储一个包括其他有用信息的身份对象，已经通过使用<code class="code">getResultRowObject()</code> 方法返回一个<code class="code">stdClass</code>对象解决了。下面的代码片段举例说明它的用法：
+        </p>
+        <div class="programlisting"><div class="cdata"><pre>
+// authenticate with Zend_Auth_Adapter_DbTable
+$result = $this-&gt;_auth-&gt;authenticate($adapter);
+
+if ($result-&gt;isValid()) {
+    // store the identity as an object where only the username and
+    //real_name have been returned
+    $storage = $this-&gt;_auth-&gt;getStorage();
+    $storage-&gt;write($adapter-&gt;getResultRowObject(array(
+        &#039;username&#039;,
+        &#039;real_name&#039;,
+    )));
+
+    // store the identity as an object where the password column has
+    // been omitted
+    $storage-&gt;write($adapter-&gt;getResultRowObject(
+        null,
+        &#039;password&#039;
+    ));
+
+    /* ... */
+
+} else {
+
+    /* ... */
+
+}
+
+        </pre></div></div>
+
+    </div>
+    <div class="section" id="zend.auth.adapter.dbtable.advanced.advanced_usage" name="zend.auth.adapter.dbtable.advanced.advanced_usage"><div class="info"><h1 class="title">高级用法范例</h1></div>
+        
+        <p class="para">
+            虽然 Zend_Auth （和它的继承者 Zend_Auth_Adapter_DbTable ）主要用来 <em class="emphasis">认证</em> 而不是 <em class="emphasis">授权</em> ，但是基于它们用在哪个域名下，还是有一些实例和问题。根据如何解释你的问题，有时候通过在认证适配器里检查授权问题也许能解决问题。
+        </p>
+        <p class="para">
+            用一点不恰当的免责声明，Zend_Auth_Adapter_DbTable 有内建的机制可以用来利用添加另外的认证时的检查来解决一些普通的用户问题。
+        </p>
+        <div class="programlisting"><div class="cdata"><pre>
+// The status field value of an account is not equal to &quot;compromised&quot;
+$adapter = new Zend_Auth_Adapter_DbTable(
+    $db,
+    &#039;users&#039;,
+    &#039;username&#039;,
+    &#039;password&#039;,
+    &#039;MD5(?) AND status != &quot;compromised&quot;&#039;
+);
+
+// The active field value of an account is equal to &quot;TRUE&quot;
+$adapter = new Zend_Auth_Adapter_DbTable(
+    $db,
+    &#039;users&#039;,
+    &#039;username&#039;,
+    &#039;password&#039;,
+    &#039;MD5(?) AND active = &quot;TRUE&quot;&#039;
+);
+
+        </pre></div></div>
+
+        <p class="para">
+            另外一个场景是免疫机制的实现。免疫是指大幅提高程序安全的技术术语。
+            它的想法是基于连接随机字符串到每个密码来使从字典里预先计算好的哈希值来完成强力攻击数据库成为可能。
+        </p>
+        <p class="para">
+            因此我们需要修改表来存储免疫的字符串：
+        </p>
+        <div class="programlisting"><div class="cdata"><pre>
+$sqlAlter = &quot;ALTER TABLE [users] &quot;
+          . &quot;ADD COLUMN [password_salt] &quot;
+          . &quot;AFTER [password]&quot;;
+
+$dbAdapter-&gt;query($sqlAlter);
+
+        </pre></div></div>
+
+        <p class="para">
+            这里是在注册时给每个用户生成免疫字符串的简单的方法：
+        </p>
+        <div class="programlisting"><div class="cdata"><pre>
+for ($i = 0; $i &lt; 50; $i++)
+{
+    $dynamicSalt .= chr(rand(33, 126));
+}
+
+        </pre></div></div>
+
+        <p class="para">
+            构造适配器：
+        </p>
+        <div class="programlisting"><div class="cdata"><pre>
+$adapter = new Zend_Auth_Adapter_DbTable(
+    $db,
+    &#039;users&#039;,
+    &#039;username&#039;,
+    &#039;password&#039;,
+    &quot;MD5(CONCAT(&#039;&quot;
+    . Zend_Registry::get(&#039;staticSalt&#039;)
+    . &quot;&#039;, ?, password_salt))&quot;
+);
+
+        </pre></div></div>
+
+        <blockquote><p><b class="note">Note</b>: 
+            
+                你可以通过使用静态免疫值硬编码到程序里来更好地改善安全问题。
+                万一你的数据库有安全隐患（例如 SQL 注入攻击），但你的 web 服务器
+                依然完整，攻击者仍得不到你的数据。
+            <br />
+        </p></blockquote>
+    </div>
+</div>
+        <hr />
+
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.auth.introduction.html">简介</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.auth.html">Zend_Auth</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.auth.adapter.digest.html">摘要式认证</a></div>
+                    </td>
+                </tr>
+            </table>
+</td>
+        <td style="font-size: smaller;" width="15%"> <style type="text/css">
+#leftbar {
+	float: left;
+	width: 186px;
+	padding: 5px;
+	font-size: smaller;
+}
+ul.toc {
+	margin: 0px 5px 5px 5px;
+	padding: 0px;
+}
+ul.toc li {
+	font-size: 85%;
+	margin: 1px 0 1px 1px;
+	padding: 1px 0 1px 11px;
+	list-style-type: none;
+	background-repeat: no-repeat;
+	background-position: center left;
+}
+ul.toc li.header {
+	font-size: 115%;
+	padding: 5px 0px 5px 11px;
+	border-bottom: 1px solid #cccccc;
+	margin-bottom: 5px;
+}
+ul.toc li.active {
+	font-weight: bold;
+}
+ul.toc li a {
+	text-decoration: none;
+}
+ul.toc li a:hover {
+	text-decoration: underline;
+}
+</style>
+ <ul class="toc">
+  <li class="header home"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="reference.html">Zend Framework Reference</a></li>
+  <li class="header up"><a href="zend.auth.html">Zend_Auth</a></li>
+  <li><a href="zend.auth.introduction.html">简介</a></li>
+  <li class="active"><a href="zend.auth.adapter.dbtable.html">数据库表认证</a></li>
+  <li><a href="zend.auth.adapter.digest.html">摘要式认证</a></li>
+  <li><a href="zend.auth.adapter.http.html">HTTP 认证适配器</a></li>
+  <li><a href="zend.auth.adapter.ldap.html">LDAP 认证</a></li>
+  <li><a href="zend.auth.adapter.openid.html">Open ID Authentication</a></li>
+ </ul>
+ </td>
+    </tr>
+</table>
+</body>
+</html>

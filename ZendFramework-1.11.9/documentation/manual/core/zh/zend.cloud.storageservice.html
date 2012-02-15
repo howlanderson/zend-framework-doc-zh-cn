@@ -1,0 +1,866 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <title>StorageService Introduction - Zend Framework Manual</title>
+
+</head>
+<body>
+<table width="100%">
+    <tr valign="top">
+        <td width="85%">
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.cloud.queueservice.html">Queue Service Introduction</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.cloud.html">SimpleCloud API: Zend_Cloud</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.codegenerator.html">Zend_CodeGenerator</a></div>
+                    </td>
+                </tr>
+            </table>
+<hr />
+<div id="zend.cloud.storageservice" class="section"><div class="info"><h1 class="title">StorageService Introduction</h1></div>
+    
+
+    <p class="para">
+        The storage service in the Simple Cloud API implements a basic interface for file storage on
+        the cloud. The files have no internal structure as far as the service is concerned, and are
+        identified by a string key that is analogous to a filepath on a filesystem.  
+    </p>
+
+    <div class="section" id="zend.cloud.storageservice.adapters" name="zend.cloud.storageservice.adapters"><div class="info"><h1 class="title">StorageService Adapters</h1></div>
+        
+
+        <p class="para">
+            The interface <span class="classname">Zend_Cloud_StorageService_Adapter</span> defines methods
+            that each concrete storage service adapter must implement.  The following adapters are
+            shipped with the Simple Cloud API:  
+        </p>
+        
+        <ul class="itemizedlist">
+            <li class="listitem">
+                <p class="para">
+                    <a href="http://aws.amazon.com/s3/" class="link external">&raquo; <span class="classname">Zend_Cloud_StorageService_Adapter_S3</span></a>
+                </p>
+            </li>
+
+            <li class="listitem">
+                <p class="para">
+                    <a href="http://msdn.microsoft.com/en-us/library/dd179423.aspx" class="link external">&raquo; <span class="classname">Zend_Cloud_StorageService_Adapter_WindowsAzure</span></a>
+                </p>
+            </li>
+
+            <li class="listitem">
+                <p class="para">
+                    <a href="http://developer.nirvanix.com/sitefiles/1000/API.html" class="link external">&raquo; <span class="classname">Zend_Cloud_StorageService_Adapter_Nirvanix</span></a>
+                </p>
+            </li>
+
+            <li class="listitem">
+                <p class="para">
+                    <span class="classname">Zend_Cloud_StorageService_Adapter_FileSystem</span>
+                </p>
+            </li>
+        </ul>
+        
+        <p class="para">
+            To create the service object, call the static method
+             <span class="methodname">Zend_Cloud_StorageService_Factory::getAdapter()</span>, which accepts
+            either an array or a <span class="classname">Zend_Config</span> object.  The key named
+            <var class="varname">storage_adapter</var> should specify the concrete adapter class.
+            Adapter-specific keys may also be passed in this configuration parameter.
+        </p>
+        
+        <div class="example"><div class="info"><p><b>Example #1 Using the StorageService Factory</b></p></div>
+            
+
+            <div class="programlisting php"><div class="phpcode"><div class="php" style="font-family: monospace;"><ol><li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #0000ff;">$storage</span> = Zend_Cloud_StorageService_Factory::<span style="color: #006600;">getAdapter</span><span style="color: #66cc66;">&#40;</span><a href="http://www.php.net/array"><span style="color: #000066;">array</span></a><span style="color: #66cc66;">&#40;</span></div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; Zend_Cloud_StorageService_Factory::<span style="color: #006600;">STORAGE_ADAPTER_KEY</span> =&gt; <span style="color: #ff0000;">'Zend_Cloud_StorageService_Adapter_S3'</span>,</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; Zend_Cloud_StorageService_Adapter_S3::<span style="color: #006600;">AWS_ACCESS_KEY</span>&nbsp; &nbsp;=&gt; <span style="color: #0000ff;">$amazonKey</span>,</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; Zend_Cloud_StorageService_Adapter_S3::<span style="color: #006600;">AWS_SECRET_KEY</span>&nbsp; &nbsp;=&gt; <span style="color: #0000ff;">$amazonSecret</span>,</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #66cc66;">&#41;</span><span style="color: #66cc66;">&#41;</span>;</div></li></ol></div></div></div>
+
+        </div>
+        
+        <div class="section" id="zend.cloud.storageservice.adapters.options" name="zend.cloud.storageservice.adapters.options"><div class="info"><h1 class="title">StorageService Adapter Options</h1></div>
+            
+
+            <table class="doctable table"><div class="info"><caption><b>Zend_Cloud_StorageService_Adapter_S3 options</b></caption></div>
+                
+
+                
+                    <thead valign="middle">
+                        <tr valign="middle">
+                            <th>Option key</th>
+                            <th>Description</th>
+                            <th>Used in</th>
+                            <th>Required</th>
+                            <th>Default</th>
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody valign="middle" class="tbody">
+                        <tr valign="middle">
+                            <td align="left">aws_accesskey</td>
+                            <td align="left">Amazon AWS access key</td>
+                            <td align="left">Constructor</td>
+                            <td align="left">Yes</td>
+                            <td align="left">None</td>
+                        </tr>
+
+
+                        <tr valign="middle">
+                            <td align="left">aws_secretkey</td>
+                            <td align="left">Amazon AWS secret key</td>
+                            <td align="left">Constructor</td>
+                            <td align="left">Yes</td>
+                            <td align="left">None</td>
+                        </tr>
+
+                        
+                        <tr valign="middle">
+                            <td align="left">bucket_name</td>
+                            <td align="left">The name of the S3 bucket for this item</td>
+                            <td align="left">
+                                Used in the constructor to set the default bucket for the
+                                instantiated service. This option can also be specified in any of
+                                the item access operations.
+                            </td>
+                            <td align="left">Yes</td>
+                            <td align="left">None</td>
+                        </tr>
+
+                        
+                        <tr valign="middle">
+                            <td align="left">bucket_as_domain</td>
+                            <td align="left">
+                                Indicates that the bucket name is part of the domain name
+                            </td>
+                            <td align="left">
+                                Used in constructor to set the default behavior for the instantiated
+                                service. This option can also be specified in any of the item access
+                                operations.
+                            </td>
+                            <td align="left">No</td>
+                            <td align="left">False</td>
+                        </tr>
+
+
+                        <tr valign="middle">
+                            <td align="left">metadata</td>
+                            <td align="left">Array of metadata to associate with the item</td>
+                            <td align="left"> <span class="methodname">storeItem()</span></td>
+                            <td align="left">No</td>
+                            <td align="left">None</td>
+                        </tr>
+
+
+                        <tr valign="middle">
+                            <td align="left">fetch_stream</td>
+                            <td align="left">
+                                Indicates whether the response is stream, and not a string
+                                <blockquote><p><b class="note">Note</b>: 
+                                    
+                                        See the <span class="classname">Zend_Service_Amazon_S3</span>
+                                        documentation for more about handling streamed responses)
+                                    <br />
+                                </p></blockquote>
+                            </td>
+                            <td align="left"> <span class="methodname">fetchItem()</span></td>
+                            <td align="left">No</td>
+                            <td align="left">False</td>
+                        </tr>
+
+
+                        <tr valign="middle">
+                            <td align="left">http_adapter</td>
+                            <td align="left">HTTP adapter to use in all access operations</td>
+                            <td align="left">Constructor</td>
+                            <td align="left">No</td>
+                            <td align="left"><span class="classname">Zend_Http_Client_Adapter_Socket</span></td>
+                        </tr>
+
+                    </tbody>
+                
+            </table>
+
+
+            <table class="doctable table"><div class="info"><caption><b>Zend_Cloud_StorageService_Adapter_WindowsAzure options</b></caption></div>
+                
+                
+                    <thead valign="middle">
+                        <tr valign="middle">
+                            <th>Option key</th>
+                            <th>Description</th>
+                            <th>Used in</th>
+                            <th>Required</th>
+                            <th>Default</th>
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody valign="middle" class="tbody">
+                        <tr valign="middle">
+                            <td align="left">storage_accountname</td>
+                            <td align="left">Windows Azure account name</td>
+                            <td align="left">Constructor</td>
+                            <td align="left">Yes</td>
+                            <td align="left">None</td>
+                        </tr>
+
+
+                        <tr valign="middle">
+                            <td align="left">storage_accountkey</td>
+                            <td align="left">Windows Azure account key</td>
+                            <td align="left">Constructor</td>
+                            <td align="left">Yes</td>
+                            <td align="left">None</td>
+                        </tr>
+
+
+                        <tr valign="middle">
+                            <td align="left">storage_container</td>
+                            <td align="left">Container to use for this storage object</td>
+                            <td align="left">Constructor</td>
+                            <td align="left">Yes</td>
+                            <td align="left">None</td>
+                        </tr>
+
+
+                        <tr valign="middle">
+                            <td align="left">storage_host</td>
+                            <td align="left">Windows Azure access host</td>
+                            <td align="left">Constructor</td>
+                            <td align="left">Yes</td>
+                            <td align="left"><var class="varname">blob.core.windows.net</var></td>
+                        </tr>
+
+
+                        <tr valign="middle">
+                            <td align="left">storage_proxy_host</td>
+                            <td align="left">Proxy hostname</td>
+                            <td align="left">Constructor</td>
+                            <td align="left">No</td>
+                            <td align="left">None</td>
+                        </tr>
+
+
+                        <tr valign="middle">
+                            <td align="left">storage_proxy_port</td>
+                            <td align="left">Proxy port</td>
+                            <td align="left">Constructor</td>
+                            <td align="left">No</td>
+                            <td align="left">8080</td>
+                        </tr>
+
+
+                        <tr valign="middle">
+                            <td align="left">storage_proxy_credentials</td>
+                            <td align="left">Proxy credentials</td>
+                            <td align="left">Constructor</td>
+                            <td align="left">No</td>
+                            <td align="left">None</td>
+                        </tr>
+
+
+                        <tr valign="middle">
+                            <td align="left">http_adapter</td>
+                            <td align="left">HTTP adapter to use in all access operations</td>
+                            <td align="left">Constructor</td>
+                            <td align="left">No</td>
+                            <td align="left"><span class="classname">Zend_Http_Client_Adapter_Socket</span></td>
+                        </tr>
+
+
+                        <tr valign="middle">
+                            <td align="left">returntype</td>
+                            <td align="left">
+                                How to return the results.
+                                <ul class="itemizedlist">
+                                    <li class="listitem">
+                                        <p class="para">For  <span class="methodname">fetchItem()</span>:</p>
+
+                                        <dl>
+
+                                            <dt>
+
+                                                <dt class="term"><b><tt>RETURN_STRING</tt></b></dt>
+
+                                                <dd>
+<p class="para">
+                                                        Return the data as strings.
+                                                </p></dd>
+
+                                            </dt>
+
+
+                                            <dt>
+
+                                                <dt class="term"><b><tt>RETURN_PATH</tt></b></dt>
+
+                                                <dd>
+
+                                                    <p class="para">
+                                                        save data on disk in temp file, return path
+                                                        name
+                                                    </p>
+                                                </dd>
+ 
+                                            </dt>
+
+
+                                            <dt>
+
+                                                <dt class="term"><b><tt>RETURN_STREAM</tt></b></dt>
+
+                                                <dd>
+
+                                                    <p class="para">Default: Return the data as stream</p>
+                                                </dd>
+ 
+                                            </dt>
+
+                                        </dl>
+
+                                    </li>
+
+                                    <li class="listitem">
+                                        <p class="para">For  <span class="methodname">listItems()</span>:</p>
+
+                                        <dl>
+
+                                            <dt>
+
+                                                <dt class="term"><b><tt>RETURN_NAMES</tt></b></dt>
+
+                                                <dd>
+
+                                                    <p class="para">return the list of item names (default)</p>
+                                                </dd>
+ 
+                                            </dt>
+
+
+                                            <dt>
+
+                                                <dt class="term"><b><tt>RETURN_LIST</tt></b></dt>
+
+                                                <dd>
+
+                                                    <p class="para">return the list of WindowsAzure objects</p>
+                                                </dd>
+ 
+                                            </dt>
+
+                                        </dl>
+
+                                    </li>
+                                </ul>
+                            </td>
+                            <td align="left">
+                                 <span class="methodname">fetchItem()</span>, 
+                                 <span class="methodname">listItems()</span>
+                            </td>
+                            <td align="left">No</td>
+                            <td align="left">
+                                <b><tt>RETURN_STREAM</tt></b> for
+                                 <span class="methodname">fetchItem()</span>;
+                                <b><tt>RETURN_NAMES</tt></b> for
+                                 <span class="methodname">listItems()</span>
+                            </td>
+                        </tr>
+
+
+                        <tr valign="middle">
+                            <td align="left">return_path</td>
+                            <td align="left">
+                                Return path. This is the URL that can be used to access the item
+                                after it has been uploaded.
+                            </td>
+                            <td align="left"> <span class="methodname">fetchItem()</span></td>
+                            <td align="left">No</td>
+                            <td align="left">System tmp directory</td>
+                        </tr>
+
+
+                        <tr valign="middle">
+                            <td align="left">return_openmode</td>
+                            <td align="left">
+                                 <span class="methodname">fopen()</span> mode used to open the file for
+                                saving data
+                            </td>
+                            <td align="left"> <span class="methodname">fetchItem()</span></td>
+                            <td align="left">No</td>
+                            <td align="left">&#039;r&#039;</td>
+                        </tr>
+
+                    </tbody>
+                
+            </table>
+
+
+            <table class="doctable table"><div class="info"><caption><b>Zend_Cloud_StorageService_Adapter_Nirvanix options</b></caption></div>
+                
+
+                
+                    <thead valign="middle">
+                        <tr valign="middle">
+                            <th>Option key</th>
+                            <th>Description</th>
+                            <th>Used in</th>
+                            <th>Required</th>
+                            <th>Default</th>
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody valign="middle" class="tbody">
+                        <tr valign="middle">
+                            <td align="left">auth_username</td>
+                            <td align="left">Nirvanix user name</td>
+                            <td align="left">Constructor</td>
+                            <td align="left">Yes</td>
+                            <td align="left">None</td>
+                        </tr>
+
+
+                        <tr valign="middle">
+                            <td align="left">auth_password</td>
+                            <td align="left">Nirvanix password</td>
+                            <td align="left">Constructor</td>
+                            <td align="left">Yes</td>
+                            <td align="left">None</td>
+                        </tr>
+
+
+                        <tr valign="middle">
+                            <td align="left">auth_accesskey</td>
+                            <td align="left">Nirvanix access key</td>
+                            <td align="left">Constructor</td>
+                            <td align="left">Yes</td>
+                            <td align="left">None</td>
+                        </tr>
+
+
+                        <tr valign="middle">
+                            <td align="left">http_adapter</td>
+                            <td align="left">HTTP adapter to use in all access operations</td>
+                            <td align="left">Constructor</td>
+                            <td align="left">No</td>
+                            <td align="left"><span class="classname">Zend_Http_Client_Adapter_Socket</span></td>
+                        </tr>
+
+
+                        <tr valign="middle">
+                            <td align="left">remote_directory</td>
+                            <td align="left">Nirvanix directory to use</td>
+                            <td align="left">Constructor (mandatory)</td>
+                            <td align="left">Yes</td>
+                            <td align="left">None</td>
+                        </tr>
+
+                    </tbody>
+                
+            </table>
+
+
+            <table class="doctable table"><div class="info"><caption><b>Zend_Cloud_StorageService_Adapter_Filesystem options</b></caption></div>
+                
+
+                
+                    <thead valign="middle">
+                        <tr valign="middle">
+                            <th>Option key</th>
+                            <th>Description</th>
+                            <th>Used in</th>
+                            <th>Required</th>
+                            <th>Default</th>
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody valign="middle" class="tbody">
+                        <tr valign="middle">
+                            <td align="left">local_directory</td>
+                            <td align="left">Local directory where the files will be stored</td>
+                            <td align="left">Constructor</td>
+                            <td align="left">No</td>
+                            <td align="left">System tmp directory</td>
+                        </tr>
+
+                    </tbody>
+                
+            </table>
+
+        </div>
+    </div>
+
+    <div class="section" id="zend.cloud.storageservice.concepts" name="zend.cloud.storageservice.concepts"><div class="info"><h1 class="title">Basic concepts</h1></div>
+        
+
+        <p class="para">
+            Different cloud storage services use their own unique terminology to refer to document
+            storage concepts. The SimpleCloud API defines a number of common concepts that are
+            shared among all major providers.
+        </p>
+
+        <p class="para">
+            The storage service identifies files by string keys, which may be URL paths or another
+            service-specific identifier. The items can be stored and retrieved using this key. Each
+            item can have <em class="emphasis">metadata</em> associated with it. These metadata carry
+            service-specific information about the item, such as size, type, permissions, etc. as
+            defined in the adapter for that provider.
+        </p>
+    </div>
+    
+    <div class="section" id="zend.cloud.storageservice.exceptions" name="zend.cloud.storageservice.exceptions"><div class="info"><h1 class="title">Exceptions</h1></div>
+        
+
+        <p class="para">
+            If some error occurs inside the storage service, a
+            <span class="classname">Zend_Cloud_StorageService_Exception</span> is thrown. If the exception
+            was caused by underlying service driver, you can use the
+             <span class="methodname">getClientException()</span> method to retrieve the original exception. 
+        </p>
+
+        <p class="para">
+            Since different cloud providers implement different sets of services, some adapters do
+            not implement certain features. In this case, the
+            <span class="classname">Zend_Cloud_OperationNotAvailableException</span> exception is thrown.
+        </p>
+    </div>
+    
+    <div class="section" id="zend.cloud.storageservice.store" name="zend.cloud.storageservice.store"><div class="info"><h1 class="title">Store an item</h1></div>
+        
+
+        <p class="para">
+             <span class="methodname">storeItem()</span> method is used to upload or otherwise add files to
+            the storage provider.
+        </p>
+
+        <div class="example"><div class="info"><p><b>Example #2 Storing an item</b></p></div>
+            
+
+            <div class="programlisting php"><div class="phpcode"><div class="php" style="font-family: monospace;"><ol><li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #0000ff;">$data</span> = <a href="http://www.php.net/file_get_contents"><span style="color: #000066;">file_get_contents</span></a><span style="color: #66cc66;">&#40;</span><span style="color: #ff0000;">'/my/local/dir/picture.jpg'</span><span style="color: #66cc66;">&#41;</span>;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #0000ff;">$returnedData</span> = <span style="color: #0000ff;">$storage</span>-&gt;<span style="color: #006600;">storeItem</span><span style="color: #66cc66;">&#40;</span><span style="color: #ff0000;">'/my/remote/path/picture.jpg'</span>, <span style="color: #0000ff;">$data</span><span style="color: #66cc66;">&#41;</span>;</div></li></ol></div></div></div>
+
+        </div>
+
+        <p class="para">
+            An optional third parameter describes service-specific options.
+        </p>
+
+        <div class="example"><div class="info"><p><b>Example #3 Storing an item with options</b></p></div>
+            
+
+            <div class="programlisting php"><div class="phpcode"><div class="php" style="font-family: monospace;"><ol><li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #0000ff;">$data</span> = <a href="http://www.php.net/file_get_contents"><span style="color: #000066;">file_get_contents</span></a><span style="color: #66cc66;">&#40;</span><span style="color: #ff0000;">&quot;/my/local/dir/picture.jpg&quot;</span><span style="color: #66cc66;">&#41;</span>;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #808080; font-style: italic;">// Use S3 bucket: myBucket</span></div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #808080; font-style: italic;">// Make this item publicly readable</span></div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #0000ff;">$returnedData</span> = <span style="color: #0000ff;">$storage</span>-&gt;<span style="color: #006600;">storeItem</span><span style="color: #66cc66;">&#40;</span></div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; <span style="color: #ff0000;">'/my/remote/path/picture.jpg'</span>, </div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; <span style="color: #0000ff;">$data</span>, </div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; <a href="http://www.php.net/array"><span style="color: #000066;">array</span></a><span style="color: #66cc66;">&#40;</span></div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; &nbsp; &nbsp; Zend_Cloud_StorageService_Adapter_S3::<span style="color: #006600;">BUCKET_NAME</span> =&gt; <span style="color: #ff0000;">&quot;myBucket&quot;</span>,</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; &nbsp; &nbsp; Zend_Cloud_StorageService_Adapter_S3::<span style="color: #006600;">METADATA</span>&nbsp; &nbsp; =&gt; <a href="http://www.php.net/array"><span style="color: #000066;">array</span></a><span style="color: #66cc66;">&#40;</span></div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Zend_Service_Amazon_S3::<span style="color: #006600;">S3_ACL_HEADER</span> =&gt; Zend_Service_Amazon_S3::<span style="color: #006600;">S3_ACL_PUBLIC_READ</span>,</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; &nbsp; &nbsp; <span style="color: #66cc66;">&#41;</span></div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; <span style="color: #66cc66;">&#41;</span></div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #66cc66;">&#41;</span>;</div></li></ol></div></div></div>
+
+        </div>
+
+        <p class="para">
+            For service adapters that support streaming, data can also be a PHP stream (i.e. opened
+            file).
+        </p>
+    </div>
+
+    <div class="section" id="zend.cloud.storageservice.fetch" name="zend.cloud.storageservice.fetch"><div class="info"><h1 class="title">Fetch an item</h1></div>
+        
+
+        <p class="para">
+            The  <span class="methodname">fetchItem()</span> operation retrieves an item from the storage.
+        </p>
+
+        <div class="example"><div class="info"><p><b>Example #4 Fetching an item</b></p></div>
+            
+
+            <div class="programlisting php"><div class="phpcode"><div class="php" style="font-family: monospace;"><ol><li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #0000ff;">$returnedData</span> = <span style="color: #0000ff;">$storage</span>-&gt;<span style="color: #006600;">fetchItem</span><span style="color: #66cc66;">&#40;</span><span style="color: #ff0000;">&quot;/my/remote/path/picture.jpg&quot;</span><span style="color: #66cc66;">&#41;</span>;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">file_put_contents<span style="color: #66cc66;">&#40;</span><span style="color: #0000ff;">$localFilePath</span>, <span style="color: #0000ff;">$returnedData</span><span style="color: #66cc66;">&#41;</span>;</div></li></ol></div></div></div>
+
+        </div>
+    </div>
+
+    <div class="section" id="zend.cloud.storageservice.delete" name="zend.cloud.storageservice.delete"><div class="info"><h1 class="title">Delete an item</h1></div>
+        
+
+        <p class="para">
+            The  <span class="methodname">deleteItem()</span> operation removes an item from the storage
+            service.
+        </p>
+
+        <div class="example"><div class="info"><p><b>Example #5 Deleting an item</b></p></div>
+            
+
+            <div class="programlisting php"><div class="phpcode"><div class="php" style="font-family: monospace;"><ol><li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #0000ff;">$storage</span>-&gt;<span style="color: #006600;">deleteItem</span><span style="color: #66cc66;">&#40;</span><span style="color: #ff0000;">&quot;/my/remote/path/picture.jpg&quot;</span><span style="color: #66cc66;">&#41;</span>;</div></li></ol></div></div></div>
+
+        </div>
+    </div>
+
+    <div class="section" id="zend.cloud.storageservice.copy" name="zend.cloud.storageservice.copy"><div class="info"><h1 class="title">Copy an item</h1></div>
+        
+
+        <p class="para">
+            The  <span class="methodname">copyItem()</span> operation creates a copy of the item in the
+            storage.
+        </p>
+
+        <blockquote><p><b class="note">Note</b>: 
+            
+                Not all services support copying natively. If this is the case, the adapter will
+                simulate the operation, fetching the item and storing it under the target path.
+            <br />
+        </p></blockquote>
+
+        <div class="example"><div class="info"><p><b>Example #6 Copying an item</b></p></div>
+            
+            <div class="programlisting php"><div class="phpcode"><div class="php" style="font-family: monospace;"><ol><li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #0000ff;">$storage</span>-&gt;<span style="color: #006600;">copyItem</span><span style="color: #66cc66;">&#40;</span></div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; <span style="color: #ff0000;">'/my/remote/path/picture.jpg'</span>, </div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; <span style="color: #ff0000;">'/anothor/remote/dir/picturecopy.jpg'</span></div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #66cc66;">&#41;</span>;</div></li></ol></div></div></div>
+
+        </div>
+    </div>
+
+    <div class="section" id="zend.cloud.storageservice.move" name="zend.cloud.storageservice.move"><div class="info"><h1 class="title">Move an item</h1></div>
+        
+
+        <p class="para">
+            The  <span class="methodname">moveItem()</span> operation moves an item from one key (or
+            directory) to another.
+        </p> 
+
+        <blockquote><p><b class="note">Note</b>: 
+            
+                Not all services support moving natively. If this is the case the adapter will
+                simulate the operation, fetching the item, storing it under the target path, then
+                deleting the original file.
+            <br />
+        </p></blockquote>
+
+        <div class="example"><div class="info"><p><b>Example #7 Moving an item</b></p></div>
+            
+            <div class="programlisting php"><div class="phpcode"><div class="php" style="font-family: monospace;"><ol><li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #0000ff;">$storage</span>-&gt;<span style="color: #006600;">moveItem</span><span style="color: #66cc66;">&#40;</span></div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; <span style="color: #ff0000;">'/my/remote/path/picture.jpg'</span>,</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; <span style="color: #ff0000;">'/anothor/remote/dir/newpicture.jpg'</span></div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #66cc66;">&#41;</span>;</div></li></ol></div></div></div>
+
+        </div>
+    </div>
+
+    <div class="section" id="zend.cloud.storageservice.rename" name="zend.cloud.storageservice.rename"><div class="info"><h1 class="title">Rename an item</h1></div>
+        
+
+        <p class="para">
+            The  <span class="methodname">renameItem()</span> operation changes the item name. For some
+            services, this operation may be equivalent to moving to its original directory with a
+            new name. 
+        </p>
+
+        <div class="example"><div class="info"><p><b>Example #8 Renaming an item</b></p></div>
+            
+
+            <div class="programlisting php"><div class="phpcode"><div class="php" style="font-family: monospace;"><ol><li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #0000ff;">$storage</span>-&gt;<span style="color: #006600;">renameItem</span><span style="color: #66cc66;">&#40;</span><span style="color: #ff0000;">'/my/remote/path/picture.jpg'</span>, <span style="color: #ff0000;">'newpicture.jpg'</span><span style="color: #66cc66;">&#41;</span>;</div></li></ol></div></div></div>
+
+        </div>
+    </div>
+
+    <div class="section" id="zend.cloud.storageservice.list" name="zend.cloud.storageservice.list"><div class="info"><h1 class="title">List items</h1></div>
+        
+
+        <p class="para">
+            To list the items stored in the specified path, use the
+             <span class="methodname">listItems()</span> method. The method returns a list of names
+            identifying matching remote items. 
+        </p>
+
+        <div class="example"><div class="info"><p><b>Example #9 List items</b></p></div>
+            
+            <div class="programlisting php"><div class="phpcode"><div class="php" style="font-family: monospace;"><ol><li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #0000ff;">$objects</span> = <span style="color: #0000ff;">$storage</span>-&gt;<span style="color: #006600;">listItems</span><span style="color: #66cc66;">&#40;</span><span style="color: #ff0000;">'/my/remote/path/'</span><span style="color: #66cc66;">&#41;</span>;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #b1b100;">foreach</span> <span style="color: #66cc66;">&#40;</span><span style="color: #0000ff;">$objects</span> <span style="color: #b1b100;">as</span> <span style="color: #0000ff;">$objname</span><span style="color: #66cc66;">&#41;</span> <span style="color: #66cc66;">&#123;</span></div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; <a href="http://www.php.net/echo"><span style="color: #000066;">echo</span></a> <span style="color: #ff0000;">&quot;Found: $objname<span style="color: #000099; font-weight: bold;">\n</span>&quot;</span>;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #66cc66;">&#125;</span></div></li></ol></div></div></div>
+
+        </div>
+    </div>
+
+    <div class="section" id="zend.cloud.storageservice.fetch-metadata" name="zend.cloud.storageservice.fetch-metadata"><div class="info"><h1 class="title">Fetching metadata</h1></div>
+        
+
+        <p class="para">
+            Some services store a set of key-value pairs along with the item as metadata.  Use the
+             <span class="methodname">fetchMetadata()</span> method to retrieve an item&#039;s metadata.
+        </p>
+
+        <div class="example"><div class="info"><p><b>Example #10 Fetching metadata</b></p></div>
+            
+
+            <div class="programlisting php"><div class="phpcode"><div class="php" style="font-family: monospace;"><ol><li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #0000ff;">$data</span> = <span style="color: #0000ff;">$storage</span>-&gt;<span style="color: #006600;">fetchMetadata</span><span style="color: #66cc66;">&#40;</span><span style="color: #ff0000;">'/my/remote/path/picture.jpg'</span><span style="color: #66cc66;">&#41;</span>;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #b1b100;">foreach</span> <span style="color: #66cc66;">&#40;</span><span style="color: #0000ff;">$data</span> <span style="color: #b1b100;">as</span> <span style="color: #0000ff;">$key</span> =&gt; <span style="color: #0000ff;">$value</span><span style="color: #66cc66;">&#41;</span> <span style="color: #66cc66;">&#123;</span></div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; <a href="http://www.php.net/echo"><span style="color: #000066;">echo</span></a> <span style="color: #ff0000;">&quot;Metadata $key: $value<span style="color: #000099; font-weight: bold;">\n</span>&quot;</span>;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #66cc66;">&#125;</span></div></li></ol></div></div></div>
+
+        </div>
+    </div>
+
+    <div class="section" id="zend.cloud.storageservice.store-metadata" name="zend.cloud.storageservice.store-metadata"><div class="info"><h1 class="title">Store metadata</h1></div>
+        
+
+        <p class="para">
+            Depending on the service, metadata can be supplied either when storing the item or with
+            a separate request. In the latter case, use  <span class="methodname">storeMetadata()</span> to
+            add or update this metadata.
+        </p>
+
+        <div class="example"><div class="info"><p><b>Example #11 Storing metadata</b></p></div>
+            
+
+            <div class="programlisting php"><div class="phpcode"><div class="php" style="font-family: monospace;"><ol><li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #0000ff;">$data</span> = <span style="color: #0000ff;">$storage</span>-&gt;<span style="color: #006600;">storeMetadata</span><span style="color: #66cc66;">&#40;</span><span style="color: #ff0000;">'/my/remote/path/picture.jpg'</span>, <a href="http://www.php.net/array"><span style="color: #000066;">array</span></a><span style="color: #66cc66;">&#40;</span></div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; <span style="color: #ff0000;">'type'</span>&nbsp; &nbsp; &nbsp;=&gt; <span style="color: #ff0000;">'JPEG'</span>,</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; <span style="color: #ff0000;">'category'</span> =&gt; <span style="color: #ff0000;">'Portrait'</span>,</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #66cc66;">&#41;</span><span style="color: #66cc66;">&#41;</span>;</div></li></ol></div></div></div>
+
+        </div>
+    </div>
+
+    <div class="section" id="zend.cloud.storageservice.delete-metadata" name="zend.cloud.storageservice.delete-metadata"><div class="info"><h1 class="title">Delete metadata</h1></div>
+        
+
+        <p class="para">
+            The  <span class="methodname">deleteMetadata()</span> method removes all user-supplied metadata
+            from an item.
+        </p>
+
+        <blockquote><p><b class="note">Note</b>: 
+            
+                Not all services support removing metadata.
+            <br />
+        </p></blockquote>
+
+        <div class="example"><div class="info"><p><b>Example #12 Deleting metadata</b></p></div>
+            
+
+            <div class="programlisting php"><div class="phpcode"><div class="php" style="font-family: monospace;"><ol><li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #0000ff;">$storage</span>-&gt;<span style="color: #006600;">deleteMetadata</span><span style="color: #66cc66;">&#40;</span><span style="color: #ff0000;">&quot;/my/remote/path/picture.jpg&quot;</span><span style="color: #66cc66;">&#41;</span>;</div></li></ol></div></div></div>
+
+        </div>
+    </div>
+
+    <div class="section" id="zend.cloud.storageservice.adapter" name="zend.cloud.storageservice.adapter"><div class="info"><h1 class="title">Accessing concrete adapters</h1></div>
+        
+
+        <p class="para">
+            Sometimes it is necessary to retrieve the concrete adapter for the service that the
+            Storage API is working with. This can be achieved by using the
+             <span class="methodname">getAdapter()</span> method.
+        </p>
+
+        <blockquote><p><b class="note">Note</b>: 
+            
+                Accessing the underlying adapter breaks portability among services, so it should be
+                reserved for exceptional circumstances only.
+            <br />
+        </p></blockquote>
+
+        <div class="example"><div class="info"><p><b>Example #13 Using a concrete adapter</b></p></div>
+            
+
+            <div class="programlisting php"><div class="phpcode"><div class="php" style="font-family: monospace;"><ol><li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #808080; font-style: italic;">// the Simple Cloud Storage API doesn't support &quot;clean bucket&quot; operation</span></div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #808080; font-style: italic;">// the concrete adapter can be used to access this feature </span></div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #0000ff;">$s3</span> = <span style="color: #0000ff;">$storage</span>-&gt;<span style="color: #006600;">getClient</span><span style="color: #66cc66;">&#40;</span><span style="color: #66cc66;">&#41;</span>;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #0000ff;">$s3</span>-&gt;<span style="color: #006600;">cleanBucket</span><span style="color: #66cc66;">&#40;</span><span style="color: #ff0000;">&quot;oldBucket&quot;</span><span style="color: #66cc66;">&#41;</span>;</div></li></ol></div></div></div>
+
+        </div>
+    </div>
+</div>
+        <hr />
+
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.cloud.queueservice.html">Queue Service Introduction</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.cloud.html">SimpleCloud API: Zend_Cloud</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.codegenerator.html">Zend_CodeGenerator</a></div>
+                    </td>
+                </tr>
+            </table>
+</td>
+        <td style="font-size: smaller;" width="15%"> <style type="text/css">
+#leftbar {
+	float: left;
+	width: 186px;
+	padding: 5px;
+	font-size: smaller;
+}
+ul.toc {
+	margin: 0px 5px 5px 5px;
+	padding: 0px;
+}
+ul.toc li {
+	font-size: 85%;
+	margin: 1px 0 1px 1px;
+	padding: 1px 0 1px 11px;
+	list-style-type: none;
+	background-repeat: no-repeat;
+	background-position: center left;
+}
+ul.toc li.header {
+	font-size: 115%;
+	padding: 5px 0px 5px 11px;
+	border-bottom: 1px solid #cccccc;
+	margin-bottom: 5px;
+}
+ul.toc li.active {
+	font-weight: bold;
+}
+ul.toc li a {
+	text-decoration: none;
+}
+ul.toc li a:hover {
+	text-decoration: underline;
+}
+</style>
+ <ul class="toc">
+  <li class="header home"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="reference.html">Zend Framework Reference</a></li>
+  <li class="header up"><a href="zend.cloud.html">SimpleCloud API: Zend_Cloud</a></li>
+  <li><a href="zend.cloud.documentservice.html">Document Service Introduction</a></li>
+  <li><a href="zend.cloud.queueservice.html">Queue Service Introduction</a></li>
+  <li class="active"><a href="zend.cloud.storageservice.html">StorageService Introduction</a></li>
+ </ul>
+ </td>
+    </tr>
+</table>
+</body>
+</html>

@@ -1,0 +1,267 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <title>Writers - Zend Framework Manual</title>
+
+</head>
+<body>
+<table width="100%">
+    <tr valign="top">
+        <td width="85%">
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.log.overview.html">概述</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.log.html">Zend_Log</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.log.formatters.html">Formatters</a></div>
+                    </td>
+                </tr>
+            </table>
+<hr />
+<div id="zend.log.writers" class="section"><div class="info"><h1 class="title">Writers</h1></div>
+  
+  <p class="para">
+    一个Writer是继承自<code class="code">Zend_Log_Writer_Abstract</code>类的一个对象.Writer的职责是向存储后端纪录日志数据.
+  </p>
+
+  <div class="section" id="zend.log.writers.stream" name="zend.log.writers.stream"><div class="info"><h1 class="title">写入到流(Streams)</h1></div>
+    
+    <p class="para">
+      <code class="code">Zend_Log_Writer_Stream</code> 写入日志数据到
+      <a href="http://www.php.net/stream" class="link external">&raquo; PHP 流</a>中.
+    </p>
+
+    <p class="para">
+      要把日志写入到输出缓冲区,使用URL<code class="code">php:://output</code>. 或则你可以直接发送日志数据到像<code class="code">STDERR</code>
+      这样的流中(php://stderr).
+
+      <div class="programlisting"><div class="cdata"><pre>
+$writer = new Zend_Log_Writer_Stream(&#039;php://output&#039;);
+$logger = new Zend_Log($writer);
+
+$logger-&gt;info(&#039;Informational message&#039;);
+
+      </pre></div></div>
+
+    </p>
+
+    <p class="para">
+      写入日志数据到一个文件,使用<a href="http://www.php.net/manual/en/wrappers.php#wrappers.file" class="link external">&raquo; Filesystem
+      URLs</a>之一:
+
+      <div class="programlisting"><div class="cdata"><pre>
+$writer = new Zend_Log_Writer_Stream(&#039;/path/to/logfile&#039;);
+$logger = new Zend_Log($writer);
+
+$logger-&gt;info(&#039;Informational message&#039;);
+
+      </pre></div></div>
+
+
+      默认情况流一个追加(<code class="code">&quot;a&quot;</code>)的方式打开.要以不同的模式打开,Zend_Log_Writer_Stream
+      构造函数接受第二个参数作为可选的模式参数.
+    </p>
+
+    <p class="para">
+      <code class="code">Zend_Log_Writer_Stream</code>还接受一个现有的流资源:
+
+      <div class="programlisting"><div class="cdata"><pre>
+$stream = @fopen(&#039;/path/to/logfile&#039;, &#039;a&#039;, false);
+if (! $stream) {
+    throw new Exception(&#039;Failed to open stream&#039;);
+}
+
+$writer = new Zend_Log_Writer_Stream($stream);
+$logger = new Zend_Log($writer);
+
+$logger-&gt;info(&#039;Informational message&#039;);
+
+      </pre></div></div>
+
+
+      你不能给现有的流资源指定模式.这样作将导致抛出一个<code class="code">Zend_Log_Exception</code>异常.
+    </p>
+  </div>
+
+  <div class="section" id="zend.log.writers.database" name="zend.log.writers.database"><div class="info"><h1 class="title">写入到数据库</h1></div>
+    
+    <p class="para">
+        <code class="code">Zend_Log_Writer_Db</code>使用<code class="code">Zend_Db</code>写入日志信息到数据库表中.
+        <code class="code">Zend_Log_Writer_Db</code>的构造函数接受一个<code class="code">Zend_Db_Adapter</code>
+        实例,一个表名,和一个数据库字段到事件数据项的映射:
+      <div class="programlisting"><div class="cdata"><pre>
+$params = array (&#039;host&#039;     =&gt; &#039;127.0.0.1&#039;,
+                 &#039;username&#039; =&gt; &#039;malory&#039;,
+                 &#039;password&#039; =&gt; &#039;******&#039;,
+                 &#039;dbname&#039;   =&gt; &#039;camelot&#039;);
+$db = Zend_Db::factory(&#039;PDO_MYSQL&#039;, $params);
+
+$columnMapping = array(&#039;lvl&#039; =&gt; &#039;priority&#039;, &#039;msg&#039; =&gt; &#039;message&#039;);
+$writer = new Zend_Log_Writer_Db($db, &#039;log_table_name&#039;, $columnMapping);
+
+$logger = new Zend_Log($writer);
+
+$logger-&gt;info(&#039;Informational message&#039;);
+
+      </pre></div></div>
+
+
+      上面的例子写入单个行到名称为<code class="code">log_table_name</code>的数据库表中.数据库字段<code class="code">lvs</code>
+      接收优先级号,名为<code class="code">msg</code>的字段接收日志消息.
+    </p>
+
+  </div>
+
+
+
+  <div class="section" id="zend.log.writers.null" name="zend.log.writers.null"><div class="info"><h1 class="title">踩熄Writer</h1></div>
+    
+    <p class="para">
+      <code class="code">Zend_Log_Writer_Null</code>是一个不向任何地方写入任何数据的存根.
+      用于在测试期间关闭或踩熄日志.
+
+      <div class="programlisting"><div class="cdata"><pre>
+$writer = new Zend_Log_Writer_Null;
+$logger = new Zend_Log($writer);
+
+// goes nowhere
+$logger-&gt;info(&#039;Informational message&#039;);
+
+      </pre></div></div>
+
+    </p>
+  </div>
+
+  <div class="section" id="zend.log.writers.mock" name="zend.log.writers.mock"><div class="info"><h1 class="title">测试 Mock</h1></div>
+    
+    <p class="para">
+      <code class="code">Zend_Log_Writer_Mock</code>是一个非常简单的Writer,它纪录所接收到的原始的数据到到作为public属性的
+      数组中.
+
+      <div class="programlisting"><div class="cdata"><pre>
+$mock = new Zend_Log_Writer_Mock;
+$logger = new Zend_Log($mock);
+
+$logger-&gt;info(&#039;Informational message&#039;);
+
+var_dump($mock-&gt;events[0]);
+
+// Array
+// (
+//    [timestamp] =&gt; 2007-04-06T07:16:37-07:00
+//    [message] =&gt; Informational message
+//    [priority] =&gt; 6
+//    [priorityName] =&gt; INFO
+// )
+
+      </pre></div></div>
+
+    </p>
+
+    <p class="para">
+      清空有mock记录的日志,设置<code class="code">$mock-&gt;events = array()</code>即可.
+    </p>
+  </div>
+
+  <div class="section" id="zend.log.writers.compositing" name="zend.log.writers.compositing"><div class="info"><h1 class="title">组合Writers</h1></div>
+    
+
+    <p class="para">
+      没有复合Writer对象,但是一个Log实例可以有任意个Writer.使用<code class="code">addWriter</code>方法
+      添加Writer:
+
+      <div class="programlisting"><div class="cdata"><pre>
+$writer1 = new Zend_Log_Writer_Stream(&#039;/path/to/first/logfile&#039;);
+$writer2 = new Zend_Log_Writer_Stream(&#039;/path/to/second/logfile&#039;);
+
+$logger = new Zend_Log();
+$logger-&gt;addWriter($writer1);
+$logger-&gt;addWriter($writer2);
+
+// goes to both writers
+$logger-&gt;info(&#039;Informational message&#039;);
+
+      </pre></div></div>
+
+    </p>
+  </div>
+</div>
+        <hr />
+
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.log.overview.html">概述</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.log.html">Zend_Log</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.log.formatters.html">Formatters</a></div>
+                    </td>
+                </tr>
+            </table>
+</td>
+        <td style="font-size: smaller;" width="15%"> <style type="text/css">
+#leftbar {
+	float: left;
+	width: 186px;
+	padding: 5px;
+	font-size: smaller;
+}
+ul.toc {
+	margin: 0px 5px 5px 5px;
+	padding: 0px;
+}
+ul.toc li {
+	font-size: 85%;
+	margin: 1px 0 1px 1px;
+	padding: 1px 0 1px 11px;
+	list-style-type: none;
+	background-repeat: no-repeat;
+	background-position: center left;
+}
+ul.toc li.header {
+	font-size: 115%;
+	padding: 5px 0px 5px 11px;
+	border-bottom: 1px solid #cccccc;
+	margin-bottom: 5px;
+}
+ul.toc li.active {
+	font-weight: bold;
+}
+ul.toc li a {
+	text-decoration: none;
+}
+ul.toc li a:hover {
+	text-decoration: underline;
+}
+</style>
+ <ul class="toc">
+  <li class="header home"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="reference.html">Zend Framework Reference</a></li>
+  <li class="header up"><a href="zend.log.html">Zend_Log</a></li>
+  <li><a href="zend.log.overview.html">概述</a></li>
+  <li class="active"><a href="zend.log.writers.html">Writers</a></li>
+  <li><a href="zend.log.formatters.html">Formatters</a></li>
+  <li><a href="zend.log.filters.html">过滤器</a></li>
+  <li><a href="zend.log.factory.html">Using the Factory to Create a Log</a></li>
+ </ul>
+ </td>
+    </tr>
+</table>
+</body>
+</html>

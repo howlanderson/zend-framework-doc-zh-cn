@@ -1,0 +1,172 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <title>Zend Framework &amp; MVC Introduction - Zend Framework Manual</title>
+
+</head>
+<body>
+<table width="100%">
+    <tr valign="top">
+        <td width="85%">
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="learning.quickstart.html">Zend Framework快速开始</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="learning.quickstart.html">Zend Framework快速开始</a></span><br />
+                        <span class="home"><a href="manual.html">程序员参考指南</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="learning.quickstart.create-project.html">创建你的项目</a></div>
+                    </td>
+                </tr>
+            </table>
+<hr />
+<div id="learning.quickstart.intro" class="section"><div class="info">
+  <h1 class="title">Zend Framework &amp; MVC 介绍</h1></div>
+    
+
+    <div class="section" id="learning.quickstart.intro.zf" name="learning.quickstart.intro.zf"><div class="info"><h1 class="title">Zend Framework</h1></div>
+        
+
+        <p class="para">
+            Zend Framework是一款开源的、面向对象的为php5设计的网站应用框架。 Zend Framework总是被叫做“组件库”, 因为它是由许多松偶联的组件构成的，这些组件你可以或多或少的单独使用(译者注：甚至可以脱离ZF使用！)。 但是Zend Framework也提供了一套高级的 模型-视图-控制器(Model-View-Controller) (<acronym class="acronym">MVC</acronym>)
+          执行机制 ,可用于你创建Zend Framework应用的基本结构。一个长长的带有简短描述的Zend Framework组件列表可以在 <a href="http://framework.zend.com/about/components" class="link external">&raquo; 组件综览</a>这里找到。本快速开始将介绍一些常用的Zend Framework组件,包括 <span class="classname">Zend_Controller</span>, <span class="classname">Zend_Layout</span>, <span class="classname">Zend_Config</span>, <span class="classname">Zend_Db</span>, <span class="classname">Zend_Db_Table</span>, <span class="classname">Zend_Registry</span> 和少量的视图助手(helper)。 </p>
+
+        <p class="para">
+            为了演示如何使用这些组件, 我们将在几分钟内建设一个简单的基于数据库的留言本应用. 该留言本的完整源代码打包在下面的附件中</p>
+
+        <ul class="itemizedlist">
+            <li class="listitem">
+                <p class="para">
+                    <a href="http://framework.zend.com/demos/ZendFrameworkQuickstart.zip" class="link external">&raquo; zip</a>
+                </p>
+            </li>
+
+            <li class="listitem">
+                <p class="para">
+                    <a href="http://framework.zend.com/demos/ZendFrameworkQuickstart.tar.gz" class="link external">&raquo; tar.gz</a>
+                </p>
+            </li>
+        </ul>
+    </div>
+
+    <div class="section" id="learning.quickstart.intro.mvc" name="learning.quickstart.intro.mvc"><div class="info"><h1 class="title">Model-View-Controller</h1></div>
+        
+
+        <p class="para">
+            每个人都在讨论MVC模型，但MVC到底是什么呢？还有就是为什么你有必要关注这个? <acronym class="acronym">MVC</acronym> 绝不仅仅是三个单词的首字母缩写(<acronym class="acronym">TLA</acronym>)，用来当你想被别人听起来更聪明时就能脱口而出；它已经成为网络应用设计模型的某种程度上的工业标准了。还有一个更好的理由。绝大多数网络应用的代码可以分成这三类：外观、商业逻辑、数据访问。MVC能非常好的适应这种划分方法（译者注：事实上，MVC就是根据这个来设计的！）. 最终的结果是外观代码、商业逻辑和数据访问都将分离开并整合到你应用中. 许多开发者（译者注：特别是大型项目的开发者）都认为这种划分方法对于他们保持代码的良好组织性太重要了, 尤其是当越来越多的开发者加入同一个应用中的时候更是不可或缺。
+        </p>
+
+        <blockquote>
+          <p><b>注意</b>: <span class="info"><b>更多信息</b><br />
+          </span>
+            
+
+            
+                让我们打开模型，查看里面的单独的片段:
+            <br />
+
+            
+                <div class="inlinemediaobject"><div class="imageobject"><img src="images/d481d625821a97b9a5eb2cec99dca50e-learning.quickstart.intro.mvc.png" alt="learning.quickstart.intro.mvc.png" width="321" height="" /></div></div>
+            <br />
+
+            <ul class="itemizedlist">
+                <li class="listitem">
+                    <p class="para">
+                    <em class="emphasis">Model</em> - 这部分将实现一些功能性的抽象. 数据访问和商业逻辑将会定义在这里.</p>
+                </li>
+
+                <li class="listitem">
+                    <p class="para">
+                        <em class="emphasis">View</em> - 视图将精确的定义呈现什么样的外观给用户. 通常控制器将数据传送给视图，并把视图渲染成某种格式。 同时视图也将负责收集来自用户的数据。在视图中，你通常可以发现大量的HTML代码</p>
+                </li>
+
+                <li class="listitem">
+                    <p class="para">
+                        <em class="emphasis">Controller</em> - 控制器位于MVC模型的后台. 控制器控制模型，根据用户请求和其他动作决定传递数据给哪个视图并渲染它, 或者将请求转发给其他的控制器. 大多数<acronym class="acronym">MVC</acronym>专家都推荐 <a href="http://weblog.jamisbuck.org/2006/10/18/skinny-controller-fat-model" class="link external">&raquo; 尽可能的保持你的控制器体积瘦小</a>.
+                    </p>
+                </li>
+            </ul>
+
+            
+                当然这里还有 <a href="http://ootips.org/mvc-pattern.html" class="link external">&raquo; 还有更多的要说</a> 关于这个关键性的模型，这个将给予你足够的背景知识用于理解我们将要创建的留言本应用<br />
+        </p></blockquote>
+    </div>
+</div>
+        <hr />
+
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="learning.quickstart.html">Zend Framework快速开始</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="learning.quickstart.html">Zend Framework快速开始</a></span><br />
+                        <span class="home"><a href="manual.html">程序员参考指南</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="learning.quickstart.create-project.html">创建你的项目</a></div>
+                    </td>
+                </tr>
+            </table>
+</td>
+        <td style="font-size: smaller;" width="15%"> <style type="text/css">
+#leftbar {
+	float: left;
+	width: 186px;
+	padding: 5px;
+	font-size: smaller;
+}
+ul.toc {
+	margin: 0px 5px 5px 5px;
+	padding: 0px;
+}
+ul.toc li {
+	font-size: 85%;
+	margin: 1px 0 1px 1px;
+	padding: 1px 0 1px 11px;
+	list-style-type: none;
+	background-repeat: no-repeat;
+	background-position: center left;
+}
+ul.toc li.header {
+	font-size: 115%;
+	padding: 5px 0px 5px 11px;
+	border-bottom: 1px solid #cccccc;
+	margin-bottom: 5px;
+}
+ul.toc li.active {
+	font-weight: bold;
+}
+ul.toc li a {
+	text-decoration: none;
+}
+ul.toc li a:hover {
+	text-decoration: underline;
+}
+</style>
+ <ul class="toc">
+  <li class="header home"><a href="manual.html">程序员参考指南</a></li>
+  <li class="header up"><a href="manual.html">程序员参考指南</a></li>
+  <li class="header up"><a href="learning.html">学习Zend Framework</a></li>
+  <li class="header up"><a href="learning.quickstart.html">Zend Framework快速开始</a></li>
+  <li class="active"><a href="learning.quickstart.intro.html">Zend Framework &amp; MVC 介绍</a></li>
+  <li><a href="learning.quickstart.create-project.html">创建你的项目</a></li>
+  <li><a href="learning.quickstart.create-layout.html">创建布局( Layout)</a></li>
+  <li><a href="learning.quickstart.create-model.html">创建模型和数据库表</a></li>
+  <li><a href="learning.quickstart.create-form.html">创建表单</a></li>
+  <li><a href="learning.quickstart.conclusion.html">恭喜你了！</a></li>
+ </ul>
+ </td>
+    </tr>
+</table>
+</body>
+</html>

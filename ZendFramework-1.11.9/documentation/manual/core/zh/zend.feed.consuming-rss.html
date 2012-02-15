@@ -1,0 +1,248 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <title>RSS Feed的使用 - Zend Framework Manual</title>
+
+</head>
+<body>
+<table width="100%">
+    <tr valign="top">
+        <td width="85%">
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.feed.findFeeds.html">从网页上获得Feed</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.feed.html">Zend_Feed</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.feed.consuming-atom.html">Atom Feed的使用</a></div>
+                    </td>
+                </tr>
+            </table>
+<hr />
+<div id="zend.feed.consuming-rss" class="section"><div class="info"><h1 class="title">RSS Feed的使用</h1></div>
+    
+    <p class="para">
+        用一个<code class="code">Zend_Feed_Rss</code>对象实例和一个Feed的URL来读取一个RSS Feed再简单不过了:
+    </p>
+    <div class="programlisting"><div class="cdata"><pre>
+$channel = new Zend_Feed_Rss(&#039;http://rss.example.com/channelName&#039;);
+
+    </pre></div></div>
+
+    <p class="para">
+        如果在获得feed时发生任何错误，那么一个<code class="code">Zend_Feed_Exception</code>异常将被抛出。
+    </p>
+
+    <p class="para">
+        一旦你获得一个Feed对象，那么你就能在这个对象上直接访问任何RSS 标准定义的channel属性:
+    </p>
+    <div class="programlisting"><div class="cdata"><pre>
+echo $channel-&gt;title();?&gt;
+
+     </pre></div></div>
+
+    <p class="para">
+        注意函数语法。如果用 &quot;getter&quot; 的语法 (<code class="code">$obj-&gt;property</code>) 取一个对象变量或是调用一个对象方法(<code class="code">$obj-&gt;property()</code>)时，<code class="code">Zend_Feed</code>将把这个变量名或方法名作为一个XML对象的属性处理(就像访问XML中的某个节点)。这样在取得指定的节点内容后还能访问其子节点。
+    </p>
+
+    <p class="para">
+        如果RSS的channel有属性，那么可以用访问 PHP 数组的语法获得他们:
+    </p>
+    <div class="programlisting"><div class="cdata"><pre>
+echo $channel-&gt;category[&#039;domain&#039;];?&gt;
+
+     </pre></div></div>
+
+    <p class="para">
+        因为XML的属性不能拥有子节点，所以不需要用方法的语法访问其属性。
+        values.
+    </p>
+
+    <p class="para">
+        最常用的是您可以通过循环遍历Feed的条目来作些事情。<code class="code">Zend_Feed_Abstract</code> 实现的是PHP 的Iterator接口，因此要打印channel中的文章标题可以像下面这样:
+    </p>
+    <div class="programlisting"><div class="cdata"><pre>
+
+foreach ($channel as $item) {
+    echo $item-&gt;title() . &quot;\n&quot;;
+}
+
+     </pre></div></div>
+
+    <p class="para">
+        如果你对RSS不是很熟，那这有一分关于RSS channel和各个RSS item(条目)标准元素的列表可能对你有帮助。
+    </p>
+
+    <p class="para">
+        必须的 channel 元素:
+    </p>
+
+    <p class="para">
+        <ul class="itemizedlist">
+            <li class="listitem">
+                <p class="para"><code class="code">title</code> - channel 名</p>
+            </li>
+            <li class="listitem">
+                <p class="para"><code class="code">link</code> - channel相关的站点URL</p>
+            </li>
+            <li class="listitem">
+                <p class="para"><code class="code">description</code> - 一句或者若干关于channel的描述</p>
+            </li>
+        </ul>
+    </p>
+
+    <p class="para">
+        可选的channel元素:
+    </p>
+
+    <p class="para">
+        <ul class="itemizedlist">
+            <li class="listitem">
+                <p class="para"><code class="code">pubDate</code> - 这份内容发布的时间，用 RFC 822 的日期格式</p>
+            </li>
+            <li class="listitem">
+                <p class="para"><code class="code">language</code> - channel的书写语言</p>
+            </li>
+            <li class="listitem">
+                <p class="para"><code class="code">category</code> - channel属于的一个或多个分类(用多个标记指名)</p>
+            </li>
+        </ul>
+    </p>
+
+    <p class="para">
+        RSS 的<code class="code">&lt;item&gt;</code> 组成没有严格的要求。但是<code class="code">title</code> 或 <code class="code">description</code>必须至少有一个。
+    </p>
+
+    <p class="para">
+        常用的item元素:
+    </p>
+
+    <p class="para">
+        <ul class="itemizedlist">
+            <li class="listitem">
+                <p class="para"><code class="code">title</code> - item的标题</p>
+            </li>
+            <li class="listitem">
+                <p class="para"><code class="code">link</code> - item的链接</p>
+            </li>
+            <li class="listitem">
+                <p class="para"><code class="code">description</code> - item的概述</p>
+            </li>
+            <li class="listitem">
+                <p class="para"><code class="code">author</code> - 作者Email</p>
+            </li>
+            <li class="listitem">
+                <p class="para"><code class="code">category</code> - item所属的一个或者多个分类</p>
+            </li>
+            <li class="listitem">
+                <p class="para"><code class="code">comments</code> - item相关评论的URL链接</p>
+            </li>
+            <li class="listitem">
+                <p class="para"><code class="code">pubDate</code> - item的发布日期( RFC 822 日期格式)</p>
+            </li>
+        </ul>
+    </p>
+
+    <p class="para">
+        在你的代码中，一个非空元素总是被能测到:
+    </p>
+    <div class="programlisting"><div class="cdata"><pre>
+if ($item-&gt;propname()) {
+    // ... proceed.
+}
+
+    </pre></div></div>
+
+
+    <p class="para">
+        如果你用<code class="code">$item-&gt;propname</code>代替<code class="code">$item-&gt;propname()</code>，那么你将总是得到一个空对象使条件判断为<code class="code">TRUE</code>，因此条件判断将失效。
+    </p>
+
+    <p class="para">
+        更多信息，请参看RSS 2.0的官方说明:<a href="http://blogs.law.harvard.edu/tech/rss" class="link external">&raquo; http://blogs.law.harvard.edu/tech/rss</a>。
+    </p>
+</div>
+        <hr />
+
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.feed.findFeeds.html">从网页上获得Feed</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.feed.html">Zend_Feed</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.feed.consuming-atom.html">Atom Feed的使用</a></div>
+                    </td>
+                </tr>
+            </table>
+</td>
+        <td style="font-size: smaller;" width="15%"> <style type="text/css">
+#leftbar {
+	float: left;
+	width: 186px;
+	padding: 5px;
+	font-size: smaller;
+}
+ul.toc {
+	margin: 0px 5px 5px 5px;
+	padding: 0px;
+}
+ul.toc li {
+	font-size: 85%;
+	margin: 1px 0 1px 1px;
+	padding: 1px 0 1px 11px;
+	list-style-type: none;
+	background-repeat: no-repeat;
+	background-position: center left;
+}
+ul.toc li.header {
+	font-size: 115%;
+	padding: 5px 0px 5px 11px;
+	border-bottom: 1px solid #cccccc;
+	margin-bottom: 5px;
+}
+ul.toc li.active {
+	font-weight: bold;
+}
+ul.toc li a {
+	text-decoration: none;
+}
+ul.toc li a:hover {
+	text-decoration: underline;
+}
+</style>
+ <ul class="toc">
+  <li class="header home"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="reference.html">Zend Framework Reference</a></li>
+  <li class="header up"><a href="zend.feed.html">Zend_Feed</a></li>
+  <li><a href="zend.feed.introduction.html">介绍</a></li>
+  <li><a href="zend.feed.importing.html">导入Feeds</a></li>
+  <li><a href="zend.feed.findFeeds.html">从网页上获得Feed</a></li>
+  <li class="active"><a href="zend.feed.consuming-rss.html">RSS Feed的使用</a></li>
+  <li><a href="zend.feed.consuming-atom.html">Atom Feed的使用</a></li>
+  <li><a href="zend.feed.consuming-atom-single-entry.html">单个Atom条目的处理</a></li>
+  <li><a href="zend.feed.modifying-feed.html">修改Feed和条目结构</a></li>
+  <li><a href="zend.feed.custom-feed.html">自定义Feed和条目类</a></li>
+  <li><a href="zend.feed.reader.html">Zend_Feed_Reader</a></li>
+  <li><a href="zend.feed.writer.html">Zend_Feed_Writer</a></li>
+  <li><a href="zend.feed.pubsubhubbub.introduction.html">Zend_Feed_Pubsubhubbub</a></li>
+ </ul>
+ </td>
+    </tr>
+</table>
+</body>
+</html>

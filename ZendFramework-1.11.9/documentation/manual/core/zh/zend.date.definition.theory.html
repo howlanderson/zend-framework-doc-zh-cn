@@ -1,0 +1,149 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <title>操作理论 - Zend Framework Manual</title>
+
+</head>
+<body>
+<table width="100%">
+    <tr valign="top">
+        <td width="85%">
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.date.introduction.html">简介</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.date.html">Zend_Date</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.date.basic.html">基本方法</a></div>
+                    </td>
+                </tr>
+            </table>
+<hr />
+<div id="zend.date.definition.theory" class="section"><div class="info"><h1 class="title"> 操作理论 </h1></div>
+
+    
+
+    <p class="para">
+        为什么在 Zend Framework 中只有一个 <code class="code">Zend_Date</code> 类来处理日期和时间？
+    </p>
+
+    <p class="para">
+        很多语言把处理时间和日历日期分成两个类，然而，Zend Framework 为简单而努力。在很多情况下，迫使开发者为时间和日期在不同的方法中管理不同的对象变成一种负担。 因为 <code class="code">Zend_Date</code> 方法支持不明确的日期，它可能不包括所有部分（era 、年、月、日、小时、分钟、秒、时区），所以开发者可以享受灵活性和轻松地使用同一类和同一方法来进行处理（例如：加、减、比较、合并日期等）。当渴望在短期内熟悉这些交互操作，把处理这些日期的片段分成多个类会把事情弄的复杂。一个单个的类为相似的操作减少了代码重复，也不需要复杂的继承等级结构。
+    </p>
+
+    <div class="section" id="zend.date.theory.internals" name="zend.date.theory.internals"><div class="info"><h1 class="title"> 内部（Internals）</h1></div>
+
+        
+
+        <p class="para">
+            <ul class="itemizedlist">
+                <li class="listitem">
+                    <p class="para">
+                        UNIX 时间戳（Timestamp）
+                    </p>
+                    <p class="para">
+                        所有日期和时间，甚至不明确的（例如，没有年），在内部表示为绝对的时间点，用期望的时间点和1970年1月1日 00:00:00 GMT/UTC 之间的差来作为UNIX 时间戳来表示。这是唯一的可能，因为 <code class="code">Zend_Date</code> 既不限于 UNIX 时间戳也不限于整数值。BCMath 扩展被要求来支持非常大的在星期五，1901年12月13日 20:45:54 GMT 到星期二，2038年1月19日 03:14:07 GMT范围之外的日期。另外，因为浮点数据类型和凑整固有的限制，细小的数学错误会产生，除非使用 BCMath 扩展。
+                    </p>
+                </li>
+                <li class="listitem">
+                    <p class="para">
+                        日期部分为时间戳（ timestamp）偏移量
+                    </p>
+                    <p class="para">
+                        这样，一个表示三小时的实例对象将被表示为在 1970年1月1日 00:00:00 GMT/UTC 之后的三小时 － 例如 0 + 3 * 60 * 60 = 10800 。
+                    </p>
+                </li>
+                <li class="listitem">
+                    <p class="para">
+                        PHP 函数
+                    </p>
+                    <p class="para">
+                        <code class="code">Zend_Date</code> 尽可能经常使用 PHP 函数提高性能。
+                    </p>
+                </li>
+            </ul>
+        </p>
+
+    </div>
+
+</div>
+        <hr />
+
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.date.introduction.html">简介</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.date.html">Zend_Date</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.date.basic.html">基本方法</a></div>
+                    </td>
+                </tr>
+            </table>
+</td>
+        <td style="font-size: smaller;" width="15%"> <style type="text/css">
+#leftbar {
+	float: left;
+	width: 186px;
+	padding: 5px;
+	font-size: smaller;
+}
+ul.toc {
+	margin: 0px 5px 5px 5px;
+	padding: 0px;
+}
+ul.toc li {
+	font-size: 85%;
+	margin: 1px 0 1px 1px;
+	padding: 1px 0 1px 11px;
+	list-style-type: none;
+	background-repeat: no-repeat;
+	background-position: center left;
+}
+ul.toc li.header {
+	font-size: 115%;
+	padding: 5px 0px 5px 11px;
+	border-bottom: 1px solid #cccccc;
+	margin-bottom: 5px;
+}
+ul.toc li.active {
+	font-weight: bold;
+}
+ul.toc li a {
+	text-decoration: none;
+}
+ul.toc li a:hover {
+	text-decoration: underline;
+}
+</style>
+ <ul class="toc">
+  <li class="header home"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="reference.html">Zend Framework Reference</a></li>
+  <li class="header up"><a href="zend.date.html">Zend_Date</a></li>
+  <li><a href="zend.date.introduction.html">简介</a></li>
+  <li class="active"><a href="zend.date.definition.theory.html">操作理论</a></li>
+  <li><a href="zend.date.basic.html">基本方法</a></li>
+  <li><a href="zend.date.overview.html">Zend_Date API 概述</a></li>
+  <li><a href="zend.date.creation.html">生成日期</a></li>
+  <li><a href="zend.date.constants.html">一般日期函数的常量</a></li>
+  <li><a href="zend.date.additional.html">Working 范例</a></li>
+ </ul>
+ </td>
+    </tr>
+</table>
+</body>
+</html>

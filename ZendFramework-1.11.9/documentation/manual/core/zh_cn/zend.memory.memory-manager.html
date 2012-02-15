@@ -1,0 +1,308 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <title>内存管理器 - Zend Framework Manual</title>
+
+</head>
+<body>
+<table width="100%">
+    <tr valign="top">
+        <td width="85%">
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.memory.overview.html">概述</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.memory.html">Zend_Memory</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.memory.memory-objects.html">内存对象</a></div>
+                    </td>
+                </tr>
+            </table>
+<hr />
+<div id="zend.memory.memory-manager" class="section"><div class="info"><h1 class="title">内存管理器</h1></div>
+    
+
+    <div class="section" id="zend.memory.memory-manager.creation" name="zend.memory.memory-manager.creation"><div class="info"><h1 class="title">创建一个内存管理器</h1></div>
+
+        
+
+        <p class="para">
+            你可以使用<code class="code">Zend_Memory::factory($backendName [, $backendOprions])</code>
+            方法创建一个新的内存管理器(<code class="code">Zend_Memory_Manager</code> 对象).
+        </p>
+
+        <p class="para">
+            第一个参数<code class="code">$backendName</code>是一个字符串,他的名字是ZendCache提供的后端实现之一.
+        </p>
+
+        <p class="para">
+            第二个参数<code class="code">$backendOptions</code>是一个可选的后端选项参数.
+        </p>
+
+        <div class="programlisting"><div class="cdata"><pre>
+$backendOptions = array(
+    &#039;cache_dir&#039; =&gt; &#039;./tmp/&#039; // Directory where to put the swapped memory blocks
+);
+
+$memoryManager = Zend_Memory::factory(&#039;File&#039;, $backendOptions);
+
+        </pre></div></div>
+
+
+        <p class="para">
+            Zend_Memory使用<a href="zend.cache.backends.html" class="link">Zend_Cache backends</a>作为存储提供者.
+        </p>
+
+        <p class="para">
+            除了标准的Zend_Cache后端之外,你可以使用特殊名称&#039;<code class="code">None</code>&#039;作为后端名称.
+
+            <div class="programlisting"><div class="cdata"><pre>
+$memoryManager = Zend_Memory::factory(&#039;None&#039;);
+
+            </pre></div></div>
+
+        </p>
+
+        <p class="para">
+            如你是使用&#039;<code class="code">None</code>&#039;作为后端名称,内城管理绝不会交换数据块.这在你知道内存没有做限制,
+            或则对象的总体大小绝不会超过内存限制的情况下非常有用.
+        </p>
+
+        <p class="para">
+            &#039;<code class="code">None</code>&#039; 后端不需要任何特定的后端选项.
+        </p>
+
+    </div>
+
+    <div class="section" id="zend.memory.memory-manager.objects-management" name="zend.memory.memory-manager.objects-management"><div class="info"><h1 class="title">管理内存对象</h1></div>
+
+        
+
+        <p class="para">
+            这一节描述了在受管理的内存中创建和销毁对象,和控制内存管理的行为的设置.
+        </p>
+
+        <div class="section" id="zend.memory.memory-manager.objects-management.movable" name="zend.memory.memory-manager.objects-management.movable"><div class="info"><h1 class="title">创建可移动的对象</h1></div>
+
+            
+
+            <p class="para">
+                使用<code class="code">Zend_Memory_Manager::create([$data])</code> 方法创建可移动的对象 (对象可以被交换):
+                <div class="programlisting"><div class="cdata"><pre>
+$memObject = $memoryManager-&gt;create($data);
+
+                </pre></div></div>
+
+
+            </p>
+
+            <p class="para">
+                <code class="code">$data</code>是可选的并且用于初始化对象的值.如果<code class="code">$data</code>参数被省略,默认值为空字符串.
+            </p>
+
+        </div>
+
+        <div class="section" id="zend.memory.memory-manager.objects-management.locked" name="zend.memory.memory-manager.objects-management.locked"><div class="info"><h1 class="title">创建锁定的对象</h1></div>
+
+            
+
+            <p class="para">
+                使用<code class="code">Zend_Memory_Manager::createLocked([$data])</code>方法创建锁定的(对象不能被交换)对象:
+                <div class="programlisting"><div class="cdata"><pre>
+$memObject = $memoryManager-&gt;createLocked($data);
+
+                </pre></div></div>
+
+            </p>
+
+            <p class="para">
+                <code class="code">$data</code>是可选的并且用于初始化对象的值.如果<code class="code">$data</code>参数被省略,默认值为空字符串.
+            </p>
+
+        </div>
+
+        <div class="section" id="zend.memory.memory-manager.objects-management.destruction" name="zend.memory.memory-manager.objects-management.destruction"><div class="info"><h1 class="title">销毁对象</h1></div>
+
+            
+
+            <p class="para">
+                当内存对象超出作用域它们被从内存管理器中自动销毁和删除:
+
+                <div class="programlisting"><div class="cdata"><pre>
+function foo()
+{
+    global $memoryManager, $memList;
+
+    ...
+
+    $memObject1 = $memoryManager-&gt;create($data1);
+    $memObject2 = $memoryManager-&gt;create($data2);
+    $memObject3 = $memoryManager-&gt;create($data3);
+
+    ...
+
+    $memList[] = $memObject3;
+
+    ...
+
+    unset($memObject2); // $memObject2 is destroyed here
+
+    ...
+    // $memObject1 is destroyed here
+    // but $memObject3 object is still referenced by $memList and is not destroyed
+}
+
+                </pre></div></div>
+
+            </p>
+
+            <p class="para">
+                应用和可移动对象和锁定对象.
+            </p>
+
+        </div>
+
+    </div>
+
+    <div class="section" id="zend.memory.memory-manager.settings" name="zend.memory.memory-manager.settings"><div class="info"><h1 class="title">内存管理器设置</h1></div>
+
+        
+
+        <div class="section" id="zend.memory.memory-manager.settings.memory-limit" name="zend.memory.memory-manager.settings.memory-limit"><div class="info"><h1 class="title">内存限制</h1></div>
+
+            
+
+            <p class="para">
+                内存限制是可以被加载的可移动对象使用的一个字节数量.
+            </p>
+
+            <p class="para">
+                如果加载和创建导致内存使用量超出了限制,内存管理将交换其他对象.
+            </p>
+
+            <p class="para">
+                你可以使用<code class="code">getMemoryLimit()</code> and <code class="code">setMemoryLimit($newLimit)</code>方法
+                检索和设置内存限制:
+                <div class="programlisting"><div class="cdata"><pre>
+$oldLimit = $memoryManager-&gt;getMemoryLimit();  // Get memory limit in bytes
+$memoryManager-&gt;setMemoryLimit($newLimit);     // Set memory limit in bytes
+
+                </pre></div></div>
+
+            </p>
+
+            <p class="para">
+                负值表示&#039;没有限制&#039;.
+            </p>
+
+            <p class="para">
+                默认值是在php.ini配置文件中&#039;<code class="code">memory_limit</code>&#039;选项的2/3大小,
+                否则如果&#039;<code class="code">memory_limit</code>&#039;没有在php.ini中设置则为&#039;没有限制&#039;(-1)
+            </p>
+
+        </div>
+
+        <div class="section" id="zend.memory.memory-manager.settings.min-size" name="zend.memory.memory-manager.settings.min-size"><div class="info"><h1 class="title">MinSize</h1></div>
+
+            
+
+            <p class="para">
+                可以被内存管理器交换的最小对象大小.内存管理器不会交换小于此设置的对象.这是为了减少交换/加载操作的数量.
+            </p>
+
+            <p class="para">
+                你可以分别使用<code class="code">getMinSize()</code> 和 <code class="code">setMinSize($newSize)</code>方法
+                检索和设置对象的最小大小:
+                <div class="programlisting"><div class="cdata"><pre>
+$oldMinSize = $memoryManager-&gt;getMinSize();  // Get MinSize in bytes
+$memoryManager-&gt;setMinSize($newSize);        // Set MinSize limit in bytes
+
+                </pre></div></div>
+
+            </p>
+
+            <p class="para">
+                默认的最小大小是16KB(16384字节).
+            </p>
+
+        </div>
+
+    </div>
+
+</div>
+        <hr />
+
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.memory.overview.html">概述</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.memory.html">Zend_Memory</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.memory.memory-objects.html">内存对象</a></div>
+                    </td>
+                </tr>
+            </table>
+</td>
+        <td style="font-size: smaller;" width="15%"> <style type="text/css">
+#leftbar {
+	float: left;
+	width: 186px;
+	padding: 5px;
+	font-size: smaller;
+}
+ul.toc {
+	margin: 0px 5px 5px 5px;
+	padding: 0px;
+}
+ul.toc li {
+	font-size: 85%;
+	margin: 1px 0 1px 1px;
+	padding: 1px 0 1px 11px;
+	list-style-type: none;
+	background-repeat: no-repeat;
+	background-position: center left;
+}
+ul.toc li.header {
+	font-size: 115%;
+	padding: 5px 0px 5px 11px;
+	border-bottom: 1px solid #cccccc;
+	margin-bottom: 5px;
+}
+ul.toc li.active {
+	font-weight: bold;
+}
+ul.toc li a {
+	text-decoration: none;
+}
+ul.toc li a:hover {
+	text-decoration: underline;
+}
+</style>
+ <ul class="toc">
+  <li class="header home"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="reference.html">Zend Framework Reference</a></li>
+  <li class="header up"><a href="zend.memory.html">Zend_Memory</a></li>
+  <li><a href="zend.memory.overview.html">概述</a></li>
+  <li class="active"><a href="zend.memory.memory-manager.html">内存管理器</a></li>
+  <li><a href="zend.memory.memory-objects.html">内存对象</a></li>
+ </ul>
+ </td>
+    </tr>
+</table>
+</body>
+</html>

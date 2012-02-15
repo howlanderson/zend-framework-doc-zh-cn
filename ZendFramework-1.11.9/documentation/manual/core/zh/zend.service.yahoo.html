@@ -1,0 +1,780 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <title>Zend_Service_Yahoo - Zend Framework Manual</title>
+
+</head>
+<body>
+<table width="100%">
+    <tr valign="top">
+        <td width="85%">
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.service.windowsazure.storage.table.html">Zend_Service_WindowsAzure_Storage_Table</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.service.html">Zend_Service</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.session.html">Zend_Session</a></div>
+                    </td>
+                </tr>
+            </table>
+<hr />
+<div id="zend.service.yahoo" class="section"><div class="info"><h1 class="title">Zend_Service_Yahoo</h1></div>
+    
+    <div class="section" id="zend.service.yahoo.introduction" name="zend.service.yahoo.introduction"><div class="info"><h1 class="title">简介</h1></div>
+        
+        <p class="para">
+            <code class="code">Zend_Service_Yahoo</code> 是一个实现多个Yahoo! REST 接口的API.
+            <code class="code">Zend_Service_Yahoo</code> 允许你使用Yahoo! 网页搜索, Yahoo! 新闻,
+            Yahoo! 本地(Local), Yahoo! 图片. 为了使用 Yahoo! REST API,
+            你必须拥有一个 Yahoo! Application ID. 要获得它, 请访问
+            <a href="http://api.search.yahoo.com/webservices/register_application" class="link external">&raquo; Application ID Request Form</a>.
+        </p>
+    </div>
+    <div class="section" id="zend.service.yahoo.websearch" name="zend.service.yahoo.websearch"><div class="info"><h1 class="title">用Yahoo!来搜索网页</h1></div>
+        
+        <p class="para">
+            <code class="code">Zend_Service_Yahoo</code> 允许你用
+            <code class="code">webSearch()</code> 方法来进行Yahoo! 网页搜索, 它接受一个查询字符串作为参数 ，
+            用一个可选的数组传递搜索选项. 更多的细节和搜索选项的信息, 请访问
+            <a href="http://developer.yahoo.net/search/web/V1/webSearch.html" class="link external">&raquo; Yahoo! Web Search
+            Documentation</a>.  <code class="code">webSearch()</code> 方法返回一个
+            <code class="code">Zend_Service_Yahoo_WebResultSet</code> 对象.
+        </p>
+        <div class="example"><div class="info"><p><b>Example #1 用Yahoo!来搜索网页</b></p></div>
+            
+            <div class="programlisting"><div class="cdata"><pre>&lt;?php
+require_once &#039;Zend/Service/Yahoo.php&#039;;
+$yahoo = new Zend_Service_Yahoo(&quot;YAHOO_APPLICATION_ID&quot;);
+$results = $yahoo-&gt;webSearch(&#039;PHP&#039;);
+foreach ($results as $result) {
+    echo $result-&gt;Title .&#039;&lt;br /&gt;&#039;;
+}
+?&gt;       </pre></div></div>
+
+        </div>
+    </div>
+    <div class="section" id="zend.service.yahoo.imagesearch" name="zend.service.yahoo.imagesearch"><div class="info"><h1 class="title"> 用Yahoo!来查找图片</h1></div>
+        
+        <p class="para">
+            你可以使用<code class="code">Zend_Service_Yahoo</code>的 <code class="code">imageSearch()</code>
+            方法来在Yahoo上搜索图片。  。 它接受一个查询字符串作为参数 ，用一个可选的数组传递搜索选项, 就像
+            <a href="zend.service.yahoo.html#zend.service.yahoo.websearch" class="link"><code class="code">webSearch()</code> method</a>.
+            更多的细节和搜索选项的信息, 请访问
+            <a href="http://developer.yahoo.net/search/image/V1/imageSearch.html" class="link external">&raquo; Yahoo! Image Search
+            Documentation</a>.
+        </p>
+        <div class="example"><div class="info"><p><b>Example #2 用Yahoo!来查找图片</b></p></div>
+            
+            <div class="programlisting"><div class="cdata"><pre>&lt;?php
+require_once &#039;Zend/Service/Yahoo.php&#039;;
+$yahoo = new Zend_Service_Yahoo(&quot;YAHOO_APPLICATION_ID&quot;);
+$results = $yahoo-&gt;imageSearch(&#039;PHP&#039;);
+foreach ($results as $result) {
+    echo $result-&gt;Title .&#039;&lt;br /&gt;&#039;;
+}
+?&gt;       </pre></div></div>
+
+        </div>
+    </div>
+    <div class="section" id="zend.service.yahoo.localsearch" name="zend.service.yahoo.localsearch"><div class="info"><h1 class="title">Finding Local Businesses and Services with Yahoo!</h1></div>
+        
+        <p class="para">
+            You can search for local businesses and services with Yahoo! by using the <code class="code">localSearch()</code> method.
+            For full details, please see the
+            <a href="http://developer.yahoo.net/search/local/V1/localSearch.html" class="link external">&raquo; Yahoo! Local Search
+            Documentation</a>.
+        </p>
+        <div class="example"><div class="info"><p><b>Example #3 用Yahoo!查找本地商务和服务信息</b></p></div>
+            
+            <div class="programlisting"><div class="cdata"><pre>&lt;?php
+require_once &#039;Zend/Service/Yahoo.php&#039;;
+$yahoo = new Zend_Service_Yahoo(&quot;YAHOO_APPLICATION_ID&quot;);
+$results = $yahoo-&gt;localSearch(&#039;Apple Computers&#039;, array(&#039;zip&#039; =&gt; &#039;95014&#039;));
+foreach ($results as $result) {
+    echo $result-&gt;Title .&#039;&lt;br /&gt;&#039;;
+}
+?&gt;       </pre></div></div>
+
+        </div>
+    </div>
+    <div class="section" id="zend.service.yahoo.newssearch" name="zend.service.yahoo.newssearch"><div class="info"><h1 class="title">搜索Yahoo! 新闻</h1></div>
+        
+        <p class="para">
+            搜索Yahoo! 新闻非常简单; 使用  <code class="code">newsSearch()</code> 方法,
+            如下面的例子. 更多的细节和搜索选项的信息, 请访问
+            <a href="http://developer.yahoo.net/search/news/V1/newsSearch.html" class="link external">&raquo; Yahoo! News Search
+            Documentation</a>.
+        </p>
+        <div class="example"><div class="info"><p><b>Example #4 搜索Yahoo! 新闻</b></p></div>
+            
+            <div class="programlisting"><div class="cdata"><pre>&lt;?php
+require_once &#039;Zend/Service/Yahoo.php&#039;;
+$yahoo = new Zend_Service_Yahoo(&quot;YAHOO_APPLICATION_ID&quot;);
+$results = $yahoo-&gt;newsSearch(&#039;PHP&#039;);
+foreach ($results as $result) {
+    echo $result-&gt;Title .&#039;&lt;br /&gt;&#039;;
+}
+?&gt;       </pre></div></div>
+
+        </div>
+    </div>
+<div class="section" id="zend.service.yahoo.classes" name="zend.service.yahoo.classes"><div class="info"><h1 class="title">Zend_Service_Yahoo 类</h1></div>
+    
+    <p class="para">
+        不同的Yahoo! 搜索类型会返回下面的这些类. 每个搜索类型返回指定类型的结果集, 我们可以很方便的对它们进行遍历,
+        每个结果被包含在一种类型的结果集对象中. 所有这些对象都实现了
+        <code class="code">SeekableIterator</code> 接口, 可以很容易的进行遍历和寻找指定结果。
+        <ul class="itemizedlist">
+            <li class="listitem"><p class="para"><a href="zend.service.yahoo.html#zend.service.yahoo.classes.resultset" class="link"><code class="code">Zend_Service_Yahoo_ResultSet</code></a></p></li>
+            <li class="listitem"><p class="para"><a href="zend.service.yahoo.html#zend.service.yahoo.classes.webresultset" class="link"><code class="code">Zend_Service_Yahoo_WebResultSet</code></a></p></li>
+            <li class="listitem"><p class="para"><a href="zend.service.yahoo.html#zend.service.yahoo.classes.imageresultset" class="link"><code class="code">Zend_Service_Yahoo_ImageResultSet</code></a></p></li>
+            <li class="listitem"><p class="para"><a href="zend.service.yahoo.html#zend.service.yahoo.classes.localresultset" class="link"><code class="code">Zend_Service_Yahoo_LocalResultSet</code></a></p></li>
+            <li class="listitem"><p class="para"><a href="zend.service.yahoo.html#zend.service.yahoo.classes.newsresultset" class="link"><code class="code">Zend_Service_Yahoo_NewsResultSet</code></a></p></li>
+            <li class="listitem"><p class="para"><a href="zend.service.yahoo.html#zend.service.yahoo.classes.result" class="link"><code class="code">Zend_Service_Yahoo_Result</code></a></p></li>
+            <li class="listitem"><p class="para"><a href="zend.service.yahoo.html#zend.service.yahoo.classes.webresult" class="link"><code class="code">Zend_Service_Yahoo_WebResult</code></a></p></li>
+            <li class="listitem"><p class="para"><a href="zend.service.yahoo.html#zend.service.yahoo.classes.imageresult" class="link"><code class="code">Zend_Service_Yahoo_ImageResult</code></a></p></li>
+            <li class="listitem"><p class="para"><a href="zend.service.yahoo.html#zend.service.yahoo.classes.localresult" class="link"><code class="code">Zend_Service_Yahoo_LocalResult</code></a></p></li>
+            <li class="listitem"><p class="para"><a href="zend.service.yahoo.html#zend.service.yahoo.classes.newsresult" class="link"><code class="code">Zend_Service_Yahoo_NewsResult</code></a></p></li>
+            <li class="listitem"><p class="para"><a href="zend.service.yahoo.html#zend.service.yahoo.classes.image" class="link"><code class="code">Zend_Service_Yahoo_Image</code></a></p></li>
+        </ul>
+    </p>
+    <div class="section" id="zend.service.yahoo.classes.resultset" name="zend.service.yahoo.classes.resultset"><div class="info"><h1 class="title">Zend_Service_Yahoo_ResultSet</h1></div>
+        
+        <p class="para">
+            每类搜索特定的结果集都由这个基类扩展而成
+        </p>
+        <p class="para">
+            每类搜索特定的结果集都会返回这个搜索特定的
+            <a href="zend.service.yahoo.html#zend.service.yahoo.classes.result" class="link">Zend_Service_Yahoo_Result</a> 对象.
+        </p>
+        <div class="section" id="zend.service.yahoo.classes.resultset.totalResults" name="zend.service.yahoo.classes.resultset.totalResults"><div class="info"><h1 class="title">Zend_Service_Yahoo_ResultSet::totalResults()</h1></div>
+            
+            <p class="para">
+                <div class="methodsynopsis dc-description">
+                     <span class="type">int</span> 
+                     <span class="methodname">totalResults</span>
+                     ( <span class="methodparam">void</span>
+                </div>
+
+            </p>
+            <p class="para">
+                返回搜索结果的数量
+            </p>
+        </div>
+        <div class="section" id="zend.service.yahoo.classes.resultset.properties" name="zend.service.yahoo.classes.resultset.properties"><div class="info"><h1 class="title">Properties</h1></div>
+            
+            <table class="doctable table"><div class="info"><caption><b>Zend_Service_Yahoo_ResultSet</b></caption></div>
+                
+                
+                    <thead valign="middle">
+                        <tr valign="middle">
+                            <th>名称</th>
+                            <th>类型</th>
+                            <th>描述</th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody valign="middle" class="tbody">
+                        <tr valign="middle">
+                            <td align="left">totalResultsAvailable</td>
+                            <td align="left">int</td>
+                            <td align="left">
+                                所有找到的结果的数量
+                            </td>
+                        </tr>
+
+                        <tr valign="middle">
+                            <td align="left">totalResultsReturned</td>
+                            <td align="left">int</td>
+                            <td align="left">当前结果集中结果的数量</td>
+                        </tr>
+
+                        <tr valign="middle">
+                            <td align="left">firstResultPosition</td>
+                            <td align="left">int</td>
+                            <td align="left">当前结果集中的第一条在所有结果中的相对位置</td>
+                        </tr>
+
+                    </tbody>
+                
+            </table>
+
+            <p class="para">
+                <a href="zend.service.yahoo.html#zend.service.yahoo.classes" class="link">Back to Class List</a>
+            </p>
+        </div>
+    </div>
+    <div class="section" id="zend.service.yahoo.classes.webresultset" name="zend.service.yahoo.classes.webresultset"><div class="info"><h1 class="title">Zend_Service_Yahoo_WebResultSet</h1></div>
+        
+        <p class="para">
+            <code class="code">Zend_Service_Yahoo_WebResultSet</code> 代表 Yahoo! 网页搜索的结果集.
+        </p>
+        <blockquote><p><b class="note">Note</b>: 
+            
+                <code class="code">Zend_Service_Yahoo_WebResultSet</code> 扩展自 <a href="zend.service.yahoo.html#zend.service.yahoo.classes.resultset" class="link">Zend_Service_Yahoo_ResultSet</a>
+            <br />
+        </p></blockquote>
+        <p class="para">
+            <a href="zend.service.yahoo.html#zend.service.yahoo.classes" class="link">Back to Class List</a>
+        </p>
+    </div>
+    <div class="section" id="zend.service.yahoo.classes.imageresultset" name="zend.service.yahoo.classes.imageresultset"><div class="info"><h1 class="title">Zend_Service_Yahoo_ImageResultSet</h1></div>
+        
+        <p class="para">
+            <code class="code">Zend_Service_Yahoo_ImageResultSet</code> 代表一个 Yahoo! 图片搜索结果集
+        </p>
+        <blockquote><p><b class="note">Note</b>: 
+            
+                <code class="code">Zend_Service_Yahoo_ImageResultSet</code> 扩展自 <a href="zend.service.yahoo.html#zend.service.yahoo.classes.resultset" class="link">Zend_Service_Yahoo_ResultSet</a>
+            <br />
+        </p></blockquote>
+        <p class="para">
+            <a href="zend.service.yahoo.html#zend.service.yahoo.classes" class="link">Back to Class List</a>
+        </p>
+    </div>
+    <div class="section" id="zend.service.yahoo.classes.localresultset" name="zend.service.yahoo.classes.localresultset"><div class="info"><h1 class="title">Zend_Service_Yahoo_LocalResultSet</h1></div>
+        
+        <p class="para">
+            <code class="code">Zend_Service_Yahoo_LocalResultSet</code> 代表一个Yahoo!本地搜索的结果集
+        </p>
+        <table class="doctable table"><div class="info"><caption><b>Zend_Service_Yahoo_LocalResultSet 属性</b></caption></div>
+            
+            
+                <thead valign="middle">
+                    <tr valign="middle">
+                        <th>名称</th>
+                        <th>类型</th>
+                        <th>描述</th>
+                    </tr>
+
+                </thead>
+
+                <tbody valign="middle" class="tbody">
+                    <tr valign="middle">
+                        <td align="left">resultSetMapURL</td>
+                        <td align="left">string</td>
+                        <td align="left">包含返回查询结果地图的URL</td>
+                    </tr>
+
+                </tbody>
+            
+        </table>
+
+        <blockquote><p><b class="note">Note</b>: 
+            
+                <code class="code">Zend_Service_Yahoo_LocalResultSet</code> 扩展自 <a href="zend.service.yahoo.html#zend.service.yahoo.classes.resultset" class="link">Zend_Service_Yahoo_ResultSet</a>
+            <br />
+        </p></blockquote>
+        <p class="para">
+            <a href="zend.service.yahoo.html#zend.service.yahoo.classes" class="link">Back to Class List</a>
+        </p>
+    </div>
+    <div class="section" id="zend.service.yahoo.classes.newsresultset" name="zend.service.yahoo.classes.newsresultset"><div class="info"><h1 class="title">Zend_Service_Yahoo_NewsResultSet</h1></div>
+        
+        <p class="para">
+            <code class="code">Zend_Service_Yahoo_NewsResultSet</code> 代表一个Yahoo!新闻搜索结果的集合
+        </p>
+        <blockquote><p><b class="note">Note</b>: 
+            
+                <code class="code">Zend_Service_Yahoo_NewsResultSet</code> 扩展自 <a href="zend.service.yahoo.html#zend.service.yahoo.classes.resultset" class="link">Zend_Service_Yahoo_ResultSet</a>
+            <br />
+        </p></blockquote>
+        <p class="para">
+            <a href="zend.service.yahoo.html#zend.service.yahoo.classes" class="link">Back to Class List</a>
+        </p>
+    </div>
+    <div class="section" id="zend.service.yahoo.classes.result" name="zend.service.yahoo.classes.result"><div class="info"><h1 class="title">Zend_Service_Yahoo_Result</h1></div>
+        
+        <p class="para">
+            每类搜索特定的结果都由这个基类扩展而成
+        </p>
+        <div class="section" id="zend.service.yahoo.classes.result.properties" name="zend.service.yahoo.classes.result.properties"><div class="info"><h1 class="title">Properties</h1></div>
+            
+            <table class="doctable table"><div class="info"><caption><b>Zend_Service_Yahoo_Result Properties</b></caption></div>
+                
+                
+                    <thead valign="middle">
+                        <tr valign="middle">
+                            <th>名称</th>
+                            <th>类型</th>
+                            <th>描述</th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody valign="middle" class="tbody">
+                        <tr valign="middle">
+                            <td align="left">Title</td>
+                            <td align="left">string</td>
+                            <td align="left">结果项的标题</td>
+                        </tr>
+
+                        <tr valign="middle">
+                            <td align="left">Url</td>
+                            <td align="left">string</td>
+                            <td align="left">结果项的url</td>
+                        </tr>
+
+                        <tr valign="middle">
+                            <td align="left">ClickUrl</td>
+                            <td align="left">string</td>
+                            <td align="left">链接到结果项的url</td>
+                        </tr>
+
+                    </tbody>
+                
+            </table>
+
+            <p class="para">
+                <a href="zend.service.yahoo.html#zend.service.yahoo.classes" class="link">Back to Class List</a>
+            </p>
+        </div>
+     </div>
+     <div class="section" id="zend.service.yahoo.classes.webresult" name="zend.service.yahoo.classes.webresult"><div class="info"><h1 class="title">Zend_Service_Yahoo_WebResult</h1></div>
+        
+        <p class="para">
+           每一个网页搜索结果作为一个 <code class="code">Zend_Service_Yahoo_WebResult</code> 对相返回.
+        </p>
+        <div class="section" id="zend.service.yahoo.classes.webresult.properties" name="zend.service.yahoo.classes.webresult.properties"><div class="info"><h1 class="title">属性</h1></div>
+            
+            <table class="doctable table"><div class="info"><caption><b>Zend_Service_Yahoo_WebResult 属性</b></caption></div>
+                
+                
+                    <thead valign="middle">
+                        <tr valign="middle">
+                            <th>名称</th>
+                            <th>类型</th>
+                            <th>描述</th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody valign="middle" class="tbody">
+                        <tr valign="middle">
+                            <td align="left">Summary</td>
+                            <td align="left">string</td>
+                            <td align="left">返回结果的摘要</td>
+                        </tr>
+
+                        <tr valign="middle">
+                            <td align="left">MimeType</td>
+                            <td align="left">string</td>
+                            <td align="left">返回结果的mimetype</td>
+                        </tr>
+
+                        <tr valign="middle">
+                            <td align="left">ModificationDate</td>
+                            <td align="left">string</td>
+                            <td align="left">一个以 UNIX timestamp 表示的最后修改日期.</td>
+                        </tr>
+
+                        <tr valign="middle">
+                            <td align="left">CacheUrl</td>
+                            <td align="left">string</td>
+                            <td align="left">返回结果Yahoo! 网页搜索缓存页面的URL</td>
+                        </tr>
+
+                        <tr valign="middle">
+                            <td align="left">CacheSize</td>
+                            <td align="left">int</td>
+                            <td align="left">Cache 项目的大小</td>
+                        </tr>
+
+                    </tbody>
+                
+            </table>
+
+            <p class="para">
+                <a href="zend.service.yahoo.html#zend.service.yahoo.classes" class="link">Back to Class List</a>
+            </p>
+        </div>
+     </div>
+     <div class="section" id="zend.service.yahoo.classes.imageresult" name="zend.service.yahoo.classes.imageresult"><div class="info"><h1 class="title">Zend_Service_Yahoo_ImageResult</h1></div>
+        
+        <p class="para">
+            每一个图片搜索结果作为一个 <code class="code">Zend_Service_Yahoo_ImageResult</code> 对相返回.
+        </p>
+        <div class="section" id="zend.service.yahoo.classes.imageresult.properties" name="zend.service.yahoo.classes.imageresult.properties"><div class="info"><h1 class="title">属性</h1></div>
+            
+            <table class="doctable table"><div class="info"><caption><b>Zend_Service_Yahoo_ImageResult 属性</b></caption></div>
+                
+                
+                    <thead valign="middle">
+                        <tr valign="middle">
+                            <th>名称</th>
+                            <th>类型</th>
+                            <th>描述</th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody valign="middle" class="tbody">
+                        <tr valign="middle">
+                            <td align="left">Summary</td>
+                            <td align="left">string</td>
+                            <td align="left">返回结果的摘要</td>
+                        </tr>
+
+                        <tr valign="middle">
+                            <td align="left">RefererUrl</td>
+                            <td align="left">string</td>
+                            <td align="left">图片引用页的URL</td>
+                        </tr>
+
+                        <tr valign="middle">
+                            <td align="left">FileSize</td>
+                            <td align="left">int</td>
+                            <td align="left">以bytes为单位的图片大小</td>
+                        </tr>
+
+                        <tr valign="middle">
+                            <td align="left">FileFormat</td>
+                            <td align="left">string</td>
+                            <td align="left">图片的格式 (bmp, gif, jpeg, png, etc.)</td>
+                        </tr>
+
+                        <tr valign="middle">
+                            <td align="left">Height</td>
+                            <td align="left">int</td>
+                            <td align="left">图片的高</td>
+                        </tr>
+
+                        <tr valign="middle">
+                            <td align="left">Width</td>
+                            <td align="left">int</td>
+                            <td align="left">图片的宽</td>
+                        </tr>
+
+                        <tr valign="middle">
+                            <td align="left">Thumbnail</td>
+                            <td align="left"><a href="zend.service.yahoo.html#zend.service.yahoo.classes.image" class="link">Zend_Service_Yahoo_Image</a></td>
+                            <td align="left">图片的缩略图</td>
+                        </tr>
+
+                    </tbody>
+                
+            </table>
+
+            <p class="para">
+                <a href="zend.service.yahoo.html#zend.service.yahoo.classes" class="link">Back to Class List</a>
+            </p>
+        </div>
+     </div>
+     <div class="section" id="zend.service.yahoo.classes.localresult" name="zend.service.yahoo.classes.localresult"><div class="info"><h1 class="title">Zend_Service_Yahoo_LocalResult</h1></div>
+        
+        <p class="para">
+            每一个本地搜索结果以 <code class="code">Zend_Service_Yahoo_LocalResult</code> 对相返回.
+        </p>
+        <div class="section" id="zend.service.yahoo.classes.localresult.properties" name="zend.service.yahoo.classes.localresult.properties"><div class="info"><h1 class="title">属性</h1></div>
+            
+            <table class="doctable table"><div class="info"><caption><b>Zend_Service_Yahoo_LocalResult 属性</b></caption></div>
+                
+                
+                    <thead valign="middle">
+                        <tr valign="middle">
+                            <th>名称</th>
+                            <th>类型</th>
+                            <th>描述</th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody valign="middle" class="tbody">
+                        <tr valign="middle">
+                            <td align="left">Address</td>
+                            <td align="left">string</td>
+                            <td align="left">搜索结果的街道地址</td>
+                        </tr>
+
+                        <tr valign="middle">
+                            <td align="left">City</td>
+                            <td align="left">string</td>
+                            <td align="left">搜索结果所在的城市</td>
+                        </tr>
+
+                        <tr valign="middle">
+                            <td align="left">State</td>
+                            <td align="left">string</td>
+                            <td align="left">搜索结果所在的州</td>
+                        </tr>
+
+                        <tr valign="middle">
+                            <td align="left">Phone</td>
+                            <td align="left">string</td>
+                            <td align="left">搜索结果相关的电话号码</td>
+                        </tr>
+
+                        <tr valign="middle">
+                            <td align="left">Rating</td>
+                            <td align="left">int</td>
+                            <td align="left">用户对该结果的评分</td>
+                        </tr>
+
+                        <tr valign="middle">
+                            <td align="left">Distance</td>
+                            <td align="left">float</td>
+                            <td align="left">从你指定的位置到搜索结果的距离</td>
+                        </tr>
+
+                        <tr valign="middle">
+                            <td align="left">MapUrl</td>
+                            <td align="left">string</td>
+                            <td align="left">搜索结果地图的URL</td>
+                        </tr>
+
+                        <tr valign="middle">
+                            <td align="left">BusinessUrl</td>
+                            <td align="left">string</td>
+                            <td align="left">商务网站的URL (如果知道的话)</td>
+                        </tr>
+
+                        <tr valign="middle">
+                            <td align="left">BusinessClickUrl</td>
+                            <td align="left">string</td>
+                            <td align="left">链接到商务网站的URL (如果知道的话)</td>
+                        </tr>
+
+                    </tbody>
+                
+            </table>
+
+            <p class="para">
+                <a href="zend.service.yahoo.html#zend.service.yahoo.classes" class="link">Back to Class List</a>
+            </p>
+        </div>
+     </div>
+     <div class="section" id="zend.service.yahoo.classes.newsresult" name="zend.service.yahoo.classes.newsresult"><div class="info"><h1 class="title">Zend_Service_Yahoo_NewsResult</h1></div>
+        
+        <p class="para">
+            每一个新闻搜索结果作为一个 <code class="code">Zend_Service_Yahoo_NewsResult</code> 对相返回.
+        </p>
+        <div class="section" id="zend.service.yahoo.classes.newsresult.properties" name="zend.service.yahoo.classes.newsresult.properties"><div class="info"><h1 class="title">属性</h1></div>
+            
+            <table class="doctable table"><div class="info"><caption><b>Zend_Service_Yahoo_NewsResult 属性</b></caption></div>
+                
+                
+                    <thead valign="middle">
+                        <tr valign="middle">
+                            <th>名称</th>
+                            <th>类型</th>
+                            <th>描述</th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody valign="middle" class="tbody">
+                        <tr valign="middle">
+                            <td align="left">Summary</td>
+                            <td align="left">string</td>
+                            <td align="left">返回结果的摘要</td>
+                        </tr>
+
+                        <tr valign="middle">
+                            <td align="left">NewsSource</td>
+                            <td align="left">string</td>
+                            <td align="left">发布文章的公司</td>
+                        </tr>
+
+                        <tr valign="middle">
+                            <td align="left">NewsSourceUrl</td>
+                            <td align="left">string</td>
+                            <td align="left">发布文章的公司的URL</td>
+                        </tr>
+
+                        <tr valign="middle">
+                            <td align="left">Language</td>
+                            <td align="left">string</td>
+                            <td align="left">文章所用的语言</td>
+                        </tr>
+
+                        <tr valign="middle">
+                            <td align="left">PublishDate</td>
+                            <td align="left">string</td>
+                            <td align="left">用 UNIX timestamp表示的文章发布日期</td>
+                        </tr>
+
+                        <tr valign="middle">
+                            <td align="left">ModificationDate</td>
+                            <td align="left">string</td>
+                            <td align="left">用 UNIX timestamp表示的文章最后更新日期</td>
+                        </tr>
+
+                        <tr valign="middle">
+                            <td align="left">Thumbnail</td>
+                            <td align="left"><a href="zend.service.yahoo.html#zend.service.yahoo.classes.image" class="link">Zend_Service_Yahoo_Image</a></td>
+                            <td align="left">文章的缩略图,如果有的话</td>
+                        </tr>
+
+                    </tbody>
+                
+            </table>
+
+            <p class="para">
+                <a href="zend.service.yahoo.html#zend.service.yahoo.classes" class="link">Back to Class List</a>
+            </p>
+        </div>
+     </div>
+     <div class="section" id="zend.service.yahoo.classes.image" name="zend.service.yahoo.classes.image"><div class="info"><h1 class="title">Zend_Service_Yahoo_Image</h1></div>
+        
+        <p class="para">
+            所有的Yahoo!图片和新闻搜索返回的图片都作为
+            <code class="code">Zend_Service_Yahoo_Image</code> 对相返回
+        </p>
+        <div class="section" id="zend.service.yahoo.classes.image.properties" name="zend.service.yahoo.classes.image.properties"><div class="info"><h1 class="title">Properties</h1></div>
+            
+            <table class="doctable table"><div class="info"><caption><b>Zend_Service_Yahoo_Image Properties</b></caption></div>
+                
+                
+                    <thead valign="middle">
+                        <tr valign="middle">
+                            <th>名称</th>
+                            <th>类型</th>
+                            <th>描述</th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody valign="middle" class="tbody">
+                        <tr valign="middle">
+                            <td align="left">Url</td>
+                            <td align="left">string</td>
+                            <td align="left">图片URL</td>
+                        </tr>
+
+                        <tr valign="middle">
+                            <td align="left">Width</td>
+                            <td align="left">int</td>
+                            <td align="left">图片的宽</td>
+                        </tr>
+
+                        <tr valign="middle">
+                            <td align="left">Height</td>
+                            <td align="left">int</td>
+                            <td align="left">图片的高</td>
+                        </tr>
+
+                    </tbody>
+                
+            </table>
+
+            <p class="para">
+                <a href="zend.service.yahoo.html#zend.service.yahoo.classes" class="link">Back to Class List</a>
+            </p>
+        </div>
+    </div>
+</div>
+</div>
+        <hr />
+
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.service.windowsazure.storage.table.html">Zend_Service_WindowsAzure_Storage_Table</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.service.html">Zend_Service</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.session.html">Zend_Session</a></div>
+                    </td>
+                </tr>
+            </table>
+</td>
+        <td style="font-size: smaller;" width="15%"> <style type="text/css">
+#leftbar {
+	float: left;
+	width: 186px;
+	padding: 5px;
+	font-size: smaller;
+}
+ul.toc {
+	margin: 0px 5px 5px 5px;
+	padding: 0px;
+}
+ul.toc li {
+	font-size: 85%;
+	margin: 1px 0 1px 1px;
+	padding: 1px 0 1px 11px;
+	list-style-type: none;
+	background-repeat: no-repeat;
+	background-position: center left;
+}
+ul.toc li.header {
+	font-size: 115%;
+	padding: 5px 0px 5px 11px;
+	border-bottom: 1px solid #cccccc;
+	margin-bottom: 5px;
+}
+ul.toc li.active {
+	font-weight: bold;
+}
+ul.toc li a {
+	text-decoration: none;
+}
+ul.toc li a:hover {
+	text-decoration: underline;
+}
+</style>
+ <ul class="toc">
+  <li class="header home"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="reference.html">Zend Framework Reference</a></li>
+  <li class="header up"><a href="zend.service.html">Zend_Service</a></li>
+  <li><a href="zend.service.introduction.html">简介</a></li>
+  <li><a href="zend.service.akismet.html">Zend_Service_Akismet</a></li>
+  <li><a href="zend.service.amazon.html">Zend_Service_Amazon</a></li>
+  <li><a href="zend.service.amazon.ec2.html">Zend_Service_Amazon_Ec2</a></li>
+  <li><a href="zend.service.amazon.ec2.instance.html">Zend_Service_Amazon_Ec2: Instances</a></li>
+  <li><a href="zend.service.amazon.ec2.windows.instance.html">Zend_Service_Amazon_Ec2: Windows Instances</a></li>
+  <li><a href="zend.service.amazon.ec2.reserved.instance.html">Zend_Service_Amazon_Ec2: Reserved Instances</a></li>
+  <li><a href="zend.service.amazon.ec2.cloudwatch.html">Zend_Service_Amazon_Ec2: CloudWatch Monitoring</a></li>
+  <li><a href="zend.service.amazon.ec2.images.html">Zend_Service_Amazon_Ec2: Amazon Machine Images (AMI)</a></li>
+  <li><a href="zend.service.amazon.ec2.ebs.html">Zend_Service_Amazon_Ec2: Elastic Block Storage (EBS)</a></li>
+  <li><a href="zend.service.amazon.ec2.elasticip.html">Zend_Service_Amazon_Ec2: Elastic IP Addresses</a></li>
+  <li><a href="zend.service.amazon.ec2.keypairs.html">Zend_Service_Amazon_Ec2: Keypairs</a></li>
+  <li><a href="zend.service.amazon.ec2.zones.html">Zend_Service_Amazon_Ec2: Regions and Availability Zones</a></li>
+  <li><a href="zend.service.amazon.ec2.securitygroups.html">Zend_Service_Amazon_Ec2: Security Groups</a></li>
+  <li><a href="zend.service.amazon.s3.html">Zend_Service_Amazon_S3</a></li>
+  <li><a href="zend.service.amazon.sqs.html">Zend_Service_Amazon_Sqs</a></li>
+  <li><a href="zend.service.audioscrobbler.html">Zend_Service_Audioscrobbler</a></li>
+  <li><a href="zend.service.delicious.html">Zend_Service_Delicious</a></li>
+  <li><a href="zend.service.developergarden.html">Zend_Service_DeveloperGarden</a></li>
+  <li><a href="zend.service.ebay.html">Zend_Service_Ebay</a></li>
+  <li><a href="zend.service.ebay.finding.html">Zend_Service_Ebay_Finding</a></li>
+  <li><a href="zend.service.flickr.html">Zend_Service_Flickr</a></li>
+  <li><a href="zend.service.livedocx.html">Zend_Service_LiveDocx</a></li>
+  <li><a href="zend.service.nirvanix.html">Zend_Service_Nirvanix</a></li>
+  <li><a href="zend.service.recaptcha.html">Zend_Service_ReCaptcha</a></li>
+  <li><a href="zend.service.short-url.html">Zend_Service_ShortUrl</a></li>
+  <li><a href="zend.service.simpy.html">Zend_Service_Simpy</a></li>
+  <li><a href="zend.service.slideshare.html">Zend_Service_SlideShare</a></li>
+  <li><a href="zend.service.strikeiron.html">Zend_Service_StrikeIron</a></li>
+  <li><a href="zend.service.strikeiron.bundled-services.html">Zend_Service_StrikeIron: Bundled Services</a></li>
+  <li><a href="zend.service.strikeiron.advanced-uses.html">Zend_Service_StrikeIron: Advanced Uses</a></li>
+  <li><a href="zend.service.technorati.html">Zend_Service_Technorati</a></li>
+  <li><a href="zend.service.twitter.html">Zend_Service_Twitter</a></li>
+  <li><a href="zend.service.windowsazure.html">Zend_Service_WindowsAzure</a></li>
+  <li><a href="zend.service.windowsazure.storage.blob.html">Zend_Service_WindowsAzure_Storage_Blob</a></li>
+  <li><a href="zend.service.windowsazure.diagnostics.manager.html">Zend_Service_WindowsAzure_Diagnostics_Manager</a></li>
+  <li><a href="zend.service.windowsazure.storage.queue.html">Zend_Service_WindowsAzure_Storage_Queue</a></li>
+  <li><a href="zend.service.windowsazure.storage.table.html">Zend_Service_WindowsAzure_Storage_Table</a></li>
+  <li class="active"><a href="zend.service.yahoo.html">Zend_Service_Yahoo</a></li>
+ </ul>
+ </td>
+    </tr>
+</table>
+</body>
+</html>

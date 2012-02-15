@@ -1,0 +1,159 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <title>附件 - Zend Framework Manual</title>
+
+</head>
+<body>
+<table width="100%">
+    <tr valign="top">
+        <td width="85%">
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.mail.html-mails.html">HTML邮件</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.mail.html">Zend_Mail</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.mail.adding-recipients.html">增加收件人</a></div>
+                    </td>
+                </tr>
+            </table>
+<hr />
+<div id="zend.mail.attachments" class="section"><div class="info"><h1 class="title"> 附件 </h1></div>
+    
+    <p class="para">
+        使用<code class="code">createAttachment()</code>方法可以将文件附加到邮件中。<code class="code">Zend_Mail</code>会缺省地认为该文件是二进制对象(application/octet-stream)，以 base64编码传输, 并且作为邮件的附件处理。通过传递额外的参数给<code class="code">createAttachment()</code>方法可以覆盖上述缺省设定：
+    </p>
+    <div class="example"><div class="info"><p><b>Example #1  带附件的邮件 </b></p></div>
+        
+        <div class="programlisting"><div class="cdata"><pre>&lt;?php
+require_once &#039;Zend/Mail.php&#039;;
+$mail = new Zend_Mail();
+// build message...
+$mail-&gt;createAttachment($someBinaryString);
+$mail-&gt;createAttachment($myImage, &#039;image/gif&#039;, Zend_Mime::DISPOSITION_INLINE, Zend_Mime::ENCODING_8BIT);
+        </pre></div></div>
+
+    </div>
+    <p class="para">
+        如果你想得到对此附件MIME段产生的更多控制，你可以使用<code class="code">createAttachment()</code>方法的返回值来修改它的属性。方法<code class="code">createAttachment()</code>返回了一个<code class="code">Zend_Mime_Part</code>对象：
+    </p>
+    <div class="programlisting"><div class="cdata"><pre>&lt;?php
+require_once &#039;Zend/Mail.php&#039;;
+$mail = new Zend_Mail();
+
+$at = $mail-&gt;createAttachment($myImage);
+$at-&gt;type        = &#039;image/gif&#039;;
+$at-&gt;disposition = Zend_Mime::DISPOSITION_INLINE;
+$at-&gt;encoding    = Zend_Mime::ENCODING_8BIT;
+$at-&gt;filename    = &#039;test.gif&#039;;
+
+$mail-&gt;send();
+    </pre></div></div>
+
+    <p class="para">
+        创建 <code class="code">Zend_Mime_Part</code> 实例和用 <code class="code">addAttachment()</code> 添加它的替代方案：
+    </p>
+    <div class="programlisting"><div class="cdata"><pre>&lt;?php
+require_once &#039;Zend/Mail.php&#039;;
+$mail = new Zend_Mail();
+
+$at = new Zend_Mime_Part($myImage);
+$at-&gt;type        = &#039;image/gif&#039;;
+$at-&gt;disposition = Zend_Mime::DISPOSITION_INLINE;
+$at-&gt;encoding    = Zend_Mime::ENCODING_8BIT;
+$at-&gt;filename    = &#039;test.gif&#039;;
+
+$mail-&gt;addAttachment($at);
+
+$mail-&gt;send();
+    </pre></div></div>
+
+</div>
+        <hr />
+
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.mail.html-mails.html">HTML邮件</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.mail.html">Zend_Mail</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.mail.adding-recipients.html">增加收件人</a></div>
+                    </td>
+                </tr>
+            </table>
+</td>
+        <td style="font-size: smaller;" width="15%"> <style type="text/css">
+#leftbar {
+	float: left;
+	width: 186px;
+	padding: 5px;
+	font-size: smaller;
+}
+ul.toc {
+	margin: 0px 5px 5px 5px;
+	padding: 0px;
+}
+ul.toc li {
+	font-size: 85%;
+	margin: 1px 0 1px 1px;
+	padding: 1px 0 1px 11px;
+	list-style-type: none;
+	background-repeat: no-repeat;
+	background-position: center left;
+}
+ul.toc li.header {
+	font-size: 115%;
+	padding: 5px 0px 5px 11px;
+	border-bottom: 1px solid #cccccc;
+	margin-bottom: 5px;
+}
+ul.toc li.active {
+	font-weight: bold;
+}
+ul.toc li a {
+	text-decoration: none;
+}
+ul.toc li a:hover {
+	text-decoration: underline;
+}
+</style>
+ <ul class="toc">
+  <li class="header home"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="reference.html">Zend Framework Reference</a></li>
+  <li class="header up"><a href="zend.mail.html">Zend_Mail</a></li>
+  <li><a href="zend.mail.introduction.html">简介</a></li>
+  <li><a href="zend.mail.sending.html">通过SMTP发送邮件</a></li>
+  <li><a href="zend.mail.multiple-emails.html">通过一个SMTP连接发送多个邮</a></li>
+  <li><a href="zend.mail.different-transports.html">使用不同的Transport对象</a></li>
+  <li><a href="zend.mail.html-mails.html">HTML邮件</a></li>
+  <li class="active"><a href="zend.mail.attachments.html">附件</a></li>
+  <li><a href="zend.mail.adding-recipients.html">增加收件人</a></li>
+  <li><a href="zend.mail.boundary.html">控制MIME分界线</a></li>
+  <li><a href="zend.mail.additional-headers.html">外加邮件头信息</a></li>
+  <li><a href="zend.mail.character-sets.html">字符集</a></li>
+  <li><a href="zend.mail.encoding.html">编码</a></li>
+  <li><a href="zend.mail.smtp-authentication.html">SMTP 身份验证</a></li>
+  <li><a href="zend.mail.smtp-secure.html">Securing SMTP Transport</a></li>
+  <li><a href="zend.mail.read.html">Reading Mail Messages</a></li>
+ </ul>
+ </td>
+    </tr>
+</table>
+</body>
+</html>

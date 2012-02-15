@@ -1,0 +1,257 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <title>基本用法 - Zend Framework Manual</title>
+
+</head>
+<body>
+<table width="100%">
+    <tr valign="top">
+        <td width="85%">
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.session.introduction.html">简介</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.session.html">Zend_Session</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.session.advanced_usage.html">高级用法</a></div>
+                    </td>
+                </tr>
+            </table>
+<hr />
+<div id="zend.session.basic_usage" class="section"><div class="info"><h1 class="title">基本用法</h1></div>
+
+    
+
+    <p class="para">
+        在Zend Framework中，<code class="code">Zend_Session_Namespace</code>实例提供了操作会话数据主要的API。命名空间常用于隔离所有的会话数据，尽管也为所有会话数据只需要一个命名空间的情况提供了一个默认的命名空间。Zend_Session利用了PHP内置的会话模块（ext/session），以及它特有的<code class="code">$_SESSION</code>全局数组做为会话状态数据的存储机制。虽然<code class="code">$_SESSION</code>在PHP的全局命名空间内仍然可以访问，但是开发者不应该直接访问它，这样<code class="code">Zend_Session</code> 和 <code class="code">Zend_Session_Namespace</code>可以提供一组最可靠、安全的处理会话相关的功能。
+    </p>
+
+    <p class="para">
+        每个<code class="code">Zend_Session_Namespace</code>的实例对应于<code class="code">$_SESSION</code>全局数组的一个条目，在那里命名空间被用作键。
+
+        <div class="programlisting"><div class="cdata"><pre>&lt;?php
+require_once &#039;Zend/Session/Namespace.php&#039;;
+
+$myNamespace = new Zend_Session_Namespace(&#039;myNamespace&#039;);
+
+// $myNamespace corresponds to $_SESSION[&#039;myNamespace&#039;]
+        </pre></div></div>
+
+
+         用Zend_Session直接和其它使用 <code class="code">$_SESSION</code>的代码协同工作是可能的。然而，为避免问题，强烈建议这样的代码只使用<code class="code">$_SESSION</code>中不和<code class="code">Zend_Session_Namespace</code>的实例想对应的部分。
+    </p>
+
+    <div class="section" id="zend.session.basic_usage.basic_examples" name="zend.session.basic_usage.basic_examples"><div class="info"><h1 class="title">实例教程</h1></div>
+
+        
+
+        <p class="para">
+            在初始化Zend_Session时，如果没有指定命名空间，所有的数据将被透明地储存在<code class="code">&#039;Default&#039;</code>命名空间下。<code class="code">Zend_Session</code>不打算直接处理会话命名空间容器的内容，取而代之，我们可以使用<code class="code">Zend_Session_Namespace</code>。下面的例子演示了缺省命名空间的使用，和怎样计算用户访问页面的次数：
+        </p>
+
+        <div class="example"><div class="info"><p><b>Example #1 页面浏览计数</b></p></div>
+
+            
+
+            <div class="programlisting"><div class="cdata"><pre>&lt;?php
+require_once &#039;Zend/Session/Namespace.php&#039;;
+
+$defaultNamespace = new Zend_Session_Namespace(&#039;Default&#039;);
+
+if (isset($defaultNamespace-&gt;numberOfPageRequests)) {
+    $defaultNamespace-&gt;numberOfPageRequests++; // 每次页面加载，这个将递增
+} else {
+    $defaultNamespace-&gt;numberOfPageRequests = 1; // 第一次
+}
+
+echo &quot;Page requests this session: &quot;, $defaultNamespace-&gt;numberOfPageRequests;
+            </pre></div></div>
+
+
+        </div>
+
+        <p class="para">
+            当多个模块使用<code class="code">Zend_Session_Namespace</code>的实例拥有不同的命名空间，每个模块为它自己的会话数据获得数据封装。可以传递给<code class="code">Zend_Session_Namespace</code>构造函数一个可选的<code class="code">$namespace</code>参数，它允许开发者分割会话数据到分离的命名空间。命名空间机制提供了一个有效的、流行的方法来确保处于命名空间之下的会话数据不遭到意外地改变。
+        </p>
+
+        <p class="para">
+            命名空间的名称被限定为字符序列，它表示为不以下划线(&quot;<code class="code">_</code>&quot;)开头的非空PHP字符串。只有Zend Framework的核心模块可使用以&quot;<code class="code">Zend</code>&quot;开头的命名空间的名称。
+        </p>
+
+        <div class="example"><div class="info"><p><b>Example #2 新方法： 使用命名空间避免冲突</b></p></div>
+
+            
+
+            <div class="programlisting"><div class="cdata"><pre>&lt;?php
+require_once &#039;Zend/Session/Namespace.php&#039;;
+
+// in the Zend_Auth component
+$authNamespace = new Zend_Session_Namespace(&#039;Zend_Auth&#039;);
+$authNamespace-&gt;user = &quot;myusername&quot;;
+
+// in a web services component
+$webServiceNamespace = new Zend_Session_Namespace(&#039;Some_Web_Service&#039;);
+$webServiceNamespace-&gt;user = &quot;mywebusername&quot;;
+            </pre></div></div>
+
+
+        </div>
+
+        <p class="para">
+            上述例子中的代码与下面的代码有相同的效果，不过，上述例子中的会话对象把会话数据封装进了各自的命名空间。
+        </p>
+
+        <div class="example"><div class="info"><p><b>Example #3 老方法: PHP会话访问</b></p></div>
+
+            
+
+            <div class="programlisting"><div class="cdata"><pre>&lt;?php
+$_SESSION[&#039;Zend_Auth&#039;][&#039;user&#039;] = &quot;myusername&quot;;
+$_SESSION[&#039;Some_Web_Service&#039;][&#039;user&#039;] = &quot;mywebusername&quot;;
+            </pre></div></div>
+
+
+        </div>
+
+    </div>
+
+    <div class="section" id="zend.session.basic_usage.iteration" name="zend.session.basic_usage.iteration"><div class="info"><h1 class="title">迭代会话命名空间</h1></div>
+
+        
+
+        <p class="para">
+            <code class="code">Zend_Session_Namespace</code>提供了<a href="http://www.php.net/~helly/php/ext/spl/interfaceIteratorAggregate.html" class="link external">&raquo; IteratorAggregate接口</a>所有的能力，包括对<code class="code">foreach</code>语句的支持：
+        </p>
+
+        <div class="example"><div class="info"><p><b>Example #4 会话迭代</b></p></div>
+
+            
+
+            <div class="programlisting"><div class="cdata"><pre>&lt;?php
+require_once &#039;Zend/Session/Namespace.php&#039;;
+
+$aNamespace = new Zend_Session_Namespace(&#039;some_namespace_with_data_present&#039;);
+
+foreach ($aNamespace as $index =&gt; $value) {
+    echo &quot;aNamespace-&gt;$index = &#039;$value&#039;;\n&quot;;
+}
+            </pre></div></div>
+
+
+        </div>
+
+    </div>
+
+    <div class="section" id="zend.session.basic_usage.accessors" name="zend.session.basic_usage.accessors"><div class="info"><h1 class="title">会话命名空间的访问器</h1></div>
+
+        
+
+        <p class="para">
+            <code class="code">Zend_Session_Namespace</code>实现<code class="code">__get()</code>, <code class="code">__set()</code>, <code class="code">__isset()</code>, and <code class="code">__unset()</code>这些 <a href="http://www.php.net/manual/en/language.oop5.overloading.php" class="link external">&raquo; 魔术方法</a>，除了在一个子类里，这些魔术方法不能被直接调用。相反，正常的操作符自动调用这些方法，如下例所示：
+        </p>
+
+        <div class="example"><div class="info"><p><b>Example #5 访问会话数据</b></p></div>
+
+            
+
+            <div class="programlisting"><div class="cdata"><pre>&lt;?php
+require_once &#039;Zend/Session/Namespace.php&#039;;
+
+$namespace = new Zend_Session_Namespace(); // 缺省的命名空间
+
+$namespace-&gt;foo = 100;
+
+echo &quot;\$namespace-&gt;foo = $namespace-&gt;foo\n&quot;;
+
+if (!isset($namespace-&gt;bar)) {
+    echo &quot;\$namespace-&gt;bar not set\n&quot;;
+}
+
+unset($namespace-&gt;foo);
+            </pre></div></div>
+
+
+        </div>
+
+    </div>
+
+</div>
+        <hr />
+
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.session.introduction.html">简介</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.session.html">Zend_Session</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.session.advanced_usage.html">高级用法</a></div>
+                    </td>
+                </tr>
+            </table>
+</td>
+        <td style="font-size: smaller;" width="15%"> <style type="text/css">
+#leftbar {
+	float: left;
+	width: 186px;
+	padding: 5px;
+	font-size: smaller;
+}
+ul.toc {
+	margin: 0px 5px 5px 5px;
+	padding: 0px;
+}
+ul.toc li {
+	font-size: 85%;
+	margin: 1px 0 1px 1px;
+	padding: 1px 0 1px 11px;
+	list-style-type: none;
+	background-repeat: no-repeat;
+	background-position: center left;
+}
+ul.toc li.header {
+	font-size: 115%;
+	padding: 5px 0px 5px 11px;
+	border-bottom: 1px solid #cccccc;
+	margin-bottom: 5px;
+}
+ul.toc li.active {
+	font-weight: bold;
+}
+ul.toc li a {
+	text-decoration: none;
+}
+ul.toc li a:hover {
+	text-decoration: underline;
+}
+</style>
+ <ul class="toc">
+  <li class="header home"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="reference.html">Zend Framework Reference</a></li>
+  <li class="header up"><a href="zend.session.html">Zend_Session</a></li>
+  <li><a href="zend.session.introduction.html">简介</a></li>
+  <li class="active"><a href="zend.session.basic_usage.html">基本用法</a></li>
+  <li><a href="zend.session.advanced_usage.html">高级用法</a></li>
+  <li><a href="zend.session.global_session_management.html">全局会话管理</a></li>
+  <li><a href="zend.session.savehandler.dbtable.html">Zend_Session_SaveHandler_DbTable</a></li>
+ </ul>
+ </td>
+    </tr>
+</table>
+</body>
+</html>

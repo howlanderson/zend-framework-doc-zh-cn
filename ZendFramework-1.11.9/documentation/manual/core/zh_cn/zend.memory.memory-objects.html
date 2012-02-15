@@ -1,0 +1,354 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <title>内存对象 - Zend Framework Manual</title>
+
+</head>
+<body>
+<table width="100%">
+    <tr valign="top">
+        <td width="85%">
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.memory.memory-manager.html">内存管理器</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.memory.html">Zend_Memory</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.mime.html">Zend_Mime</a></div>
+                    </td>
+                </tr>
+            </table>
+<hr />
+<div id="zend.memory.memory-objects" class="section"><div class="info"><h1 class="title">内存对象</h1></div>
+
+    
+
+    <div class="section" id="zend.memory.memory-objects.movable" name="zend.memory.memory-objects.movable"><div class="info"><h1 class="title">可移动的</h1></div>
+
+        
+
+        <p class="para">
+            使用内存管理器的<code class="code">create([$data])</code>方法创建可移动的内存对象:
+            <div class="programlisting"><div class="cdata"><pre>
+$memObject = $memoryManager-&gt;create($data);
+
+            </pre></div></div>
+
+        </p>
+
+        <p class="para">
+            &quot;可移动&quot;意思是这样的对象可以被交换并从内存中卸载,然后当应用程序代码访问该对象时再加载它.
+        </p>
+
+    </div>
+
+    <div class="section" id="zend.memory.memory-objects.locked" name="zend.memory.memory-objects.locked"><div class="info"><h1 class="title">锁定的</h1></div>
+
+        
+
+        <p class="para">
+            使用内存管理器的<code class="code">createLocked([$data])</code>方法创建锁定的内存对象:
+            <div class="programlisting"><div class="cdata"><pre>
+$memObject = $memoryManager-&gt;createLocked($data);
+
+            </pre></div></div>
+
+        </p>
+
+        <p class="para">
+            &quot;锁定的&quot;意思是这样的对象绝不会被交换和从内存中卸载.
+        </p>
+
+        <p class="para">
+            锁定的对象和可移动的对象提供相同的接口(<code class="code">Zend_Memory_Container_Interface</code>).
+            因此锁定的对象可以用于任何地方代替可移动对象.
+        </p>
+
+        <p class="para">
+            基于性能的考虑,应用程序或则开发者能决定一些对象应该决不会被交换是非常有用的.
+        </p>
+
+        <p class="para">
+            访问锁定的对象更快,应为内存管理器不需要追踪这些对象的变化.
+        </p>
+
+        <p class="para">
+            The locked objects class (<code class="code">Zend_Memory_Container_Locked</code>)
+            guarantees virtually the same performance as working with a string
+            variable.  The overhead is a single dereference to get the class property.
+
+            锁定的对象类(<code class="code">Zend_Memory_Container_Locked</code>)保证了和处理字符串变量差不多的性能.
+        </p>
+
+    </div>
+
+    <div class="section" id="zend.memory.memory-objects.value" name="zend.memory.memory-objects.value"><div class="info"><h1 class="title">内存容器 &#039;值&#039; 属性.</h1></div>
+
+        
+
+        <p class="para">
+            使用内存容器(可移动或者锁定)&#039;<code class="code">值</code>&#039;属性操作内存对象数据:
+            <div class="programlisting"><div class="cdata"><pre>
+$memObject = $memoryManager-&gt;create($data);
+
+echo $memObject-&gt;value;
+
+$memObject-&gt;value = $newValue;
+
+$memObject-&gt;value[$index] = &#039;_&#039;;
+
+echo ord($memObject-&gt;value[$index1]);
+
+$memObject-&gt;value = substr($memObject-&gt;value, $start, $length);
+
+            </pre></div></div>
+
+        </p>
+
+        <p class="para">
+            访问内存对象数据的一个替代的方法是使用<a href="zend.memory.memory-objects.html#zend.memory.memory-objects.api.getRef" class="link"><code class="code">getRef()</code></a>
+            方法.该方法在<em class="emphasis">必须</em>用于PHP5.2之前的版本.它还不得不用于其他由于性能原因情况
+        </p>
+    </div>
+
+    <div class="section" id="zend.memory.memory-objects.api" name="zend.memory.memory-objects.api"><div class="info"><h1 class="title">内存容器接口</h1></div>
+
+        
+
+        <p class="para">
+            内存容器提供下面的方法:
+        </p>
+
+        <div class="section" id="zend.memory.memory-objects.api.getRef" name="zend.memory.memory-objects.api.getRef"><div class="info"><h1 class="title">getRef() 方法</h1></div>
+
+            
+
+            <div class="programlisting"><div class="cdata"><pre>
+public function &amp;getRef();
+
+            </pre></div></div>
+
+
+            <p class="para">
+                <code class="code">getRef()</code> 方法返回对象值的引用.
+            </p>
+
+            <p class="para">
+                如果此时对象不在内存中,可移动对象从缓存中加载.
+                如果对象从缓存中加载,并且受管理对象的内存使用量总和超过内存限制,将导致交换.
+            </p>
+
+            <p class="para">
+                <code class="code">getRef()</code> 方法 <em class="emphasis">必须</em>
+                用于访问PHP5.2版本以前的内存对象数据.
+            </p>
+
+            <p class="para">
+                追踪数据的变化需要额外的资源.<code class="code">getRef()</code>返回字符串的引用,它直接由用户应用程序改变.
+                因此好的办法是使用<code class="code">getRef()</code>方法进行值数据处理:
+                <div class="programlisting"><div class="cdata"><pre>
+$memObject = $memoryManager-&gt;create($data);
+
+$value = &amp;$memObject-&gt;getRef();
+
+for ($count = 0; $count &lt; strlen($value); $count++) {
+    $char = $value[$count];
+    ...
+}
+
+                </pre></div></div>
+
+            </p>
+
+        </div>
+
+        <div class="section" id="zend.memory.memory-objects.api.touch" name="zend.memory.memory-objects.api.touch"><div class="info"><h1 class="title">touch() 方法</h1></div>
+
+            
+
+            <div class="programlisting"><div class="cdata"><pre>
+public function touch();
+
+            </pre></div></div>
+
+            <p class="para">
+                <code class="code">touch()</code> 方法应该和<code class="code">getRef()</code>一起使用.当对象值改变时它会发出信号.
+                <div class="programlisting"><div class="cdata"><pre>
+$memObject = $memoryManager-&gt;create($data);
+...
+
+$value = &amp;$memObject-&gt;getRef();
+
+for ($count = 0; $count &lt; strlen($value); $count++) {
+    ...
+    if ($condition) {
+        $value[$count] = $char;
+    }
+    ...
+}
+
+$memObject-&gt;touch();
+
+                </pre></div></div>
+
+
+            </p>
+
+        </div>
+
+        <div class="section" id="zend.memory.memory-objects.api.lock" name="zend.memory.memory-objects.api.lock"><div class="info"><h1 class="title">lock() 方法</h1></div>
+
+            
+
+            <div class="programlisting"><div class="cdata"><pre>
+public function lock();
+
+            </pre></div></div>
+
+
+            <p class="para">
+                它用于阻止一些你选择的对象被交换.正常情况,这是不需要的,因为内存管理器使用智能的算法决定候选的交换数据.
+                但是你明确地知道,在代码的这一部分对象不应该被交换,你可以锁定它们.
+            </p>
+
+            <p class="para">
+                在内存中锁定的对象还保证了在解锁对象前<code class="code">getRef()</code>方法返回的引用是有效的:
+                <div class="programlisting"><div class="cdata"><pre>
+$memObject1 = $memoryManager-&gt;create($data1);
+$memObject2 = $memoryManager-&gt;create($data2);
+...
+
+$memObject1-&gt;lock();
+$memObject2-&gt;lock();
+
+$value1 = &amp;$memObject1-&gt;getRef();
+$value2 = &amp;$memObject2-&gt;getRef();
+
+for ($count = 0; $count &lt; strlen($value2); $count++) {
+    $value1 .= $value2[$count];
+}
+
+$memObject1-&gt;touch();
+$memObject1-&gt;unlock();
+$memObject2-&gt;unlock();
+
+                </pre></div></div>
+
+            </p>
+
+        </div>
+
+        <div class="section" id="zend.memory.memory-objects.api.unlock" name="zend.memory.memory-objects.api.unlock"><div class="info"><h1 class="title">unlock() 方法</h1></div>
+
+            
+
+            <div class="programlisting"><div class="cdata"><pre>
+public function unlock();
+
+            </pre></div></div>
+
+
+            <p class="para">
+                当不再需要锁定是<code class="code">unlock()</code> 方法解锁一个内存对象.查看上面的例子.
+            </p>
+
+        </div>
+
+        <div class="section" id="zend.memory.memory-objects.api.isLocked" name="zend.memory.memory-objects.api.isLocked"><div class="info"><h1 class="title">isLocked() 方法</h1></div>
+
+            
+
+            <div class="programlisting"><div class="cdata"><pre>
+public function isLocked();
+
+            </pre></div></div>
+
+
+            <p class="para">
+                <code class="code">isLocked()</code>方法用于检测是否一个对象被锁定了.如果对象被锁定她返回
+                <code class="code">true</code>,否则如果没有被锁定返回<code class="code">false</code>.
+                对于&quot;锁定的&quot;对象这总是<code class="code">true</code>,对于&quot;可移动&quot;对象可以使<code class="code">true</code>
+                或则<code class="code">false</code>.
+            </p>
+
+        </div>
+
+    </div>
+
+</div>
+        <hr />
+
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.memory.memory-manager.html">内存管理器</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.memory.html">Zend_Memory</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.mime.html">Zend_Mime</a></div>
+                    </td>
+                </tr>
+            </table>
+</td>
+        <td style="font-size: smaller;" width="15%"> <style type="text/css">
+#leftbar {
+	float: left;
+	width: 186px;
+	padding: 5px;
+	font-size: smaller;
+}
+ul.toc {
+	margin: 0px 5px 5px 5px;
+	padding: 0px;
+}
+ul.toc li {
+	font-size: 85%;
+	margin: 1px 0 1px 1px;
+	padding: 1px 0 1px 11px;
+	list-style-type: none;
+	background-repeat: no-repeat;
+	background-position: center left;
+}
+ul.toc li.header {
+	font-size: 115%;
+	padding: 5px 0px 5px 11px;
+	border-bottom: 1px solid #cccccc;
+	margin-bottom: 5px;
+}
+ul.toc li.active {
+	font-weight: bold;
+}
+ul.toc li a {
+	text-decoration: none;
+}
+ul.toc li a:hover {
+	text-decoration: underline;
+}
+</style>
+ <ul class="toc">
+  <li class="header home"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="reference.html">Zend Framework Reference</a></li>
+  <li class="header up"><a href="zend.memory.html">Zend_Memory</a></li>
+  <li><a href="zend.memory.overview.html">概述</a></li>
+  <li><a href="zend.memory.memory-manager.html">内存管理器</a></li>
+  <li class="active"><a href="zend.memory.memory-objects.html">内存对象</a></li>
+ </ul>
+ </td>
+    </tr>
+</table>
+</body>
+</html>

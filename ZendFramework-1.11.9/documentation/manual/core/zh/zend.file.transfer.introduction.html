@@ -1,0 +1,170 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <title>Zend_File_Transfer - Zend Framework Manual</title>
+
+</head>
+<body>
+<table width="100%">
+    <tr valign="top">
+        <td width="85%">
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.file.html">Zend_File</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.file.html">Zend_File</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.file.transfer.validators.html">Validators for Zend_File_Transfer</a></div>
+                    </td>
+                </tr>
+            </table>
+<hr />
+<div id="zend.file.transfer.introduction" class="section"><div class="info"><h1 class="title">Zend_File_Transfer</h1></div>
+
+    
+
+    <p class="para">
+        <code class="code">Zend_File_Transfer</code> 让开发者控制文件上载和下载。它有用于文件的内置的校验器
+        并且甚至可以用过滤器来修改文件。<code class="code">Zend_File_Transfer</code> 使用适配器，这样对于
+        不同的传输协议如 HTTP、 FTP、 WEBDAV 等等就可以使用相同的 API。
+    </p>
+
+    <blockquote><p><b class="note">Note</b>: <span class="info"><b>局限</b><br /></span>
+        
+        
+            当前的 <code class="code">Zend_File_Transfer</code> 实现包含在 1.6.0 版中，仅限于 HTTP Post 上载。文件下载和
+            其它适配器在下次发行时会增加。没实现的功能会抛出异常。所以应该直接使用 <code class="code">Zend_File_Transfer_Adapter_Http</code> 的实例。
+            当多重适配器可用时，这个就会改变。
+        <br />
+    </p></blockquote>
+
+    <p class="para">
+        <code class="code">Zend_File_Transfer</code> 的用法非常简单。它包括两个部分：用于上载的 HTTP 表单和用
+        <code class="code">Zend_File_Transfer</code> 来处理上载文件。参见下面的例子：
+    </p>
+
+    <div class="example"><div class="info"><p><b>Example #1  简单的文件上载表单 </b></p></div>
+        
+        <div class="example-contents"><p>
+            本例示范了一个基本的文件上传，它使用 <code class="code">Zend_File_Transfer</code>  来完成。
+            第一部分是文件表单。在例子中，有一个文件要上载。
+        </p></div>
+        <div class="programlisting"><div class="cdata"><pre>
+&lt;form enctype=&quot;multipart/form-data&quot; action=&quot;/file/upload&quot; method=&quot;POST&quot;&gt;
+    &lt;input type=&quot;hidden&quot; name=&quot;MAX_FILE_SIZE&quot; value=&quot;100000&quot; /&gt;
+        Choose a file to upload: &lt;input name=&quot;uploadedfile&quot; type=&quot;file&quot; /&gt;
+    &lt;br /&gt;
+    &lt;input type=&quot;submit&quot; value=&quot;Upload File&quot; /&gt;
+&lt;/form&gt;
+
+</pre></div></div>
+
+        <div class="example-contents"><p>
+            注意利用 <a href="" class="link">Zend_Form_Element_File</a> 而不需要手工编写 HTML。
+        </p></div>
+        <div class="example-contents"><p>
+            下一步是生成上载的接收者。在本例中接收者是 <code class="code">/file/upload</code> 。所以我们就编写
+            带有动作 <code class="code">upload</code> 的控制器 <code class="code">file</code> 。
+        </p></div>
+        <div class="programlisting"><div class="cdata"><pre>
+$adapter = new Zend_File_Transfer_Adapter_Http();
+
+$adapter-&gt;setDestination(&#039;C:\temp&#039;);
+
+if (!$adapter-&gt;receive()) {
+    $messages = $adapter-&gt;getMessages();
+    echo implode(&quot;\n&quot;, $messages);
+}
+
+        </pre></div></div>
+
+        <div class="example-contents"><p>
+            正如你所看到的简单的用法，使用 <code class="code">setDestination</code> 定义一个目的地然后调用 <code class="code">receive()</code>  方法。
+            如果有任何上载错误，就会包含在返回的异常里。
+        </p></div>
+
+        <blockquote><p><b class="note">Note</b>: <span class="info"><b>注意</b><br /></span>
+            
+            
+                记住这只是个最简单的用法，应该 <em class="emphasis">永远不要</em>仅仅把它用于实际的环境，
+                因为它有严重的安全问题。实际中需要用校验器来增强安全性。
+            <br />
+        </p></blockquote>
+    </div>
+</div>
+        <hr />
+
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.file.html">Zend_File</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.file.html">Zend_File</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.file.transfer.validators.html">Validators for Zend_File_Transfer</a></div>
+                    </td>
+                </tr>
+            </table>
+</td>
+        <td style="font-size: smaller;" width="15%"> <style type="text/css">
+#leftbar {
+	float: left;
+	width: 186px;
+	padding: 5px;
+	font-size: smaller;
+}
+ul.toc {
+	margin: 0px 5px 5px 5px;
+	padding: 0px;
+}
+ul.toc li {
+	font-size: 85%;
+	margin: 1px 0 1px 1px;
+	padding: 1px 0 1px 11px;
+	list-style-type: none;
+	background-repeat: no-repeat;
+	background-position: center left;
+}
+ul.toc li.header {
+	font-size: 115%;
+	padding: 5px 0px 5px 11px;
+	border-bottom: 1px solid #cccccc;
+	margin-bottom: 5px;
+}
+ul.toc li.active {
+	font-weight: bold;
+}
+ul.toc li a {
+	text-decoration: none;
+}
+ul.toc li a:hover {
+	text-decoration: underline;
+}
+</style>
+ <ul class="toc">
+  <li class="header home"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="reference.html">Zend Framework Reference</a></li>
+  <li class="header up"><a href="zend.file.html">Zend_File</a></li>
+  <li class="active"><a href="zend.file.transfer.introduction.html">Zend_File_Transfer</a></li>
+  <li><a href="zend.file.transfer.validators.html">Validators for Zend_File_Transfer</a></li>
+  <li><a href="zend.file.transfer.filters.html">Filters for Zend_File_Transfer</a></li>
+ </ul>
+ </td>
+    </tr>
+</table>
+</body>
+</html>

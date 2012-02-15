@@ -1,0 +1,251 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <title>Zend_Layout 配置选项 - Zend Framework Manual</title>
+
+</head>
+<body>
+<table width="100%">
+    <tr valign="top">
+        <td width="85%">
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.layout.quickstart.html">Zend_Layout 快速入门</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.layout.html">Zend_Layout</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.layout.advanced.html">Zend_Layout 高级用法</a></div>
+                    </td>
+                </tr>
+            </table>
+<hr />
+<div id="zend.layout.options" class="section"><div class="info"><h1 class="title">Zend_Layout 配置选项</h1></div>
+    
+
+    <p class="para">
+        <code class="code">Zend_Layout</code>有多种配置选项。这些都可以用调用适当的访问器来设置，传递数组或<code class="code">Zend_Config</code>对象给构造器或<code class="code">startMvc()</code>，传递选项数组给<code class="code">setOptions()</code>，或传递<code class="code">Zend_Config</code>对象给to <code class="code">setConfig()</code>。
+    </p>
+
+    <ul class="itemizedlist">
+        <li class="listitem"><p class="para">
+                <em class="emphasis">layout</em>：被使用的布局。使用当前变形器来解析提供给合适的布局视图脚本的名称。缺省地，这个值是&#039;layout&#039;并解析为&#039;layout.phtml&#039;。访问器是<code class="code">setLayout()</code> 和 <code class="code">getLayout()</code>。
+        </p></li>
+
+        <li class="listitem"><p class="para">
+                <em class="emphasis">layoutPath</em>:  布局视图脚本的基本路径。访问器是<code class="code">setLayoutPath()</code> 和 <code class="code">getLayoutPath()</code>。
+        </p></li>
+
+        <li class="listitem"><p class="para">
+                <em class="emphasis">contentKey</em>: 用于缺省内容（和MVC一起使用）的布局变量。缺省值是&#039;content&#039;。访问器是<code class="code">setContentKey()</code> 和 <code class="code">getContentKey()</code>。
+        </p></li>
+
+        <li class="listitem"><p class="para">
+                <em class="emphasis">mvcSuccessfulActionOnly</em>: 当使用MVC，当动作抛出一个异常并且这个标志为true，布局将不被解析（这是为了防止当<a href="zend.controller.plugins.html#zend.controller.plugins.standard.errorhandler" class="link">ErrorHandler plugin</a> 在使用时，布局被双重解析）。缺省地，这个标记是true。访问器是<code class="code">setMvcSuccessfulActionOnly()</code> 和 <code class="code">getMvcSuccessfulActionOnly()</code>。
+        </p></li>
+
+        <li class="listitem"><p class="para">
+                <em class="emphasis">view</em>: 当解析时使用的视图对象。当和MVC一起使用时，如果没有视图对象被显式传递，<code class="code">Zend_Layout</code> 将尝试使用用<a href="zend.controller.actionhelpers.html#zend.controller.actionhelpers.viewrenderer" class="link">the ViewRenderer</a> 注册的视图对象。访问器是<code class="code">setView()</code> 和 <code class="code">getView()</code>。
+        </p></li>
+
+        <li class="listitem"><p class="para">
+                <em class="emphasis">helperClass</em>: 当和MVC组件一起使用<code class="code">Zend_Layout</code> 时的动作助手。  缺省是 <code class="code">Zend_Layout_Controller_Action_Helper_Layout</code>。访问器是 <code class="code">setHelperClass()</code> 和 <code class="code">getHelperClass()</code>。
+        </p></li>
+
+        <li class="listitem"><p class="para">
+                <em class="emphasis">pluginClass</em>: 当和MVC组件一起使用<code class="code">Zend_Layout</code> 时的前端控制器插件类。缺省是 <code class="code">Zend_Layout_Controller_Plugin_Layout</code>。访问器是 <code class="code">setPluginClass()</code> 和 <code class="code">getPluginClass()</code>。
+        </p></li>
+
+        <li class="listitem"><p class="para">
+                <em class="emphasis">inflector</em>: 当解析布局名给布局视图脚本路径时的变形器；参见<a href="zend.layout.advanced.html#zend.layout.advanced.inflector" class="link"> <code class="code">Zend_Layout</code> 变形器文档有更多细节 </a>。访问器是 <code class="code">setInflector()</code> 和 <code class="code">getInflector()</code>。
+        </p></li>
+    </ul>
+
+    <blockquote><p><b class="note">Note</b>: <span class="info"><b>助手类和插件类必须传递给startMvc()</b><br /></span>
+        
+
+        
+            为了<code class="code">helperClass</code>和<code class="code">pluginClass</code>设置有效，它们必须作为选项传递给<code class="code">startMvc()</code>；如果以后设置，它们就没有影响。
+        <br />
+    </p></blockquote>
+
+    <div class="section" id="zend.layout.options.examples" name="zend.layout.options.examples"><div class="info"><h1 class="title">范例</h1></div>
+        
+
+        <p class="para">
+            下面的例子假定使用<code class="code">$options</code>数组和<code class="code">$config</code>对象：
+        </p>
+
+        <div class="programlisting"><div class="cdata"><pre>&lt;?php
+$options = array(
+    &#039;layout&#039;     =&gt; &#039;foo&#039;,
+    &#039;layoutPath&#039; =&gt; &#039;/path/to/layouts&#039;,
+    &#039;contentKey&#039; =&gt; &#039;CONTENT&#039;,           // ignored when MVC not used
+);
+?&gt;</pre></div></div>
+
+
+        <div class="programlisting"><div class="cdata"><pre>&lt;?php
+/**
+[layout]
+layout = &quot;foo&quot;
+layoutPath = &quot;/path/to/layouts&quot;
+contentKey = &quot;CONTENT&quot;
+*/
+$config = new Zend_Config_Ini(&#039;/path/to/layout.ini&#039;, &#039;layout&#039;);
+?&gt;</pre></div></div>
+
+
+        <div class="example"><div class="info"><p><b>Example #1 传递选项给构造器或startMvc()</b></p></div>
+            
+
+            <div class="example-contents"><p>
+                为了配置<code class="code">Zend_Layout</code>实例，构造器和<code class="code">startMvc()</code> 静态方法都可以接受选项数组或带有选项的<code class="code">Zend_Config</code> 对象。
+            </p></div>
+
+            <div class="example-contents"><p>
+                首先，看一下传递数组：
+            </p></div>
+
+            <div class="programlisting"><div class="cdata"><pre>&lt;?php
+// Using constructor:
+$layout = new Zend_Layout($options);
+
+// Using startMvc():
+$layout = Zend_Layout::startMvc($options);
+?&gt;</pre></div></div>
+
+
+            <div class="example-contents"><p>
+                现在使用配置对象：
+            </p></div>
+
+            <div class="programlisting"><div class="cdata"><pre>&lt;?php
+$config = new Zend_Config_Ini(&#039;/path/to/layout.ini&#039;, &#039;layout&#039;);
+
+// Using constructor:
+$layout = new Zend_Layout($config);
+
+// Using startMvc():
+$layout = Zend_Layout::startMvc($config);
+?&gt;</pre></div></div>
+
+
+            <div class="example-contents"><p>
+               基本上，这是定制<code class="code">Zend_Layout</code>实例的最简单的方法。
+            </p></div>
+        </div>
+
+        <div class="example"><div class="info"><p><b>Example #2 使用setOption() 和 setConfig()</b></p></div>
+            
+
+            <div class="example-contents"><p>
+                有时候在<code class="code">Zend_Layout</code> 对象初始化以后才需要配置；<code class="code">setOptions()</code> 和 <code class="code">setConfig()</code>让你快速而起容易地来做：
+            </p></div>
+
+            <div class="programlisting"><div class="cdata"><pre>&lt;?php
+// Using an array of options:
+$layout-&gt;setOptions($options);
+
+// Using a Zend_Config object:
+$layout-&gt;setConfig($options);
+?&gt;</pre></div></div>
+
+
+            <div class="example-contents"><p>
+                然而要注意特定的选项，如<code class="code">pluginClass</code> 和 <code class="code">helperClass</code>，当用这个方法传递，将没有效果；它们需要传递给构造器或者<code class="code">startMvc()</code> 方法。
+            </p></div>
+        </div>
+
+        <div class="example"><div class="info"><p><b>Example #3 使用访问器</b></p></div>
+            
+
+            <div class="example-contents"><p>
+                最后，通过访问器来配置<code class="code">Zend_Layout</code> 实例。所有的访问器实现一个流畅的接口，意味这它们的调用可能被链接：
+            </p></div>
+
+            <div class="programlisting"><div class="cdata"><pre>&lt;?php
+$layout-&gt;setLayout(&#039;foo&#039;)
+       -&gt;setLayoutPath(&#039;/path/to/layouts&#039;)
+       -&gt;setContentKey(&#039;CONTENT&#039;);
+?&gt;</pre></div></div>
+
+        </div>
+    </div>
+</div>
+        <hr />
+
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.layout.quickstart.html">Zend_Layout 快速入门</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.layout.html">Zend_Layout</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.layout.advanced.html">Zend_Layout 高级用法</a></div>
+                    </td>
+                </tr>
+            </table>
+</td>
+        <td style="font-size: smaller;" width="15%"> <style type="text/css">
+#leftbar {
+	float: left;
+	width: 186px;
+	padding: 5px;
+	font-size: smaller;
+}
+ul.toc {
+	margin: 0px 5px 5px 5px;
+	padding: 0px;
+}
+ul.toc li {
+	font-size: 85%;
+	margin: 1px 0 1px 1px;
+	padding: 1px 0 1px 11px;
+	list-style-type: none;
+	background-repeat: no-repeat;
+	background-position: center left;
+}
+ul.toc li.header {
+	font-size: 115%;
+	padding: 5px 0px 5px 11px;
+	border-bottom: 1px solid #cccccc;
+	margin-bottom: 5px;
+}
+ul.toc li.active {
+	font-weight: bold;
+}
+ul.toc li a {
+	text-decoration: none;
+}
+ul.toc li a:hover {
+	text-decoration: underline;
+}
+</style>
+ <ul class="toc">
+  <li class="header home"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="reference.html">Zend Framework Reference</a></li>
+  <li class="header up"><a href="zend.layout.html">Zend_Layout</a></li>
+  <li><a href="zend.layout.introduction.html">简介</a></li>
+  <li><a href="zend.layout.quickstart.html">Zend_Layout 快速入门</a></li>
+  <li class="active"><a href="zend.layout.options.html">Zend_Layout 配置选项</a></li>
+  <li><a href="zend.layout.advanced.html">Zend_Layout 高级用法</a></li>
+ </ul>
+ </td>
+    </tr>
+</table>
+</body>
+</html>

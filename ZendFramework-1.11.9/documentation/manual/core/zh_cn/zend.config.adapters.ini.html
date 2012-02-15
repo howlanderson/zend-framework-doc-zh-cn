@@ -1,0 +1,199 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <title>Zend_Config_Ini - Zend Framework Manual</title>
+
+</head>
+<body>
+<table width="100%">
+    <tr valign="top">
+        <td width="85%">
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.config.theory_of_operation.html">操作理论</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.config.html">Zend_Config</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.config.adapters.json.html">Zend_Config_Json</a></div>
+                    </td>
+                </tr>
+            </table>
+<hr />
+<div id="zend.config.adapters.ini" class="section"><div class="info"><h1 class="title">Zend_Config_Ini</h1></div>
+    
+    <p class="para">
+        <code class="code">Zend_Config_Ini</code>允许开发者通过嵌套的对象属性语法在应用程序中用熟悉的 INI 格式存储和读取配置数据。INI 格式在提供拥有配置数据键的等级结构和配置数据节之间的继承能力方面具有专长。配置数据等级结构通过用点或者句号 (<code class="code">.</code>)分离键值。一个节可以扩展或者通过在节的名称之后带一个冒号(<code class="code">:</code>)和被继承的配置数据的节的名称来从另一个节继承。
+    </p>
+    <blockquote><p><b class="note">Note</b>: <span class="info"><b>parse_ini_file</b><br /></span>
+        
+        
+            <code class="code">Zend_Config_Ini</code> 使用<a href="http://php.net/parse_ini_file" class="link external">&raquo; <code class="code">parse_ini_file()</code></a>PHP 函数。请复习这个文档了解它的特定行为，它在<code class="code">Zend_Config_Ini</code>中使用，例如<code class="code">true</code>, <code class="code">false</code>, <code class="code">yes</code>, <code class="code">no</code> 和 <code class="code">null</code> 这些特殊的值如何操作。
+        <br />
+    </p></blockquote>
+    <blockquote><p><b class="note">Note</b>: <span class="info"><b>键分离器</b><br /></span>
+        
+        
+            缺省地，键分离器字符是句号(<code class="code">.</code>)。然而，这个可以通过当构造<code class="code">Zend_Config_Ini</code>对象时修改<code class="code">$options</code> key <code class="code">&#039;nestSeparator&#039;</code> 被修改。例如：
+            <div class="programlisting"><div class="cdata"><pre>
+$options[&#039;nestSeparator&#039;] = &#039;:&#039;;
+$config = new Zend_Config_Ini(&#039;/path/to/config.ini&#039;,
+                              &#039;staging&#039;,
+                              $options);
+
+            </pre></div></div>
+
+        <br />
+    </p></blockquote>
+    <div class="example"><div class="info"><p><b>Example #1 使用 Zend_Config_Ini</b></p></div>
+        
+        <div class="example-contents"><p>
+            这个例子示例了从 INI 文件加载配置数据的<code class="code">Zend_Config_Ini</code>的基本用法。在这个例子中有生产系统（production system）和开发系统（staging system）的配置数据。因为开发系统配置数据和生产系统的配置数据类似，所以开发系统的节从生产系统的节继承。在这个案例中，结果(decision)是任意的并且它可以反过来做，即生产系统节从开发系统节继承，尽管这不可能用于更复杂的情形。接着，假定下面的配置数据包含在<code class="code">/path/to/config.ini</code>中：
+        </p></div>
+        <div class="programlisting"><div class="cdata"><pre>
+; 生产站点配置数据
+[production]
+webhost                  = www.example.com
+database.adapter         = pdo_mysql
+database.params.host     = db.example.com
+database.params.username = dbuser
+database.params.password = secret
+database.params.dbname   = dbname
+
+; 开发站点配置数据从生产站点配置数据集成并如果需要可以重写
+[staging : production]
+database.params.host     = dev.example.com
+database.params.username = devuser
+database.params.password = devsecret
+
+</pre></div></div>
+
+        <div class="example-contents"><p>
+            接着，假定开发者需要从INI文件取开发配置数据。这非常简单，只要指定INI文件和开发系统节就可以加载这些数据了：
+        </p></div>
+        <div class="programlisting"><div class="cdata"><pre>
+$config = new Zend_Config_Ini(&#039;/path/to/config.ini&#039;, &#039;staging&#039;);
+
+echo $config-&gt;database-&gt;params-&gt;host;   // 输出 &quot;dev.example.com&quot;
+echo $config-&gt;database-&gt;params-&gt;dbname; // 输出 &quot;dbname&quot;
+
+        </pre></div></div>
+
+    </div>
+    <blockquote><p><b class="note">Note</b>: 
+    <table class="doctable table"><div class="info"><caption><b>Zend_Config_Ini 构造器参数</b></caption></div>
+        
+        
+            <thead valign="middle">
+                  <tr valign="middle">
+                    <th>参数</th>
+                    <th>注释</th>
+                </tr>
+
+            </thead>
+
+            <tbody valign="middle" class="tbody">
+                <tr valign="middle">
+                    <td align="left"><code class="code">$filename</code></td>
+                    <td align="left">要加载的 INI 文件。</td>
+                </tr>
+
+                <tr valign="middle">
+                    <td align="left"><code class="code">$section</code></td>
+                    <td align="left">在INI文件中 [section] （节）将被加载。把这个参数设置为null，所有的节将被加载。另外，一个节名称的数组被提供给加载多个节。</td>
+                </tr>
+
+                <tr valign="middle">
+                    <td align="left"><code class="code">$options = false</code></td>
+                    <td align="left">选项数组。下面的键被支持：
+                        <ul class="itemizedlist">
+                            <li class="listitem"><p class="para"><em class="emphasis">allowModifications</em>：设置为true 允许随后加载文件更改。缺省为false </p></li>
+                            <li class="listitem"><p class="para"><em class="emphasis">nestSeparator</em>: 设置嵌套字符。缺省为&quot;.&quot;</p></li>
+                        </ul>
+                    </td>
+                </tr>
+
+            </tbody>
+        
+    </table>
+
+    </p></blockquote>
+</div>
+        <hr />
+
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.config.theory_of_operation.html">操作理论</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.config.html">Zend_Config</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.config.adapters.json.html">Zend_Config_Json</a></div>
+                    </td>
+                </tr>
+            </table>
+</td>
+        <td style="font-size: smaller;" width="15%"> <style type="text/css">
+#leftbar {
+	float: left;
+	width: 186px;
+	padding: 5px;
+	font-size: smaller;
+}
+ul.toc {
+	margin: 0px 5px 5px 5px;
+	padding: 0px;
+}
+ul.toc li {
+	font-size: 85%;
+	margin: 1px 0 1px 1px;
+	padding: 1px 0 1px 11px;
+	list-style-type: none;
+	background-repeat: no-repeat;
+	background-position: center left;
+}
+ul.toc li.header {
+	font-size: 115%;
+	padding: 5px 0px 5px 11px;
+	border-bottom: 1px solid #cccccc;
+	margin-bottom: 5px;
+}
+ul.toc li.active {
+	font-weight: bold;
+}
+ul.toc li a {
+	text-decoration: none;
+}
+ul.toc li a:hover {
+	text-decoration: underline;
+}
+</style>
+ <ul class="toc">
+  <li class="header home"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="reference.html">Zend Framework Reference</a></li>
+  <li class="header up"><a href="zend.config.html">Zend_Config</a></li>
+  <li><a href="zend.config.introduction.html">简介</a></li>
+  <li><a href="zend.config.theory_of_operation.html">操作理论</a></li>
+  <li class="active"><a href="zend.config.adapters.ini.html">Zend_Config_Ini</a></li>
+  <li><a href="zend.config.adapters.json.html">Zend_Config_Json</a></li>
+  <li><a href="zend.config.adapters.xml.html">Zend_Config_Xml</a></li>
+  <li><a href="zend.config.adapters.yaml.html">Zend_Config_Yaml</a></li>
+ </ul>
+ </td>
+    </tr>
+</table>
+</body>
+</html>

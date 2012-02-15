@@ -1,0 +1,170 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <title>安装 - Zend Framework Manual</title>
+
+</head>
+<body>
+<table width="100%">
+    <tr valign="top">
+        <td width="85%">
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="introduction.overview.html">概述</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="introduction.html">Introduction to Zend Framework</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="learning.html">Learning Zend Framework</a></div>
+                    </td>
+                </tr>
+            </table>
+<hr />
+<div id="introduction.installation" class="section"><div class="info"><h1 class="title">安装</h1></div>
+
+    
+
+    <p class="para">
+        Zend Framework 要求 PHP版本不低于5.1.4，但强烈建议使用 5.2.3 或更高版本，因为在这两个版本之间有
+        许多重大安全和性能方面的改善和提高。请查阅 <a href="requirements.html" class="link">附录 需求</a> 了解更多信息。
+    </p>
+
+    <p class="para">
+          安装 Zend Framework 非常简单。只要你下载并解压它，并把发行版里的 /library 文件夹加到你的 include 路径里就行了。
+          你也可以把 library 文件夹移动到其它可共享的位置。
+        <ul class="itemizedlist">
+            <li class="listitem">
+                <p class="para">
+                    <a href="http://framework.zend.com/download" class="link external">&raquo; 下载最新的稳定版本。</a>
+                    这个版本有 <code class="code">.zip</code> 和 <code class="code">.tar.gz</code>
+                    两种格式，对于 Zend Framework 的新手来说是不错的选择。
+                </p>
+            </li>
+            <li class="listitem">
+                <p class="para">
+                    <a href="http://framework.zend.com/download/snapshot" class="link external">&raquo; 下载最新的每日快照（nightly snapshot）。
+                    </a>对于用于勇于面对困难的人更加适用。每日快照可以体现出 Zend Framework 的开发进展。
+                    快照同时含有英文版本和其他可用语言的文档。
+                    如果希望使用最新的 Zend Framework 进行开发，请使用 SVN （Subversion）客户端下载最新的代码。
+                </p>
+            </li>
+            <li class="listitem">
+                <p class="para">
+                    使用 <a href="http://subversion.tigris.org" class="link external">&raquo; Subversion</a>（SVN）客户端。Zend Framework
+                    是开源软件，开发所使用的 Subversionu 仓库也是可公开访问的。如果已经在开发中使用了 SVN 的代码，
+                    或者希望对框架有所贡献，或者想使用比公开发布版本更新的代码，则可以考虑从 SVN 中获得
+                    Zend Framework。
+                </p>
+                <p class="para">
+                    <a href="http://svnbook.red-bean.com/nightly/zh/svn.ref.svn.c.export.html" class="link external">&raquo; 导出</a>
+                    功能可以获得在工作目录中没有 <code class="code">.svn</code> 文件夹的指定版本的框架副本。
+                </p>
+                <p class="para">
+                    <a href="http://svnbook.red-bean.com/nightly/zh/svn.ref.svn.c.checkout.html" class="link external">&raquo; 检出</a>
+                    对于向 Zend Framework 进行贡献是很方便的，同时工作副本可以在任何时候使用
+                    <a href="http://svnbook.red-bean.com/nightly/zh/svn.ref.svn.c.update.html" class="link external">&raquo; 
+                    <code class="code">提交</code></a>来更新。
+                </p>
+                <p class="para">
+                    <a href="http://svnbook.red-bean.com/nightly/zh/svn.advanced.externals.html" class="link external">&raquo; 外部定义
+                    </a> 可以让开发者在他们的应用中方便的使用 SVN 同步框架版本。
+                </p>
+                <p class="para">
+                    Zend Framework 的 SVN 仓库 URL 地址是：
+                    <a href="http://framework.zend.com/svn/framework/standard/trunk" class="link external">&raquo; http://framework.zend.com/svn/framework/standard/trunk</a>
+                </p>
+            </li>
+        </ul>
+    </p>
+
+    <p class="para">
+        当拥有了一个可用的 Zend Framework 副本时，应用程序需要能够访问到框架中的类。虽然有
+        <a href="http://www.php.net/manual/zh/configuration.changes.php" class="link external">&raquo; 许多的方法来达到这个目的</a>，PHP 的
+        <a href="http://www.php.net/manual/zh/ini.core.php#ini.include-path" class="link external">&raquo; <code class="code">include_path</code></a>
+        必须含有 Zend Framework 库的路径。
+    </p>
+
+    <p class="para">
+          Zend 提供了 <a href="http://framework.zend.com/docs/quickstart" class="link external">&raquo; 快速入门指南</a> 可以让你尽快入门。
+          这是一个极好的用实际的例子来学习 Zend Framework的方法。
+    </p>
+
+    <p class="para">
+        因为 Zend Framework 的组件是松耦合的， 在你的程序里可以使用一些独一无二的它们的组合。
+        本文档下面的章节基于组件划分，全面介绍了 Zend Framework 的使用。
+    </p>
+
+</div>
+        <hr />
+
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="introduction.overview.html">概述</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="introduction.html">Introduction to Zend Framework</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="learning.html">Learning Zend Framework</a></div>
+                    </td>
+                </tr>
+            </table>
+</td>
+        <td style="font-size: smaller;" width="15%"> <style type="text/css">
+#leftbar {
+	float: left;
+	width: 186px;
+	padding: 5px;
+	font-size: smaller;
+}
+ul.toc {
+	margin: 0px 5px 5px 5px;
+	padding: 0px;
+}
+ul.toc li {
+	font-size: 85%;
+	margin: 1px 0 1px 1px;
+	padding: 1px 0 1px 11px;
+	list-style-type: none;
+	background-repeat: no-repeat;
+	background-position: center left;
+}
+ul.toc li.header {
+	font-size: 115%;
+	padding: 5px 0px 5px 11px;
+	border-bottom: 1px solid #cccccc;
+	margin-bottom: 5px;
+}
+ul.toc li.active {
+	font-weight: bold;
+}
+ul.toc li a {
+	text-decoration: none;
+}
+ul.toc li a:hover {
+	text-decoration: underline;
+}
+</style>
+ <ul class="toc">
+  <li class="header home"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="introduction.html">Introduction to Zend Framework</a></li>
+  <li><a href="introduction.overview.html">概述</a></li>
+  <li class="active"><a href="introduction.installation.html">安装</a></li>
+ </ul>
+ </td>
+    </tr>
+</table>
+</body>
+</html>

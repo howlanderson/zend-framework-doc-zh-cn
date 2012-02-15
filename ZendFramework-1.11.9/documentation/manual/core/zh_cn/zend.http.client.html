@@ -1,0 +1,344 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <title>Zend_Http_Client - 介绍 - Zend Framework Manual</title>
+
+</head>
+<body>
+<table width="100%">
+    <tr valign="top">
+        <td width="85%">
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.http.html">Zend_Http</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.http.html">Zend_Http</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.http.client.advanced.html">Zend_Http_Client - Advanced Usage</a></div>
+                    </td>
+                </tr>
+            </table>
+<hr />
+<div id="zend.http.client" class="section"><div class="info"><h1 class="title">Zend_Http_Client - 介绍</h1></div>
+    
+
+    <div class="section" id="zend.http.client.introduction" name="zend.http.client.introduction"><div class="info"><h1 class="title">介绍</h1></div>
+        
+        <p class="para">
+            Zend_Http_Client 提供了一个简单的界面来执行HTTP请求。Zend_Http_Client 支持
+            作为一个 HTTP 客户端应有的大多数简单功能，也包括象HTTP认证和文件上传等更加
+            复杂的功能。成功的请求和大多数失败的请求将返回一个 Zend_Http_Response 对象，
+            该对象提供了对响应的头部信息和主体信息的访问。
+            （见<a href="zend.http.response.html" class="xref">Zend_Http_Response</a>）
+        </p>
+        <p class="para">
+            构造器类可选的第一个参数可以是一个URL（字符串或者 Zend_Uri_Http 对象），
+            第二个可选参数是一个包含配置参数的数组。这两个参数也可以全空，之后由
+            setUri()和setConfig()方法提供。
+            <div class="example"><div class="info"><p><b>Example #1 初始化一个 Zend_Http_Client 对象</b></p></div>
+                
+                <div class="programlisting"><div class="cdata"><pre>
+$client = new Zend_Http_Client(&#039;http://example.org&#039;, array(
+    &#039;maxredirects&#039; =&gt; 0,
+    &#039;timeout&#039;      =&gt; 30));
+
+// 上述代码和下面的代码是两种不同的写法
+$client = new Zend_Http_Client();
+$client-&gt;setUri(&#039;http://example.org&#039;);
+$client-&gt;setConfig(array(
+    &#039;maxredirects&#039; =&gt; 0,
+    &#039;timeout&#039;      =&gt; 30));
+
+                </pre></div></div>
+
+            </div>
+        </p>
+    </div>
+    <div class="section" id="zend.http.client.configuration" name="zend.http.client.configuration"><div class="info"><h1 class="title">配置参数</h1></div>
+        
+        <p class="para">
+            构造器和 setConfig() 方法接受一个复合的配置参数数组，因为这些配置参数
+            有一个缺省值，所以是否配置这些参数都是可选的。
+            <table class="doctable table"><div class="info"><caption><b>Zend_Http_Client 配置参数</b></caption></div>
+                
+                
+                    <thead valign="middle">
+                        <tr valign="middle">
+                            <th>参数</th>
+                            <th>描述</th>
+                            <th>值的类型</th>
+                            <th>缺省值</th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody valign="middle" class="tbody">
+                        <tr valign="middle">
+                            <td align="left">maxredirects</td>
+                            <td align="left">随后的重定向的最大值 (0 = none)</td>
+                            <td align="left">整数</td>
+                            <td align="left">5</td>
+                        </tr>
+
+                        <tr valign="middle">
+                            <td align="left">strict</td>
+                            <td align="left">是否执行头部名称的确认，当设置为 False 时，将忽略确认，通常情况下不应改变这个参数的值。</td>
+                            <td align="left">布尔值</td>
+                            <td align="left">true</td>
+                        </tr>
+
+                        <tr valign="middle">
+                            <td align="left">strictredirects</td>
+                            <td align="left">重定向时是否严格遵守 RFC (见 <a href="zend.http.client.advanced.html#zend.http.client.redirections" class="xref">HTTP Redirections</a>)</td>
+                            <td align="left">布尔值</td>
+                            <td align="left">false</td>
+                        </tr>
+
+                        <tr valign="middle">
+                            <td align="left">useragent</td>
+                            <td align="left">用户代理的识别字符串（含在请求的头部信息内）</td>
+                            <td align="left">字符串</td>
+                            <td align="left">&#039;Zend_Http_Client&#039;</td>
+                        </tr>
+
+                        <tr valign="middle">
+                            <td align="left">timeout</td>
+                            <td align="left">连接超时 (单位是秒)</td>
+                            <td align="left">整数</td>
+                            <td align="left">10</td>
+                        </tr>
+
+                        <tr valign="middle">
+                            <td align="left">httpversion</td>
+                            <td align="left">HTTP 协议版本 (通常是 &#039;1.1&#039; 或 &#039;1.0&#039;)</td>
+                            <td align="left">字符串</td>
+                            <td align="left">&#039;1.1&#039;</td>
+                        </tr>
+
+                        <tr valign="middle">
+                            <td align="left">adapter</td>
+                            <td align="left">连接适配器类时使用（见 <a href="zend.http.client.adapters.html" class="xref">Zend_Http_Client - Connection Adapters</a>）</td>
+                            <td align="left">多种类型</td>
+                            <td align="left">&#039;Zend_Http_Client_Adapter_Socket&#039;</td>
+                        </tr>
+
+                        <tr valign="middle">
+                            <td align="left">keepalive</td>
+                            <td align="left">是否允许与服务器之间的 keep-alive 连接。如果在同一台服务器上
+                            执行几个互相关联的请求时，keep-alive 连接是有用的而且有可能提高性能。</td>
+                            <td align="left">布尔值</td>
+                            <td align="left">false</td>
+                        </tr>
+
+                        <tr valign="middle">
+                            <td align="left">storeresponse</td>
+                            <td align="left">是否保存上次的响应结果，以备今后使用getLastResponse()重新获取。如果设置为 false，getLastResponse() 将返回空。</td>
+                            <td align="left">布尔值</td>
+                            <td align="left">true</td>
+                        </tr>
+
+                    </tbody>
+                
+            </table>
+
+        </p>
+    </div>
+    <div class="section" id="zend.http.client.basic-requests" name="zend.http.client.basic-requests"><div class="info"><h1 class="title">执行基本 HTTP 请求</h1></div>
+        
+        <p class="para">
+            使用 request() 方法执行简单 HTTP 请求是件非常容易的事情，3行代码即可搞定：
+            <div class="example"><div class="info"><p><b>Example #2 执行一个简单的 GET 请求</b></p></div>
+                
+                <div class="programlisting"><div class="cdata"><pre>
+$client = new Zend_Http_Client(&#039;http://example.org&#039;);
+$response = $client-&gt;request();
+
+                </pre></div></div>
+
+            </div>
+            request() 带一个可选的参数 - 请求方法，它可以是 GET, POST, PUT, HEAD,
+            DELETE, TRACE, OPTIONS 或 CONNECT 等由 HTTP 协议定义的方法。
+            <a href="#fnid1" name="fn1"><sup>[1]</sup></a>
+              <tt class="uri">http://www.w3.org/Protocols/rfc2616/rfc2616.html</tt>
+            .
+            为了方便起见，这些都被定义为类的常量：即
+            Zend_Http_Request::GET, Zend_Http_Request::POST 等等。
+        </p>
+        <p class="para">
+            如果没有指定请求方法，则使用最后一次 setMethod() 设定的请求方法。
+            如果从未使用 setMethod()，那么缺省的请求方法是 GET（见上述的例子）。
+            <div class="example"><div class="info"><p><b>Example #3 使用 GET 以外的请求方法</b></p></div>
+                
+                <div class="programlisting"><div class="cdata"><pre>
+// 执行一个 POST 请求
+$response = $client-&gt;request(&#039;POST&#039;);
+
+// 另外一种执行 POST 请求的方式
+$client-&gt;setMethod(Zend_Http_Client::POST);
+$response = $client-&gt;request();
+
+                </pre></div></div>
+
+            </div>
+        </p>
+    </div>
+
+    <div class="section" id="zend.http.client.parameters" name="zend.http.client.parameters"><div class="info"><h1 class="title">添加 GET 和 POST 参数 </h1></div>
+        
+        <p class="para">
+            在一个HTTP请求中添加GET参数是非常简单的，既可以通过把参数指定为
+            URL的一部分，也可以通过使用 setParameterGet() 方法来添加。这个方
+            法把把GET参数的名称作为它的第一个参数，把GET参数的值作为它的第二
+            个参数。为了方便起见，setParameterGet() 方法也能接受单个复合数组
+            （名称 =&gt; 值）的 GET 参数，这种方式对于需要设置几个 GET 参数时更
+            加方便。
+            <div class="example"><div class="info"><p><b>Example #4 设置 GET 参数</b></p></div>
+                
+                <div class="programlisting"><div class="cdata"><pre>
+// 使用 setParameterGet 方法设置一个 GET 参数
+$client-&gt;setParameterGet(&#039;knight&#039;, &#039;lancelot&#039;);
+
+// 设置 URL 的等效方法
+$client-&gt;setUri(&#039;http://example.com/index.php?knight=lancelot&#039;);
+
+// 一次添加几个参数
+$client-&gt;setParameterGet(array(
+    &#039;first_name&#039;  =&gt; &#039;Bender&#039;,
+    &#039;middle_name&#039; =&gt; &#039;Bending&#039;
+    &#039;made_in&#039;     =&gt; &#039;Mexico&#039;,
+));
+
+                </pre></div></div>
+
+            </div>
+        </p>
+        <p class="para">
+            虽然 GET 参数可以和任何请求方法一起发送，但 POST 参数只能在 POST
+            请求内发送。给一个请求添加 POST 参数与添加 GET 参数非常类似，是由
+            setParameterPost() 方法完成的，该方法在结构上与 setParameterGet()
+            方法很相似。
+            <div class="example"><div class="info"><p><b>Example #5 设置 POST 参数</b></p></div>
+                
+                <div class="programlisting"><div class="cdata"><pre>
+// 设置一个 POST 参数
+$client-&gt;setParameterPost(&#039;language&#039;, &#039;fr&#039;);
+
+// 设置几个 POST 参数，其中的一个参数有几个值
+$client-&gt;setParameterPost(array(
+    &#039;language&#039;  =&gt; &#039;es&#039;,
+    &#039;country&#039;   =&gt; &#039;ar&#039;,
+    &#039;selection&#039; =&gt; array(45, 32, 80)
+));
+
+                </pre></div></div>
+
+            </div>
+            需要注意的是，当发送 POST 请求时，即可设置GET参数，也可设置POST参数。
+            另一方面，如果针对一个非 POST 请求设置 POST 参数，将不会被触发或给出
+            报错，因为它是没有用的。除非请求是一个 POST 请求，POST 参数都会被简
+            单地忽略掉。
+        </p>
+    </div>
+
+    <div class="section" id="zend.http.client.accessing_last" name="zend.http.client.accessing_last"><div class="info"><h1 class="title">访问最后一次的请求和响应</h1></div>
+        
+        <p class="para">
+            Zend_Http_Client 提供了访问客户端最后一次发送的请求和访问客户端最后
+            一次接收到的响应的方法。
+            <code class="code">Zend_Http_Client-&gt;getLastRequest()</code> 不需要设置参数，同时
+            返回最后一次客户端发送的HTTP请求字符串。同样，
+            <code class="code">Zend_Http_Client-&gt;getLastResponse()</code> 返回客户端接收到的
+            最后一次<a href="zend.http.response.html" class="link">Zend_Http_Response</a> 对象。
+        </p>
+    </div>
+
+<div class="footnote"><a name="fnid1" href="#fn1"><sup>[1]</sup></a><span class="para footnote">
+                见 RFC 2616 - .
+              </span></div>
+</div>
+        <hr />
+
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.http.html">Zend_Http</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.http.html">Zend_Http</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.http.client.advanced.html">Zend_Http_Client - Advanced Usage</a></div>
+                    </td>
+                </tr>
+            </table>
+</td>
+        <td style="font-size: smaller;" width="15%"> <style type="text/css">
+#leftbar {
+	float: left;
+	width: 186px;
+	padding: 5px;
+	font-size: smaller;
+}
+ul.toc {
+	margin: 0px 5px 5px 5px;
+	padding: 0px;
+}
+ul.toc li {
+	font-size: 85%;
+	margin: 1px 0 1px 1px;
+	padding: 1px 0 1px 11px;
+	list-style-type: none;
+	background-repeat: no-repeat;
+	background-position: center left;
+}
+ul.toc li.header {
+	font-size: 115%;
+	padding: 5px 0px 5px 11px;
+	border-bottom: 1px solid #cccccc;
+	margin-bottom: 5px;
+}
+ul.toc li.active {
+	font-weight: bold;
+}
+ul.toc li a {
+	text-decoration: none;
+}
+ul.toc li a:hover {
+	text-decoration: underline;
+}
+</style>
+ <ul class="toc">
+  <li class="header home"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="reference.html">Zend Framework Reference</a></li>
+  <li class="header up"><a href="zend.http.html">Zend_Http</a></li>
+  <li class="active"><a href="zend.http.client.html">Zend_Http_Client - 介绍</a></li>
+  <li><a href="zend.http.client.advanced.html">Zend_Http_Client - Advanced Usage</a></li>
+  <li><a href="zend.http.client.adapters.html">Zend_Http_Client - Connection Adapters</a></li>
+  <li><a href="zend.http.cookies.html">Zend_Http_Cookie and Zend_Http_CookieJar</a></li>
+  <li><a href="zend.http.response.html">Zend_Http_Response</a></li>
+  <li><a href="zend.http.user-agent.html">Zend_Http_UserAgent</a></li>
+  <li><a href="zend.http.user-agent-device.html">The UserAgent Device Interface</a></li>
+  <li><a href="zend.http.user-agent-features.html">The UserAgent Features Adapter</a></li>
+  <li><a href="zend.http.user-agent-features-wurfl.html">The WURFL UserAgent Features Adapter</a></li>
+  <li><a href="zend.http.user-agent-features-device-atlas.html">The DeviceAtlas UserAgent Features Adapter</a></li>
+  <li><a href="zend.http.user-agent-features-tera-wurfl.html">The TeraWurfl UserAgent Features Adapter</a></li>
+  <li><a href="zend.http.user-agent-storage.html">The UserAgent Storage Interface</a></li>
+  <li><a href="zend.http.user-agent-storage-session.html">The Session UserAgent Storage Adapter</a></li>
+ </ul>
+ </td>
+    </tr>
+</table>
+</body>
+</html>

@@ -1,0 +1,272 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <title>精细的访问控制 - Zend Framework Manual</title>
+
+</head>
+<body>
+<table width="100%">
+    <tr valign="top">
+        <td width="85%">
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.acl.introduction.html">简介</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.acl.html">Zend_Acl</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.acl.advanced.html">高级用法</a></div>
+                    </td>
+                </tr>
+            </table>
+<hr />
+<div id="zend.acl.refining" class="section"><div class="info"><h1 class="title">精细的访问控制</h1></div>
+
+    
+
+    <div class="section" id="zend.acl.refining.precise" name="zend.acl.refining.precise"><div class="info"><h1 class="title">精细的访问控制</h1></div>
+
+        
+
+        <p class="para">
+            在<a href="zend.acl.introduction.html" class="link">前一章节</a>中定义的基本的 ACL 显示如何在整个 ACL (所有的 resources )允许各种各样的权限。然而在实践中，访问控制趋向于拥有例外和可变程度的复杂性。Zend_Acl 允许你直截了当并灵活地完成这些精细准确的控制。
+        </p>
+
+        <p class="para">
+            对于CMS范例，&#039;staff&#039; 组覆盖了绝大多数用户的需求，同时，一个新的 &#039;marketing&#039; 组要求在CMS中访问时事通讯和最近的新闻。这个组相当地自给自足并有能力发布和归档时事通讯和最近的新闻。
+        </p>
+
+        <p class="para">
+           另外，还要求 &#039;staff&#039; 组被允许浏览新闻故事但不能修订最近的新闻。最后，不可能让每一个人（包括系统管理员）去归档任何&#039;announcement&#039; 新闻故事，因为它们只有1-2天的生命周期。
+        </p>
+
+        <p class="para">
+            首先我们修订 role 注册表来反映这些变化。我们已经确定 &#039;marketing&#039; 组和 &#039;staff&#039; 组有着同样的基本许可，所以我们用从 &#039;staff&#039; 组继承许可的方法来定义 &#039;marketing&#039; 组
+        </p>
+
+        <div class="programlisting"><div class="cdata"><pre>
+// 新 marketing 组从 staff 组继承许可
+$acl-&gt;addRole(new Zend_Acl_Role(&#039;marketing&#039;), &#039;staff&#039;);
+
+        </pre></div></div>
+
+
+        <p class="para">
+           然后， 注意上面的访问控制涉及到特定的 resources ( 例如 &quot;newsletter&quot;, &quot;latest news&quot;, &quot;announcement news&quot;). 现在我们来添加这些 resources：
+        </p>
+
+        <div class="programlisting"><div class="cdata"><pre>
+// Create Resources for the rules
+
+// newsletter
+$acl-&gt;add(new Zend_Acl_Resource(&#039;newsletter&#039;));
+
+// news
+$acl-&gt;add(new Zend_Acl_Resource(&#039;news&#039;));
+
+// latest news
+$acl-&gt;add(new Zend_Acl_Resource(&#039;latest&#039;), &#039;news&#039;);
+
+// announcement news
+$acl-&gt;add(new Zend_Acl_Resource(&#039;announcement&#039;), &#039;news&#039;);
+
+        </pre></div></div>
+
+
+        <p class="para">
+           接着，这个是在 ACL 的目标区域定义更特定的规则的概况：
+        </p>
+
+        <div class="programlisting"><div class="cdata"><pre>
+// Marketing must be able to publish and archive newsletters and the
+// latest news
+$acl-&gt;allow(&#039;marketing&#039;,
+            array(&#039;newsletter&#039;, &#039;latest&#039;),
+            array(&#039;publish&#039;, &#039;archive&#039;));
+
+// Staff (和 marketing, 通过继承), 禁止修订 latest news
+$acl-&gt;deny(&#039;staff&#039;, &#039;latest&#039;, &#039;revise&#039;);
+
+// Everyone (包括 administrators) 禁止归档 news announcements
+$acl-&gt;deny(null, &#039;announcement&#039;, &#039;archive&#039;);
+
+        </pre></div></div>
+
+
+        <p class="para">
+           我们现在能够查询到 ACL 的最新变化：
+        </p>
+
+        <div class="programlisting"><div class="cdata"><pre>
+echo $acl-&gt;isAllowed(&#039;staff&#039;, &#039;newsletter&#039;, &#039;publish&#039;) ?
+     &quot;allowed&quot; : &quot;denied&quot;;
+// denied
+
+echo $acl-&gt;isAllowed(&#039;marketing&#039;, &#039;newsletter&#039;, &#039;publish&#039;) ?
+     &quot;allowed&quot; : &quot;denied&quot;;
+// allowed
+
+echo $acl-&gt;isAllowed(&#039;staff&#039;, &#039;latest&#039;, &#039;publish&#039;) ?
+     &quot;allowed&quot; : &quot;denied&quot;;
+// denied
+
+echo $acl-&gt;isAllowed(&#039;marketing&#039;, &#039;latest&#039;, &#039;publish&#039;) ?
+     &quot;allowed&quot; : &quot;denied&quot;;
+// allowed
+
+echo $acl-&gt;isAllowed(&#039;marketing&#039;, &#039;latest&#039;, &#039;archive&#039;) ?
+     &quot;allowed&quot; : &quot;denied&quot;;
+// allowed
+
+echo $acl-&gt;isAllowed(&#039;marketing&#039;, &#039;latest&#039;, &#039;revise&#039;) ?
+     &quot;allowed&quot; : &quot;denied&quot;;
+// denied
+
+echo $acl-&gt;isAllowed(&#039;editor&#039;, &#039;announcement&#039;, &#039;archive&#039;) ?
+     &quot;allowed&quot; : &quot;denied&quot;;
+// denied
+
+echo $acl-&gt;isAllowed(&#039;administrator&#039;, &#039;announcement&#039;, &#039;archive&#039;) ?
+     &quot;allowed&quot; : &quot;denied&quot;;
+// denied
+
+        </pre></div></div>
+
+
+    </div>
+
+    <div class="section" id="zend.acl.refining.removing" name="zend.acl.refining.removing"><div class="info"><h1 class="title">除去访问控制</h1></div>
+
+        
+
+        <p class="para">
+            要从 ACL 中除去一个或多个访问规则，只要简单地用 <code class="code">removeAllow()</code> 或 <code class="code">removeDeny()</code> 方法即可。如果提供一个<code class="code">null</code>参数值给 <code class="code">allow()</code> 和 <code class="code">deny()</code> 方法，则访问规则将应用到所有的角色，资源和/或权限上。
+        </p>
+
+        <div class="programlisting"><div class="cdata"><pre>
+// 除去 “禁止 staff 修订最近的新闻”(和marketing, 由于继承的原因)
+//（等于允许staff修订最近的新闻 Jason注）
+$acl-&gt;removeDeny(&#039;staff&#039;, &#039;latest&#039;, &#039;revise&#039;);
+
+echo $acl-&gt;isAllowed(&#039;marketing&#039;, &#039;latest&#039;, &#039;revise&#039;) ?
+     &quot;allowed&quot; : &quot;denied&quot;;
+// allowed
+
+// Remove the allowance of publishing and archiving newsletters to
+// marketing
+$acl-&gt;removeAllow(&#039;marketing&#039;,
+                  &#039;newsletter&#039;,
+                  array(&#039;publish&#039;, &#039;archive&#039;));
+
+echo $acl-&gt;isAllowed(&#039;marketing&#039;, &#039;newsletter&#039;, &#039;publish&#039;) ?
+     &quot;allowed&quot; : &quot;denied&quot;;
+// denied
+
+echo $acl-&gt;isAllowed(&#039;marketing&#039;, &#039;newsletter&#039;, &#039;archive&#039;) ?
+     &quot;allowed&quot; : &quot;denied&quot;;
+// denied
+
+        </pre></div></div>
+
+
+        <p class="para">
+          如上所示，对于权限的修改可能是增量的，但使用 <code class="code">null</code> 值（未指定权限项的参数值）超越了对权限的增量修改。（所谓的增量修改是指可以对 Resources 一个一个地添加权限或禁止，而如果未指定权限参数值，即使用 <code class="code">null</code> 值，可以使得这些步骤简化，一次性地对某个Resource的所有权限进行允许或禁止。Jason注，Haohappy补）
+        </p>
+
+        <div class="programlisting"><div class="cdata"><pre>
+// 允许 marketing 对 latest news 有所有的许可
+$acl-&gt;allow(&#039;marketing&#039;, &#039;latest&#039;);
+
+echo $acl-&gt;isAllowed(&#039;marketing&#039;, &#039;latest&#039;, &#039;publish&#039;) ?
+     &quot;allowed&quot; : &quot;denied&quot;;
+// allowed
+
+echo $acl-&gt;isAllowed(&#039;marketing&#039;, &#039;latest&#039;, &#039;archive&#039;) ?
+     &quot;allowed&quot; : &quot;denied&quot;;
+// allowed
+
+echo $acl-&gt;isAllowed(&#039;marketing&#039;, &#039;latest&#039;, &#039;anything&#039;) ?
+     &quot;allowed&quot; : &quot;denied&quot;;
+// allowed
+
+        </pre></div></div>
+
+
+    </div>
+
+</div>
+        <hr />
+
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.acl.introduction.html">简介</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.acl.html">Zend_Acl</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.acl.advanced.html">高级用法</a></div>
+                    </td>
+                </tr>
+            </table>
+</td>
+        <td style="font-size: smaller;" width="15%"> <style type="text/css">
+#leftbar {
+	float: left;
+	width: 186px;
+	padding: 5px;
+	font-size: smaller;
+}
+ul.toc {
+	margin: 0px 5px 5px 5px;
+	padding: 0px;
+}
+ul.toc li {
+	font-size: 85%;
+	margin: 1px 0 1px 1px;
+	padding: 1px 0 1px 11px;
+	list-style-type: none;
+	background-repeat: no-repeat;
+	background-position: center left;
+}
+ul.toc li.header {
+	font-size: 115%;
+	padding: 5px 0px 5px 11px;
+	border-bottom: 1px solid #cccccc;
+	margin-bottom: 5px;
+}
+ul.toc li.active {
+	font-weight: bold;
+}
+ul.toc li a {
+	text-decoration: none;
+}
+ul.toc li a:hover {
+	text-decoration: underline;
+}
+</style>
+ <ul class="toc">
+  <li class="header home"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="reference.html">Zend Framework Reference</a></li>
+  <li class="header up"><a href="zend.acl.html">Zend_Acl</a></li>
+  <li><a href="zend.acl.introduction.html">简介</a></li>
+  <li class="active"><a href="zend.acl.refining.html">精细的访问控制</a></li>
+  <li><a href="zend.acl.advanced.html">高级用法</a></li>
+ </ul>
+ </td>
+    </tr>
+</table>
+</body>
+</html>

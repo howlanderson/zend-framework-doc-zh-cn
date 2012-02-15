@@ -1,0 +1,408 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <title>Zend_Config_Yaml - Zend Framework Manual</title>
+
+</head>
+<body>
+<table width="100%">
+    <tr valign="top">
+        <td width="85%">
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.config.adapters.xml.html">Zend_Config_Xml</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.config.html">Zend_Config</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.config.writer.html">Zend_Config_Writer</a></div>
+                    </td>
+                </tr>
+            </table>
+<hr />
+<div id="zend.config.adapters.yaml" class="section"><div class="info"><h1 class="title">Zend_Config_Yaml</h1></div>
+    
+
+    <div class="section" id="zend.config.adapters.yaml.intro" name="zend.config.adapters.yaml.intro"><div class="info"><h1 class="title">Overview</h1></div>
+        
+
+        <p class="para">
+            <a href="http://www.yaml.org/" class="link external">&raquo; YAML</a> is a recursive acronym meaning &quot;YAML
+            Ain&#039;t Markup Language&quot;, and is intended as a &quot;human friendly data serialization
+            standard for all programming languages.&quot; It is often used for application configuration.
+        </p>
+
+        <p class="para">
+            <span class="classname">Zend_Config_Yaml</span> is a lightweight
+            <span class="classname">Zend_Config</span> extension. It includes a parser capable of
+            recognizing most common YAML syntax used for purposes of configuration, and allows
+            specifying other parsers should you want more complex syntax (e.g., ext/syck, spyc,
+            sfYaml, etc.).
+        </p>
+    </div>
+
+    <div class="section" id="zend.config.adapters.yaml.quick-start" name="zend.config.adapters.yaml.quick-start"><div class="info"><h1 class="title">Quick Start</h1></div>
+        
+
+        <p class="para">
+            The following is a YAML version of a standard application configuration.
+        </p>
+
+        <div class="programlisting yaml"><div class="yamlcode"><div style="font-family: monospace;"><ol><li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">production:</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; phpSettings:</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; display_startup_errors: false</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; display_errors: false</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; includePaths:</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; library: APPLICATION_PATH/../library</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; bootstrap:</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; path: APPLICATION_PATH/Bootstrap.php</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; class: &quot;Bootstrap&quot;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; appnamespace: &quot;Application&quot;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; resources:</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; frontController:</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; &nbsp; controllerDirectory: APPLICATION_PATH/controllers</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; &nbsp; moduleDirectory: APPLICATION_PATH/modules</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; &nbsp; params:</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; &nbsp; &nbsp; displayExceptions: false</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; modules:</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; db:</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; &nbsp; adapter: &quot;pdo_sqlite&quot;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; &nbsp; params:</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; &nbsp; &nbsp; dbname: APPLICATION_PATH/../data/db/application.db</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; layout:</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; &nbsp; layoutPath: APPLICATION_PATH/layouts/scripts/</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">staging: </div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; _extends: production</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">testing: </div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; _extends: production</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; phpSettings:</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; display_startup_errors: true</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; display_errors: true</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">development:</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; _extends: production</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; phpSettings:</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; display_startup_errors: true</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; display_errors: true</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; resources:</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; frontController:</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; &nbsp; params:</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; &nbsp; &nbsp; displayExceptions: true</div></li></ol></div></div></div>
+
+
+        <p class="para">
+            To utilize it, you simply instantiate <span class="classname">Zend_Config_Yaml</span>, pointing
+            it to the location of this file and indicating the section of the file to load. By
+            default, constant names found in values will be substituted with their appropriate
+            values.
+        </p>
+
+        <div class="programlisting php"><div class="phpcode"><div class="php" style="font-family: monospace;"><ol><li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #0000ff;">$config</span> = <span style="color: #000000; font-weight: bold;">new</span> Zend_Config_Yaml<span style="color: #66cc66;">&#40;</span></div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; APPLICATION_PATH . <span style="color: #ff0000;">'/configs/application.yaml'</span>,</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; APPLICATION_ENV</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #66cc66;">&#41;</span>;</div></li></ol></div></div></div>
+
+
+        <p class="para">
+            Once instantiated, you use it as you would any other configuration object.
+        </p>
+
+        <div class="programlisting php"><div class="phpcode"><div class="php" style="font-family: monospace;"><ol><li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #0000ff;">$db</span> = Zend_Db::<span style="color: #006600;">factory</span><span style="color: #66cc66;">&#40;</span><span style="color: #0000ff;">$config</span>-&gt;<span style="color: #006600;">resources</span>-&gt;<span style="color: #006600;">db</span><span style="color: #66cc66;">&#41;</span>;</div></li></ol></div></div></div>
+
+    </div>
+
+    <div class="section" id="zend.config.adapters.yaml.options" name="zend.config.adapters.yaml.options"><div class="info"><h1 class="title">Configuration Options</h1></div>
+        
+
+        <p class="para">
+            The following options may be passed as keys to the third, <var class="varname">$options</var>
+            argument of the constructor.
+        </p>
+
+        <dl>
+<div class="info"><h1 class="title">Zend_Config_Yaml Options</h1></div>
+            
+
+            <dt>
+
+                <dt class="term">allow_modifications</dt>
+
+                <dd>
+
+                    <p class="para">
+                        The default behavior of <span class="classname">Zend_Config</span> is to mark the
+                        object as immutable once loaded. Passing this flag with a boolean
+                        <b><tt>true</tt></b> will enable modifications to the object.
+                    </p>
+                </dd>
+
+            </dt>
+
+
+            <dt>
+
+                <dt class="term">skip_extends</dt>
+
+                <dd>
+
+                    <p class="para">
+                        By default, any time a section extends another,
+                        <span class="classname">Zend_Config</span> will merge the section with the section
+                        it extends. Speciying a boolean <b><tt>true</tt></b> value to this
+                        option will disable this feature, giving you only the configuration defined
+                        explicitly in that section.
+                    </p>
+                </dd>
+
+            </dt>
+
+
+            <dt>
+
+                <dt class="term">ignore_constants</dt>
+
+                <dd>
+
+                    <p class="para">
+                        By default, <span class="classname">Zend_Config_Yaml</span> will replace constant
+                        names found in values with the defined constant value. You map pass a
+                        boolean <b><tt>true</tt></b> to this option to disable this
+                        functionality.
+                    </p>
+                </dd>
+
+            </dt>
+
+
+            <dt>
+
+                <dt class="term">yaml_decoder</dt>
+
+                <dd>
+
+                    <p class="para">
+                        By default, <span class="classname">Zend_Config_Yaml</span> uses a built in decoder,
+                         <span class="methodname">Zend_Config_Yaml::decode()</span>, to parse and process
+                        YAML files. You may specify an alternate callback to use in place of the
+                        built-in one using this option.
+                    </p>
+                </dd>
+
+            </dt>
+
+        </dl>
+
+    </div>
+
+    <div class="section" id="zend.config.adapters.yaml.methods" name="zend.config.adapters.yaml.methods"><div class="info"><h1 class="title">Available Methods</h1></div>
+        
+
+        <dl>
+
+            <dt id="zend.config.adapters.yaml.methods.constructor">
+                <dt class="term">
+                    <div class="methodsynopsis dc-description">
+                         <span class="methodname">__construct</span>
+                        <span class="methodparam">( 
+                            <code_funcparams class="funcparams">$yaml, $section = null, $options = false</code_funcparams>
+                         )</span>
+                    </div>
+
+                </dt>
+
+                <dd>
+
+                    <p class="para">
+                        Constructor. <var class="varname">$yaml</var> should refer to a valid filesystem
+                        location containing a YAML configuration file. <var class="varname">$section</var>,
+                        if specified, indicates a specific section of the configuration file to use.
+                        <var class="varname">$options</var> is discussed in the <a href="zend.config.adapters.yaml.html#zend.config.adapters.yaml.options" class="link">options section</a>.
+                    </p>
+                </dd>
+
+            </dt>
+
+
+            <dt id="zend.config.adapters.yaml.methods.decode">
+                <dt class="term">
+                    <div class="methodsynopsis dc-description">
+                         <span class="methodname">decode</span>
+                        <span class="methodparam">( 
+                            <code_funcparams class="funcparams">$yaml</code_funcparams>
+                         )</span>
+                    </div>
+
+                </dt>
+
+                <dd>
+
+                    <p class="para">
+                        Parses a YAML string into a PHP array.
+                    </p>
+                </dd>
+
+            </dt>
+
+
+            <dt id="zend.config.adapters.yaml.methods.set-ignore-constants">
+                <dt class="term">
+                    <div class="methodsynopsis dc-description">
+                         <span class="methodname">setIgnoreConstants</span>
+                        <span class="methodparam">( 
+                            <code_funcparams class="funcparams">$flag</code_funcparams>
+                         )</span>
+                    </div>
+
+                </dt>
+
+                <dd>
+
+                    <p class="para">
+                        This <em class="emphasis">static</em> function may be used to globally override
+                        the default settings for how constants found in YAML strings are handled. By
+                        default, constant names are replaced with the appropriate constant values;
+                        passing a boolean <b><tt>true</tt></b> value to this method will
+                        override that behavior. (You can override it per-instance via the
+                        <var class="varname">ignore_constants</var> option as well.)
+                    </p>
+                </dd>
+
+            </dt>
+
+
+            <dt id="zend.config.adapters.yaml.methods.ignore-constants">
+                <dt class="term">
+                    <div class="methodsynopsis dc-description">
+                         <span class="methodname">ignoreConstants</span>
+                        <span class="methodparam">( 
+                            <code_funcparams class="funcparams"/>
+                         )</span>
+                    </div>
+
+                </dt>
+
+                <dd>
+
+                    <p class="para">
+                        This <em class="emphasis">static</em> method gives you the current setting for
+                        the <var class="varname">ignore_constants</var> flag.
+                    </p>
+                </dd>
+
+            </dt>
+
+        </dl>
+
+    </div>
+
+    <div class="section" id="zend.config.adapters.yaml.examples" name="zend.config.adapters.yaml.examples"><div class="info"><h1 class="title">Examples</h1></div>
+        
+
+        <div class="example"><div class="info"><p><b>Example #1 Using Zend_Config_Yaml with sfYaml</b></p></div>
+            
+
+            <div class="example-contents"><p>
+                As noted in the <a href="zend.config.adapters.yaml.html#zend.config.adapters.yaml.options" class="link">options
+                    section</a>, <span class="classname">Zend_Config_Yaml</span> allows you to specify an
+                alternate YAML parser at instantiation.
+            </p></div>
+
+            <div class="example-contents"><p>
+                <a href="http://components.symfony-project.org/yaml/" class="link external">&raquo; sfYaml</a> is a <a href="http://components.symfony-project.org/" class="link external">&raquo; Symfony component</a> that
+                implements a complete YAML parser in PHP, and includes a number of additional
+                features including the ability to parse PHP expressions embedded in the YAML. In
+                this example, we use the  <span class="methodname">sfYaml::load()</span> method as our YAML
+                decoder callback. <em class="emphasis">(Note: this assumes that the
+                    <span class="classname">sfYaml</span> class is either already loaded or available via
+                    autoloading.)</em>
+            </p></div>
+
+            <div class="programlisting php"><div class="phpcode"><div class="php" style="font-family: monospace;"><ol><li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #0000ff;">$config</span> = <span style="color: #000000; font-weight: bold;">new</span> Zend_Config_Yaml<span style="color: #66cc66;">&#40;</span></div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; APPLICATION_PATH . <span style="color: #ff0000;">'/configs/application.yaml'</span>,</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; APPLICATION_ENV,</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; <a href="http://www.php.net/array"><span style="color: #000066;">array</span></a><span style="color: #66cc66;">&#40;</span><span style="color: #ff0000;">'yaml_decoder'</span> =&gt; <a href="http://www.php.net/array"><span style="color: #000066;">array</span></a><span style="color: #66cc66;">&#40;</span><span style="color: #ff0000;">'sfYaml'</span>, <span style="color: #ff0000;">'load'</span><span style="color: #66cc66;">&#41;</span><span style="color: #66cc66;">&#41;</span></div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #66cc66;">&#41;</span>;</div></li></ol></div></div></div>
+
+        </div>
+    </div>
+</div>
+        <hr />
+
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.config.adapters.xml.html">Zend_Config_Xml</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.config.html">Zend_Config</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.config.writer.html">Zend_Config_Writer</a></div>
+                    </td>
+                </tr>
+            </table>
+</td>
+        <td style="font-size: smaller;" width="15%"> <style type="text/css">
+#leftbar {
+	float: left;
+	width: 186px;
+	padding: 5px;
+	font-size: smaller;
+}
+ul.toc {
+	margin: 0px 5px 5px 5px;
+	padding: 0px;
+}
+ul.toc li {
+	font-size: 85%;
+	margin: 1px 0 1px 1px;
+	padding: 1px 0 1px 11px;
+	list-style-type: none;
+	background-repeat: no-repeat;
+	background-position: center left;
+}
+ul.toc li.header {
+	font-size: 115%;
+	padding: 5px 0px 5px 11px;
+	border-bottom: 1px solid #cccccc;
+	margin-bottom: 5px;
+}
+ul.toc li.active {
+	font-weight: bold;
+}
+ul.toc li a {
+	text-decoration: none;
+}
+ul.toc li a:hover {
+	text-decoration: underline;
+}
+</style>
+ <ul class="toc">
+  <li class="header home"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="reference.html">Zend Framework Reference</a></li>
+  <li class="header up"><a href="zend.config.html">Zend_Config</a></li>
+  <li><a href="zend.config.introduction.html">简介</a></li>
+  <li><a href="zend.config.theory_of_operation.html">操作理论</a></li>
+  <li><a href="zend.config.adapters.ini.html">Zend_Config_Ini</a></li>
+  <li><a href="zend.config.adapters.json.html">Zend_Config_Json</a></li>
+  <li><a href="zend.config.adapters.xml.html">Zend_Config_Xml</a></li>
+  <li class="active"><a href="zend.config.adapters.yaml.html">Zend_Config_Yaml</a></li>
+ </ul>
+ </td>
+    </tr>
+</table>
+</body>
+</html>

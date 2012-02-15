@@ -1,0 +1,1260 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <title>Zend_Http_UserAgent - Zend Framework Manual</title>
+
+</head>
+<body>
+<table width="100%">
+    <tr valign="top">
+        <td width="85%">
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.http.response.html">Zend_Http_Response</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.http.html">Zend_Http</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.http.user-agent-device.html">The UserAgent Device Interface</a></div>
+                    </td>
+                </tr>
+            </table>
+<hr />
+<div id="zend.http.user-agent" class="section"><div class="info"><h1 class="title">Zend_Http_UserAgent</h1></div>
+    
+
+    <div class="section" id="zend.http.user-agent.intro" name="zend.http.user-agent.intro"><div class="info"><h1 class="title">Overview</h1></div>
+        
+
+        <p class="para">
+            With the plethora of mobile devices available on the market, it&#039;s increasingly important
+            to be able to identify the capabilities of those devices in order to present content in
+            a an appropriate way. For instance, if the device is not capable of displaying images,
+            you might want to omit them from the markup; alternately, if a device is capable of
+            Flash, you may want to provide a Flash-based user interface.
+        </p>
+
+        <p class="para">
+            The process of identifying a device&#039;s capabilities typically first requires knowing the
+            HTTP User Agent, and then comparing that user agent against a database of user agent
+            capabilities. <span class="classname">Zend_Http_UserAgent</span> was created to provide these
+            capabilities for your applications. It consists of several major features:
+        </p>
+
+        <ul class="itemizedlist">
+            <li class="listitem">
+                <p class="para">
+                    The primary <span class="classname">Zend_Http_UserAgent</span> class, which detects the
+                    User Agent, and gives you a device object, as well as persists the device object
+                    for later retrieval.
+                </p>
+            </li>
+
+            <li class="listitem">
+                <p class="para">
+                    A <a href="zend.http.user-agent-device.html" class="link">Zend_Http_UserAgent_Device</a>
+                    interface, and a number of implementations that implement it. These objects
+                    utilize a features adatper to discover device capabilities, and then allow you
+                    to introspect those capabilities.
+                </p>
+            </li>
+
+            <li class="listitem">
+                <p class="para">
+                    A <a href="zend.http.user-agent-features.html" class="link">Zend_Http_UserAgent_Features_Adapter</a>
+                    interface; concrete implementations provide the ability to discover device
+                    capabilities, or features.
+                </p>
+            </li>
+
+            <li class="listitem">
+                <p class="para">
+                    A <a href="zend.http.user-agent-storage.html" class="link">Zend_Http_UserAgent_Storage</a>
+                    interface, which is used to persist discovered devices for given users, allowing
+                    for faster device capability discovery on subsequent page visits.
+                </p>
+            </li>
+
+            <li class="listitem">
+                <p class="para">
+                    A <a href="" class="link">view helper</a> that
+                    can be used within your view scripts and layouts to branch display logic based
+                    on device capabilities.
+                </p>
+            </li>
+
+            <li class="listitem">
+                <p class="para">
+                    A <span class="classname">Zend_Application</span> <a href="zend.application.available-resources.html#zend.application.available-resources.useragent" class="link">resource</a> for
+                    configuring and instantiating the user agent object, as well as seeding the view
+                    helper with the user agent object instance.
+                </p>
+            </li>
+        </ul>
+
+        <p class="para">
+            At the time of this writing, The <span class="classname">UserAgent</span> component provides
+            three adapters:
+        </p>
+
+        <ul class="itemizedlist">
+            <li class="listitem">
+                <p class="para">
+                    <a href="zend.http.user-agent-features-wurfl.html" class="link">Zend_Http_UserAgent_Features_Adapter_Wurfl</a>
+                    consumes the <a href="http://wurfl.sourceforge.net/" class="link external">&raquo; WURFL</a> (Wireless
+                    Universal Resource File) PHP API. This database is considered one of the most
+                    comprehensive mobile device capabilities databases available.
+                </p>
+            </li>
+
+            <li class="listitem">
+                <p class="para">
+                    <a href="zend.http.user-agent-features-tera-wurfl.html" class="link">Zend_Http_UserAgent_Features_Adapter_TeraWurfl</a>
+                    consumes the TeraWurfl API, which is built on top of <acronym class="acronym">WURFL</acronym>,
+                    and aimed at providing a highly available, highly performant lookup mechanism.
+                </p>
+            </li>
+
+            <li class="listitem">
+                <p class="para">
+                    <a href="zend.http.user-agent-features-device-atlas.html" class="link">Zend_Http_UserAgent_Features_Adapter_DeviceAtlas</a>
+                    consumes the DeviceAtlas API, which is a paid, Enterprise-grade mobile device
+                    capabilities database.
+                </p>
+            </li>
+        </ul>
+    </div>
+
+    <div class="section" id="zend.http.user-agent.quick-start" name="zend.http.user-agent.quick-start"><div class="info"><h1 class="title">Quick Start</h1></div>
+        
+
+        <p class="para">
+            First, you will need to download the following:
+        </p>
+
+        <ul class="itemizedlist">
+            <li class="listitem">
+                <p class="para">
+                    The <acronym class="acronym">WURFL</acronym> <a href="http://sourceforge.net/projects/wurfl/files/WURFL%20PHP/1.1/wurfl-php-1.1.tar.gz/download" class="link external">&raquo; PHP
+                        API</a>. This archive contains the most recent
+                    <var class="filename">wurfl-latest.xml</var> file and patches which constitute the
+                    actual <acronym class="acronym">WURFL</acronym> database.
+                </p>
+            </li>
+        </ul>
+
+        <p class="para">
+            We suggest that you inflate this archive in your &quot;library&quot; directory. Inflating the
+            archive will create a <var class="filename">wurfl-php-1.1</var> directory.
+        </p>
+
+        <div class="programlisting text"><div class="textcode"><div class="text" style="font-family: monospace;"><ol><li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">library</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">|-- wurfl-php-1.1</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">|&nbsp; &nbsp;|-- COPYING</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">|&nbsp; &nbsp;|-- docs</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">|&nbsp; &nbsp;|-- examples</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">|&nbsp; &nbsp;|-- README</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">|&nbsp; &nbsp;|-- tests</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">|&nbsp; &nbsp;`-- WURFL</div></li></ol></div></div></div>
+
+
+        <p class="para">
+            Next, create a data and cache directory for the <acronym class="acronym">WURFL</acronym> database and
+            related cache files; this should be done from your project root (the directory
+            containing the <var class="filename">application</var> and <var class="filename">library</var>
+            directories). When you do so, make sure the directory is at least writable by the web
+            server user; the following makes it writable for all users.
+        </p>
+
+        <div class="programlisting sh"><div class="shcode"><div style="font-family: monospace;"><ol><li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">mkdir -p data/wurfl/cache</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">chmod -R o+rwX data/wurfl/cache</div></li></ol></div></div></div>
+
+
+        <p class="para">
+            Now, copy the <acronym class="acronym">WURFL</acronym> data from the inflated archive into your data
+            directory.
+        </p>
+
+        <div class="programlisting sh"><div class="shcode"><div style="font-family: monospace;"><ol><li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">cp library/wurfl-php-1.1/tests/resources/wurfl-latest.zip data/wurfl/</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">cp library/wurfl-php-1.1/tests/resources/web_browsers_patch.xml data/wurfl/</div></li></ol></div></div></div>
+
+
+        <p class="para">
+            Create a <acronym class="acronym">WURFL</acronym> configuration file named
+            <var class="filename">application/configs/wurfl-config.php</var>, with the following contents:
+        </p>
+
+        <div class="programlisting php"><div class="phpcode"><div class="php" style="font-family: monospace;"><ol><li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #000000; font-weight: bold;">&lt;?php</span></div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #0000ff;">$resourcesDir</span>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; = <a href="http://www.php.net/dirname"><span style="color: #000066;">dirname</span></a><span style="color: #66cc66;">&#40;</span><span style="color: #000000; font-weight: bold;">__FILE__</span><span style="color: #66cc66;">&#41;</span> . <span style="color: #ff0000;">'/../../data/wurfl/'</span>;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #0000ff;">$wurfl</span><span style="color: #66cc66;">&#91;</span><span style="color: #ff0000;">'main-file'</span><span style="color: #66cc66;">&#93;</span>&nbsp; &nbsp; &nbsp; = <span style="color: #0000ff;">$resourcesDir</span>&nbsp; . <span style="color: #ff0000;">'wurfl-latest.zip'</span>;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #0000ff;">$wurfl</span><span style="color: #66cc66;">&#91;</span><span style="color: #ff0000;">'patches'</span><span style="color: #66cc66;">&#93;</span>&nbsp; &nbsp; &nbsp; &nbsp; = <a href="http://www.php.net/array"><span style="color: #000066;">array</span></a><span style="color: #66cc66;">&#40;</span><span style="color: #0000ff;">$resourcesDir</span> . <span style="color: #ff0000;">'web_browsers_patch.xml'</span><span style="color: #66cc66;">&#41;</span>;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #0000ff;">$persistence</span><span style="color: #66cc66;">&#91;</span><span style="color: #ff0000;">'provider'</span><span style="color: #66cc66;">&#93;</span> = <span style="color: #ff0000;">'file'</span>;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #0000ff;">$persistence</span><span style="color: #66cc66;">&#91;</span><span style="color: #ff0000;">'dir'</span><span style="color: #66cc66;">&#93;</span>&nbsp; &nbsp; &nbsp; = <span style="color: #0000ff;">$resourcesDir</span> . <span style="color: #ff0000;">'/cache/'</span>;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #0000ff;">$cache</span><span style="color: #66cc66;">&#91;</span><span style="color: #ff0000;">'provider'</span><span style="color: #66cc66;">&#93;</span>&nbsp; &nbsp; &nbsp; &nbsp;= <span style="color: #000000; font-weight: bold;">null</span>;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #0000ff;">$configuration</span><span style="color: #66cc66;">&#91;</span><span style="color: #ff0000;">'wurfl'</span><span style="color: #66cc66;">&#93;</span>&nbsp; &nbsp; &nbsp; &nbsp;= <span style="color: #0000ff;">$wurfl</span>;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #0000ff;">$configuration</span><span style="color: #66cc66;">&#91;</span><span style="color: #ff0000;">'persistence'</span><span style="color: #66cc66;">&#93;</span> = <span style="color: #0000ff;">$persistence</span>;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #0000ff;">$configuration</span><span style="color: #66cc66;">&#91;</span><span style="color: #ff0000;">'cache'</span><span style="color: #66cc66;">&#93;</span>&nbsp; &nbsp; &nbsp; &nbsp;= <span style="color: #0000ff;">$cache</span>;</div></li></ol></div></div></div>
+
+
+        <p class="para">
+            Finally, edit your <var class="filename">application.ini</var> to add the following lines to your
+            <var class="varname">[production]</var> section:
+        </p>
+
+        <div class="programlisting ini"><div class="inicode"><div class="ini" style="font-family: monospace;"><ol><li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">resources.useragent.wurflapi.<span style="color: #000099;">wurfl_api_version </span>= <span style="color: #933;">&quot;1.1&quot;</span></div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">resources.useragent.wurflapi.<span style="color: #000099;">wurfl_lib_dir </span>=<span style="color: #660066;"> APPLICATION_PATH </span><span style="color: #933;">&quot;/../library/wurfl-php-1.1/WURFL/&quot;</span></div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">resources.useragent.wurflapi.<span style="color: #000099;">wurfl_config_file </span>=<span style="color: #660066;"> APPLICATION_PATH </span><span style="color: #933;">&quot;/configs/wurfl-config.php&quot;</span></div></li></ol></div></div></div>
+
+
+        <blockquote><p><b class="note">Note</b>: 
+            
+                The trailing directory separator on the <b><tt>wurfl_lib_dir</tt></b> setting
+                is important. The <acronym class="acronym">WURFL</acronym> API does no normalization, and expects
+                it to be there.
+            <br />
+        </p></blockquote>
+
+        <p class="para">
+            At this point, everything is setup. The first request (from a mobile device) will populate the
+            <acronym class="acronym">WURFL</acronym> cache by parsing the <var class="filename">resources/wurfl.xml</var>
+            file, and as such may take up to a minute. After that, lookups will be quite fast, and
+            each request will contain detailed information on the user agent.
+        </p>
+
+        <p class="para">
+            You can access this information in a variety of ways. From within the MVC portion of
+            your application, you can access it via the bootstrap. Within plugins, this is done by
+            grabbing the bootstrap from the front controller.
+        </p>
+
+        <div class="programlisting php"><div class="phpcode"><div class="php" style="font-family: monospace;"><ol><li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #0000ff;">$bootstrap</span> = Zend_Controller_Front::<span style="color: #006600;">getInstance</span><span style="color: #66cc66;">&#40;</span><span style="color: #66cc66;">&#41;</span>-&gt;<span style="color: #006600;">getParam</span><span style="color: #66cc66;">&#40;</span><span style="color: #ff0000;">'bootstrap'</span><span style="color: #66cc66;">&#41;</span>;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #0000ff;">$userAgent</span> = <span style="color: #0000ff;">$bootstrap</span>-&gt;<span style="color: #006600;">getResource</span><span style="color: #66cc66;">&#40;</span><span style="color: #ff0000;">'useragent'</span><span style="color: #66cc66;">&#41;</span>;</div></li></ol></div></div></div>
+
+
+        <p class="para">
+            From your action controller, use  <span class="methodname">getInvokeArg()</span> to grab the
+            bootstrap, and from there, the user agent object.
+        </p>
+
+        <div class="programlisting php"><div class="phpcode"><div class="php" style="font-family: monospace;"><ol><li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #0000ff;">$bootstrap</span> = <span style="color: #0000ff;">$this</span>-&gt;<span style="color: #006600;">getInvokeArg</span><span style="color: #66cc66;">&#40;</span><span style="color: #ff0000;">'bootstrap'</span><span style="color: #66cc66;">&#41;</span>;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #0000ff;">$userAgent</span> = <span style="color: #0000ff;">$bootstrap</span>-&gt;<span style="color: #006600;">getResource</span><span style="color: #66cc66;">&#40;</span><span style="color: #ff0000;">'useragent'</span><span style="color: #66cc66;">&#41;</span>;</div></li></ol></div></div></div>
+
+
+        <p class="para">
+            Within your view, you can grab it using the <span class="classname">UserAgent</span> view
+            helper.
+        </p>
+
+        <div class="programlisting php"><div class="phpcode"><div class="php" style="font-family: monospace;"><ol><li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #0000ff;">$userAgent</span> = <span style="color: #0000ff;">$this</span>-&gt;<span style="color: #006600;">userAgent</span><span style="color: #66cc66;">&#40;</span><span style="color: #66cc66;">&#41;</span>;</div></li></ol></div></div></div>
+
+
+        <p class="para">
+            Once you have the user agent object, you can query it for different capabilities. As one
+            example, you may want to use an alternate layout script based on the user agent
+            capabilities.
+        </p>
+
+        <div class="programlisting php"><div class="phpcode"><div class="php" style="font-family: monospace;"><ol><li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #0000ff;">$width</span> = <span style="color: #0000ff;">$userAgent</span>-&gt;<span style="color: #006600;">getDevice</span><span style="color: #66cc66;">&#40;</span><span style="color: #66cc66;">&#41;</span>-&gt;<span style="color: #006600;">getPhysicalScreenWidth</span><span style="color: #66cc66;">&#40;</span><span style="color: #66cc66;">&#41;</span>;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #b1b100;">switch</span> <span style="color: #66cc66;">&#40;</span><span style="color: #000000; font-weight: bold;">true</span><span style="color: #66cc66;">&#41;</span> <span style="color: #66cc66;">&#123;</span></div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; <span style="color: #b1b100;">case</span> <span style="color: #66cc66;">&#40;</span><span style="color: #0000ff;">$width</span> &lt;= <span style="color: #cc66cc;">128</span><span style="color: #66cc66;">&#41;</span>:</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; &nbsp; &nbsp; <span style="color: #0000ff;">$layout</span>-&gt;<span style="color: #006600;">setLayout</span><span style="color: #66cc66;">&#40;</span><span style="color: #ff0000;">'layout-poor'</span><span style="color: #66cc66;">&#41;</span>;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; &nbsp; &nbsp; <span style="color: #b1b100;">break</span>;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; <span style="color: #b1b100;">case</span> <span style="color: #66cc66;">&#40;</span><span style="color: #0000ff;">$width</span> &lt;= <span style="color: #cc66cc;">176</span><span style="color: #66cc66;">&#41;</span>:</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; &nbsp; &nbsp; <span style="color: #0000ff;">$layout</span>-&gt;<span style="color: #006600;">setLayout</span><span style="color: #66cc66;">&#40;</span><span style="color: #ff0000;">'layout-medium'</span><span style="color: #66cc66;">&#41;</span>;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; &nbsp; &nbsp; <span style="color: #b1b100;">break</span>;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; <span style="color: #b1b100;">case</span> <span style="color: #66cc66;">&#40;</span><span style="color: #0000ff;">$width</span> &lt;= <span style="color: #cc66cc;">240</span><span style="color: #66cc66;">&#41;</span>:</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; &nbsp; &nbsp; <span style="color: #0000ff;">$layout</span>-&gt;<span style="color: #006600;">setLayout</span><span style="color: #66cc66;">&#40;</span><span style="color: #ff0000;">'layout-high'</span><span style="color: #66cc66;">&#41;</span>;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; &nbsp; &nbsp; <span style="color: #b1b100;">break</span>;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; <span style="color: #b1b100;">case</span> <span style="color: #66cc66;">&#40;</span><span style="color: #0000ff;">$width</span> &lt;= <span style="color: #cc66cc;">320</span><span style="color: #66cc66;">&#41;</span>:</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; &nbsp; &nbsp; <span style="color: #0000ff;">$layout</span>-&gt;<span style="color: #006600;">setLayout</span><span style="color: #66cc66;">&#40;</span><span style="color: #ff0000;">'layout-ultra'</span><span style="color: #66cc66;">&#41;</span>;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; &nbsp; &nbsp; <span style="color: #b1b100;">break</span>;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; <span style="color: #000000; font-weight: bold;">default</span>:</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; &nbsp; &nbsp; <span style="color: #808080; font-style: italic;">// use default</span></div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; &nbsp; &nbsp; <span style="color: #b1b100;">break</span>;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #66cc66;">&#125;</span></div></li></ol></div></div></div>
+
+
+        <p class="para">
+            Finally, each device will often have a large number of capabilities not immediately
+            represented in the device interface. You can query these using the
+             <span class="methodname">hasFeature()</span> and  <span class="methodname">getFeature()</span> methods.
+        </p>
+
+        <div class="programlisting php"><div class="phpcode"><div class="php" style="font-family: monospace;"><ol><li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #b1b100;">if</span> <span style="color: #66cc66;">&#40;</span><span style="color: #0000ff;">$userAgent</span>-&gt;<span style="color: #006600;">hasFeature</span><span style="color: #66cc66;">&#40;</span><span style="color: #ff0000;">'mp3'</span><span style="color: #66cc66;">&#41;</span> &amp;&amp; <span style="color: #0000ff;">$userAgent</span>-&gt;<span style="color: #006600;">getFeature</span><span style="color: #66cc66;">&#40;</span><span style="color: #ff0000;">'mp3'</span><span style="color: #66cc66;">&#41;</span><span style="color: #66cc66;">&#41;</span> <span style="color: #66cc66;">&#123;</span></div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; <span style="color: #808080; font-style: italic;">// embed HTML5 audio tag...</span></div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #66cc66;">&#125;</span></div></li></ol></div></div></div>
+
+    </div>
+
+    <div class="section" id="zend.http.user-agent.options" name="zend.http.user-agent.options"><div class="info"><h1 class="title">Configuration Options</h1></div>
+        
+
+        <dl>
+<div class="info"><h1 class="title">UserAgent Options</h1></div>
+            
+
+            <p class="para">
+                The following options may be passed to the constructor or within your application
+                configuration. A &quot;.&quot; indicates another layer of depth in the configuration array; as
+                an example, assigning &quot;wurflapi.wurfl_config_array.wurfl.main-file&quot; as part of a PHP
+                configuration would require the following definition:
+            </p>
+
+            <div class="programlisting php"><div class="phpcode"><div class="php" style="font-family: monospace;"><ol><li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #0000ff;">$config</span> = <a href="http://www.php.net/array"><span style="color: #000066;">array</span></a><span style="color: #66cc66;">&#40;</span></div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; <span style="color: #ff0000;">'wurflapi'</span> =&gt; <a href="http://www.php.net/array"><span style="color: #000066;">array</span></a><span style="color: #66cc66;">&#40;</span></div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; &nbsp; &nbsp; <span style="color: #ff0000;">'wurfl_config_array'</span> =&gt; <a href="http://www.php.net/array"><span style="color: #000066;">array</span></a><span style="color: #66cc66;">&#40;</span></div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <span style="color: #ff0000;">'wurfl'</span> =&gt; <a href="http://www.php.net/array"><span style="color: #000066;">array</span></a><span style="color: #66cc66;">&#40;</span></div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <span style="color: #ff0000;">'main-file'</span> =&gt; <span style="color: #ff0000;">'path/to/some/file'</span>,</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <span style="color: #66cc66;">&#41;</span>,</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; &nbsp; &nbsp; <span style="color: #66cc66;">&#41;</span>,</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; <span style="color: #66cc66;">&#41;</span>,</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #66cc66;">&#41;</span>;</div></li></ol></div></div></div>
+
+
+            <p class="para">
+                Each features adapter has its own options available as well, which may be mixed in
+                with the general UserAgent options.
+            </p>
+
+            <dt>
+
+                <dt class="term">browser_type</dt>
+
+                <dd>
+
+                    <p class="para">
+                        Used to seed the list of devices the component will search. See also
+                        <var class="varname">identification_sequence</var>; this value will be prepended to
+                        that list during user agent device discovery.
+                    </p>
+                </dd>
+
+            </dt>
+
+
+            <dt>
+
+                <dt class="term">http_accept</dt>
+
+                <dd>
+
+                    <p class="para">
+                        The value of the <var class="varname">Accept</var> <acronym class="acronym">HTTP</acronym> header;
+                        used by some user agents to determine capabilities. Set this to seed the
+                        value explicitly.
+                    </p>
+                </dd>
+
+            </dt>
+
+
+            <dt>
+
+                <dt class="term">identification_sequence</dt>
+
+                <dd>
+
+                    <p class="para">
+                        A comma-separated list of device types to scan for matches; defaults to
+                        &quot;mobile,desktop&quot;.
+                    </p>
+                </dd>
+
+            </dt>
+
+
+            <dt>
+
+                <dt class="term">storage.adapter</dt>
+
+                <dd>
+
+                    <p class="para">
+                        The name of a storage adapter used to persist the device capabilities,
+                        typically within a given user session. The value may either be a fully
+                        qualified class name, or a short name to resolve by the plugin loader for
+                        storage classes. By default, uses &quot;Session&quot; as the value, resolving to
+                        <span class="classname">Zend_Http_UserAgent_Storage_Session</span>.
+                    </p>
+                </dd>
+
+            </dt>
+
+
+            <dt>
+
+                <dt class="term">storage.options[]</dt>
+
+                <dd>
+
+                    <p class="para">
+                        An array of options to pass to the constructor of a storage adapter. By
+                        default, the option <var class="varname">browser_type</var> will be present.
+                    </p>
+                </dd>
+
+            </dt>
+
+
+            <dt>
+
+                <dt class="term">plugin_loader.[type] = [class]</dt>
+
+                <dd>
+
+                    <p class="para">
+                        Plugin loader configuration; allows you to specify a pre-configured
+                        <span class="classname">Zend_Loader_PluginLoader</span> extension class to use for
+                        one of the plugin loader types managed by <span class="classname">UserAgent</span>
+                        (currently &quot;storage&quot; and &quot;device&quot;. 
+                    </p>
+                </dd>
+
+            </dt>
+
+
+            <dt>
+
+                <dt class="term">server[]</dt>
+
+                <dd>
+
+                    <p class="para">
+                        Typically, you will not set this; this simply allows injection of the
+                        <var class="varname">$_SERVER</var> superglobal (or a filtered version of it). The
+                        value should be an associative array.
+                    </p>
+                </dd>
+
+            </dt>
+
+
+            <dt>
+
+                <dt class="term">user_agent</dt>
+
+                <dd>
+
+                    <p class="para">
+                        The actual <acronym class="acronym">HTTP</acronym> User-Agent string you wish to try and
+                        match. Typically, this will be auto-discovered from the
+                        <var class="varname">server</var> array.
+                    </p>
+                </dd>
+
+            </dt>
+
+
+            <dt>
+
+                <dt class="term">[browser_type].device.classname</dt>
+
+                <dd>
+
+                    <p class="para">
+                        The device class to use for a given browser type; typically,
+                        <var class="varname">browser_type</var> will be one of the supported browser
+                        devices, including:
+                    </p>
+
+                    <ul class="itemizedlist">
+                        <li class="listitem"><p class="para">Bot</p></li>
+                        <li class="listitem"><p class="para">Checker</p></li>
+                        <li class="listitem"><p class="para">Console</p></li>
+                        <li class="listitem"><p class="para">Desktop</p></li>
+                        <li class="listitem"><p class="para">Email</p></li>
+                        <li class="listitem"><p class="para">Feed</p></li>
+                        <li class="listitem"><p class="para">Mobile</p></li>
+                        <li class="listitem"><p class="para">Offline</p></li>
+                        <li class="listitem"><p class="para">Probe</p></li>
+                        <li class="listitem"><p class="para">Spam</p></li>
+                        <li class="listitem"><p class="para">Text</p></li>
+                        <li class="listitem"><p class="para">Validator</p></li>
+                    </ul>
+
+                    <p class="para">
+                        The <var class="varname">browser_type</var> should be normalized to lowercase for
+                        configuration purposes.
+                    </p>
+                </dd>
+
+            </dt>
+
+
+            <dt>
+
+                <dt class="term">[browser_type].device.path and [browser_type].device.prefix</dt>
+
+                <dd>
+
+                    <p class="para">
+                        An alternate way to specify the device class for a given browser type is to
+                        assume it is named after the device, and that all device classes are in the
+                        same path sharing the same prefix. Configure the prefix and path using these
+                        keys.
+                    </p>
+
+                    <p class="para">
+                        As an example, the following would look for a class named
+                        &quot;Mobile_Device_Bot&quot; on the path &quot;Mobile/Device/&quot; under the application
+                        library.
+                    </p>
+
+                    <div class="programlisting ini"><div class="inicode"><div class="ini" style="font-family: monospace;"><ol><li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">resources.useragent.bot.device.<span style="color: #000099;">path </span>=<span style="color: #660066;"> APPLICATION_PATH '/../library/Mobile/Device</span><span style="color: #933;">&quot;</span></div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #933;">resources.useragent.bot.device.prefix = &quot;</span>Mobile_Device<span style="color: #933;">&quot;</span></div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #933;"</span></div></li></ol></div></div></div>
+
+                </dd>
+
+            </dt>
+
+
+            <dt>
+
+                <dt class="term">[browser_type].features.path and [browser_type].features.classname</dt>
+
+                <dd>
+
+                    <p class="para">
+                        These settings are used to load the features capabilities detection class
+                        for a given browser type. The class will be named using the
+                        <var class="varname">classname</var> key, and is expected to exist in the file
+                        denoted by the <var class="varname">path</var> key. The class should implement
+                        <span class="classname">Zend_Http_UserAgent_Features_Adapter</span>.
+                    </p>
+                </dd>
+
+            </dt>
+
+
+            <dt>
+
+                <dt class="term">wurflapi.wurfl_api_version</dt>
+
+                <dd>
+
+                    <p class="para">
+                        If using the <acronym class="acronym">WURFL</acronym> API, use this key to specify which
+                        version you are using; typically, this will be either &quot;1.0&quot; or &quot;1.1&quot;.
+                    </p>
+                </dd>
+
+            </dt>
+
+
+            <dt>
+
+                <dt class="term">wurflapi.wurfl_lib_dir</dt>
+
+                <dd>
+
+                    <p class="para">
+                        If using the <acronym class="acronym">WURFL</acronym> API, use this key to specify in which
+                        directory the library exists.
+                    </p>
+                </dd>
+
+            </dt>
+
+
+            <dt>
+
+                <dt class="term">wurflapi.wurfl_config_file</dt>
+
+                <dd>
+
+                    <p class="para">
+                        If using the <acronym class="acronym">WURFL</acronym> API, use this key to specify the
+                        location of the configuration file you will use; typically, this will be
+                        <var class="filename">resources/wurfl-config.php</var> within the
+                        <var class="varname">wurfl_lib_dir</var>.
+                    </p>
+                </dd>
+
+            </dt>
+
+
+            <dt>
+
+                <dt class="term">wurflapi.wurfl_config_array.wurfl.main-file</dt>
+
+                <dd>
+
+                    <p class="para">
+                        If using version 1.1 of the <acronym class="acronym">WURFL</acronym> API, you can omit using
+                        a <var class="varname">wurfl_config_file</var>, and instead provide an associative
+                        array of configuration values. This particular value indicates the location
+                        of the <var class="filename">wurfl.xml</var> file containing the actual
+                        <acronym class="acronym">WURFL</acronym> database.
+                    </p>
+                </dd>
+
+            </dt>
+
+
+            <dt>
+
+                <dt class="term">wurflapi.wurfl_config_array.wurfl.patches[]</dt>
+
+                <dd>
+
+                    <p class="para">
+                        If using version 1.1 of the <acronym class="acronym">WURFL</acronym> API, you can omit using
+                        a <var class="varname">wurfl_config_file</var>, and instead provide an associative
+                        array of configuration values. This particular value is an array of file
+                        locations containing patchfiles for the <var class="varname">wurfl.main-file</var>
+                        (which are used to ammend and extend the primary database file).
+                    </p>
+                </dd>
+
+            </dt>
+
+
+            <dt>
+
+                <dt class="term">wurflapi.wurfl_config_array.persistence.provider</dt>
+
+                <dd>
+
+                    <p class="para">
+                        If using version 1.1 of the <acronym class="acronym">WURFL</acronym> API, you can omit using
+                        a <var class="varname">wurfl_config_file</var>, and instead provide an associative
+                        array of configuration values. This particular value indicates the type of
+                        persistence provider used when caching discovered capabilities. See the
+                        <acronym class="acronym">WURFL</acronym> documentation for potential values; &quot;file&quot; is a
+                        known good value.
+                    </p>
+                </dd>
+
+            </dt>
+
+
+            <dt>
+
+                <dt class="term">wurflapi.wurfl_config_array.persistence.dir</dt>
+
+                <dd>
+
+                    <p class="para">
+                        If using version 1.1 of the <acronym class="acronym">WURFL</acronym> API, you can omit using
+                        a <var class="varname">wurfl_config_file</var>, and instead provide an associative
+                        array of configuration values. This particular value indicates the location
+                        where the persistence provider will cache discovered capabilities.
+                    </p>
+                </dd>
+
+            </dt>
+
+        </dl>
+
+    </div>
+
+    <div class="section" id="zend.http.user-agent.methods" name="zend.http.user-agent.methods"><div class="info"><h1 class="title">Available Methods</h1></div>
+        
+
+        <dl>
+
+            <dt id="zend.http.user-agent.methods.constructor">
+                <dt class="term">
+                    <div class="methodsynopsis dc-description">
+                         <span class="methodname">__construct</span>
+                        <span class="methodparam">( 
+                            <code_funcparams class="funcparams">$options = null</code_funcparams>
+                         )</span>
+                    </div>
+
+                </dt>
+
+                <dd>
+
+                    <p class="para">
+                        The constructor attempts to determine the current User-Agent based on the
+                        options provided, the current request information, and/or previously discovered
+                        information persisted in storage. Once instantiated, the detected device is
+                        immediately available.
+                    </p>
+
+                    <p class="para">
+                        Please see <a href="zend.http.user-agent.html#zend.http.user-agent.options" class="link">configuration
+                            options</a> section for details on the <var class="varname">$options</var> array.
+                    </p>
+                </dd>
+
+            </dt>
+
+
+            <dt id="zend.http.user-agent.methods.serialize">
+                <dt class="term">
+                    <div class="methodsynopsis dc-description">
+                         <span class="methodname">serialize</span>
+                        <span class="methodparam">( 
+                            <code_funcparams class="funcparams"/>
+                         )</span>
+                    </div>
+
+                </dt>
+
+                <dd>
+
+                    <p class="para">
+                        Defined by the <span class="interfacename">Serializable</span> interface, this
+                        method performs logic necessary to determine what within the object should be
+                        serialized when the object is serialized by a storage adapter.
+                    </p>
+                </dd>
+
+            </dt>
+
+
+            <dt id="zend.http.user-agent.methods.unserialize">
+                <dt class="term">
+                    <div class="methodsynopsis dc-description">
+                         <span class="methodname">unserialize</span>
+                        <span class="methodparam">( 
+                            <code_funcparams class="funcparams">$serialized</code_funcparams>
+                         )</span>
+                    </div>
+
+                </dt>
+
+                <dd>
+
+                    <p class="para">
+                        Defined by the <span class="interfacename">Serializable</span> interface, this
+                        method performs logic necessary to determine how to unserialize a previously
+                        serialized instance.
+                    </p>
+                </dd>
+
+            </dt>
+
+
+            <dt id="zend.http.user-agent.methods.set-options">
+                <dt class="term">
+                    <div class="methodsynopsis dc-description">
+                         <span class="methodname">setOptions</span>
+                        <span class="methodparam">( 
+                            <code_funcparams class="funcparams">$options</code_funcparams>
+                         )</span>
+                    </div>
+
+                </dt>
+
+                <dd>
+
+                    <p class="para">
+                        Initializes object state. Please see the <a href="zend.http.user-agent.html#zend.http.user-agent.options" class="link">configuration options</a> section
+                        for information on the <var class="varname">$options</var> array.
+                    </p>
+                </dd>
+
+            </dt>
+
+
+            <dt id="zend.http.user-agent.methods.get-user-agent">
+                <dt class="term">
+                    <div class="methodsynopsis dc-description">
+                         <span class="methodname">getUserAgent</span>
+                        <span class="methodparam">( 
+                            <code_funcparams class="funcparams"/>
+                         )</span>
+                    </div>
+
+                </dt>
+
+                <dd>
+
+                    <p class="para">
+                        Retrieve the discovered User-Agent string. Unless set explicitly, this will be
+                        autodiscovered from the server array.
+                    </p>
+                </dd>
+
+            </dt>
+
+
+            <dt id="zend.http.user-agent.methods.set-user-agent">
+                <dt class="term">
+                    <div class="methodsynopsis dc-description">
+                         <span class="methodname">setUserAgent</span>
+                        <span class="methodparam">( 
+                            <code_funcparams class="funcparams">$userAgent</code_funcparams>
+                         )</span>
+                    </div>
+
+                </dt>
+
+                <dd>
+
+                    <p class="para">
+                        Set the User-Agent string explicitly. Once  <span class="methodname">getDevice()</span>
+                        has been called, this property is marked immutable, and calling this method will
+                        raise an exception.
+                    </p>
+                </dd>
+
+            </dt>
+
+
+            <dt id="zend.http.user-agent.methods.get-http-accept">
+                <dt class="term">
+                    <div class="methodsynopsis dc-description">
+                         <span class="methodname">getHttpAccept</span>
+                        <span class="methodparam">( 
+                            <code_funcparams class="funcparams">$httpAccept = null</code_funcparams>
+                         )</span>
+                    </div>
+
+                </dt>
+
+                <dd>
+
+                    <p class="para">
+                        Retrieve the HTTP Accept header value. 
+                    </p>
+                </dd>
+
+            </dt>
+
+
+            <dt id="zend.http.user-agent.methods.set-http-accept">
+                <dt class="term">
+                    <div class="methodsynopsis dc-description">
+                         <span class="methodname">setHttpAccept</span>
+                        <span class="methodparam">( 
+                            <code_funcparams class="funcparams">$httpAccept</code_funcparams>
+                         )</span>
+                    </div>
+
+                </dt>
+
+                <dd>
+
+                    <p class="para">
+                        Explicitly set the HTTP Accept header value. Once
+                         <span class="methodname">getDevice()</span> has been called, this property is marked
+                        immutable, and calling this method will raise an exception.
+                    </p>
+                </dd>
+
+            </dt>
+
+
+            <dt id="zend.http.user-agent.methods.get-storage">
+                <dt class="term">
+                    <div class="methodsynopsis dc-description">
+                         <span class="methodname">getStorage</span>
+                        <span class="methodparam">( 
+                            <code_funcparams class="funcparams">$browser = null</code_funcparams>
+                         )</span>
+                    </div>
+
+                </dt>
+
+                <dd>
+
+                    <p class="para">
+                        Retrieves a persistent storage object for a given browser type.
+                    </p>
+                </dd>
+
+            </dt>
+
+
+            <dt id="zend.http.user-agent.methods.set-storage">
+                <dt class="term">
+                    <div class="methodsynopsis dc-description">
+                         <span class="methodname">setStorage</span>
+                        <span class="methodparam">( 
+                            <code_funcparams class="funcparams">Zend_Http_UserAgent_Storage $storage</code_funcparams>
+                         )</span>
+                    </div>
+
+                </dt>
+
+                <dd>
+
+                    <p class="para">
+                        Use this to explicitly set the peristent storage object. Once
+                         <span class="methodname">getDevice()</span> has been called, the storage is marked
+                        immutable (as in: you may not inject a new storage object), and calling this
+                        method will raise an exception.
+                    </p>
+                </dd>
+
+            </dt>
+
+
+            <dt id="zend.http.user-agent.methods.clear-storage">
+                <dt class="term">
+                    <div class="methodsynopsis dc-description">
+                         <span class="methodname">clearStorage</span>
+                        <span class="methodparam">( 
+                            <code_funcparams class="funcparams">$browser = null</code_funcparams>
+                         )</span>
+                    </div>
+
+                </dt>
+
+                <dd>
+
+                    <p class="para">
+                        Clears any information in the persistent storage object.
+                    </p>
+                </dd>
+
+            </dt>
+
+
+            <dt id="zend.http.user-agent.methods.get-config">
+                <dt class="term">
+                    <div class="methodsynopsis dc-description">
+                         <span class="methodname">getConfig</span>
+                        <span class="methodparam">( 
+                            <code_funcparams class="funcparams"/>
+                         )</span>
+                    </div>
+
+                </dt>
+
+                <dd>
+
+                    <p class="para">
+                        Retrieve configuration parameters.
+                    </p>
+                </dd>
+
+            </dt>
+
+
+            <dt id="zend.http.user-agent.methods.get-device">
+                <dt class="term">
+                    <div class="methodsynopsis dc-description">
+                         <span class="methodname">getDevice</span>
+                        <span class="methodparam">( 
+                            <code_funcparams class="funcparams"/>
+                         )</span>
+                    </div>
+
+                </dt>
+
+                <dd>
+
+                    <p class="para">
+                        Use this method to get the User-Agent Device object; this is the object that
+                        will contain the various discovered device capabilities.
+                    </p>
+
+                    <p class="para">
+                        Discovery of the User-Agent device occurs in this method. Once the device has
+                        been retrieved, the server array, browser type, user agent, http accept, and
+                        storage properties are marked as immutable.
+                    </p>
+                </dd>
+
+            </dt>
+
+
+            <dt id="zend.http.user-agent.methods.get-browser-type">
+                <dt class="term">
+                    <div class="methodsynopsis dc-description">
+                         <span class="methodname">getBrowserType</span>
+                        <span class="methodparam">( 
+                            <code_funcparams class="funcparams"/>
+                         )</span>
+                    </div>
+
+                </dt>
+
+                <dd>
+
+                    <p class="para">
+                        Retrieve the discovered browser type; usually one of:
+                    </p>
+
+                    <ul class="itemizedlist">
+                        <li class="listitem"><p class="para">Bot</p></li>
+                        <li class="listitem"><p class="para">Checker</p></li>
+                        <li class="listitem"><p class="para">Console</p></li>
+                        <li class="listitem"><p class="para">Desktop</p></li>
+                        <li class="listitem"><p class="para">Email</p></li>
+                        <li class="listitem"><p class="para">Feed</p></li>
+                        <li class="listitem"><p class="para">Mobile</p></li>
+                        <li class="listitem"><p class="para">Offline</p></li>
+                        <li class="listitem"><p class="para">Probe</p></li>
+                        <li class="listitem"><p class="para">Spam</p></li>
+                        <li class="listitem"><p class="para">Text</p></li>
+                        <li class="listitem"><p class="para">Validator</p></li>
+                    </ul>
+
+                    <p class="para">
+                        Unless explicitly set, the browser type is unknown until
+                         <span class="methodname">getDevice()</span> has been called.
+                    </p>
+                </dd>
+
+            </dt>
+
+
+            <dt id="zend.http.user-agent.methods.set-browser-type">
+                <dt class="term">
+                    <div class="methodsynopsis dc-description">
+                         <span class="methodname">setBrowserType</span>
+                        <span class="methodparam">( 
+                            <code_funcparams class="funcparams">$browserType</code_funcparams>
+                         )</span>
+                    </div>
+
+                </dt>
+
+                <dd>
+
+                    <p class="para">
+                        Explicitly set the browser type to prepend to the identification sequence. Once
+                         <span class="methodname">getDevice()</span> has been called, the browser type is marked
+                        immutable, and calling this method will raise an exception.
+                    </p>
+                </dd>
+
+            </dt>
+
+
+            <dt id="zend.http.user-agent.methods.get-server">
+                <dt class="term">
+                    <div class="methodsynopsis dc-description">
+                         <span class="methodname">getServer</span>
+                        <span class="methodparam">( 
+                            <code_funcparams class="funcparams"/>
+                         )</span>
+                    </div>
+
+                </dt>
+
+                <dd>
+
+                    <p class="para">
+                        Retrieve the array of HTTP headers and environment variables used to perform
+                        device discovery. If the array has not yet been set, it is seeded with the
+                        <var class="varname">$_SERVER</var> superglobal.
+                    </p>
+                </dd>
+
+            </dt>
+
+
+            <dt id="zend.http.user-agent.methods.set-server">
+                <dt class="term">
+                    <div class="methodsynopsis dc-description">
+                         <span class="methodname">setServer</span>
+                        <span class="methodparam">( 
+                            <code_funcparams class="funcparams">$server</code_funcparams>
+                         )</span>
+                    </div>
+
+                </dt>
+
+                <dd>
+
+                    <p class="para">
+                        Explicitly set the &quot;server&quot; array of HTTP headers and environment variables to
+                        use during device discovery. Once  <span class="methodname">getDevice()</span> has been
+                        called, the server array is marked immutable, and calling this method will raise
+                        an exception.
+                    </p>
+                </dd>
+
+            </dt>
+
+
+            <dt id="zend.http.user-agent.methods.get-server-value">
+                <dt class="term">
+                    <div class="methodsynopsis dc-description">
+                         <span class="methodname">getServerValue</span>
+                        <span class="methodparam">( 
+                            <code_funcparams class="funcparams">$key</code_funcparams>
+                         )</span>
+                    </div>
+
+                </dt>
+
+                <dd>
+
+                    <p class="para">
+                        Retrieve a single value from the server array by key.
+                    </p>
+                </dd>
+
+            </dt>
+
+
+            <dt id="zend.http.user-agent.methods.set-server-value">
+                <dt class="term">
+                    <div class="methodsynopsis dc-description">
+                         <span class="methodname">setServerValue</span>
+                        <span class="methodparam">( 
+                            <code_funcparams class="funcparams">$key, $value</code_funcparams>
+                         )</span>
+                    </div>
+
+                </dt>
+
+                <dd>
+
+                    <p class="para">
+                        Overwrite or define a value in the internal server array. Once
+                         <span class="methodname">getDevice()</span> has been called, the server array is marked
+                        immutable, and calling this method will raise an exception.
+                    </p>
+                </dd>
+
+            </dt>
+
+
+            <dt id="zend.http.user-agent.methods.set-plugin-loader">
+                <dt class="term">
+                    <div class="methodsynopsis dc-description">
+                         <span class="methodname">setPluginLoader</span>
+                        <span class="methodparam">( 
+                            <code_funcparams class="funcparams">$type, $loader</code_funcparams>
+                         )</span>
+                    </div>
+
+                </dt>
+
+                <dd>
+
+                    <p class="para">
+                        <var class="varname">$type</var> may be one of &quot;device&quot; or &quot;storage; the former is used
+                        when attempting to find device classes, the latter for finding storage classes.
+                        <var class="varname">$loader</var> may be a
+                        <span class="classname">Zend_Loader_PluginLoader</span> instance, or a string name
+                        containing the classname of a <span class="classname">Zend_Loader_PluginLoader</span>
+                        extension class.
+                    </p>
+                </dd>
+
+            </dt>
+
+
+            <dt id="zend.http.user-agent.methods.get-plugin-loader">
+                <dt class="term">
+                    <div class="methodsynopsis dc-description">
+                         <span class="methodname">getPluginLoader</span>
+                        <span class="methodparam">( 
+                            <code_funcparams class="funcparams">$type</code_funcparams>
+                         )</span>
+                    </div>
+
+                </dt>
+
+                <dd>
+
+                    <p class="para">
+                        Retrieves either the &quot;device&quot; or &quot;storage&quot; plugin loader instance.
+                    </p>
+                </dd>
+
+            </dt>
+
+        </dl>
+
+    </div>
+
+    <div class="section" id="zend.http.user-agent.examples" name="zend.http.user-agent.examples"><div class="info"><h1 class="title">Examples</h1></div>
+        
+
+        <p class="para">
+            Please see the <a href="zend.http.user-agent.html#zend.http.user-agent.quick-start" class="link">quick start</a> for
+            examples at this time.
+        </p>
+    </div>
+</div>
+        <hr />
+
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.http.response.html">Zend_Http_Response</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.http.html">Zend_Http</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.http.user-agent-device.html">The UserAgent Device Interface</a></div>
+                    </td>
+                </tr>
+            </table>
+</td>
+        <td style="font-size: smaller;" width="15%"> <style type="text/css">
+#leftbar {
+	float: left;
+	width: 186px;
+	padding: 5px;
+	font-size: smaller;
+}
+ul.toc {
+	margin: 0px 5px 5px 5px;
+	padding: 0px;
+}
+ul.toc li {
+	font-size: 85%;
+	margin: 1px 0 1px 1px;
+	padding: 1px 0 1px 11px;
+	list-style-type: none;
+	background-repeat: no-repeat;
+	background-position: center left;
+}
+ul.toc li.header {
+	font-size: 115%;
+	padding: 5px 0px 5px 11px;
+	border-bottom: 1px solid #cccccc;
+	margin-bottom: 5px;
+}
+ul.toc li.active {
+	font-weight: bold;
+}
+ul.toc li a {
+	text-decoration: none;
+}
+ul.toc li a:hover {
+	text-decoration: underline;
+}
+</style>
+ <ul class="toc">
+  <li class="header home"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="reference.html">Zend Framework Reference</a></li>
+  <li class="header up"><a href="zend.http.html">Zend_Http</a></li>
+  <li><a href="zend.http.client.html">Zend_Http_Client - 介绍</a></li>
+  <li><a href="zend.http.client.advanced.html">Zend_Http_Client - Advanced Usage</a></li>
+  <li><a href="zend.http.client.adapters.html">Zend_Http_Client - Connection Adapters</a></li>
+  <li><a href="zend.http.cookies.html">Zend_Http_Cookie and Zend_Http_CookieJar</a></li>
+  <li><a href="zend.http.response.html">Zend_Http_Response</a></li>
+  <li class="active"><a href="zend.http.user-agent.html">Zend_Http_UserAgent</a></li>
+  <li><a href="zend.http.user-agent-device.html">The UserAgent Device Interface</a></li>
+  <li><a href="zend.http.user-agent-features.html">The UserAgent Features Adapter</a></li>
+  <li><a href="zend.http.user-agent-features-wurfl.html">The WURFL UserAgent Features Adapter</a></li>
+  <li><a href="zend.http.user-agent-features-device-atlas.html">The DeviceAtlas UserAgent Features Adapter</a></li>
+  <li><a href="zend.http.user-agent-features-tera-wurfl.html">The TeraWurfl UserAgent Features Adapter</a></li>
+  <li><a href="zend.http.user-agent-storage.html">The UserAgent Storage Interface</a></li>
+  <li><a href="zend.http.user-agent-storage-session.html">The Session UserAgent Storage Adapter</a></li>
+ </ul>
+ </td>
+    </tr>
+</table>
+</body>
+</html>

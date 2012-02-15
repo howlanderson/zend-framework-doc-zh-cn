@@ -1,0 +1,213 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <title>Zend_Config_Xml - Zend Framework Manual</title>
+
+</head>
+<body>
+<table width="100%">
+    <tr valign="top">
+        <td width="85%">
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.config.adapters.json.html">Zend_Config_Json</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.config.html">Zend_Config</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.config.adapters.yaml.html">Zend_Config_Yaml</a></div>
+                    </td>
+                </tr>
+            </table>
+<hr />
+<div id="zend.config.adapters.xml" class="section"><div class="info"><h1 class="title">Zend_Config_Xml</h1></div>
+    
+    <p class="para">
+        <code class="code">Zend_Config_Xml</code> 让开发者能够存储配置数据到一个简单XML格式并通过嵌入对象属性语法来读取。XML文件的根元素（root element）不相关并可以任意命名。顶级的XML元素和配置数据的节相对应。XML格式通过嵌入XML元素到节一级元素（section-level elements）的下面来支持等级结构组织。叶一级（leaf-level）的XML元素和配置数据的值相对应。节继承通过一个特殊的XML属性名为<code class="code">extends</code>来支持，与之相对应的这个属性的值通过扩展节（extending section）来继承。
+    </p>
+    <blockquote><p><b class="note">Note</b>: <span class="info"><b>返回类型</b><br /></span>
+        
+        
+            读入<code class="code">Zend_Config_Xml</code>中的配置数据总是返回字串。数据从字符串到其它类型的转换留给开发者来适应他们特定的需求。
+        <br />
+    </p></blockquote>
+    <div class="example"><div class="info"><p><b>Example #1 使用Zend_Config_Xml</b></p></div>
+        
+        <div class="example-contents"><p>
+            这个例子示例了从INI文件加载配置数据的<code class="code">Zend_Config_Xml</code>的基本用法。在这个例子中有生产系统（production system）和开发系统（staging system）的配置数据。因为开发系统配置数据和生产系统的配置数据类似，所以开发系统的节从生产系统的节继承。在这个案例中，结果(decision)是任意的并且它可以反过来做，即生产系统节从开发系统节继承，尽管这不可能用于更复杂的情形。接着，假定下面的配置数据包含在<code class="code">/path/to/config.xml</code>中：
+        </p></div>
+        <div class="programlisting"><div class="cdata"><pre>
+&lt;?xml version=&quot;1.0&quot;?&gt;
+&lt;configdata&gt;
+    &lt;production&gt;
+        &lt;webhost&gt;www.example.com&lt;/webhost&gt;
+        &lt;database&gt;
+            &lt;adapter&gt;pdo_mysql&lt;/adapter&gt;
+            &lt;params&gt;
+                &lt;host&gt;db.example.com&lt;/host&gt;
+                &lt;username&gt;dbuser&lt;/username&gt;
+                &lt;password&gt;secret&lt;/password&gt;
+                &lt;dbname&gt;dbname&lt;/dbname&gt;
+            &lt;/params&gt;
+        &lt;/database&gt;
+    &lt;/production&gt;
+    &lt;staging extends=&quot;production&quot;&gt;
+        &lt;database&gt;
+            &lt;params&gt;
+                &lt;host&gt;dev.example.com&lt;/host&gt;
+                &lt;username&gt;devuser&lt;/username&gt;
+                &lt;password&gt;devsecret&lt;/password&gt;
+            &lt;/params&gt;
+        &lt;/database&gt;
+    &lt;/staging&gt;
+&lt;/configdata&gt;
+
+</pre></div></div>
+
+        <div class="example-contents"><p>
+            接着，假定开发者需要从XML文件取开发配置数据。这非常简单，只要指定XML文件和开发系统节就可以加载这些数据了：
+        </p></div>
+        <div class="programlisting"><div class="cdata"><pre>
+$config = new Zend_Config_Xml(&#039;/path/to/config.xml&#039;, &#039;staging&#039;);
+
+echo $config-&gt;database-&gt;params-&gt;host;   // 输出 &quot;dev.example.com&quot;
+echo $config-&gt;database-&gt;params-&gt;dbname; // 输出 &quot;dbname&quot;
+
+        </pre></div></div>
+
+    </div>
+    <div class="example"><div class="info"><p><b>Example #2  在 Zend_Config_Xml 使用标签（tag）属性 </b></p></div>
+        
+        <div class="example-contents"><p>
+            Zend_Config_Xml 也支持另外两种方法在配置文件里定义节点。它们都利用属性。
+            因为 <code class="code">extends</code> 和 <code class="code">value</code> 属性是保留关键字（后者是第二种使用属性的方法），它们可能不被使用。
+            第一种方法使用属性是把属性添加到父节点，它本身就变成了子节点：
+        </p></div>
+        <div class="programlisting"><div class="cdata"><pre>
+&lt;?xml version=&quot;1.0&quot;?&gt;
+&lt;configdata&gt;
+    &lt;production webhost=&quot;www.example.com&quot;&gt;
+        &lt;database adapter=&quot;pdo_mysql&quot;&gt;
+            &lt;params host=&quot;db.example.com&quot; username=&quot;dbuser&quot; password=&quot;secret&quot; dbname=&quot;dbname&quot;/&gt;
+        &lt;/database&gt;
+    &lt;/production&gt;
+    &lt;staging extends=&quot;production&quot;&gt;
+        &lt;database&gt;
+            &lt;params host=&quot;dev.example.com&quot; username=&quot;devuser&quot; password=&quot;devsecret&quot;/&gt;
+        &lt;/database&gt;
+    &lt;/staging&gt;
+&lt;/configdata&gt;
+
+</pre></div></div>
+
+        <div class="example-contents"><p>
+            另一种方法也不会使配置文件变小，但使维护变得容易，是因为你需要要写标签名两次。你可以创建一个空标签，它在 <code class="code">value</code>  属性里包含它的值：
+        </p></div>
+        <div class="programlisting"><div class="cdata"><pre>
+&lt;?xml version=&quot;1.0&quot;?&gt;
+&lt;configdata&gt;
+    &lt;production&gt;
+        &lt;webhost&gt;www.example.com&lt;/webhost&gt;
+        &lt;database&gt;
+            &lt;adapter value=&quot;pdo_mysql&quot;/&gt;
+            &lt;params&gt;
+                &lt;host value=&quot;db.example.com&quot;/&gt;
+                &lt;username value=&quot;dbuser&quot;/&gt;
+                &lt;password value=&quot;secret&quot;/&gt;
+                &lt;dbname value=&quot;dbname&quot;/&gt;
+            &lt;/params&gt;
+        &lt;/database&gt;
+    &lt;/production&gt;
+    &lt;staging extends=&quot;production&quot;&gt;
+        &lt;database&gt;
+            &lt;params&gt;
+                &lt;host value=&quot;dev.example.com&quot;/&gt;
+                &lt;username value=&quot;devuser&quot;/&gt;
+                &lt;password value=&quot;devsecret&quot;/&gt;
+            &lt;/params&gt;
+        &lt;/database&gt;
+    &lt;/staging&gt;
+&lt;/configdata&gt;
+
+</pre></div></div>
+
+    </div>
+</div>
+        <hr />
+
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.config.adapters.json.html">Zend_Config_Json</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.config.html">Zend_Config</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.config.adapters.yaml.html">Zend_Config_Yaml</a></div>
+                    </td>
+                </tr>
+            </table>
+</td>
+        <td style="font-size: smaller;" width="15%"> <style type="text/css">
+#leftbar {
+	float: left;
+	width: 186px;
+	padding: 5px;
+	font-size: smaller;
+}
+ul.toc {
+	margin: 0px 5px 5px 5px;
+	padding: 0px;
+}
+ul.toc li {
+	font-size: 85%;
+	margin: 1px 0 1px 1px;
+	padding: 1px 0 1px 11px;
+	list-style-type: none;
+	background-repeat: no-repeat;
+	background-position: center left;
+}
+ul.toc li.header {
+	font-size: 115%;
+	padding: 5px 0px 5px 11px;
+	border-bottom: 1px solid #cccccc;
+	margin-bottom: 5px;
+}
+ul.toc li.active {
+	font-weight: bold;
+}
+ul.toc li a {
+	text-decoration: none;
+}
+ul.toc li a:hover {
+	text-decoration: underline;
+}
+</style>
+ <ul class="toc">
+  <li class="header home"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="reference.html">Zend Framework Reference</a></li>
+  <li class="header up"><a href="zend.config.html">Zend_Config</a></li>
+  <li><a href="zend.config.introduction.html">简介</a></li>
+  <li><a href="zend.config.theory_of_operation.html">操作理论</a></li>
+  <li><a href="zend.config.adapters.ini.html">Zend_Config_Ini</a></li>
+  <li><a href="zend.config.adapters.json.html">Zend_Config_Json</a></li>
+  <li class="active"><a href="zend.config.adapters.xml.html">Zend_Config_Xml</a></li>
+  <li><a href="zend.config.adapters.yaml.html">Zend_Config_Yaml</a></li>
+ </ul>
+ </td>
+    </tr>
+</table>
+</body>
+</html>

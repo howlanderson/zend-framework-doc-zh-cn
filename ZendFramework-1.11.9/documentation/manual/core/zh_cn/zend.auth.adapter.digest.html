@@ -1,0 +1,210 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <title>摘要式认证 - Zend Framework Manual</title>
+
+</head>
+<body>
+<table width="100%">
+    <tr valign="top">
+        <td width="85%">
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.auth.adapter.dbtable.html">数据库表认证</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.auth.html">Zend_Auth</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.auth.adapter.http.html">HTTP 认证适配器</a></div>
+                    </td>
+                </tr>
+            </table>
+<hr />
+<div id="zend.auth.adapter.digest" class="section"><div class="info"><h1 class="title">摘要式认证</h1></div>
+
+    
+
+    <div class="section" id="zend.auth.adapter.digest.introduction" name="zend.auth.adapter.digest.introduction"><div class="info"><h1 class="title">简介</h1></div>
+
+        
+
+        <p class="para">
+            <a href="http://en.wikipedia.org/wiki/Digest_access_authentication" class="link external">&raquo; 摘要式认证</a>是一个HTTP认证的方法，它通过不需要通过网络传递明文密码的方法对<a href="http://en.wikipedia.org/wiki/Basic_authentication_scheme" class="link external">&raquo; 基本认证</a>加以改进。
+        </p>
+
+        <p class="para">
+            这个适配器允许依靠文本文件认证，该文本包括数行摘要式认证的基本元素：
+            <ul class="itemizedlist">
+                <li class="listitem">
+                    <p class="para">
+                        用户名，例如 &quot;<code class="code">joe.user</code>&quot;
+                    </p>
+                </li>
+                <li class="listitem">
+                    <p class="para">
+                        领域，例如 &quot;<code class="code">Administrative Area</code>&quot;
+                    </p>
+                </li>
+                <li class="listitem">
+                    <p class="para">
+                        用户名，领域和密码的MD5 hash用冒号隔开
+                    </p>
+                </li>
+            </ul>
+            在下面的例子中，上面的元素用冒号隔开（密码是&quot;<code class="code">somePassword</code>&quot;）：
+        </p>
+
+        <div class="programlisting"><div class="cdata"><pre>
+someUser:Some Realm:fde17b91c3a510ecbaf7dbd37f59d4f8
+
+</pre></div></div>
+
+
+    </div>
+
+    <div class="section" id="zend.auth.adapter.digest.specifics" name="zend.auth.adapter.digest.specifics"><div class="info"><h1 class="title">规范（Specifics）</h1></div>
+
+        
+
+        <p class="para">
+            摘要式认证适配器<code class="code">Zend_Auth_Adapter_Digest</code>需要若干输入参数：
+            <ul class="itemizedlist">
+                <li class="listitem">
+                    <p class="para">
+                        文件名 － 认证查询被执行是所需的文件名
+                    </p>
+                </li>
+                <li class="listitem">
+                    <p class="para">
+                        领域 － 摘要式认证领域
+                    </p>
+                </li>
+                <li class="listitem">
+                    <p class="para">
+                        用户名 － 摘要式认证用户
+                    </p>
+                </li>
+                <li class="listitem">
+                    <p class="para">
+                        密码 － 该领域用户的密码
+                    </p>
+                </li>
+            </ul>
+            在调用<code class="code">authenticate()</code>之前必需要设定这些参数。
+        </p>
+
+    </div>
+
+    <div class="section" id="zend.auth.adapter.digest.identity" name="zend.auth.adapter.digest.identity"><div class="info"><h1 class="title">身份（Identity）</h1></div>
+
+        
+
+        <p class="para">
+            摘要式认证返回一个<code class="code">Zend_Auth_Result</code> 对象，它由包含<code class="code">realm</code>和<code class="code">username</code>健值的数组的身份形成。在<code class="code">authenticate()</code>被调用之前，分别设置和这些健值关联的数组值为相符的值。
+        </p>
+
+        <div class="programlisting"><div class="cdata"><pre>
+&lt;
+$adapter = new Zend_Auth_Adapter_Digest($filename,
+                                        $realm,
+                                        $username,
+                                        $password);
+
+$result = $adapter-&gt;authenticate();
+
+$identity = $result-&gt;getIdentity();
+
+print_r($identity);
+
+/*
+Array
+(
+    [realm] =&gt; Some Realm
+    [username] =&gt; someUser
+)
+*/
+
+        </pre></div></div>
+
+
+    </div>
+
+</div>
+        <hr />
+
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.auth.adapter.dbtable.html">数据库表认证</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.auth.html">Zend_Auth</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.auth.adapter.http.html">HTTP 认证适配器</a></div>
+                    </td>
+                </tr>
+            </table>
+</td>
+        <td style="font-size: smaller;" width="15%"> <style type="text/css">
+#leftbar {
+	float: left;
+	width: 186px;
+	padding: 5px;
+	font-size: smaller;
+}
+ul.toc {
+	margin: 0px 5px 5px 5px;
+	padding: 0px;
+}
+ul.toc li {
+	font-size: 85%;
+	margin: 1px 0 1px 1px;
+	padding: 1px 0 1px 11px;
+	list-style-type: none;
+	background-repeat: no-repeat;
+	background-position: center left;
+}
+ul.toc li.header {
+	font-size: 115%;
+	padding: 5px 0px 5px 11px;
+	border-bottom: 1px solid #cccccc;
+	margin-bottom: 5px;
+}
+ul.toc li.active {
+	font-weight: bold;
+}
+ul.toc li a {
+	text-decoration: none;
+}
+ul.toc li a:hover {
+	text-decoration: underline;
+}
+</style>
+ <ul class="toc">
+  <li class="header home"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="reference.html">Zend Framework Reference</a></li>
+  <li class="header up"><a href="zend.auth.html">Zend_Auth</a></li>
+  <li><a href="zend.auth.introduction.html">简介</a></li>
+  <li><a href="zend.auth.adapter.dbtable.html">数据库表认证</a></li>
+  <li class="active"><a href="zend.auth.adapter.digest.html">摘要式认证</a></li>
+  <li><a href="zend.auth.adapter.http.html">HTTP 认证适配器</a></li>
+  <li><a href="zend.auth.adapter.ldap.html">LDAP 认证</a></li>
+  <li><a href="zend.auth.adapter.openid.html">Open ID Authentication</a></li>
+ </ul>
+ </td>
+    </tr>
+</table>
+</body>
+</html>

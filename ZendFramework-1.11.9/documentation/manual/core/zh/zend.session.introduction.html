@@ -1,0 +1,147 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <title>简介 - Zend Framework Manual</title>
+
+</head>
+<body>
+<table width="100%">
+    <tr valign="top">
+        <td width="85%">
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.session.html">Zend_Session</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.session.html">Zend_Session</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.session.basic_usage.html">基本用法</a></div>
+                    </td>
+                </tr>
+            </table>
+<hr />
+<div id="zend.session.introduction" class="section"><div class="info"><h1 class="title">简介</h1></div>
+
+    
+
+    <p class="para">
+        Zend Framework Auth 团队也非常期望大家在邮件列表中进行反馈和贡献：
+        <a href="mailto:fw-auth@lists.zend.com" class="link external">&raquo; fw-auth@lists.zend.com</a>
+    </p>
+
+    <p class="para">
+        在基于 PHP 开发的 Web 应用程序中，<em class="emphasis">会话(session)</em>
+        代表服务器端和特定的用户代理客户端(比如 web 浏览器)之间的一对一的持久的状态数据。
+        <code class="code">Zend_Session</code> 用来在由相同客户端发起的多个页面请求之间，管理和保护会话数据
+        。逻辑上来说，会话数据是 cookie 数据的扩展。
+        和 cookie 数据不同，会话数据不储存在客户端，仅当服务器端程序源代码使得会话数据可用，
+        才通过回应来自客户端的请求与客户端共享会话数据。在该组件及其文档中，术语“session data”代表服务器端存储在
+        <a href="http://www.php.net/manual/en/reserved.variables.php#reserved.variables.session" class="link external">&raquo; <code class="code">$_SESSION</code></a>
+        中的数据。该数据使用 <code class="code">Zend_Session</code> 来管理，由 <code class="code">Zend_Session_Namespace</code>
+        采用对象的方式来控制。
+        <em class="emphasis">会话命名空间(Session Namespaces)</em>
+        提供了使用经典的<a href="http://en.wikipedia.org/wiki/Namespace_%28computer_science%29" class="link external">&raquo; 命名空间</a>
+        方式来访问会话数据，命名空间逻辑上就是一系列被命名（键名为字符串）的联合数组（类似于普通的 PHP 数组）。
+    </p>
+
+    <p class="para">
+        <code class="code">Zend_Session_Namespace</code> 的实例用对象存储的方式实现了 <code class="code">$_SESSION</code> 的命名空间。
+        <code class="code">Zend_Session</code> 组件包装了PHP内置的会话模块，提供了一个管理会话的接口，也为
+        <code class="code">Zend_Session_Namespace</code> 持久化命名空间数据提供了API。
+        <code class="code">Zend_Session_Namespace</code> 为会话命名空间数据到PHP内部会话机制的持久化提供了一个标准的、面向对象的接口。
+        <code class="code">Zend_Session</code> 支持现有无名的会话，同时也支持“登录会话”。Zend Framework 的用户验证组件
+        <code class="code">Zend_Auth</code>，使用了
+        <code class="code">Zend_Session_Namespace</code>，把用户的鉴别信息储存到了&quot;Zend_Auth&quot;命名空间下。
+        因为 <code class="code">Zend_Session</code> 使用了PHP内置的会话函数，常用的配置选项和设置都仍然适用(请参考
+        <a href="http://www.php.net/session" class="link external">&raquo; http://www.php.net/session</a>)。
+        如此，储存在cookie或者URL中的会话标识，保持了客户端与服务器端会话状态数据之间的联系。
+    </p>
+
+    <p class="para">
+        PHP 默认的
+        <a href="http://www.php.net/manual/en/function.session-set-save-handler.php" class="link external">&raquo; session_save_handler 函数</a>
+        没有解决当客户端连接到了集群服务器中的一些服务器的情况下，保持客户端与服务器端会话状态数据之间联系的问题，
+        因为会话状态数据只能储存在本地服务器当中（译注：也就是在各服务器间不能共享session数据）。
+        当一组附加的且合理的save handlers可用时，我们会提供它。我们鼓励社区成员在我们的邮件列表
+        <a href="mailto:fw-auth@lists.zend.com" class="link external">&raquo; fw-auth@lists.zend.com</a> 中发表你的建议或者提交save handlers。
+        与Zend_Db兼容的save handler已经发表在邮件列表中。
+    </p>
+
+</div>
+        <hr />
+
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.session.html">Zend_Session</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.session.html">Zend_Session</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.session.basic_usage.html">基本用法</a></div>
+                    </td>
+                </tr>
+            </table>
+</td>
+        <td style="font-size: smaller;" width="15%"> <style type="text/css">
+#leftbar {
+	float: left;
+	width: 186px;
+	padding: 5px;
+	font-size: smaller;
+}
+ul.toc {
+	margin: 0px 5px 5px 5px;
+	padding: 0px;
+}
+ul.toc li {
+	font-size: 85%;
+	margin: 1px 0 1px 1px;
+	padding: 1px 0 1px 11px;
+	list-style-type: none;
+	background-repeat: no-repeat;
+	background-position: center left;
+}
+ul.toc li.header {
+	font-size: 115%;
+	padding: 5px 0px 5px 11px;
+	border-bottom: 1px solid #cccccc;
+	margin-bottom: 5px;
+}
+ul.toc li.active {
+	font-weight: bold;
+}
+ul.toc li a {
+	text-decoration: none;
+}
+ul.toc li a:hover {
+	text-decoration: underline;
+}
+</style>
+ <ul class="toc">
+  <li class="header home"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="reference.html">Zend Framework Reference</a></li>
+  <li class="header up"><a href="zend.session.html">Zend_Session</a></li>
+  <li class="active"><a href="zend.session.introduction.html">简介</a></li>
+  <li><a href="zend.session.basic_usage.html">基本用法</a></li>
+  <li><a href="zend.session.advanced_usage.html">高级用法</a></li>
+  <li><a href="zend.session.global_session_management.html">全局会话管理</a></li>
+  <li><a href="zend.session.savehandler.dbtable.html">Zend_Session_SaveHandler_DbTable</a></li>
+ </ul>
+ </td>
+    </tr>
+</table>
+</body>
+</html>

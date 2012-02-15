@@ -1,0 +1,499 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <title>前端控制器 - Zend Framework Manual</title>
+
+</head>
+<body>
+<table width="100%">
+    <tr valign="top">
+        <td width="85%">
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.controller.basics.html">Zend_Controller 基础</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.controller.html">Zend_Controller</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.controller.request.html">请求对象</a></div>
+                    </td>
+                </tr>
+            </table>
+<hr />
+<div id="zend.controller.front" class="section"><div class="info"><h1 class="title">前端控制器</h1></div>
+    
+
+    <div class="section" id="zend.controller.front.overview" name="zend.controller.front.overview"><div class="info"><h1 class="title">概述</h1></div>
+        
+
+        <p class="para">
+            <code class="code">Zend_Controller_Front</code>实现了<a href="http://en.wikipedia.org/wiki/Model-view-controller" class="link external">&raquo; 模型-视图-控制器 (MVC)</a>应用程序的<a href="http://www.martinfowler.com/eaaCatalog/frontController.html" class="link external">&raquo; 前端控制器模式</a>。目的在于初始化请求环境，并路由到来的请求，接着分发任何发现的动作；收集所有的响应，在整个过程完成时就其返回。
+        </p>
+
+        <p class="para">
+            <code class="code">Zend_Controller_Front</code>也实现了<a href="http://en.wikipedia.org/wiki/Singleton_pattern" class="link external">&raquo; 单件（Singleton）模式</a>，意味着任何时候，都只可能有一个有效实例。这使得它可以作为注册表，供分发过程中的其他对象引用。
+        </p>
+
+        <p class="para">
+            <code class="code">Zend_Controller_Front</code>自己注册了一个<a href="zend.controller.plugins.html" class="link">插件经纪人（plugin broker）</a>，允许插件观测它所触发的各种事件。大多数情况下，这将使得开发人员有机会裁剪站点的分发过程，而无需通过扩展前端控制器增加功能。
+        </p>
+
+        <p class="para">
+            前端控制器最至少需要一个或多个包含<a href="zend.controller.action.html" class="link">动作控制器</a>的目录的路径来完成工作。还有大量的方法可供调用，进一步裁剪前端控制器以及它的助手类环境。
+        </p>
+
+        <blockquote><p><b class="note">Note</b>: <span class="info"><b>默认的行为</b><br /></span>
+            
+            
+                默认地，前端控制器加载<a href="zend.controller.plugins.html#zend.controller.plugins.standard.errorhandler" class="link">ErrorHandler</a>插件，以及<a href="zend.controller.actionhelpers.html#zend.controller.actionhelpers.viewrenderer" class="link">ViewRenderer</a>动作助手，分别为了简化控制器中的错误处理和视图渲染。
+            <br />
+
+            
+                如需禁用<code class="code">ErrorHandler</code>，调用<code class="code">dispatch()</code>前执行下面代码：
+            <br />
+
+            <div class="programlisting"><div class="cdata"><pre>
+// Disable the ErrorHandler plugin:
+$front-&gt;setParam(&#039;noErrorHandler&#039;, true);
+
+            </pre></div></div>
+
+
+            
+                如需禁用<code class="code">ViewRenderer</code>，调用<code class="code">dispatch()</code>前执行下面代码：
+            <br />
+
+            <div class="programlisting"><div class="cdata"><pre>
+// Disable the ViewRenderer helper:
+$front-&gt;setParam(&#039;noViewRenderer&#039;, true);
+
+            </pre></div></div>
+
+        </p></blockquote>
+    </div>
+
+    <div class="section" id="zend.controller.front.methods.primary" name="zend.controller.front.methods.primary"><div class="info"><h1 class="title">主要方法</h1></div>
+        
+
+        <p class="para">
+            前端控制器有很多建立其环境的访问器。但是，有三个是开启前端控制器功能的主要方法：
+        </p>
+
+        <div class="section" id="zend.controller.front.methods.primary.getinstance" name="zend.controller.front.methods.primary.getinstance"><div class="info"><h1 class="title">getInstance()</h1></div>
+            
+
+            <p class="para">
+                <code class="code">getInstance()</code>方法用来获取前端控制器实例。因为前端控制器实现了单件模式，这可能是唯一创建前端控制器对象的方法。
+            </p>
+
+            <div class="programlisting"><div class="cdata"><pre>
+$front = Zend_Controller_Front::getInstance();
+
+            </pre></div></div>
+
+        </div>
+
+        <div class="section" id="zend.controller.front.methods.primary.setcontrollerdirectory" name="zend.controller.front.methods.primary.setcontrollerdirectory"><div class="info"><h1 class="title">setControllerDirectory() 和 addControllerDirectory()</h1></div>
+            
+
+            <p class="para">
+                <code class="code">setControllerDirectory()</code>通知<a href="zend.controller.dispatcher.html" class="link">分发器</a>到哪查找动作控制器<a href="zend.controller.action.html" class="link">action controller</a>类文件。参数接受单一路径和模块/路径对关联数组。
+            </p>
+
+            <p class="para">
+                例如：
+            </p>
+
+            <div class="programlisting"><div class="cdata"><pre>
+// Set the default controller directory:
+$front-&gt;setControllerDirectory(&#039;../application/controllers&#039;);
+
+// Set several module directories at once:
+$front-&gt;setControllerDirectory(array(
+    &#039;default&#039; =&gt; &#039;../application/controllers&#039;,
+    &#039;blog&#039;    =&gt; &#039;../modules/blog/controllers&#039;,
+    &#039;news&#039;    =&gt; &#039;../modules/news/controllers&#039;,
+));
+
+// Add a &#039;foo&#039; module directory:
+$front-&gt;addControllerDirectory(&#039;../modules/foo/controllers&#039;, &#039;foo&#039;);
+
+            </pre></div></div>
+
+
+            <blockquote><p><b class="note">Note</b>: 
+                
+                    如果使用<code class="code">addControllerDirectory()</code>时不带模块名，将会为<code class="code">default</code>模块设定目录——如果目录已设定，就覆盖掉。
+                <br />
+            </p></blockquote>
+
+            <p class="para">
+                可以通过<code class="code">getControllerDirectory()</code>获取控制器目录的当前设置；它将返回一个模块/目录对关联数组。
+            </p>
+        </div>
+
+        <div class="section" id="zend.controller.front.methods.primary.addmoduledirectory" name="zend.controller.front.methods.primary.addmoduledirectory"><div class="info"><h1 class="title">addModuleDirectory() and getModuleDirectory()</h1></div>
+            
+
+            <p class="para">
+                前端控制器的一个功能是你可以
+                <a href="zend.controller.modular.html" class="link">定义一个模块目录结构
+                </a>
+                来创建独立的组件，被叫做“模块”。
+            </p>
+
+            <p class="para">
+                每个模块位于自己的目录并和缺省模块的目录结构一样 － 例如，它至少
+                有个 &quot;controllers&quot; 字目录和 &quot;views&quot; 子目录以及其它应用子目录。
+            </p>
+
+            <p class="para">
+                <code class="code">addModuleDirectory()</code> 让你传递一个包含一个或多个模块目录的目录名。
+                然后进行扫描并把它们作为控制器目录添加到前端控制器。
+            </p>
+
+            <p class="para">
+                然后，如果你想确定特定模块或当前模块路径，调用 <code class="code">getModuleDirectory()</code>，
+                可选地传递模块名来获得模块目录。
+            </p>
+        </div>
+
+        <div class="section" id="zend.controller.front.methods.primary.dispatch" name="zend.controller.front.methods.primary.dispatch"><div class="info"><h1 class="title">dispatch()</h1></div>
+            
+
+            <p class="para">
+                <code class="code">dispatch(Zend_Controller_Request_Abstract $request = null, Zend_Controller_Response_Abstract $response = null)</code>完成前端控制器最繁重的工作。该方法带有可选的参数<a href="zend.controller.request.html" class="link">请求对象</a>和/或<a href="zend.controller.response.html" class="link">响应对象</a>，允许开发人员为每一个传入定制的对象。
+            </p>
+
+            <p class="para">
+                        如果没有请求或者响应对象传入，<code class="code">dispatch()</code>将检查先前注册的对象并使用，如果没有发现则创建默认的对象版本（它们两个都默认使用HTTP对象）。
+            </p>
+
+            <p class="para">
+                        类似的，<code class="code">dispatch()</code>先检查已注册的<a href="zend.controller.router.html" class="link">路由器（router）</a>和<a href="zend.controller.dispatcher.html" class="link">分发器（dispatcher）</a>对象，如果没有发现则实例化它们的默认版本。
+            </p>
+
+            <p class="para">
+                        分发过程有三个不同的事件：
+            </p>
+
+            <ul class="itemizedlist">
+                <li class="listitem"><p class="para">路由（Routing）</p></li>
+                <li class="listitem"><p class="para">分发（Dispatching）</p></li>
+                <li class="listitem"><p class="para">响应（Response）</p></li>
+            </ul>
+
+            <p class="para">
+                        路由只发生一次，当调用<code class="code">dispatch()</code>时利用请求对象中的值。分发发生在一个循环中;请求可能指示	分发多个动作，或者控制器或插件可能重置请求对象，强制分发附加的动作。所有都完成后，前端控制器返回响应对象。
+            </p>
+        </div>
+
+        <div class="section" id="zend.controller.front.methods.primary.run" name="zend.controller.front.methods.primary.run"><div class="info"><h1 class="title">run()</h1></div>
+            
+
+            <p class="para">
+                <code class="code">Zend_Controller_Front::run($path)</code>是静态方法，只带一个参数，就是指向包含控制器的目录的路径。它首先通过<a href="zend.controller.front.html#zend.controller.front.methods.primary.getinstance" class="link">getInstance()</a>获取前端控制器实例，然后通过<a href="zend.controller.front.html#zend.controller.front.methods.primary.setcontrollerdirectory" class="link">setControllerDirectory()</a>注册传入的路径，最后<a href="zend.controller.front.html#zend.controller.front.methods.primary.dispatch" class="link">分发</a>。
+            </p>
+
+            <p class="para">
+                        基本上，如果不要求定制前端控制器环境，<code class="code">run()</code>是一个很方便的建立前端控制器环境的方法。
+            </p>
+
+            <div class="programlisting"><div class="cdata"><pre>
+// Instantiate front controller, set controller directory, and dispatch in one
+// easy step:
+Zend_Controller_Front::run(&#039;../application/controllers&#039;);
+
+            </pre></div></div>
+
+        </div>
+    </div>
+
+    <div class="section" id="zend.controller.front.methods.environment" name="zend.controller.front.methods.environment"><div class="info"><h1 class="title">环境访问器方法</h1></div>
+        
+
+        <p class="para">
+                  除了上面所列的方法以外，还有很多访问器方法可以影响前端控制器环境 —— 因而也影响前端控制器代理（delegate）的类的环境。
+        </p>
+
+        <ul class="itemizedlist">
+            <li class="listitem">
+                <p class="para">
+                    <code class="code">resetInstance()</code>方法清除当前的所有设置。主要用来测试，不过，在希望将几个前端控制器连锁的地方也是很有用的（but it can also be used for instances where you wish to chain together multiple front controllers）。
+                </p>
+            </li>
+
+            <li class="listitem">
+                <p class="para">
+                    <code class="code">(set|get)DefaultControllerName()</code>方法可以为默认的控制器指定另外一个名字（否则使用&#039;index&#039;），以及获取当前值。它们将代理<a href="zend.controller.dispatcher.html" class="link">分发器</a>。
+                </p>
+            </li>
+
+            <li class="listitem">
+                <p class="para">
+                    <code class="code">(set|get)DefaultAction()</code>方法可以为默认的动作指定另外一个名字（否则使用&#039;index&#039;）,以及获取当前值。它们将代理<a href="zend.controller.dispatcher.html" class="link">分发器</a>。
+                </p>
+            </li>
+
+            <li class="listitem">
+                <p class="para">
+                    <code class="code">(set|get)Request()</code>方法指定分发过程中使用的<a href="zend.controller.request.html" class="link">请求</a>类或对象，以及获取当前的请求对象。设置请求对象时，可以传入一个请求类的名字，该方法将加载类文件并创建实例。
+                </p>
+            </li>
+
+            <li class="listitem">
+                <p class="para">
+                    <code class="code">(set|get)Router()</code>方法指定分发过程中使用的<a href="zend.controller.router.html" class="link">路由器</a>类或对象，以及获取当前对象。设置路由器时，可以传入一个路由器类的名字，该方法将加载类文件并创建实例。
+                </p>
+
+                <p class="para">
+                             获取路由器对象的时候，首先检查是否已有一个，如果没有，创建默认的路由器实例（rewrite路由器）。
+                </p>
+            </li>
+
+            <li class="listitem">
+                <p class="para">
+                    <code class="code">(set|get)BaseUrl()</code>方法指定路由请求时剥离（strip）的<a href="zend.controller.request.html#zend.controller.request.http.baseurl" class="link">基地址（base URL）</a>，以及获取当前值。这个值将在路由前提供给路由器。
+                        </p>
+            </li>
+
+            <li class="listitem">
+                <p class="para">
+                    <code class="code">(set|get)Dispatcher()</code>方法指定分发过程中使用的<a href="zend.controller.dispatcher.html" class="link">分发器</a>类或对象，以及获取当前对象。设定分发器对象时，可以传入一个分发器类的名字，该方法将加载类文件并创建实例。
+                </p>
+
+                <p class="para">
+                              获取分发器对象时，首先检查是否已有一个存在，如果没有，将创建一个默认的分发器实例。
+                </p>
+            </li>
+
+            <li class="listitem">
+                <p class="para">
+                    <code class="code">(set|get)Response()</code>方法指定分发过程中使用的<a href="zend.controller.response.html" class="link">响应</a>类或对象，已经获取当前对象。设定响应对象时，可以传入一个响应类的名字，该方法将加载类文件并创建实例。
+                </p>
+            </li>
+
+            <li class="listitem">
+                <p class="para">
+                    <code class="code">registerPlugin(Zend_Controller_Plugin_Abstract $plugin, $stackIndex = null)</code>方法允许注册一个<a href="zend.controller.plugins.html" class="link">插件对象</a>。通过设置可选参数<code class="code">$stackIndex</code>，插件执行的顺序。
+                </p>
+            </li>
+
+            <li class="listitem">
+                <p class="para">
+                    <code class="code">unregisterPlugin($plugin)</code>方法移除<a href="zend.controller.plugins.html" class="link">插件对象</a>。<code class="code">$plugin</code>可以是一个插件对象或者代表移除插件类的字符串。
+                </p>
+            </li>
+
+            <li class="listitem">
+                <p class="para">
+                    <code class="code">throwExceptions($flag)</code>方法用来开启或者关闭分发过程中抛出异常的能力。默认的，异常引起并放置在<a href="zend.controller.response.html" class="link">响应对象</a>中；开启<code class="code">throwExceptions()</code>将覆盖这一行为。
+                </p>
+
+                <p class="para">
+                              想知道更多信息的话，请阅读<a href="zend.controller.exceptions.html" class="xref">MVC 异常</a>。
+                </p>
+            </li>
+
+            <li class="listitem">
+                <p class="para">
+                    <code class="code">returnResponse($flag)</code>方法通知前端控制器是否从<code class="code">dispatch()</code>中返回请求对象（<code class="code">true</code>），否则自动发送响应对象（<code class="code">false</code>—）。默认的，响应对象被自动发送（通过调用<code class="code">Zend_Controller_Response_Abstract::sendResponse()</code>）；开启<code class="code">returnResponse()</code>将覆盖这一行为。
+                </p>
+
+                <p class="para">
+                              返回响应对象的原因包括希望在发送响应前检查异常，记录响应的各种属性（例如消息头）等等。
+                </p>
+            </li>
+        </ul>
+    </div>
+
+    <div class="section" id="zend.controller.front.methods.params" name="zend.controller.front.methods.params"><div class="info"><h1 class="title">前端控制器参数</h1></div>
+        
+
+        <p class="para">
+                  介绍里曾提到前端控制器可以用作各种控制器组件的注册表。它通过一个&quot;param&quot;家族的方法来做到这些。这些方法允许通过前端控制器注册任意类型的数据 —— 对象和变量，可以在分发链中的任何时候获取。这些变量被传递到路由器，分发器，以及动作控制器。这些方法包括：
+        </p>
+
+        <ul class="itemizedlist">
+            <li class="listitem">
+                <p class="para">
+                    <code class="code">setParam($name, $value)</code>方法设定值为<code class="code">$value</code>的单个参数<code class="code">$name</code>。
+                </p>
+            </li>
+
+            <li class="listitem">
+                <p class="para">
+                    <code class="code">setParams(array $params)</code>方法通过关联数组一次设定多个参数。
+                </p>
+            </li>
+
+            <li class="listitem">
+                <p class="para">
+                    <code class="code">getParam($name)</code>方法通过<code class="code">$name</code>标识符获取单个参数。
+                </p>
+            </li>
+
+            <li class="listitem">
+                <p class="para">
+                    <code class="code">getParams()</code>方法一次获取整个参数列表。
+                </p>
+            </li>
+
+            <li class="listitem">
+                <p class="para">
+                    <code class="code">clearParams()</code>方法可以清空一个参数（传入单个字符串标识符），清空多个参数（传入字符串标识符数组），清空整个参数栈（不传入参数）。
+                </p>
+            </li>
+        </ul>
+
+        <p class="para">
+                  有几个预定义的参数可供设定，它们在分发链中有特别的用途：
+        </p>
+
+        <ul class="itemizedlist">
+            <li class="listitem">
+                <p class="para">
+                    <code class="code">useDefaultControllerAlways</code>用来提示 <a href="zend.controller.dispatcher.html" class="link">分发器</a>遇到无法分发的请求时使用默认模块的默认控制器。这默认是关闭的。
+                </p>
+
+                <p class="para">
+                    阅读<a href="zend.controller.exceptions.html#zend.controller.exceptions.internal" class="xref">可能遭遇的MVC异常</a>获得使用该设定的更详尽信息。
+                </p>
+            </li>
+
+            <li class="listitem">
+                <p class="para">
+                    <code class="code">disableOutputBuffering</code>用来提示 is used to hint to <a href="zend.controller.dispatcher.html" class="link">分发器</a>不使用输出缓冲来捕捉动作控制器产生的输出。默认的，分发器捕捉任何输出并追加到响应对象的主体内容。
+                </p>
+            </li>
+
+            <li class="listitem">
+                <p class="para">
+                    <code class="code">noViewRenderer</code>用来禁用<a href="zend.controller.actionhelpers.html#zend.controller.actionhelpers.viewrenderer" class="link">ViewRenderer</a>。设定该参数为true可以禁用该助手。
+                </p>
+            </li>
+
+            <li class="listitem">
+                <p class="para">
+                    <code class="code">noErrorHandler</code> 用来禁用<a href="zend.controller.plugins.html#zend.controller.plugins.standard.errorhandler" class="link">错误处理器插件</a>。设定该参数为true可以禁用该插件。
+                </p>
+            </li>
+        </ul>
+    </div>
+
+    <div class="section" id="zend.controller.front.subclassing" name="zend.controller.front.subclassing"><div class="info"><h1 class="title">继承前端控制器</h1></div>
+        
+
+        <p class="para">
+                  要继承前端控制器，至少需要覆盖<code class="code">getInstance()</code>方法：
+        </p>
+
+        <div class="programlisting"><div class="cdata"><pre>
+class My_Controller_Front extends Zend_Controller_Front
+{
+    public static function getInstance()
+    {
+        if (null === self::$_instance) {
+            self::$_instance = new self();
+        }
+
+        return self::$_instance;
+    }
+}
+
+        </pre></div></div>
+
+
+        <p class="para">
+                  覆盖<code class="code">getInstance()</code>保证后面调用<code class="code">Zend_Controller_Front::getInstance()</code>会返回子类的实例，而不是<code class="code">Zend_Controller_Front</code>实例 —— 这对于一些可替换的路由器和视图助手非常有用。
+        </p>
+
+        <p class="para">
+                  通常不需要继承前端控制器，除非你需要增加新的功能（比如，一个插件自动加载器，或者一个方法来指定动作助手路径）。你想要改动的地方可能包括修改控制器目录的存储方式，使用的默认路由器以及分发器。
+        </p>
+    </div>
+</div>
+        <hr />
+
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.controller.basics.html">Zend_Controller 基础</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.controller.html">Zend_Controller</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.controller.request.html">请求对象</a></div>
+                    </td>
+                </tr>
+            </table>
+</td>
+        <td style="font-size: smaller;" width="15%"> <style type="text/css">
+#leftbar {
+	float: left;
+	width: 186px;
+	padding: 5px;
+	font-size: smaller;
+}
+ul.toc {
+	margin: 0px 5px 5px 5px;
+	padding: 0px;
+}
+ul.toc li {
+	font-size: 85%;
+	margin: 1px 0 1px 1px;
+	padding: 1px 0 1px 11px;
+	list-style-type: none;
+	background-repeat: no-repeat;
+	background-position: center left;
+}
+ul.toc li.header {
+	font-size: 115%;
+	padding: 5px 0px 5px 11px;
+	border-bottom: 1px solid #cccccc;
+	margin-bottom: 5px;
+}
+ul.toc li.active {
+	font-weight: bold;
+}
+ul.toc li a {
+	text-decoration: none;
+}
+ul.toc li a:hover {
+	text-decoration: underline;
+}
+</style>
+ <ul class="toc">
+  <li class="header home"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="reference.html">Zend Framework Reference</a></li>
+  <li class="header up"><a href="zend.controller.html">Zend_Controller</a></li>
+  <li><a href="zend.controller.quickstart.html">Zend_Controller 快速入门</a></li>
+  <li><a href="zend.controller.basics.html">Zend_Controller 基础</a></li>
+  <li class="active"><a href="zend.controller.front.html">前端控制器</a></li>
+  <li><a href="zend.controller.request.html">请求对象</a></li>
+  <li><a href="zend.controller.router.html">标准路由器</a></li>
+  <li><a href="zend.controller.dispatcher.html">分发器</a></li>
+  <li><a href="zend.controller.action.html">动作控制器</a></li>
+  <li><a href="zend.controller.actionhelpers.html">动作助手</a></li>
+  <li><a href="zend.controller.response.html">响应对象</a></li>
+  <li><a href="zend.controller.plugins.html">插件</a></li>
+  <li><a href="zend.controller.modular.html">使用传统的模块目录结构</a></li>
+  <li><a href="zend.controller.exceptions.html">MVC 异常</a></li>
+ </ul>
+ </td>
+    </tr>
+</table>
+</body>
+</html>

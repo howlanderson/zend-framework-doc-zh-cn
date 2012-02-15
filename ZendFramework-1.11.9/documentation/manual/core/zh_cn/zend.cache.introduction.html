@@ -1,0 +1,224 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <title>简介 - Zend Framework Manual</title>
+
+</head>
+<body>
+<table width="100%">
+    <tr valign="top">
+        <td width="85%">
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.cache.html">Zend_Cache</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.cache.html">Zend_Cache</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.cache.theory.html">缓存原理</a></div>
+                    </td>
+                </tr>
+            </table>
+<hr />
+<div id="zend.cache.introduction" class="section"><div class="info"><h1 class="title">简介</h1></div>
+    
+    <p class="para">
+        <code class="code">Zend_Cache</code> 提供了一个缓存任何数据的一般方法.
+    </p>
+    <p class="para">
+      在Zend Framework中缓存由前端操作,同时通过后端适配器(<code class="code">File</code>, <code class="code">Sqlite</code>, <code class="code">Memcache</code>...)和
+    一个灵活的IDs和Tags系统(标识符和标记系统)存储缓存纪录.使用此方法,易于删除特定类型的纪录(例如:&quot;删除所有标记为tag的纪录&quot;)
+    </p>
+    <p class="para">
+        模块(<code class="code">Zend_Cache_Core</code>) 的核心是通用,灵活和可配置.对于特定的需要,为了便捷,这里有一些继承自<code class="code">Zend_Cache_Core</code>的前端:
+        <code class="code">Output</code>, <code class="code">File</code>, <code class="code">Function</code> 和 <code class="code">Class</code>.
+    </p>
+    <div class="example"><div class="info"><p><b>Example #1 调用 <code class="code">Zend_Cache::factory()</code>取得一个前端</b></p></div>
+        
+        <div class="example-contents"><p>
+            <code class="code">Zend_Cache::factory()</code> 实例化正确的对象并把他们捆绑到一起.
+            在这第一个例子中我们将把 <code class="code">Core</code> 前端和 <code class="code">File</code> 后端一起使用.
+        </p></div>
+            <div class="programlisting"><div class="cdata"><pre>
+$frontendOptions = array(
+   &#039;lifeTime&#039; =&gt; 7200, // 两小时的缓存生命期
+   &#039;automatic_serialization&#039; =&gt; true
+);
+
+$backendOptions = array(
+    &#039;cache_dir&#039; =&gt; &#039;./tmp/&#039; // 放缓存文件的目录
+);
+
+// 取得一个Zend_Cache_Core 对象
+$cache = Zend_Cache::factory(&#039;Core&#039;,
+                             &#039;File&#039;,
+                             $frontendOptions,
+                             $backendOptions);
+
+            </pre></div></div>
+
+    </div>
+
+    <blockquote><p><b class="note">Note</b>: <span class="info"><b>由多个字组成的前端和后端</b><br /></span>
+        
+        
+            一些前端和后端使用多个字命名,例如&#039;ZendPlatform&#039;.当指定给工厂时,使用字分隔符,比如空格(&#039; &#039;),连字符(&#039;-&#039;),或则点(&#039;.&#039;).
+        <br />
+    </p></blockquote>
+
+    <div class="example"><div class="info"><p><b>Example #2 Caching a database query result</b></p></div>
+        
+
+        <div class="example-contents"><p>
+            现在有了一个前端,可用缓存任何类型的数据了(开了序列化&#039;serialization&#039;).例如,能够缓存从昂贵的数据库查询中缓存一个结果.结果被缓存后,不再需要连接到数据库;数据直接在缓存中取回和反序列化.
+        </p></div>
+            <div class="programlisting"><div class="cdata"><pre>
+// $cache 在先前的例子中已经初始化了
+
+// 查看一个缓存是否存在:
+if(!$result = $cache-&gt;load(&#039;myresult&#039;)) {
+
+    // 缓存不命中;连接到数据库
+
+    $db = Zend_Db::factory( [...] );
+
+    $result = $db-&gt;fetchAll(&#039;SELECT * FROM huge_table&#039;);
+
+    $cache-&gt;save($result, &#039;myresult&#039;);
+
+} else {
+
+    // cache hit! shout so that we know
+    echo &quot;This one is from cache!\n\n&quot;;
+
+}
+
+print_r($result);
+
+
+
+            </pre></div></div>
+
+    </div>
+    <div class="example"><div class="info"><p><b>Example #3 用<code class="code">Zend_Cache</code> 输出前端缓存输出</b></p></div>
+        
+        <div class="example-contents"><p>
+        通过加入条件逻辑,我们&#039;mark up&#039;(标记)那些希望缓存输出的段(sections),在<code class="code">start()</code> 和 <code class="code">end()</code>方法间封装这些section(这类似第一个例子,并且是缓存的核心策略).
+        </p></div><div class="example-contents"><p>
+            在内部,像往常一样输出你的数据,当执行到<code class="code">end()</code>方法时,所有之前的输出都被缓存.在下一次运行时,整个段(end()方法调用前的代码)将被跳过执行,直接从Cache中取回数据(只要缓存纪录是有效的).
+        </p></div>
+            <div class="programlisting"><div class="cdata"><pre>
+$frontendOptions = array(
+   &#039;lifeTime&#039; =&gt; 30,                  // cache lifetime of 30 seconds
+   &#039;automatic_serialization&#039; =&gt; false  // this is the default anyway s
+);
+// 翻译时实验系统为Windows,请使用Windows的读者修改cacheDir的路径为实际的路径
+$backendOptions = array(&#039;cache_dir&#039; =&gt; &#039;./tmp/&#039;);
+
+$cache = Zend_Cache::factory(&#039;Output&#039;,
+                             &#039;File&#039;,
+                             $frontendOptions,
+                             $backendOptions);
+
+// 传递一个唯一标识符给start()方法
+if(!$cache-&gt;start(&#039;mypage&#039;)) {
+    // output as usual:
+
+    echo &#039;Hello world! &#039;;
+    echo &#039;This is cached (&#039;.time().&#039;) &#039;;
+
+    $cache-&gt;end(); // the output is saved and sent to the browser
+}
+
+echo &#039;This is never cached (&#039;.time().&#039;).&#039;;
+
+
+            </pre></div></div>
+
+       <div class="example-contents"><p>
+           注意我们两次输出了<code class="code">time()</code>的结果;为演示目的第二次的time()调用是动态的.再运行然后刷新多次;你会注意到当随着时间的流逝第一个数字并没有随时间改变.这是因为第一个数组在缓存段中输出,因此输出是被缓存了.
+           30秒后(我们设置了lifetime为30秒)由于缓存纪录超时而变得无效了,第一个数字再次更新,同时于第二个时间匹配(相同).你应该在你的浏览器或者控制台中试一下.
+       </p></div>
+    </div>
+    <blockquote><p><b class="note">Note</b>: 
+        在使用Zend_Cache是特别要注意的Cache标识(传递给<code class="code">save()</code>和<code class="code">start()</code>的参数).它必须对于你所缓存的每个资源唯一,否则不相关的缓存纪录就会相互覆盖,
+        更糟的是,导致错误的显示结果.
+    <br /></p></blockquote>
+</div>
+        <hr />
+
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.cache.html">Zend_Cache</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.cache.html">Zend_Cache</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.cache.theory.html">缓存原理</a></div>
+                    </td>
+                </tr>
+            </table>
+</td>
+        <td style="font-size: smaller;" width="15%"> <style type="text/css">
+#leftbar {
+	float: left;
+	width: 186px;
+	padding: 5px;
+	font-size: smaller;
+}
+ul.toc {
+	margin: 0px 5px 5px 5px;
+	padding: 0px;
+}
+ul.toc li {
+	font-size: 85%;
+	margin: 1px 0 1px 1px;
+	padding: 1px 0 1px 11px;
+	list-style-type: none;
+	background-repeat: no-repeat;
+	background-position: center left;
+}
+ul.toc li.header {
+	font-size: 115%;
+	padding: 5px 0px 5px 11px;
+	border-bottom: 1px solid #cccccc;
+	margin-bottom: 5px;
+}
+ul.toc li.active {
+	font-weight: bold;
+}
+ul.toc li a {
+	text-decoration: none;
+}
+ul.toc li a:hover {
+	text-decoration: underline;
+}
+</style>
+ <ul class="toc">
+  <li class="header home"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="reference.html">Zend Framework Reference</a></li>
+  <li class="header up"><a href="zend.cache.html">Zend_Cache</a></li>
+  <li class="active"><a href="zend.cache.introduction.html">简介</a></li>
+  <li><a href="zend.cache.theory.html">缓存原理</a></li>
+  <li><a href="zend.cache.frontends.html">Zend_Cache前端</a></li>
+  <li><a href="zend.cache.backends.html">Zend_Cache后端</a></li>
+  <li><a href="zend.cache.cache.manager.html">The Cache Manager</a></li>
+ </ul>
+ </td>
+    </tr>
+</table>
+</body>
+</html>

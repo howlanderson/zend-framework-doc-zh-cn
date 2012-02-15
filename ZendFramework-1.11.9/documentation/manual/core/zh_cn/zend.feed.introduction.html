@@ -1,0 +1,163 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <title>介绍 - Zend Framework Manual</title>
+
+</head>
+<body>
+<table width="100%">
+    <tr valign="top">
+        <td width="85%">
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.feed.html">Zend_Feed</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.feed.html">Zend_Feed</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.feed.importing.html">导入Feeds</a></div>
+                    </td>
+                </tr>
+            </table>
+<hr />
+<div id="zend.feed.introduction" class="section"><div class="info"><h1 class="title">介绍</h1></div>
+    
+    <p class="para">
+        <code class="code">Zend_Feed</code>提供了处理的 RSS 和 Atom Feed的功能。它提供了一套自然的方法用于
+        访问Feed元素、属性、和条目属性。 除此之外<code class="code">Zend_Feed</code>还扩展提供了同样简单的方法
+        用于修改feed和条目的结构，并将结果转化成XML格式。不久的将来这些扩展可能会被 Atom Publishig Protocol(AtomPP)所支持。
+    </p>
+
+    <p class="para">
+        <code class="code">Zend_Feed</code>由一个<code class="code">Zend_Feed</code>基类、一个<code class="code">Zend_Feed_Abstract</code>抽象类以及一个用于表示Feed和条目的<code class="code">Zend_Feed_Entry_Abstract</code>基类组成。这些类封装了 RSS 和 Atom 的feed和条目特性的，提供了一套自然的方法使他们用起来变得异常简单。
+    </p>
+
+    <p class="para">
+        在下面的例子中，我们示范了一个获得一个RSS feed并将其中的一般部分相关数据保存到一个PHP数组中的简单实例，这样这些数据就能方便的用于输出、保存到数据库等等。
+    </p>
+
+    <blockquote><p><b class="note">Note</b>: <span class="info"><b>Be aware</b><br /></span>
+        
+        
+        许多RSS中的channel和item属性是不同的。RSS的规范中提供了许多可选的属性，因此在编写RSS相关应用代码时要充分考虑这点。
+        <br />
+    </p></blockquote>
+
+    <div class="example"><div class="info"><p><b>Example #1 用Zend_Feed来处理RSS Feed数据</b></p></div>
+        
+        <div class="programlisting"><div class="cdata"><pre>
+&lt;?php
+require_once &#039;Zend/Feed.php&#039;;
+
+// 取得最新的 Slashdot 头条新闻
+try {
+    $slashdotRss = Zend_Feed::import(&#039;http://rss.slashdot.org/Slashdot/slashdot&#039;);
+} catch (Zend_Feed_Exception $e) {
+    // feed 导入失败
+    echo &quot;Exception caught importing feed: {$e-&gt;getMessage()}\n&quot;;
+    exit;
+}
+
+// 初始化保存 channel 数据的数组
+$channel = array(
+    &#039;title&#039;       =&gt; $slashdotRss-&gt;title(),
+    &#039;link&#039;        =&gt; $slashdotRss-&gt;link(),
+    &#039;description&#039; =&gt; $slashdotRss-&gt;description(),
+    &#039;items&#039;       =&gt; array()
+    );
+
+// 循环获得channel的item并存储到相关数组中
+foreach ($slashdotRss as $item) {
+    $channel[&#039;items&#039;][] = array(
+        &#039;title&#039;       =&gt; $item-&gt;title(),
+        &#039;link&#039;        =&gt; $item-&gt;link(),
+        &#039;description&#039; =&gt; $item-&gt;description()
+        );
+}
+       </pre></div></div>
+
+    </div>
+</div>
+        <hr />
+
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.feed.html">Zend_Feed</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.feed.html">Zend_Feed</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.feed.importing.html">导入Feeds</a></div>
+                    </td>
+                </tr>
+            </table>
+</td>
+        <td style="font-size: smaller;" width="15%"> <style type="text/css">
+#leftbar {
+	float: left;
+	width: 186px;
+	padding: 5px;
+	font-size: smaller;
+}
+ul.toc {
+	margin: 0px 5px 5px 5px;
+	padding: 0px;
+}
+ul.toc li {
+	font-size: 85%;
+	margin: 1px 0 1px 1px;
+	padding: 1px 0 1px 11px;
+	list-style-type: none;
+	background-repeat: no-repeat;
+	background-position: center left;
+}
+ul.toc li.header {
+	font-size: 115%;
+	padding: 5px 0px 5px 11px;
+	border-bottom: 1px solid #cccccc;
+	margin-bottom: 5px;
+}
+ul.toc li.active {
+	font-weight: bold;
+}
+ul.toc li a {
+	text-decoration: none;
+}
+ul.toc li a:hover {
+	text-decoration: underline;
+}
+</style>
+ <ul class="toc">
+  <li class="header home"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="reference.html">Zend Framework Reference</a></li>
+  <li class="header up"><a href="zend.feed.html">Zend_Feed</a></li>
+  <li class="active"><a href="zend.feed.introduction.html">介绍</a></li>
+  <li><a href="zend.feed.importing.html">导入Feeds</a></li>
+  <li><a href="zend.feed.findFeeds.html">从网页上获得Feed</a></li>
+  <li><a href="zend.feed.consuming-rss.html">RSS Feed的使用</a></li>
+  <li><a href="zend.feed.consuming-atom.html">Atom Feed的使用</a></li>
+  <li><a href="zend.feed.consuming-atom-single-entry.html">单个Atom条目的处理</a></li>
+  <li><a href="zend.feed.modifying-feed.html">修改Feed和条目结构</a></li>
+  <li><a href="zend.feed.custom-feed.html">自定义Feed和条目类</a></li>
+  <li><a href="zend.feed.reader.html">Zend_Feed_Reader</a></li>
+  <li><a href="zend.feed.writer.html">Zend_Feed_Writer</a></li>
+  <li><a href="zend.feed.pubsubhubbub.introduction.html">Zend_Feed_Pubsubhubbub</a></li>
+ </ul>
+ </td>
+    </tr>
+</table>
+</body>
+</html>

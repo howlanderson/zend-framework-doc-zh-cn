@@ -1,0 +1,142 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <title>校验器链 - Zend Framework Manual</title>
+
+</head>
+<body>
+<table width="100%">
+    <tr valign="top">
+        <td width="85%">
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.validate.set.html">标准校验类</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.validate.html">Zend_Validate</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.validate.writing_validators.html">编写校验器</a></div>
+                    </td>
+                </tr>
+            </table>
+<hr />
+<div id="zend.validate.validator_chains" class="section"><div class="info"><h1 class="title">校验器链</h1></div>
+
+    
+
+    <p class="para">
+        通常，多个校验器按照特定的顺序被用于某些值。下面的代码示范一个办法去解决<a href="zend.validate.introduction.html" class="link">introduction</a>中的例子的要求，即用户名必须在6到12个字符的文字数字组合：
+        <div class="programlisting"><div class="cdata"><pre>
+// Create a validator chain and add validators to it
+$validatorChain = new Zend_Validate();
+$validatorChain-&gt;addValidator(new Zend_Validate_StringLength(6, 12))
+               -&gt;addValidator(new Zend_Validate_Alnum());
+
+// Validate the username
+if ($validatorChain-&gt;isValid($username)) {
+    // username passed validation
+} else {
+    // username failed validation; print reasons
+    foreach ($validatorChain-&gt;getMessages() as $message) {
+        echo &quot;$message\n&quot;;
+    }
+
+        </pre></div></div>
+
+
+        校验器按照它们被加到<code class="code">Zend_Validate</code>的顺序执行。在上面的例子中，用户名首先被检查来确保它的长度在6到12个字符，然后它被检查来确保它只包含文字和数字。不管第一个校验（检查长度是否6到12）是否成功，第二个校验（检查是否文字数字组合）总被执行。这就意味着如果两个校验都失败，<code class="code">getMessages()</code>将为两个校验器都返回失败信息。
+    </p>
+
+    <p class="para">
+        在某些情况下，如果校验过程失败， 让校验器中断校验器链符合常识。<code class="code">Zend_Validate</code> 在<code class="code">addValidator()</code>方法中使用第二个参数来支持这样的用例。通过设置<code class="code">$breakChainOnFailure</code>为<code class="code">true</code>，如果校验失败，校验器将中断校验器链执行，这样就避免了在这个情形下运行其他已经被决定是不必要的或不适当的校验。如果上面的例子被写成如下，如果字串长度校验失败，文字数字组合校验就不会发生：
+        <div class="programlisting"><div class="cdata"><pre>
+$validatorChain-&gt;addValidator(new Zend_Validate_StringLength(6, 12), true)
+               -&gt;addValidator(new Zend_Validate_Alnum());
+
+        </pre></div></div>
+
+
+    </p>
+
+    <p class="para">
+        任何实现<code class="code">Zend_Validate_Interface</code>的对象都可以被用作校验器链。
+    </p>
+
+</div>
+        <hr />
+
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.validate.set.html">标准校验类</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.validate.html">Zend_Validate</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.validate.writing_validators.html">编写校验器</a></div>
+                    </td>
+                </tr>
+            </table>
+</td>
+        <td style="font-size: smaller;" width="15%"> <style type="text/css">
+#leftbar {
+	float: left;
+	width: 186px;
+	padding: 5px;
+	font-size: smaller;
+}
+ul.toc {
+	margin: 0px 5px 5px 5px;
+	padding: 0px;
+}
+ul.toc li {
+	font-size: 85%;
+	margin: 1px 0 1px 1px;
+	padding: 1px 0 1px 11px;
+	list-style-type: none;
+	background-repeat: no-repeat;
+	background-position: center left;
+}
+ul.toc li.header {
+	font-size: 115%;
+	padding: 5px 0px 5px 11px;
+	border-bottom: 1px solid #cccccc;
+	margin-bottom: 5px;
+}
+ul.toc li.active {
+	font-weight: bold;
+}
+ul.toc li a {
+	text-decoration: none;
+}
+ul.toc li a:hover {
+	text-decoration: underline;
+}
+</style>
+ <ul class="toc">
+  <li class="header home"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="reference.html">Zend Framework Reference</a></li>
+  <li class="header up"><a href="zend.validate.html">Zend_Validate</a></li>
+  <li><a href="zend.validate.introduction.html">简介</a></li>
+  <li><a href="zend.validate.set.html">标准校验类</a></li>
+  <li class="active"><a href="zend.validate.validator_chains.html">校验器链</a></li>
+  <li><a href="zend.validate.writing_validators.html">编写校验器</a></li>
+  <li><a href="zend.validate.messages.html">Validation Messages</a></li>
+ </ul>
+ </td>
+    </tr>
+</table>
+</body>
+</html>

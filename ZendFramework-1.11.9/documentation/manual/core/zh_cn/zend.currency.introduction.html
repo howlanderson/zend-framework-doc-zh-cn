@@ -1,0 +1,157 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <title>Zend_Currency 简介 - Zend Framework Manual</title>
+
+</head>
+<body>
+<table width="100%">
+    <tr valign="top">
+        <td width="85%">
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.currency.html">Zend_Currency</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.currency.html">Zend_Currency</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.currency.usage.html">如何使用货币</a></div>
+                    </td>
+                </tr>
+            </table>
+<hr />
+<div id="zend.currency.introduction" class="section"><div class="info"><h1 class="title"> Zend_Currency 简介 </h1></div>
+
+    
+
+    <p class="para">
+        <code class="code">Zend_Currency</code> 是Zend_Framework I18n 核心的一部分。它处理所有关于货币、钱的表示和格式。它也提供另外的信息方法，包括货币的本地化信息、关于哪个货币在哪个地区使用等等。
+    </p>
+
+    <div class="section" id="zend.currency.introduction.list" name="zend.currency.introduction.list"><div class="info"><h1 class="title"> 为什么使用 <code class="code">Zend_Currency</code> ？</h1></div>
+
+        
+
+        <p class="para">
+            <code class="code">Zend_Currency</code> 提供了下列函数来处理货币和钱相关的工作。
+        </p>
+
+        <ul class="itemizedlist">
+            <li class="listitem">
+                <p class="para">
+                    <em class="emphasis"> 完全本地支持 </em>
+                </p>
+                <p class="para">
+                    <code class="code">Zend_Currency</code> 支持所有有效地区并因此有能力知道超过 100 中不同的本地货币信息，包括例如货币名称、缩写、钱的符合等等。
+                </p>
+            </li>
+            <li class="listitem">
+                <p class="para">
+                    <em class="emphasis"> 可重用的货币定义 </em>
+                </p>
+                <p class="para">
+                    <code class="code">Zend_Currency</code> 不包括货币的值。这就是为什么它的函数不包括在 <code class="code">Zend_Locale_Format</code> 里，但好处是已经定义的货币表示可以被重用。
+                </p>
+            </li>
+            <li class="listitem">
+                <p class="para">
+                    <em class="emphasis"> Fluent 接口 </em>
+                </p>
+                <p class="para">
+                    <code class="code">Zend_Currency</code> 按需包含 fluent 接口。
+                </p>
+            </li>
+            <li class="listitem">
+                <p class="para">
+                    <em class="emphasis"> 另外的信息方法 </em>
+                </p>
+                <p class="para">
+                    <code class="code">Zend_Currency</code> 包括另外的方法，这方法提供关于哪个地区使用哪种货币或哪种货币被用于被定义的地区的信息。
+                </p>
+            </li>
+        </ul>
+    </div>
+
+</div>
+        <hr />
+
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.currency.html">Zend_Currency</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.currency.html">Zend_Currency</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.currency.usage.html">如何使用货币</a></div>
+                    </td>
+                </tr>
+            </table>
+</td>
+        <td style="font-size: smaller;" width="15%"> <style type="text/css">
+#leftbar {
+	float: left;
+	width: 186px;
+	padding: 5px;
+	font-size: smaller;
+}
+ul.toc {
+	margin: 0px 5px 5px 5px;
+	padding: 0px;
+}
+ul.toc li {
+	font-size: 85%;
+	margin: 1px 0 1px 1px;
+	padding: 1px 0 1px 11px;
+	list-style-type: none;
+	background-repeat: no-repeat;
+	background-position: center left;
+}
+ul.toc li.header {
+	font-size: 115%;
+	padding: 5px 0px 5px 11px;
+	border-bottom: 1px solid #cccccc;
+	margin-bottom: 5px;
+}
+ul.toc li.active {
+	font-weight: bold;
+}
+ul.toc li a {
+	text-decoration: none;
+}
+ul.toc li a:hover {
+	text-decoration: underline;
+}
+</style>
+ <ul class="toc">
+  <li class="header home"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="reference.html">Zend Framework Reference</a></li>
+  <li class="header up"><a href="zend.currency.html">Zend_Currency</a></li>
+  <li class="active"><a href="zend.currency.introduction.html">Zend_Currency 简介</a></li>
+  <li><a href="zend.currency.usage.html">如何使用货币</a></li>
+  <li><a href="zend.currency.options.html">Options for currencies</a></li>
+  <li><a href="zend.currency.description.html">What makes a currency?</a></li>
+  <li><a href="zend.currency.position.html">Where is the currency?</a></li>
+  <li><a href="zend.currency.number.html">How does the currency look like?</a></li>
+  <li><a href="zend.currency.value.html">How much is my currency?</a></li>
+  <li><a href="zend.currency.calculation.html">Calculating with currencies</a></li>
+  <li><a href="zend.currency.exchange.html">Exchanging currencies</a></li>
+  <li><a href="zend.currency.additional.html">Additional informations on Zend_Currency</a></li>
+ </ul>
+ </td>
+    </tr>
+</table>
+</body>
+</html>

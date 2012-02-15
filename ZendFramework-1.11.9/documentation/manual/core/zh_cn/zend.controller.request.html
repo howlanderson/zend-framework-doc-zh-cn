@@ -1,0 +1,410 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <title>请求对象 - Zend Framework Manual</title>
+
+</head>
+<body>
+<table width="100%">
+    <tr valign="top">
+        <td width="85%">
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.controller.front.html">前端控制器</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.controller.html">Zend_Controller</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.controller.router.html">标准路由器</a></div>
+                    </td>
+                </tr>
+            </table>
+<hr />
+<div id="zend.controller.request" class="section"><div class="info"><h1 class="title">请求对象</h1></div>
+    
+    <div class="section" id="zend.controller.request.introduction" name="zend.controller.request.introduction"><div class="info"><h1 class="title">介绍</h1></div>
+        
+        <p class="para">
+            请求对象是在前端控制器，路由器，分发器，以及控制类间传递的简单值对象。请求对象封装了请求的模块，控制器，动作以及可选的参数，还包括其他的请求环境，如HTTP，CLI，PHP-GTK。
+        </p>
+
+        <ul class="itemizedlist">
+            <li class="listitem"><p class="para">
+                          模块名可通过<code class="code">getModuleName()</code>和<code class="code">setModuleName()</code>访问。
+            </p></li>
+
+            <li class="listitem"><p class="para">
+                                控制器名可通过<code class="code">getControllerName()</code>和<code class="code">setControllerName()</code>访问。
+            </p></li>
+
+            <li class="listitem"><p class="para">
+                          控制器调用的动作名称可通过<code class="code">getActionName()</code>和<code class="code">setActionName()</code>访问。
+            </p></li>
+
+            <li class="listitem"><p class="para">
+                          可访问的参数是一个键值对的关联数组。数组可通过<code class="code">getParams()</code>和 <code class="code">setParams()</code>获取及设置，单个参数可以通过 <code class="code">getParam()</code> 和 <code class="code">setParam()</code>获取及设置。
+            </p></li>
+        </ul>
+
+        <p class="para">
+           基于请求的类型存在更多的可用方法。默认的<code class="code">Zend_Controller_Request_Http</code>请求对象，拥有访问请求url、路径信息、<code class="code">$_GET</code> 和 <code class="code">$_POST</code>参数的方法等等。
+        </p>
+
+        <p class="para">
+            请求对象先被传入到前端控制器。如果没有提供请求对象，它将在分发过程的开始、任何路由过程发生之前实例化。请求对象将被传递到分发链中的每个对象。
+        </p>
+
+        <p class="para">
+           而且，请求对象在测试中是很有用的。开发人员可根据需要搭建请求环境，包括模块、控制器、动作、参数、URI等等，并且将其传入前端控制器来测试程序流向。如果与<a href="zend.controller.response.html" class="link">响应对象</a>配合，可以对MVC程序进行精确巧妙的单元测试(<code class="code">unit testing</code>)。
+        </p>
+    </div>
+
+    <div class="section" id="zend.controller.request.http" name="zend.controller.request.http"><div class="info"><h1 class="title">HTTP 请求</h1></div>
+        
+
+        <div class="section" id="zend.controller.request.http.dataacess" name="zend.controller.request.http.dataacess"><div class="info"><h1 class="title">访问请求数据</h1></div>
+            
+
+            <p class="para">
+                <code class="code">Zend_Controller_Request_Http</code>封装了对相关值的访问，如控制器和动作路由器变量的键名和值，从URL解析的附加参数。它还允许访问作为公共成员的超全局变量，管理当前的基地址(Base URL)和请求URI。超全局变量不能在请求对象中赋值，但可以通过setParam/getParam方法设定/获取用户参数。
+            </p>
+
+            <blockquote><p><b class="note">Note</b>: <span class="info"><b>超全局数据</b><br /></span>
+                
+                
+                    通过<code class="code">Zend_Controller_Request_Http</code>访问公共成员属性的超全局数据,有必要认识到一点，这些属性名(超全局数组的键)按照特定次序匹配超全局变量：1. GET，2.POST，3. COOKIE，4. SERVER，5. ENV。
+                <br />
+            </p></blockquote>
+
+            <p class="para">
+               特定的超全局变量也可以选择特定的方法来访问，如<code class="code">$_POST[&#039;user&#039;]</code>可以调用请求对象的<code class="code">getPost(&#039;user&#039;)</code>访问，<code class="code">getQuery()</code>可以获取<code class="code">$_GET</code>元素，<code class="code">getHeader()</code>可以获取请求消息头。
+            </p>
+
+            <blockquote><p><b class="note">Note</b>: <span class="info"><b>GET和POST数据</b><br /></span>
+                
+                
+                    需要注意：在请求对象中访问数据是没有经过任何过滤的，路由器和分发器根据任务来验证过滤数据，但在请求对象中没有任何处理。
+                <br />
+            </p></blockquote>
+
+              <blockquote><p><b class="note">Note</b>: <span class="info"><b> 也获取原始 （Raw） POST 数据！</b><br /></span>
+                
+
+                
+                    从 1.5.0 开始，也可以通过 <code class="code">getRawBody()</code>  方法获取原始 post 数据。如果没有数据以那种方式提交，该方法返回 false，但 post 的全体（full boday）是个例外。
+                <br />
+
+                
+                    当开发一个 RESTful MVC 程序，这个对于接受内容相当有用。
+                <br />
+            </p></blockquote>
+
+            <p class="para">
+               可以在请求对象中使用<code class="code">setParam()</code> 和<code class="code">getParam()</code>来设置和获取用户参数。 路由器根据请求URI中的参数，利用这项功能请求对象设定参数。
+            </p>
+
+            <blockquote><p><b class="note">Note</b>: <span class="info"><b>getParam()不只可以获取用户参数</b><br /></span>
+                
+
+                
+                    <code class="code">getParam()</code>事实上从几个资源中获取参数。根据优先级排序：通过<code class="code">setParam()</code>设置的用户参数，<code class="code">GET</code> 参数，最后是<code class="code">POST</code>参数。 通过该方法获取数据时需要注意这点。
+                <br />
+            </p></blockquote>
+
+            <p class="para">
+                如果你希望从你通过 <code class="code">setParam()</code> 设置的参数中获取（参数），使用 <code class="code">getUserParam()</code>。
+            </p>
+
+            <p class="para">
+                 另外，从 1.5.0 开始，可以锁定搜索哪个参数源，<code class="code">setParamSources()</code> 允许指定一个空数组或者一个带有一个或多个指示哪个参数源被允许（缺省两者都被允许）的值 &#039;_GET&#039;或&#039;_POST&#039;的数组；如果想限制只访问 &#039;_GET&#039;，那么指定 <code class="code">setParamSources(array(&#039;_GET&#039;))</code> 。
+            </p>
+
+            <blockquote><p><b class="note">Note</b>: <span class="info"><b>Apache相关</b><br /></span>
+                
+                
+                        如果使用apache的404处理器来传递请求到前端控制器，或者使用重写规则(rewrite rules)的PT标志，URI包含在<code class="code">$_SERVER[&#039;REDIRECT_URL&#039;]</code>，而不是<code class="code">$_SERVER[&#039;REQUEST_URI&#039;]</code>。如果使用这样的设定并获取无效的路由，应该使用<code class="code">Zend_Controller_Request_Apache404</code>类代替默认的HTTP类：
+                <br />
+
+                <div class="programlisting"><div class="cdata"><pre>
+$request = new Zend_Controller_Request_Apache404();
+$front-&gt;setRequest($request);
+
+                </pre></div></div>
+
+
+                
+                    这个类继承了<code class="code">Zend_Controller_Request_Http</code>，并简单的修改了请求URI的自动发现(autodiscovery)，它可以用来作为简易替换器件(drop-in replacement)。
+                <br />
+            </p></blockquote>
+        </div>
+
+        <div class="section" id="zend.controller.request.http.baseurl" name="zend.controller.request.http.baseurl"><div class="info"><h1 class="title">基地址和子目录</h1></div>
+            
+
+            <p class="para">
+                <code class="code">Zend_Controller_Request_Http</code>允许在子目录中使用<code class="code">Zend_Controller_Router_Rewrite</code>。<code class="code">Zend_Controller_Request_Http</code>试图自动的检测你的基地址，并进行相应的设置。
+            </p>
+
+            <p class="para">
+                例如，如果将 <code class="code">index.php</code> 放在web服务器的名为<code class="code">/projects/myapp/index.php</code>子目录中，基地址应该被设置为<code class="code">/projects/myapp</code>。计算任何路由匹配之前将先从路径中去除这个字符串。这个字串需要被加入到任何路由前面。路由              <code class="code">&#039;user/:username&#039;</code>将匹配类似<code class="code">http://localhost/projects/myapp/user/martel</code> 和<code class="code">http://example.com/user/martel</code>的URL。
+            </p>
+
+            <blockquote><p><b class="note">Note</b>: <span class="info"><b>URL检测区分大小写</b><br /></span>
+                
+                
+            基地址的自动检测是区分大小写的，因此需要确保URL与文件系统中的子目录匹配。否则将会引发异常。
+                <br />
+            </p></blockquote>
+
+            <p class="para">
+        如果基地址经检测不正确，可以利用<code class="code">Zend_Controller_Request_Http</code>或者<code class="code">Zend_Controller_Front</code>类的<code class="code">setBaseUrl()</code>方法设置自己的基路径。<code class="code">Zend_Controller_Front</code>设置最容易，它将导入基地址到请求对象。定制基地址的用法举例：
+            </p>
+
+            <div class="programlisting"><div class="cdata"><pre>
+/**
+ * Dispatch Request with custom base URL with Zend_Controller_Front.
+ */
+$router     = new Zend_Controller_Router_Rewrite();
+$controller = Zend_Controller_Front::getInstance();
+$controller-&gt;setControllerDirectory(&#039;./application/controllers&#039;)
+           -&gt;setRouter($router)
+           -&gt;setBaseUrl(&#039;/projects/myapp&#039;); // set the base url!
+$response   = $controller-&gt;dispatch();
+
+            </pre></div></div>
+
+
+        </div>
+
+        <div class="section" id="zend.controller.request.http.method" name="zend.controller.request.http.method"><div class="info"><h1 class="title"> 决定请求方式 </h1></div>
+            
+
+            <p class="para">
+                <code class="code">getMethod()</code> 允许你决定用于请求当前资源的 HTTP 请求方法。另外，当询问是否一个请求的特定类型是否已经存在，有许多方法允许你获得布尔响应：
+            </p>
+
+            <ul class="itemizedlist">
+                <li class="listitem"><p class="para"><code class="code">isGet()</code></p></li>
+                <li class="listitem"><p class="para"><code class="code">isPost()</code></p></li>
+                <li class="listitem"><p class="para"><code class="code">isPut()</code></p></li>
+                <li class="listitem"><p class="para"><code class="code">isDelete()</code></p></li>
+                <li class="listitem"><p class="para"><code class="code">isHead()</code></p></li>
+                <li class="listitem"><p class="para"><code class="code">isOptions()</code></p></li>
+            </ul>
+
+            <p class="para">
+                这些基本用例是来创建 RESTful MVC 架构的。
+            </p>
+        </div>
+
+        <div class="section" id="zend.controller.request.http.ajax" name="zend.controller.request.http.ajax"><div class="info"><h1 class="title">删除 AJAX 请求</h1></div>
+            
+
+            <p class="para">
+                <code class="code">Zend_Controller_Request_Http</code> 有一个初步的方法用来检测AJAX请求：<code class="code">isXmlHttpRequest()</code>。这个方法寻找一个带有&#039;XMLHttpRequest&#039; 值的HTTP请求头<code class="code">X-Requested-With</code>；如果发现，就返回true。
+            </p>
+
+            <p class="para">
+                当前，这个头用下列JS库缺省地传递：
+            </p>
+
+            <ul class="itemizedlist">
+                <li class="listitem"><p class="para">Prototype/Scriptaculous (and libraries derived
+                        from Prototype)</p></li>
+                <li class="listitem"><p class="para">Yahoo! UI Library</p></li>
+                <li class="listitem"><p class="para">jQuery</p></li>
+                <li class="listitem"><p class="para">MochiKit</p></li>
+            </ul>
+
+            <p class="para">
+                大多数 AJAX 库允许发送定制的HTTP请求头；如果你的库没有发送这个头，简单地把它作为一个请求头添加上确保<code class="code">isXmlHttpRequest()</code> 方法工作。
+            </p>
+        </div>
+    </div>
+
+    <div class="section" id="zend.controller.request.subclassing" name="zend.controller.request.subclassing"><div class="info"><h1 class="title">子类化请求对象</h1></div>
+        
+
+        <p class="para">
+        所有请求对象的基请求类是抽象类<code class="code">Zend_Controller_Request_Abstract</code>。定义了一些最基本的方法：
+        </p>
+
+        <div class="programlisting"><div class="cdata"><pre>
+abstract class Zend_Controller_Request_Abstract
+{
+    /**
+     * @return string
+     */
+    public function getControllerName();
+
+    /**
+     * @param string $value
+     * @return self
+     */
+    public function setControllerName($value);
+
+    /**
+     * @return string
+     */
+    public function getActionName();
+
+    /**
+     * @param string $value
+     * @return self
+     */
+    public function setActionName($value);
+
+    /**
+     * @return string
+     */
+    public function getControllerKey();
+
+    /**
+     * @param string $key
+     * @return self
+     */
+    public function setControllerKey($key);
+
+    /**
+     * @return string
+     */
+    public function getActionKey();
+
+    /**
+     * @param string $key
+     * @return self
+     */
+    public function setActionKey($key);
+
+    /**
+     * @param string $key
+     * @return mixed
+     */
+    public function getParam($key);
+
+    /**
+     * @param string $key
+     * @param mixed $value
+     * @return self
+     */
+    public function setParam($key, $value);
+
+    /**
+     * @return array
+     */
+     public function getParams();
+
+    /**
+     * @param array $array
+     * @return self
+     */
+    public function setParams(array $array);
+
+    /**
+     * @param boolean $flag
+     * @return self
+     */
+    public function setDispatched($flag = true);
+
+    /**
+     * @return boolean
+     */
+    public function isDispatched();
+}
+
+        </pre></div></div>
+
+
+        <p class="para">
+        请求对象是请求环境的容器。控制器链实际上只需要知道如何设置和获取控制器、动作，可选的参数以及分发的状态。默认的，请求将使用controller和action键查询自己的参数来确定控制器和动作。
+        </p>
+
+        <p class="para">
+        需要一个请求类来与特定的环境交互以获得需要的数据时，可以扩展该基类或它的衍生类。例如<a href="zend.controller.request.html#zend.controller.request.http" class="link">HTTP环境</a>，CLI环境，或者PHP-GTK环境。
+        </p>
+    </div>
+</div>
+        <hr />
+
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.controller.front.html">前端控制器</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.controller.html">Zend_Controller</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.controller.router.html">标准路由器</a></div>
+                    </td>
+                </tr>
+            </table>
+</td>
+        <td style="font-size: smaller;" width="15%"> <style type="text/css">
+#leftbar {
+	float: left;
+	width: 186px;
+	padding: 5px;
+	font-size: smaller;
+}
+ul.toc {
+	margin: 0px 5px 5px 5px;
+	padding: 0px;
+}
+ul.toc li {
+	font-size: 85%;
+	margin: 1px 0 1px 1px;
+	padding: 1px 0 1px 11px;
+	list-style-type: none;
+	background-repeat: no-repeat;
+	background-position: center left;
+}
+ul.toc li.header {
+	font-size: 115%;
+	padding: 5px 0px 5px 11px;
+	border-bottom: 1px solid #cccccc;
+	margin-bottom: 5px;
+}
+ul.toc li.active {
+	font-weight: bold;
+}
+ul.toc li a {
+	text-decoration: none;
+}
+ul.toc li a:hover {
+	text-decoration: underline;
+}
+</style>
+ <ul class="toc">
+  <li class="header home"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="reference.html">Zend Framework Reference</a></li>
+  <li class="header up"><a href="zend.controller.html">Zend_Controller</a></li>
+  <li><a href="zend.controller.quickstart.html">Zend_Controller 快速入门</a></li>
+  <li><a href="zend.controller.basics.html">Zend_Controller 基础</a></li>
+  <li><a href="zend.controller.front.html">前端控制器</a></li>
+  <li class="active"><a href="zend.controller.request.html">请求对象</a></li>
+  <li><a href="zend.controller.router.html">标准路由器</a></li>
+  <li><a href="zend.controller.dispatcher.html">分发器</a></li>
+  <li><a href="zend.controller.action.html">动作控制器</a></li>
+  <li><a href="zend.controller.actionhelpers.html">动作助手</a></li>
+  <li><a href="zend.controller.response.html">响应对象</a></li>
+  <li><a href="zend.controller.plugins.html">插件</a></li>
+  <li><a href="zend.controller.modular.html">使用传统的模块目录结构</a></li>
+  <li><a href="zend.controller.exceptions.html">MVC 异常</a></li>
+ </ul>
+ </td>
+    </tr>
+</table>
+</body>
+</html>

@@ -1,0 +1,505 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <title>Zend_Service_Flickr - Zend Framework Manual</title>
+
+</head>
+<body>
+<table width="100%">
+    <tr valign="top">
+        <td width="85%">
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.service.ebay.finding.html">Zend_Service_Ebay_Finding</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.service.html">Zend_Service</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.service.livedocx.html">Zend_Service_LiveDocx</a></div>
+                    </td>
+                </tr>
+            </table>
+<hr />
+<div id="zend.service.flickr" class="section"><div class="info"><h1 class="title">Zend_Service_Flickr</h1></div>
+    
+    <div class="section" id="zend.service.flickr.introduction" name="zend.service.flickr.introduction"><div class="info"><h1 class="title">对Flickr搜索的介绍</h1></div>
+        
+        <p class="para">
+            <code class="code">Zend_Service_Flickr</code> i是一组用来使用Flickr REST Web Service 的简单API.
+            为了可以使用Flickr web services, 你必须拥有 API key. 获取key或需要Flickr REST Web Service更多详细信息, 请访问
+            <a href="http://www.flickr.com/services/api/" class="link external">&raquo; Flickr API Documentation</a>.
+        </p>
+        <p class="para">
+            在下面的例子中, 我们使用 <code class="code">tagSearch()</code>  方法来搜索tag中有 &quot;php&quot;的照片
+            .
+        </p>
+        <div class="example"><div class="info"><p><b>Example #1 简单的 Flickr 照片搜索</b></p></div>
+            
+            <div class="programlisting"><div class="cdata"><pre>&lt;?php
+require_once &#039;Zend/Service/Flickr.php&#039;;
+
+$flickr = new Zend_Service_Flickr(&#039;MY_API_KEY&#039;);
+
+$results = $flickr-&gt;tagSearch(&quot;php&quot;);
+
+foreach ($results as $result) {
+    echo $result-&gt;title . &#039;&lt;br /&gt;&#039;;
+}
+?&gt;       </pre></div></div>
+
+        </div>
+        <blockquote><p><b class="note">Note</b>: 
+            <code class="code">tagSearch()</code> 可以接受第二个(可选的)参数提供更多选项.
+        <br /></p></blockquote>
+    </div>
+    <div class="section" id="zend.service.flickr.finding-users" name="zend.service.flickr.finding-users"><div class="info"><h1 class="title">查找 Flickr 用户</h1></div>
+        
+        <p class="para">
+            <code class="code">Zend_Service_Flickr</code>  提供三种不同的方法来得到 Flickr的用户信息:
+        </p>
+        <ul class="itemizedlist">
+            <li class="listitem">
+                <p class="para">
+                    <code class="code">userSearch()</code>: 接受一个以空格来作为分隔符的(由tag构成)查询字符串，用数组的方式(可选)来指定搜索选项, 返回一个
+                 <code class="code">Zend_Service_Flickr_ResultSet</code>
+                对象.
+                </p>
+            </li>
+            <li class="listitem">
+                <p class="para">
+                    <code class="code">getIdByUsername()</code>: 以字符串的格式返回与给定用户名关联的用户 ID
+                </p>
+            </li>
+            <li class="listitem">
+                <p class="para">
+                    <code class="code">getIdByEmail()</code>: 以字符串的格式返回与给定email地址关联的用户 ID
+                </p>
+            </li>
+        </ul>
+        <div class="example"><div class="info"><p><b>Example #2 用email地址来查找Flickr用户</b></p></div>
+            
+            <div class="example-contents"><p>
+                在这个例子中, 我们有一个Flickr用户的e-mail 地址, 并用
+                 <code class="code">userSearch()</code> 方法获得用户的信息:
+            </p></div>
+            <div class="programlisting"><div class="cdata"><pre>&lt;?php
+require_once &#039;Zend/Service/Flickr.php&#039;;
+
+$flickr = new Zend_Service_Flickr(&#039;MY_API_KEY&#039;);
+
+$results = $flickr-&gt;userSearch($userEmail);
+
+foreach ($results as $result) {
+    echo $result-&gt;title . &#039;&lt;br /&gt;&#039;;
+}
+?&gt;       </pre></div></div>
+
+        </div>
+    </div>
+    <div class="section" id="zend.service.flickr.getimagedetails" name="zend.service.flickr.getimagedetails"><div class="info"><h1 class="title">获得 Flickr 图像详细资料</h1></div>
+        
+        <p class="para"><code class="code">Zend_Service_Flickr</code>使我们可以使用给定的图像id来非常方便快捷的得到图像的详细信息,使用<code class="code">getImageDetails()</code>
+        方法, 如下面的例子:</p>
+        <div class="example"><div class="info"><p><b>Example #3 获得 Flickr 图像详细资料</b></p></div>
+            
+            <div class="example-contents"><p>
+                一旦你有一个Flickr 图像的ID,获得它的详细信息将是小事一桩:
+            </p></div>
+            <div class="programlisting"><div class="cdata"><pre>&lt;?php
+require_once &#039;Zend/Service/Flickr.php&#039;;
+
+$flickr = new Zend_Service_Flickr(&#039;MY_API_KEY&#039;);
+
+$image = $flickr-&gt;getImageDetails($imageId);
+
+echo &quot;Image ID $imageId is $image-&gt;width x $image-&gt;height pixels.&lt;br /&gt;\n&quot;;
+echo &quot;&lt;a href=\&quot;$image-&gt;clickUri\&quot;&gt;Click for Image&lt;/a&gt;\n&quot;;
+?&gt;       </pre></div></div>
+
+        </div>
+    </div>
+<div class="section" id="zend.service.flickr.classes" name="zend.service.flickr.classes"><div class="info"><h1 class="title">Zend_Service_Flickr 类</h1></div>
+    
+    <p class="para">
+        下面列出的是将由<code class="code">tagSearch()</code> 和 <code class="code">userSearch()</code>返回的一些类:
+        <ul class="itemizedlist">
+            <li class="listitem"><p class="para"><a href="zend.service.flickr.html#zend.service.flickr.classes.resultset" class="link"><code class="code">Zend_Service_Flickr_ResultSet</code></a></p></li>
+            <li class="listitem"><p class="para"><a href="zend.service.flickr.html#zend.service.flickr.classes.result" class="link"><code class="code">Zend_Service_Flickr_Result</code></a></p></li>
+            <li class="listitem"><p class="para"><a href="zend.service.flickr.html#zend.service.flickr.classes.image" class="link"><code class="code">Zend_Service_Flickr_Image</code></a></p></li>
+        </ul>
+    </p>
+    <div class="section" id="zend.service.flickr.classes.resultset" name="zend.service.flickr.classes.resultset"><div class="info"><h1 class="title">Zend_Service_Flickr_ResultSet</h1></div>
+        
+        <p class="para">代表一个Flickr search的结果集.</p>
+        <blockquote><p><b class="note">Note</b>: 
+            
+                该对象实现了
+                <code class="code">SeekableIterator</code>
+                接口,我们可以很方便的进行遍历 (如 foreach ), 也可以用
+                <code class="code">seek()</code>直接访问指定的结果 .
+                .
+            <br />
+        </p></blockquote>
+        <div class="section" id="zend.service.flickr.classes.resultset.properties" name="zend.service.flickr.classes.resultset.properties"><div class="info"><h1 class="title">属性</h1></div>
+            
+            <table class="doctable table"><div class="info"><caption><b>Zend_Service_Flickr_ResultSet 属性</b></caption></div>
+                
+                
+                    <thead valign="middle">
+                        <tr valign="middle">
+                            <th>名称</th>
+                            <th>类别</th>
+                            <th>描述</th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody valign="middle" class="tbody">
+                        <tr valign="middle">
+                            <td align="left">totalResultsAvailable</td>
+                            <td align="left">int</td>
+                            <td align="left">所有有效结果的数量</td>
+                        </tr>
+
+                        <tr valign="middle">
+                            <td align="left">totalResultsReturned</td>
+                            <td align="left">int</td>
+                            <td align="left">所有结果的数量</td>
+                        </tr>
+
+                        <tr valign="middle">
+                            <td align="left">firstResultPosition</td>
+                            <td align="left">int</td>
+                            <td align="left">当前结果集在所有结果集中的偏移</td>
+                        </tr>
+
+                    </tbody>
+                
+            </table>
+
+        </div>
+        <div class="section" id="zend.service.flickr.classes.resultset.totalResults" name="zend.service.flickr.classes.resultset.totalResults"><div class="info"><h1 class="title">Zend_Service_Flickr_ResultSet::totalResults()</h1></div>
+            
+            <p class="para">
+                <div class="methodsynopsis dc-description">
+                     <span class="type">int</span> 
+                     <span class="methodname">totalResults</span>
+                     ( <span class="methodparam">void</span>
+                </div>
+
+            </p>
+            <p class="para">
+                返回这个结果集中所有结果的数量
+            </p>
+            <p class="para">
+                <a href="zend.service.flickr.html#zend.service.flickr.classes" class="link">Back to Class List</a>
+            </p>
+        </div>
+    </div>
+    <div class="section" id="zend.service.flickr.classes.result" name="zend.service.flickr.classes.result"><div class="info"><h1 class="title">Zend_Service_Flickr_Result</h1></div>
+        
+        <p class="para">
+            Flickr query中的一个单一图片结果
+        </p>
+        <div class="section" id="zend.service.flickr.classes.result.properties" name="zend.service.flickr.classes.result.properties"><div class="info"><h1 class="title">属性</h1></div>
+            
+            <table class="doctable table"><div class="info"><caption><b>Zend_Service_Flickr_Result  属性</b></caption></div>
+                
+                
+                    <thead valign="middle">
+                        <tr valign="middle">
+                            <th>名称</th>
+                            <th>类别</th>
+                            <th>描述</th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody valign="middle" class="tbody">
+                        <tr valign="middle">
+                            <td align="left">id</td>
+                            <td align="left">int</td>
+                            <td align="left">图片 ID</td>
+                        </tr>
+
+                        <tr valign="middle">
+                            <td align="left">owner</td>
+                            <td align="left">int</td>
+                            <td align="left">相片所有者的 NSID.</td>
+                        </tr>
+
+                        <tr valign="middle">
+                            <td align="left">secret</td>
+                            <td align="left">string</td>
+                            <td align="left">一个用于构建url的key</td>
+                        </tr>
+
+                        <tr valign="middle">
+                            <td align="left">server</td>
+                            <td align="left">string</td>
+                            <td align="left">用于构建url的服务器名称</td>
+                        </tr>
+
+                        <tr valign="middle">
+                            <td align="left">title</td>
+                            <td align="left">string</td>
+                            <td align="left">    相片的title</td>
+                        </tr>
+
+                        <tr valign="middle">
+                            <td align="left">ispublic</td>
+                            <td align="left">boolean</td>
+                            <td align="left">相片是否是公开的</td>
+                        </tr>
+
+                        <tr valign="middle">
+                            <td align="left">isfriend</td>
+                            <td align="left">boolean</td>
+                            <td align="left">因为你是相片所有者的朋友，相片对你可见</td>
+                        </tr>
+
+                        <tr valign="middle">
+                            <td align="left">isfamily</td>
+                            <td align="left">boolean</td>
+                            <td align="left">因为你是相片所有者的亲属，相片对你可见</td>
+                        </tr>
+
+                        <tr valign="middle">
+                            <td align="left">license</td>
+                            <td align="left">string</td>
+                            <td align="left">相片基于什么license</td>
+                        </tr>
+
+                        <tr valign="middle">
+                            <td align="left">date_upload</td>
+                            <td align="left">string</td>
+                            <td align="left">上传相片的时间</td>
+                        </tr>
+
+                        <tr valign="middle">
+                            <td align="left">date_taken</td>
+                            <td align="left">string</td>
+                            <td align="left">拍照的时间</td>
+                        </tr>
+
+                        <tr valign="middle">
+                            <td align="left">owner_name</td>
+                            <td align="left">string</td>
+                            <td align="left">相片所有者的名字</td>
+                        </tr>
+
+                        <tr valign="middle">
+                            <td align="left">icon_server</td>
+                            <td align="left">string</td>
+                            <td align="left">    用来装配图标 URLs的服务器</td>
+                        </tr>
+
+                        <tr valign="middle">
+                            <td align="left">Square</td>
+                            <td align="left"><a href="zend.service.flickr.html#zend.service.flickr.classes.image" class="link">Zend_Service_Flickr_Image</a></td>
+                            <td align="left">一个 75x75像素大小的预览图</td>
+                        </tr>
+
+                        <tr valign="middle">
+                            <td align="left">Thumbnail</td>
+                            <td align="left"><a href="zend.service.flickr.html#zend.service.flickr.classes.image" class="link">Zend_Service_Flickr_Image</a></td>
+                            <td align="left">一个100像素大小的预览图</td>
+                        </tr>
+
+                        <tr valign="middle">
+                            <td align="left">Small</td>
+                            <td align="left"><a href="zend.service.flickr.html#zend.service.flickr.classes.image" class="link">Zend_Service_Flickr_Image</a></td>
+                            <td align="left">一个240像素大小的图片</td>
+                        </tr>
+
+                        <tr valign="middle">
+                            <td align="left">Medium</td>
+                            <td align="left"><a href="zend.service.flickr.html#zend.service.flickr.classes.image" class="link">Zend_Service_Flickr_Image</a></td>
+                            <td align="left">一个500像素大小的图片</td>
+                        </tr>
+
+                        <tr valign="middle">
+                            <td align="left">Large</td>
+                            <td align="left"><a href="zend.service.flickr.html#zend.service.flickr.classes.image" class="link">Zend_Service_Flickr_Image</a></td>
+                            <td align="left">一个640像素大小的图片</td>
+                        </tr>
+
+                        <tr valign="middle">
+                            <td align="left">Original</td>
+                            <td align="left"><a href="zend.service.flickr.html#zend.service.flickr.classes.image" class="link">Zend_Service_Flickr_Image</a></td>
+                            <td align="left">原始图片</td>
+                        </tr>
+
+                    </tbody>
+                
+            </table>
+
+            <p class="para">
+                <a href="zend.service.flickr.html#zend.service.flickr.classes" class="link">Back to Class List</a>
+            </p>
+        </div>
+    </div>
+    <div class="section" id="zend.service.flickr.classes.image" name="zend.service.flickr.classes.image"><div class="info"><h1 class="title">Zend_Service_Flickr_Image</h1></div>
+        
+        <p class="para">代表由Flickr搜索返回的图片</p>
+        <div class="section" id="zend.service.flickr.classes.image.properties" name="zend.service.flickr.classes.image.properties"><div class="info"><h1 class="title">属性</h1></div>
+            
+            <table class="doctable table"><div class="info"><caption><b>Zend_Service_Flickr_Image 属性</b></caption></div>
+                
+                
+                    <thead valign="middle">
+                        <tr valign="middle">
+                            <th>名称</th>
+                            <th>类别</th>
+                            <th>描述</th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody valign="middle" class="tbody">
+                        <tr valign="middle">
+                            <td align="left">uri</td>
+                            <td align="left">string</td>
+                            <td align="left">原始图片的URI</td>
+                        </tr>
+
+                        <tr valign="middle">
+                            <td align="left">clickUri</td>
+                            <td align="left">string</td>
+                            <td align="left">图片相关的可点击的URI (如 Flickr 的页面)</td>
+                        </tr>
+
+                        <tr valign="middle">
+                            <td align="left">width</td>
+                            <td align="left">int</td>
+                            <td align="left">图片的宽度</td>
+                        </tr>
+
+                        <tr valign="middle">
+                            <td align="left">height</td>
+                            <td align="left">int</td>
+                            <td align="left">图片的高度</td>
+                        </tr>
+
+                    </tbody>
+                
+            </table>
+
+            <p class="para">
+                <a href="zend.service.flickr.html#zend.service.flickr.classes" class="link">Back to Class List</a>
+            </p>
+        </div>
+    </div>
+</div>
+</div>
+        <hr />
+
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.service.ebay.finding.html">Zend_Service_Ebay_Finding</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.service.html">Zend_Service</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.service.livedocx.html">Zend_Service_LiveDocx</a></div>
+                    </td>
+                </tr>
+            </table>
+</td>
+        <td style="font-size: smaller;" width="15%"> <style type="text/css">
+#leftbar {
+	float: left;
+	width: 186px;
+	padding: 5px;
+	font-size: smaller;
+}
+ul.toc {
+	margin: 0px 5px 5px 5px;
+	padding: 0px;
+}
+ul.toc li {
+	font-size: 85%;
+	margin: 1px 0 1px 1px;
+	padding: 1px 0 1px 11px;
+	list-style-type: none;
+	background-repeat: no-repeat;
+	background-position: center left;
+}
+ul.toc li.header {
+	font-size: 115%;
+	padding: 5px 0px 5px 11px;
+	border-bottom: 1px solid #cccccc;
+	margin-bottom: 5px;
+}
+ul.toc li.active {
+	font-weight: bold;
+}
+ul.toc li a {
+	text-decoration: none;
+}
+ul.toc li a:hover {
+	text-decoration: underline;
+}
+</style>
+ <ul class="toc">
+  <li class="header home"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="reference.html">Zend Framework Reference</a></li>
+  <li class="header up"><a href="zend.service.html">Zend_Service</a></li>
+  <li><a href="zend.service.introduction.html">简介</a></li>
+  <li><a href="zend.service.akismet.html">Zend_Service_Akismet</a></li>
+  <li><a href="zend.service.amazon.html">Zend_Service_Amazon</a></li>
+  <li><a href="zend.service.amazon.ec2.html">Zend_Service_Amazon_Ec2</a></li>
+  <li><a href="zend.service.amazon.ec2.instance.html">Zend_Service_Amazon_Ec2: Instances</a></li>
+  <li><a href="zend.service.amazon.ec2.windows.instance.html">Zend_Service_Amazon_Ec2: Windows Instances</a></li>
+  <li><a href="zend.service.amazon.ec2.reserved.instance.html">Zend_Service_Amazon_Ec2: Reserved Instances</a></li>
+  <li><a href="zend.service.amazon.ec2.cloudwatch.html">Zend_Service_Amazon_Ec2: CloudWatch Monitoring</a></li>
+  <li><a href="zend.service.amazon.ec2.images.html">Zend_Service_Amazon_Ec2: Amazon Machine Images (AMI)</a></li>
+  <li><a href="zend.service.amazon.ec2.ebs.html">Zend_Service_Amazon_Ec2: Elastic Block Storage (EBS)</a></li>
+  <li><a href="zend.service.amazon.ec2.elasticip.html">Zend_Service_Amazon_Ec2: Elastic IP Addresses</a></li>
+  <li><a href="zend.service.amazon.ec2.keypairs.html">Zend_Service_Amazon_Ec2: Keypairs</a></li>
+  <li><a href="zend.service.amazon.ec2.zones.html">Zend_Service_Amazon_Ec2: Regions and Availability Zones</a></li>
+  <li><a href="zend.service.amazon.ec2.securitygroups.html">Zend_Service_Amazon_Ec2: Security Groups</a></li>
+  <li><a href="zend.service.amazon.s3.html">Zend_Service_Amazon_S3</a></li>
+  <li><a href="zend.service.amazon.sqs.html">Zend_Service_Amazon_Sqs</a></li>
+  <li><a href="zend.service.audioscrobbler.html">Zend_Service_Audioscrobbler</a></li>
+  <li><a href="zend.service.delicious.html">Zend_Service_Delicious</a></li>
+  <li><a href="zend.service.developergarden.html">Zend_Service_DeveloperGarden</a></li>
+  <li><a href="zend.service.ebay.html">Zend_Service_Ebay</a></li>
+  <li><a href="zend.service.ebay.finding.html">Zend_Service_Ebay_Finding</a></li>
+  <li class="active"><a href="zend.service.flickr.html">Zend_Service_Flickr</a></li>
+  <li><a href="zend.service.livedocx.html">Zend_Service_LiveDocx</a></li>
+  <li><a href="zend.service.nirvanix.html">Zend_Service_Nirvanix</a></li>
+  <li><a href="zend.service.recaptcha.html">Zend_Service_ReCaptcha</a></li>
+  <li><a href="zend.service.short-url.html">Zend_Service_ShortUrl</a></li>
+  <li><a href="zend.service.simpy.html">Zend_Service_Simpy</a></li>
+  <li><a href="zend.service.slideshare.html">Zend_Service_SlideShare</a></li>
+  <li><a href="zend.service.strikeiron.html">Zend_Service_StrikeIron</a></li>
+  <li><a href="zend.service.strikeiron.bundled-services.html">Zend_Service_StrikeIron: Bundled Services</a></li>
+  <li><a href="zend.service.strikeiron.advanced-uses.html">Zend_Service_StrikeIron: Advanced Uses</a></li>
+  <li><a href="zend.service.technorati.html">Zend_Service_Technorati</a></li>
+  <li><a href="zend.service.twitter.html">Zend_Service_Twitter</a></li>
+  <li><a href="zend.service.windowsazure.html">Zend_Service_WindowsAzure</a></li>
+  <li><a href="zend.service.windowsazure.storage.blob.html">Zend_Service_WindowsAzure_Storage_Blob</a></li>
+  <li><a href="zend.service.windowsazure.diagnostics.manager.html">Zend_Service_WindowsAzure_Diagnostics_Manager</a></li>
+  <li><a href="zend.service.windowsazure.storage.queue.html">Zend_Service_WindowsAzure_Storage_Queue</a></li>
+  <li><a href="zend.service.windowsazure.storage.table.html">Zend_Service_WindowsAzure_Storage_Table</a></li>
+  <li><a href="zend.service.yahoo.html">Zend_Service_Yahoo</a></li>
+ </ul>
+ </td>
+    </tr>
+</table>
+</body>
+</html>

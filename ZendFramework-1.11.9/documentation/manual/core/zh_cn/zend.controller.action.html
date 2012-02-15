@@ -1,0 +1,568 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <title>动作控制器 - Zend Framework Manual</title>
+
+</head>
+<body>
+<table width="100%">
+    <tr valign="top">
+        <td width="85%">
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.controller.dispatcher.html">分发器</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.controller.html">Zend_Controller</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.controller.actionhelpers.html">动作助手</a></div>
+                    </td>
+                </tr>
+            </table>
+<hr />
+<div id="zend.controller.action" class="section"><div class="info"><h1 class="title">动作控制器</h1></div>
+    
+
+    <div class="section" id="zend.controller.action.introduction" name="zend.controller.action.introduction"><div class="info"><h1 class="title">简介</h1></div>
+        
+        <p class="para">
+            <code class="code">Zend_Controller_Action</code>是一个抽象类，当基于模型－视图－控制器（MVC）模式建立网站的时候，你可以用它来为和前端控制器使用一起来实现动作控制器。
+        </p>
+
+        <p class="para">
+            为使用<code class="code">Zend_Controller_Action</code>，你需要在实际的控制器类中把它子类化（或者为动作控制器创建你自己的基本类而使它子类化）。最基本的操作是子类化和创建对应于不同动作的动作方法，这些动作是你希望控制器来处理你的站点的动作。Zend_Controller的路由和派遣处理将在你的类里自动发现任何以&#039;Action&#039;结尾的方法作为潜在的控制器动作。
+        </p>
+
+        <p class="para">
+            例如，你的类如下定义：
+        </p>
+
+        <div class="programlisting"><div class="cdata"><pre>
+class FooController extends Zend_Controller_Action
+{
+    public function barAction()
+    {
+        // do something
+    }
+
+    public function bazAction()
+    {
+        // do something
+    }
+}
+
+        </pre></div></div>
+
+
+        <p class="para">
+            上述 <code class="code">FooController</code> 类（控制器<code class="code">foo</code>）定义了两个动作：<code class="code">bar</code>和<code class="code">baz</code>。
+        </p>
+
+        <p class="para">
+            还有更多的可以被实现，例如定制初始化动作，如果没有动作（或者有个无效动作）被指定，缺省的动作被调用，派遣之前和之后的钩子，以及无数的助手方法。这章是动作控制器功能的一个总览。
+        </p>
+
+        <blockquote><p><b class="note">Note</b>: <span class="info"><b>缺省行为</b><br /></span>
+            
+
+            
+                缺省地，<a href="zend.controller.front.html" class="link">前端控制器</a>激活了<a href="zend.controller.actionhelpers.html#zend.controller.actionhelpers.viewrenderer" class="link">ViewRenderer</a>动作助手。这个助手负责把视图对象注入到控制器，同时解析（rendering）视图。通过下面方法之一，可以在动作控制器里禁止它：
+            <br />
+
+            <div class="programlisting"><div class="cdata"><pre>
+class FooController extends Zend_Controller_Action
+{
+    public function init()
+    {
+        // 只是局部控制器；当初始化加载时，对这个控制器的所有动作有效：
+        $this-&gt;_helper-&gt;viewRenderer-&gt;setNoRender(true);
+
+        // 全局：
+        $this-&gt;_helper-&gt;removeHelper(&#039;viewRenderer&#039;);
+
+        // 也是全局，但需要和本地版本协作，以便繁殖这个控制器：
+        Zend_Controller_Front::getInstance()-&gt;setParam(&#039;noViewRenderer&#039;, true);
+    }
+}
+
+            </pre></div></div>
+
+
+            
+                <code class="code">initView()</code>、 <code class="code">getViewScript()</code>、<code class="code">render()</code>和<code class="code">renderScript()</code> 都代理 <code class="code">ViewRenderer</code>，除非助手不在助手经纪人（broker）里或<code class="code">noViewRenderer</code>标志被设置。
+            <br />
+
+            
+                通过设置<code class="code">ViewRenderer</code>的<code class="code">noRender</code>标记，可以简单地为一个独立的视图禁止解析（rendering）：
+            <br />
+
+            <div class="programlisting"><div class="cdata"><pre>
+class FooController extends Zend_Controller_Action
+{
+    public function barAction()
+    {
+        // disable autorendering for this action only:
+        $this-&gt;_helper-&gt;viewRenderer-&gt;setNoRender();
+    }
+}
+
+            </pre></div></div>
+
+
+            
+                禁止<code class="code">ViewRenderer</code>的主要原因是如果你不需要视图对象或者如果你不通过视图脚本（例如，当使用动作控制器来司服网站服务协议如SOAP,XML-RPC或REST）来解析。大多数情况下，你不需要全局地禁止<code class="code">ViewRenderer</code>，只选择性地在个别控制器或动作里禁止它。
+            <br />
+        </p></blockquote>
+    </div>
+
+    <div class="section" id="zend.controller.action.initialization" name="zend.controller.action.initialization"><div class="info"><h1 class="title">对象初始化</h1></div>
+        
+
+        <p class="para">
+            虽然你可以总重写动作控制器的构造函数，我们不建议这么做。Zend_Controller_Action::__construct()执行一些重要的任务，如注册请求和响应对象，还有任何从前端控制器传来的invocation参数。如果你必须重写构造函数，别忘记调用<code class="code">parent::__construct($request, $response, $invokeArgs)</code>。
+        </p>
+
+        <p class="para">
+            更合适的方法来定制实例化是使用<code class="code">init()</code>方法，它是在<code class="code">__construct()</code>里的最后一个调用任务。例如，如果你想在实例化时连接数据库：
+        </p>
+
+        <div class="programlisting"><div class="cdata"><pre>
+class FooController extends Zend_Controller_Action
+{
+    public function init()
+    {
+        $this-&gt;db = Zend_Db::factory(&#039;Pdo_Mysql&#039;, array(
+            &#039;host&#039;     =&gt; &#039;myhost&#039;,
+            &#039;username&#039; =&gt; &#039;user&#039;,
+            &#039;password&#039; =&gt; &#039;XXXXXXX&#039;,
+            &#039;dbname&#039;   =&gt; &#039;website&#039;
+        ));
+    }
+}
+
+        </pre></div></div>
+
+    </div>
+
+    <div class="section" id="zend.controller.action.prepostdispatch" name="zend.controller.action.prepostdispatch"><div class="info"><h1 class="title">派遣前后的钩子</h1></div>
+        
+
+        <p class="para">
+            <code class="code">Zend_Controller_Action</code>指定两个方法，<code class="code">preDispatch()</code> 和<code class="code">postDispatch()</code>，可能被调用来bookend一个请求的动作。这在很多场合都有用：例如在运行一个动作（通过调用<code class="code">preDispatch()</code>里的<code class="code">_forward()</code>，动作将被跳过）前校验认证和ACLs，或者在网站范围的模板里（<code class="code">postDispatch()</code>）替换生成的内容。
+        </p>
+    </div>
+
+    <div class="section" id="zend.controller.action.accessors" name="zend.controller.action.accessors"><div class="info"><h1 class="title">访问器</h1></div>
+        
+
+        <p class="para">
+            无数的对象和变量与对象一起注册，并且每个都有访问器方法。
+        </p>
+
+        <ul class="itemizedlist">
+            <li class="listitem"><p class="para">
+                <em class="emphasis">请求对象</em>：<code class="code">getRequest()</code>可用来读取调用动作请求对象。
+            </p></li>
+
+            <li class="listitem">
+                <p class="para">
+                    <em class="emphasis">响应对象</em>: <code class="code">getResponse()</code>可用来读取收集最终响应的响应对象。一些典型的调用看起来象这样：
+                </p>
+
+                <div class="programlisting"><div class="cdata"><pre>
+$this-&gt;getResponse()-&gt;setHeader(&#039;Content-Type&#039;, &#039;text/xml&#039;);
+$this-&gt;getResponse()-&gt;appendBody($content);
+
+                </pre></div></div>
+
+            </li>
+
+            <li class="listitem">
+                <p class="para">
+                    <em class="emphasis">调用参数</em>：前端控制器可能把参数传给路由器、派遣器和动作控制器。为了读取这些参数，可使用<code class="code">getInvokeArg($key)</code>；另外，用<code class="code">getInvokeArgs()</code>读取整个参数列表。
+                </p>
+            </li>
+
+            <li class="listitem">
+                <p class="para">
+                    <em class="emphasis">请求参数</em>：请求对象手机请求参数，如任何_GET 或 _POST 参数，或者指定在URL的路径信息里的用户参数。为了读取这些参数，可使用<code class="code">_getParam($key)</code>或<code class="code">_getAllParams()</code>。也可以用<code class="code">_setParam()</code>来设置请求参数；当转发到另外的动作时这很有用。
+                </p>
+
+                <p class="para">
+                    用<code class="code">_hasParam($key)</code>来测试是否一个参数存在（对逻辑分支有用）。
+                </p>
+
+                <blockquote><p><b class="note">Note</b>: 
+                    
+                        <code class="code">_getParam()</code>可带有一个可选的第二个参数，如果它不是空的，就包含一个缺省的值。用它在读取值之前来消除对<code class="code">_hasParam()</code> 的调用：
+                    <br />
+
+                    <div class="programlisting"><div class="cdata"><pre>
+// Use default value of 1 if id is not set
+$id = $this-&gt;_getParam(&#039;id&#039;, 1);
+
+// Instead of:
+if ($this-&gt;_hasParam(&#039;id&#039;) {
+    $id = $this-&gt;_getParam(&#039;id&#039;);
+} else {
+    $id = 1;
+}
+
+                    </pre></div></div>
+
+                </p></blockquote>
+            </li>
+        </ul>
+    </div>
+
+    <div class="section" id="zend.controller.action.viewintegration" name="zend.controller.action.viewintegration"><div class="info"><h1 class="title">视图集成</h1></div>
+        
+
+        <p class="para">
+            <code class="code">Zend_Controller_Action</code>为视图继承提供了一个初步的灵活的机制。有两个方法来完成这个：<code class="code">initView()</code> 和 <code class="code">render()</code>；前者松散地加载<code class="code">$view</code> public 属性，后者基于当前请求的动作来解析视图，它们使用目录层次来决定脚本路径。
+        </p>
+
+        <div class="section" id="zend.controller.action.viewintegration.initview" name="zend.controller.action.viewintegration.initview"><div class="info"><h1 class="title">视图初始化</h1></div>
+            
+
+            <p class="para">
+                <code class="code">initView()</code>初始化视图对象。为了读取视图对象，<code class="code">render()</code>调用<code class="code">initView()</code>，但它可以在任何时候被初始化；缺省地，它用<code class="code">Zend_View</code>对象来组装<code class="code">$view</code>属性，但任何实现<code class="code">Zend_View_Interface</code>的类可以使用。如果<code class="code">$view</code>已经被初始化，它就简单地返回属性。
+            </p>
+
+            <p class="para">
+                缺省的实现使用下面假设的目录结构：
+            </p>
+
+            <div class="programlisting"><div class="cdata"><pre>
+applicationOrModule/
+    controllers/
+        IndexController.php
+    views/
+        scripts/
+            index/
+                index.phtml
+        helpers/
+        filters/
+
+            </pre></div></div>
+
+
+            <p class="para">
+                换句话说，视图脚本假定放在<code class="code">views/scripts/</code>子目录，同时假定<code class="code"> views</code>子目录还包含兄弟功能（助手和过滤器）。确定视图脚本名称和路径时，先以<code class="code"> views/scripts/</code>作为基路径，然后加上以视图脚本对应控制器命名的目录。
+            </p>
+        </div>
+
+        <div class="section" id="zend.controller.action.viewintegration.render" name="zend.controller.action.viewintegration.render"><div class="info"><h1 class="title">解析（Rendering）视图</h1></div>
+            
+
+            <p class="para">
+                <code class="code">render()</code> 有下列特征：has the following signature:
+            </p>
+
+            <div class="programlisting"><div class="cdata"><pre>
+string render(string $action = null,
+              string $name = null,
+              bool $noController = false);
+
+            </pre></div></div>
+
+
+            <p class="para">
+                <code class="code">render()</code>解析视图脚本。如果没有传递参数，它假定请求的脚本是<code class="code">[controller]/[action].phtml</code> （<code class="code">.phtml</code>是<code class="code">$viewSuffix</code>属性的值）。为<code class="code">$action</code>传递一个值将解析在<code class="code">[controller]</code>子目录中的模板。为用<code class="code">[controller]</code>重写，传递一个true值给<code class="code">$noController</code>。最后，模板被解析到响应对象；如果你希望解析到一个在响应对象里指定的<a href="zend.controller.response.html#zend.controller.response.namedsegments" class="link">named segment</a>，传递一个值给<code class="code">$name</code>。
+            </p>
+
+            <blockquote><p><b class="note">Note</b>: 
+                    因为控制器和动作名字里可能包含分隔符如&#039;_&#039;、 &#039;.&#039; 和 &#039;-&#039;，当决定视图名字时，render()把它们规格化成 &#039;-&#039;.在内部，它使用派遣器的字和路径分隔符来做规格化。这样，对<code class="code">/foo.bar/baz-bat</code>的请求将解析脚本<code class="code">foo-bar/baz-bat.phtml</code>。如果动作方法包含camelCasing，记住当决定视图脚本文件名的时候，这将变成由&#039;-&#039;分隔的字。
+            <br /></p></blockquote>
+
+            <p class="para">
+                一些例子：
+            </p>
+
+            <div class="programlisting"><div class="cdata"><pre>
+class MyController extends Zend_Controller_Action
+{
+    public function fooAction()
+    {
+        // Renders my/foo.phtml
+        $this-&gt;render();
+
+        // Renders my/bar.phtml
+        $this-&gt;render(&#039;bar&#039;);
+
+        // Renders baz.phtml
+        $this-&gt;render(&#039;baz&#039;, null, true);
+
+        // Renders my/login.phtml to the &#039;form&#039; segment of the
+        // response object
+        $this-&gt;render(&#039;login&#039;, &#039;form&#039;);
+
+        // Renders site.phtml to the &#039;page&#039; segment of the response
+        // object; does not use the &#039;my/&#039; subirectory
+        $this-&gt;render(&#039;site&#039;, &#039;page&#039;, true);
+    }
+
+    public function bazBatAction()
+    {
+        // Renders my/baz-bat.phtml
+        $this-&gt;render();
+    }
+}
+
+            </pre></div></div>
+
+        </div>
+    </div>
+
+    <div class="section" id="zend.controller.action.utilmethods" name="zend.controller.action.utilmethods"><div class="info"><h1 class="title">实用方法</h1></div>
+        
+
+        <p class="para">
+            除了访问器和视图继承方法，在动作方法内部里，<code class="code">Zend_Controller_Action</code>有若干实用方法来执行普通的任务（或在派遣的前后）。
+        </p>
+
+        <ul class="itemizedlist">
+            <li class="listitem">
+                <p class="para">
+                    <code class="code">_forward($action, $controller = null, $module = null, array $params = null)</code> ：执行另外一个动作。如果在<code class="code">preDispatch()</code>里调用，当前请求的动作将被跳过来支持新的动作。否则，在当前动作被处理之后，在_forward()请求的动作将被执行。
+                </p>
+            </li>
+
+            <li class="listitem">
+                <p class="para">
+                    <code class="code">_redirect($url, array $options = array())</code>：重定向到另外一个地方。这个方法用URL和一组可选的选项。缺省地，它执行HTTP 302 重定向。
+                </p>
+
+                <p class="para">
+                    选项可包括一个或多个下面这些：
+                </p>
+
+                <ul class="itemizedlist">
+                    <li class="listitem">
+                        <p class="para">
+                            <em class="emphasis">exit:</em>是否立即退出。如果被请求，它将干净地关闭任何打开的会话和执行重定向。
+                        </p>
+
+                        <p class="para">
+                            可以用<code class="code">setRedirectExit()</code>访问器在控制器里全局地设置这个选项。
+                        </p>
+                    </li>
+
+                    <li class="listitem">
+                        <p class="para">
+                            <em class="emphasis">prependBase:</em>是否预先考虑基础URL和URL提供的请求对象一起注册。
+                        </p>
+
+                        <p class="para">
+                            使用<code class="code">setRedirectPrependBase()</code>访问器，在控制器里全局地设置这个选项。
+                        </p>
+                    </li>
+
+                    <li class="listitem">
+                        <p class="para">
+                            <em class="emphasis">code:</em>在重定向时要用什么HTTP代码。缺省使用302；可以用从301到306之间的任何代码。
+                        </p>
+
+                        <p class="para">
+                            使用<code class="code">setRedirectCode()</code>访问器，在控制器里全局地设置这个选项。
+                        </p>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+
+    <div class="section" id="zend.controller.action.subclassing" name="zend.controller.action.subclassing"><div class="info"><h1 class="title">继承（Subclassing）动作控制器</h1></div>
+        
+
+        <p class="para">
+            为了创建动作控制器，设计上，<code class="code">Zend_Controller_Action</code> 必须被继承。至少，需要定义控制器可能调用的动作方法。
+        </p>
+
+        <p class="para">
+            除了为web应用程序创建有用的函数外，你可能发现在不同的控制器里重复同样的设置和实用方法；如果这样，创建一个继承（extends）<code class="code">Zend_Controller_Action</code> 的基础类可能会解决问题。
+        </p>
+
+        <div class="example"><div class="info"><p><b>Example #1 如何处理不存在的动作</b></p></div>
+            
+
+            <div class="example-contents"><p>
+                如果控制器的请求包括一个未定义的动作方法，<code class="code">Zend_Controller_Action::__call()</code>将被调用。<code class="code">__call()</code>当然是PHP中用来重载方法的魔术方法。
+            </p></div>
+
+            <div class="example-contents"><p>
+                缺省地，这个方法抛出一个<code class="code">Zend_Controller_Action_Exception</code> 来表明在控制器里没有发现要求的方法。如果要求的方法以&#039;Action&#039;结尾，就假设一个动作被请求并且不存在；这样的错误导致带有代码为 404 的异常。所有其它方法导致带有代码为 500 的异常。这使你很容易地在错误句柄里区分是页面没有发现还是程序错误。
+            </p></div>
+
+            <div class="example-contents"><p>
+                如果想执行其它操作，你应该重写这个函数。例如，如果你想显示错误信息，可以象下面这样来写：
+            </p></div>
+
+            <div class="programlisting"><div class="cdata"><pre>
+class MyController extends Zend_Controller_Action
+{
+    public function __call($method, $args)
+    {
+        if (&#039;Action&#039; == substr($method, -6)) {
+            // If the action method was not found, render the error
+            // template
+            return $this-&gt;render(&#039;error&#039;);
+        }
+
+        // all other methods throw an exception
+        throw new Exception(&#039;Invalid method &quot;&#039;
+                            . $method
+                            . &#039;&quot; called&#039;,
+                            500);
+    }
+}
+
+            </pre></div></div>
+
+
+            <div class="example-contents"><p>
+                另外的可能性就是你可能想转发到缺省控制页面：
+            </p></div>
+
+            <div class="programlisting"><div class="cdata"><pre>
+class MyController extends Zend_Controller_Action
+{
+    public function indexAction()
+    {
+        $this-&gt;render();
+    }
+
+    public function __call($method, $args)
+    {
+        if (&#039;Action&#039; == substr($method, -6)) {
+            // If the action method was not found, forward to the
+            // index action
+            return $this-&gt;_forward(&#039;index&#039;);
+        }
+
+        // all other methods throw an exception
+        throw new Exception(&#039;Invalid method &quot;&#039;
+                            . $method
+                            . &#039;&quot; called&#039;,
+                            500);
+    }
+}
+
+            </pre></div></div>
+
+        </div>
+
+        <p class="para">
+            为了定制控制器，除了重写<code class="code">__call()</code>以外，本章前面说涉及的初始化、实用程序、访问器、视图和派遣钩子等方法都可以被重写。作为例子，如果把视图对象保存到注册表里，你可能想用象下面的代码来修改<code class="code">initView()</code>：
+        </p>
+
+        <div class="programlisting"><div class="cdata"><pre>
+abstract class My_Base_Controller extends Zend_Controller_Action
+{
+    public function initView()
+    {
+        if (null === $this-&gt;view) {
+            if (Zend_Registry::isRegistered(&#039;view&#039;)) {
+                $this-&gt;view = Zend_Registry::get(&#039;view&#039;);
+            } else {
+                $this-&gt;view = new Zend_View();
+                $this-&gt;view-&gt;setBasePath(dirname(__FILE__) . &#039;/../views&#039;);
+            }
+        }
+
+        return $this-&gt;view;
+    }
+}
+
+        </pre></div></div>
+
+
+        <p class="para">
+            很希望你能从这章的信息里发现这个特别的组件的灵活性并且用到你的程序和网站里。
+        </p>
+    </div>
+</div>
+        <hr />
+
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.controller.dispatcher.html">分发器</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.controller.html">Zend_Controller</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.controller.actionhelpers.html">动作助手</a></div>
+                    </td>
+                </tr>
+            </table>
+</td>
+        <td style="font-size: smaller;" width="15%"> <style type="text/css">
+#leftbar {
+	float: left;
+	width: 186px;
+	padding: 5px;
+	font-size: smaller;
+}
+ul.toc {
+	margin: 0px 5px 5px 5px;
+	padding: 0px;
+}
+ul.toc li {
+	font-size: 85%;
+	margin: 1px 0 1px 1px;
+	padding: 1px 0 1px 11px;
+	list-style-type: none;
+	background-repeat: no-repeat;
+	background-position: center left;
+}
+ul.toc li.header {
+	font-size: 115%;
+	padding: 5px 0px 5px 11px;
+	border-bottom: 1px solid #cccccc;
+	margin-bottom: 5px;
+}
+ul.toc li.active {
+	font-weight: bold;
+}
+ul.toc li a {
+	text-decoration: none;
+}
+ul.toc li a:hover {
+	text-decoration: underline;
+}
+</style>
+ <ul class="toc">
+  <li class="header home"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="reference.html">Zend Framework Reference</a></li>
+  <li class="header up"><a href="zend.controller.html">Zend_Controller</a></li>
+  <li><a href="zend.controller.quickstart.html">Zend_Controller 快速入门</a></li>
+  <li><a href="zend.controller.basics.html">Zend_Controller 基础</a></li>
+  <li><a href="zend.controller.front.html">前端控制器</a></li>
+  <li><a href="zend.controller.request.html">请求对象</a></li>
+  <li><a href="zend.controller.router.html">标准路由器</a></li>
+  <li><a href="zend.controller.dispatcher.html">分发器</a></li>
+  <li class="active"><a href="zend.controller.action.html">动作控制器</a></li>
+  <li><a href="zend.controller.actionhelpers.html">动作助手</a></li>
+  <li><a href="zend.controller.response.html">响应对象</a></li>
+  <li><a href="zend.controller.plugins.html">插件</a></li>
+  <li><a href="zend.controller.modular.html">使用传统的模块目录结构</a></li>
+  <li><a href="zend.controller.exceptions.html">MVC 异常</a></li>
+ </ul>
+ </td>
+    </tr>
+</table>
+</body>
+</html>

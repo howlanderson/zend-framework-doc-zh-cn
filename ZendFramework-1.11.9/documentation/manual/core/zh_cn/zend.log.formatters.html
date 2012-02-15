@@ -1,0 +1,208 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <title>Formatters - Zend Framework Manual</title>
+
+</head>
+<body>
+<table width="100%">
+    <tr valign="top">
+        <td width="85%">
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.log.writers.html">Writers</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.log.html">Zend_Log</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.log.filters.html">过滤器</a></div>
+                    </td>
+                </tr>
+            </table>
+<hr />
+<div id="zend.log.formatters" class="section"><div class="info"><h1 class="title">Formatters</h1></div>
+  
+  <p class="para">
+    Formatter是一个负责取得一个描述日志事件的<code class="code">event</code>数组并输出一个格式化的日志行的对象.
+  </p>
+
+  <p class="para">
+    有些Writer不是面向行的并且不能使用Formatter.一个例子是数据库Writer,它向数据库中直接插入一个事件项.
+    对于这样的Writer不支持Formatter,如果你对这样的Writer设置一个Formatter将抛出一个异常.
+  </p>
+
+  <div class="section" id="zend.log.formatters.simple" name="zend.log.formatters.simple"><div class="info"><h1 class="title">简单格式化</h1></div>
+    
+    <p class="para">
+      <code class="code">Zend_Log_Formatter_Simple</code> 是默认的.当未指定任何formatter时使用.
+      默认的配置等同于下面的配置:
+
+      <div class="programlisting"><div class="cdata"><pre>&lt;?php
+$format = &#039;%timestamp% %priorityName% (%priority%): %message%&#039; . PHP_EOL;
+$formatter = new Zend_Log_Formatter_Simple($format);
+      </pre></div></div>
+
+    </p>
+
+    <p class="para">
+    使用Writer的<code class="code">steFormatter()</code>方法在个别的Writer上设置Formatter:
+      <div class="programlisting"><div class="cdata"><pre>&lt;?php
+$writer = new Zend_Log_Writer_Stream(&#039;php://output&#039;);
+$formatter = new Zend_Log_Formatter_Simple(&#039;hello %message%&#039; . PHP_EOL);
+$writer-&gt;setFormatter($formatter);
+
+$logger = new Zend_Log();
+$logger-&gt;addWriter($writer);
+
+$logger-&gt;info(&#039;there&#039;);
+
+// outputs &quot;hello there&quot;
+      </pre></div></div>
+
+    </p>
+
+    <p class="para">
+      <code class="code">Zend_Log_Formatter_Simple</code>的构造函数接受单个参数: 格式化字符串.该字符串包含有单个百分号包裹的键(例如,<code class="code">%message%</code>).
+      格式化字符串可以包含来自于任何事件数据数组的键。在 <code class="code">Zend_Log_Formatter_Simple</code> 里使用 DEFAULT_FORMAT 常量，可以获取缺省键。
+    </p>
+  </div>
+
+  <div class="section" id="zend.log.formatters.xml" name="zend.log.formatters.xml"><div class="info"><h1 class="title">格式化到XML</h1></div>
+    
+    <p class="para">
+    <code class="code">Zend_Log_Formatter_Xml</code>格式化日志数据到XML字符串中.
+    默认,它自动地纪录在事件数据数组中的所有项.
+      <div class="programlisting"><div class="cdata"><pre>&lt;?php
+$writer = new Zend_Log_Writer_Stream(&#039;php://output&#039;);
+$formatter = new Zend_Log_Formatter_Xml();
+$writer-&gt;setFormatter($formatter);
+
+$logger = new Zend_Log();
+$logger-&gt;addWriter($writer);
+
+$logger-&gt;info(&#039;informational message&#039;);
+      </pre></div></div>
+
+    </p>
+
+    <p class="para">
+      上面的代码输出下面的XML(为清晰添加了空格):
+
+      <div class="programlisting"><div class="cdata"><pre>
+&lt;logEntry&gt;
+  &lt;timestamp&gt;2007-04-06T07:24:37-07:00&lt;/timestamp&gt;
+  &lt;message&gt;informational message&lt;/message&gt;
+  &lt;priority&gt;6&lt;/priority&gt;
+  &lt;priorityName&gt;INFO&lt;/priorityName&gt;
+&lt;/logEntry&gt;
+      </pre></div></div>
+
+    </p>
+
+    <p class="para">
+        可以定制根元素并指定一个到事件数据数组的XML元素映射.
+        <code class="code">Zend_Log_Formatter_Xml</code>的构造函数接受一个根元素名字
+        的字符串作为第一个参数和一个元素映射的关联数组作为第二个参数:
+      <div class="programlisting"><div class="cdata"><pre>&lt;?php
+$writer = new Zend_Log_Writer_Stream(&#039;php://output&#039;);
+$formatter = new Zend_Log_Formatter_Xml(&#039;log&#039;, array(&#039;msg&#039; =&gt; &#039;message&#039;, &#039;level&#039; =&gt; &#039;priorityName&#039;));
+$writer-&gt;setFormatter($formatter);
+
+$logger = new Zend_Log();
+$logger-&gt;addWriter($writer);
+
+$logger-&gt;info(&#039;informational message&#039;);
+      </pre></div></div>
+
+
+      上面的代码改变默认的根元素<code class="code">logEntry</code>为<code class="code">log</code>.
+      还可以映射元素<code class="code">msg</code>到事件数据项<code class="code">message</code>,下面是输出结果:
+
+      <div class="programlisting"><div class="cdata"><pre>
+&lt;log&gt;
+  &lt;msg&gt;informational message&lt;/msg&gt;
+  &lt;level&gt;INFO&lt;/level&gt;
+&lt;/log&gt;
+      </pre></div></div>
+
+    </p>
+
+  </div>
+</div>
+        <hr />
+
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.log.writers.html">Writers</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.log.html">Zend_Log</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.log.filters.html">过滤器</a></div>
+                    </td>
+                </tr>
+            </table>
+</td>
+        <td style="font-size: smaller;" width="15%"> <style type="text/css">
+#leftbar {
+	float: left;
+	width: 186px;
+	padding: 5px;
+	font-size: smaller;
+}
+ul.toc {
+	margin: 0px 5px 5px 5px;
+	padding: 0px;
+}
+ul.toc li {
+	font-size: 85%;
+	margin: 1px 0 1px 1px;
+	padding: 1px 0 1px 11px;
+	list-style-type: none;
+	background-repeat: no-repeat;
+	background-position: center left;
+}
+ul.toc li.header {
+	font-size: 115%;
+	padding: 5px 0px 5px 11px;
+	border-bottom: 1px solid #cccccc;
+	margin-bottom: 5px;
+}
+ul.toc li.active {
+	font-weight: bold;
+}
+ul.toc li a {
+	text-decoration: none;
+}
+ul.toc li a:hover {
+	text-decoration: underline;
+}
+</style>
+ <ul class="toc">
+  <li class="header home"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="reference.html">Zend Framework Reference</a></li>
+  <li class="header up"><a href="zend.log.html">Zend_Log</a></li>
+  <li><a href="zend.log.overview.html">概述</a></li>
+  <li><a href="zend.log.writers.html">Writers</a></li>
+  <li class="active"><a href="zend.log.formatters.html">Formatters</a></li>
+  <li><a href="zend.log.filters.html">过滤器</a></li>
+  <li><a href="zend.log.factory.html">Using the Factory to Create a Log</a></li>
+ </ul>
+ </td>
+    </tr>
+</table>
+</body>
+</html>

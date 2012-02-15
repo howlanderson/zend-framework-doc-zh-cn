@@ -1,0 +1,141 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <title>单个Atom条目的处理 - Zend Framework Manual</title>
+
+</head>
+<body>
+<table width="100%">
+    <tr valign="top">
+        <td width="85%">
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.feed.consuming-atom.html">Atom Feed的使用</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.feed.html">Zend_Feed</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.feed.modifying-feed.html">修改Feed和条目结构</a></div>
+                    </td>
+                </tr>
+            </table>
+<hr />
+<div id="zend.feed.consuming-atom-single-entry" class="section"><div class="info"><h1 class="title">单个Atom条目的处理</h1></div>
+    
+
+    <p class="para">
+        单个Atom <code class="code">&lt;entry&gt;</code> 元素自身也是有效的。通常在Feed的URL后带上<code class="code">/&lt;entryId&gt;</code>就是一个条目的URL。就像<code class="code">http://atom.example.com/feed/1</code>，
+        我们就以上述的URL作为例子。
+    </p>
+
+    <p class="para">
+        如果你想读取单个条目，你仍然可以使用<code class="code">Zend_Feed_Atom</code>对象，它将自动创建一个匿名的Feed用来包含条目。
+    </p>
+
+    <div class="example"><div class="info"><p><b>Example #1 读取Atom Feed的单个条目</b></p></div>
+        
+        <div class="programlisting"><div class="cdata"><pre>&lt;?php
+
+$feed = new Zend_Feed_Atom(&#039;http://atom.example.com/feed/1&#039;);
+echo &#039;The feed has: &#039; . $feed-&gt;count() . &#039; entry.&#039;;
+
+$entry = $feed-&gt;current();</pre></div></div>
+
+    </div>
+
+    <p class="para">
+        或者如果你确定只想访问文档的一个<code class="code">&lt;entry&gt;</code>，那么你可以用条目对象直接访问：
+    </p>
+
+    <div class="example"><div class="info"><p><b>Example #2 用条目对象直接访问Atom Feed的单个条目</b></p></div>
+        
+        <div class="programlisting"><div class="cdata"><pre>&lt;?php
+
+$entry = new Zend_Feed_Entry_Atom(&#039;http://atom.example.com/feed/1&#039;);
+echo $entry-&gt;title();   </pre></div></div>
+
+    </div>
+</div>
+        <hr />
+
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.feed.consuming-atom.html">Atom Feed的使用</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.feed.html">Zend_Feed</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.feed.modifying-feed.html">修改Feed和条目结构</a></div>
+                    </td>
+                </tr>
+            </table>
+</td>
+        <td style="font-size: smaller;" width="15%"> <style type="text/css">
+#leftbar {
+	float: left;
+	width: 186px;
+	padding: 5px;
+	font-size: smaller;
+}
+ul.toc {
+	margin: 0px 5px 5px 5px;
+	padding: 0px;
+}
+ul.toc li {
+	font-size: 85%;
+	margin: 1px 0 1px 1px;
+	padding: 1px 0 1px 11px;
+	list-style-type: none;
+	background-repeat: no-repeat;
+	background-position: center left;
+}
+ul.toc li.header {
+	font-size: 115%;
+	padding: 5px 0px 5px 11px;
+	border-bottom: 1px solid #cccccc;
+	margin-bottom: 5px;
+}
+ul.toc li.active {
+	font-weight: bold;
+}
+ul.toc li a {
+	text-decoration: none;
+}
+ul.toc li a:hover {
+	text-decoration: underline;
+}
+</style>
+ <ul class="toc">
+  <li class="header home"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="reference.html">Zend Framework Reference</a></li>
+  <li class="header up"><a href="zend.feed.html">Zend_Feed</a></li>
+  <li><a href="zend.feed.introduction.html">介绍</a></li>
+  <li><a href="zend.feed.importing.html">导入Feeds</a></li>
+  <li><a href="zend.feed.findFeeds.html">从网页上获得Feed</a></li>
+  <li><a href="zend.feed.consuming-rss.html">RSS Feed的使用</a></li>
+  <li><a href="zend.feed.consuming-atom.html">Atom Feed的使用</a></li>
+  <li class="active"><a href="zend.feed.consuming-atom-single-entry.html">单个Atom条目的处理</a></li>
+  <li><a href="zend.feed.modifying-feed.html">修改Feed和条目结构</a></li>
+  <li><a href="zend.feed.custom-feed.html">自定义Feed和条目类</a></li>
+  <li><a href="zend.feed.reader.html">Zend_Feed_Reader</a></li>
+  <li><a href="zend.feed.writer.html">Zend_Feed_Writer</a></li>
+  <li><a href="zend.feed.pubsubhubbub.introduction.html">Zend_Feed_Pubsubhubbub</a></li>
+ </ul>
+ </td>
+    </tr>
+</table>
+</body>
+</html>

@@ -1,0 +1,356 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <title>HTTP 认证适配器 - Zend Framework Manual</title>
+
+</head>
+<body>
+<table width="100%">
+    <tr valign="top">
+        <td width="85%">
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.auth.adapter.digest.html">摘要式认证</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.auth.html">Zend_Auth</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.auth.adapter.ldap.html">LDAP 认证</a></div>
+                    </td>
+                </tr>
+            </table>
+<hr />
+<div id="zend.auth.adapter.http" class="section"><div class="info"><h1 class="title">HTTP 认证适配器</h1></div>
+
+    
+
+    <div class="section" id="zend.auth.adapter.http.introduction" name="zend.auth.adapter.http.introduction"><div class="info"><h1 class="title">简介</h1></div>
+
+        
+
+        <p class="para">
+            <code class="code">Zend_Auth_Adapter_Http</code>提供一个大部分符合<a href="http://tools.ietf.org/html/rfc2617" class="link external">&raquo; RFC-2617</a>的<a href="http://en.wikipedia.org/wiki/Basic_authentication_scheme" class="link external">&raquo; 基本</a> 和 <a href="http://en.wikipedia.org/wiki/Digest_access_authentication" class="link external">&raquo; 摘要</a> HTTP 认证。摘要认证是一个认证的方法，它在基本认证的基础上做了改进，不需要在网络上传输明文密码。
+        </p>
+
+        <p class="para">
+            <em class="emphasis">主要特性：</em>
+            <ul class="itemizedlist">
+                <li class="listitem">
+                    <p class="para">
+                        支持基本和摘要认证。
+                    </p>
+                </li>
+                <li class="listitem">
+                    <p class="para">
+                        对所有支持的 schemes 发出请求，所以客户端可以响应任何它所支持的 scheme。
+                    </p>
+                </li>
+                <li class="listitem">
+                    <p class="para">
+                        支持代理认证。
+                    </p>
+                </li>
+                <li class="listitem">
+                    <p class="para">
+                        包括支持文本文件认证和提供一个接口来支持其它资源认证，例如数据库。
+                    </p>
+                </li>
+            </ul>
+        </p>
+
+        <p class="para">
+            还有一些显著的 RFC-2617 特性没有实现：
+            <ul class="itemizedlist">
+                <li class="listitem">
+                    <p class="para">
+                        Nonce 跟踪，它将考虑 &quot;stale&quot; 支持，和增强的重放供给保护。
+                    </p>
+                </li>
+                <li class="listitem">
+                    <p class="para">
+                        带完整性检查的认证，或 &quot;auth-int&quot;。
+                    </p>
+                </li>
+                <li class="listitem">
+                    <p class="para">
+                        HTTP 认证信息头。
+                    </p>
+                </li>
+            </ul>
+        </p>
+
+    </div>
+
+    <div class="section" id="zend.auth.adapter.design_overview" name="zend.auth.adapter.design_overview"><div class="info"><h1 class="title">设计回顾</h1></div>
+
+        
+
+        <p class="para">
+            这个适配器包括两个子组件，HTTP authentication类本身和所谓的 &quot;Resolvers&quot;。HTTP authentication类封装了实现基本和摘要认证的逻辑。它使用Resolver在数据存储（缺省是文本文件）中查找客户的身份并取出证书。&quot;resolved&quot; 的证书和客户的输入相比较来决定认证是否成功。
+        </p>
+
+    </div>
+
+    <div class="section" id="zend.auth.adapter.configuration_options" name="zend.auth.adapter.configuration_options"><div class="info"><h1 class="title">配置选项</h1></div>
+
+        
+
+        <p class="para">
+            <code class="code">Zend_Auth_Adapter_Http</code> 类需要一个配置数组传递给它的构造器。有若干个配置选项有效，其中一些是必需的：
+            <table class="doctable table"><div class="info"><caption><b>配置选项</b></caption></div>
+                
+                
+                    <thead valign="middle">
+                        <tr valign="middle">
+                            <th>选项名称</th>
+                            <th>是否必须</th>
+                            <th>描述</th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody valign="middle" class="tbody">
+                        <tr valign="middle">
+                            <td align="left"><code class="code">accept_schemes</code></td>
+                            <td align="left">是</td>
+                            <td align="left">
+                                决定适配器从客户端接受哪个认证schemes。必须是包括<code class="code">&#039;basic&#039;</code> 和/或 <code class="code">&#039;digest&#039;</code>的空格分隔的列表。
+                            </td>
+                        </tr>
+
+                        <tr valign="middle">
+                            <td align="left"><code class="code">realm</code></td>
+                            <td align="left">是</td>
+                            <td align="left">
+                                设置认证领域；在给定的领域里用户名必须是唯一的。
+                            </td>
+                        </tr>
+
+                        <tr valign="middle">
+                            <td align="left"><code class="code">digest_domains</code></td>
+                            <td align="left">是，当<code class="code">&#039;accept_schemes&#039;</code> 包含 <code class="code">&#039;digest&#039;</code></td>
+                            <td align="left">
+                               相同认证信息是有效的空格分隔的URIs列表。 URIs不需要都只想同一个服务器。
+                            </td>
+                        </tr>
+
+                        <tr valign="middle">
+                            <td align="left"><code class="code">nonce_timeout</code></td>
+                            <td align="left">是，当<code class="code">&#039;accept_schemes&#039;</code> 包含 <code class="code">&#039;digest&#039;</code></td>
+                            <td align="left">
+                                设置nonce有效的秒数。参见下面的注解。
+                            </td>
+                        </tr>
+
+                        <tr valign="middle">
+                            <td align="left"><code class="code">proxy_auth</code></td>
+                            <td align="left">否</td>
+                            <td align="left">
+                                缺省是 Disabled 。Enable 后执行代理认证而不是正常的源服务器认证。
+                            </td>
+                        </tr>
+
+                    </tbody>
+                
+            </table>
+
+        </p>
+
+        <blockquote><p><b class="note">Note</b>: 
+            
+                当前的<code class="code">nonce_timeout</code>实现有一些有趣的副作用。这个设置用来决定给定的nonce的有效寿命，或者客户端的认证信息多长时间被有效地接受。目前，如果它被设置为3600（例如），它将导致适配器准点地每个小时提示客户端提供新的证书。一旦nonce跟踪和stale支持实现，这在将来的版本中被解决。
+            <br />
+        </p></blockquote>
+
+    </div>
+
+    <div class="section" id="zend.auth.adapter.http.resolvers" name="zend.auth.adapter.http.resolvers"><div class="info"><h1 class="title">Resolvers</h1></div>
+
+        
+
+        <p class="para">
+            Resolver的作用是接受用户名和领域，并返回证书值。基本认证期望接收用户密码的Base64编码版本。摘要认证期望接收用户的用户名，领域和密码（用冒号分隔）的hash。当前，唯一支持的hash算法是MD5。
+        </p>
+
+        <p class="para">
+            <code class="code">Zend_Auth_Adapter_Http</code> 依靠对象实现 <code class="code">Zend_Auth_Adapter_Http_Resolver_Interface</code>。适配器中包含一个文本文件resolver类，但任何其它种类的resolver可以通过实现resolver接口来创建。
+        </p>
+
+        <div class="section" id="zend.auth.adapter.http.resolvers.file" name="zend.auth.adapter.http.resolvers.file"><div class="info"><h1 class="title">文件 Resolver</h1></div>
+
+            
+
+            <p class="para">
+                文件resolver是一个非常简单的类。它有一个单个的属性指定一个文件名，它也可以被传递给构造器。它的<code class="code">resolve()</code>方法遍历文本文件，用匹配用户名和领域来搜索一行。文本文件的格式和Apache htpasswd文件类似： <div class="programlisting"><div class="cdata"><pre>
+&lt;username&gt;:&lt;realm&gt;:&lt;credentials&gt;\n
+
+</pre></div></div>
+每行包含三个字段 - 用户名，领域 和 证书 - 用冒号分隔。证书字段对文件resolver不透明；它被简单地不做修改地返回给调用者。所以，这同样的文件格式对基本和摘要认证都适合。对基本认证，证书字段应该是Base64编码的用户的密码。对摘要认证，它应该是上述的MD5 hash。
+            </p>
+
+            <p class="para">
+                有两个同等简单的方法创建文件 Resolver:
+                <div class="programlisting"><div class="cdata"><pre>
+$path     = &#039;files/passwd.txt&#039;;
+$resolver = new Zend_Auth_Adapter_Http_Resolver_File($path);
+
+                </pre></div></div>
+
+                或者
+                <div class="programlisting"><div class="cdata"><pre>
+$path     = &#039;files/passwd.txt&#039;;
+$resolver = new Zend_Auth_Adapter_Http_Resolver_File();
+$resolver-&gt;setFile($path);
+
+                </pre></div></div>
+
+                如果给定的路径是空的或不可读，将抛出一个异常。
+            </p>
+
+        </div>
+
+    </div>
+
+    <div class="section" id="zend.auth.adapter.http.basic_usage" name="zend.auth.adapter.http.basic_usage"><div class="info"><h1 class="title">基本用法</h1></div>
+
+        
+
+        <p class="para">
+            首先，建立一个带有必需的配置值得数组：
+            <div class="programlisting"><div class="cdata"><pre>
+$config = array(
+    &#039;accept_schemes&#039; =&gt; &#039;basic digest&#039;,
+    &#039;realm&#039;          =&gt; &#039;My Web Site&#039;,
+    &#039;digest_domains&#039; =&gt; &#039;/members_only /my_account&#039;,
+    &#039;nonce_timeout&#039;  =&gt; 3600,
+);
+
+            </pre></div></div>
+
+            这个数组将使适配器接收基本或者摘要认证，并将请求对所有在<code class="code">/members_only</code> 和<code class="code">/my_account</code>之下的区域认证访问。领域值通常在浏览器中密码对话框中显示。<code class="code">nonce_timeout</code>，当然，会有上述的行为。
+        </p>
+
+        <p class="para">
+            下一步, 创建 Zend_Auth_Adapter_Http 对象：
+            <div class="programlisting"><div class="cdata"><pre>
+$adapter = new Zend_Auth_Adapter_Http($config);
+
+            </pre></div></div>
+
+        </p>
+
+        <p class="para">
+            因为我们对基本和摘要认证都支持，所以我们需要两个不同的resolver对象。注意这仅仅简单地是两个不同的类：
+            <div class="programlisting"><div class="cdata"><pre>
+$basicResolver = new Zend_Auth_Adapter_Http_Resolver_File();
+$basicResolver-&gt;setFile(&#039;files/basicPasswd.txt&#039;);
+
+$digestResolver = new Zend_Auth_Adapter_Http_Resolver_File();
+$digestResolver-&gt;setFile(&#039;files/digestPasswd.txt&#039;);
+
+$adapter-&gt;setBasicResolver($basicResolver);
+$adapter-&gt;setDigestResolver($digestResolver);
+
+            </pre></div></div>
+
+        </p>
+
+        <p class="para">
+            最后，我们执行认证。为了完成认证，适配器对请求（Request）和响应（Response）都需要一个reference：
+            <div class="programlisting"><div class="cdata"><pre>
+assert($request instanceof Zend_Controller_Request_Http);
+assert($response instanceof Zend_Controller_Response_Http);
+
+$adapter-&gt;setRequest($request);
+$adapter-&gt;setResponse($response);
+
+$result = $adapter-&gt;authenticate();
+if (!$result-&gt;isValid()) {
+    // 错误的 userame/password，或者取消了密码提示
+}
+
+            </pre></div></div>
+
+        </p>
+
+    </div>
+
+</div>
+        <hr />
+
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.auth.adapter.digest.html">摘要式认证</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.auth.html">Zend_Auth</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.auth.adapter.ldap.html">LDAP 认证</a></div>
+                    </td>
+                </tr>
+            </table>
+</td>
+        <td style="font-size: smaller;" width="15%"> <style type="text/css">
+#leftbar {
+	float: left;
+	width: 186px;
+	padding: 5px;
+	font-size: smaller;
+}
+ul.toc {
+	margin: 0px 5px 5px 5px;
+	padding: 0px;
+}
+ul.toc li {
+	font-size: 85%;
+	margin: 1px 0 1px 1px;
+	padding: 1px 0 1px 11px;
+	list-style-type: none;
+	background-repeat: no-repeat;
+	background-position: center left;
+}
+ul.toc li.header {
+	font-size: 115%;
+	padding: 5px 0px 5px 11px;
+	border-bottom: 1px solid #cccccc;
+	margin-bottom: 5px;
+}
+ul.toc li.active {
+	font-weight: bold;
+}
+ul.toc li a {
+	text-decoration: none;
+}
+ul.toc li a:hover {
+	text-decoration: underline;
+}
+</style>
+ <ul class="toc">
+  <li class="header home"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="reference.html">Zend Framework Reference</a></li>
+  <li class="header up"><a href="zend.auth.html">Zend_Auth</a></li>
+  <li><a href="zend.auth.introduction.html">简介</a></li>
+  <li><a href="zend.auth.adapter.dbtable.html">数据库表认证</a></li>
+  <li><a href="zend.auth.adapter.digest.html">摘要式认证</a></li>
+  <li class="active"><a href="zend.auth.adapter.http.html">HTTP 认证适配器</a></li>
+  <li><a href="zend.auth.adapter.ldap.html">LDAP 认证</a></li>
+  <li><a href="zend.auth.adapter.openid.html">Open ID Authentication</a></li>
+ </ul>
+ </td>
+    </tr>
+</table>
+</body>
+</html>

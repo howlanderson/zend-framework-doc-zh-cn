@@ -1,0 +1,186 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <title>与 Java Lucene 的互操作性 - Zend Framework Manual</title>
+
+</head>
+<body>
+<table width="100%">
+    <tr valign="top">
+        <td width="85%">
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.search.lucene.extending.html">扩展性</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.search.lucene.html">Zend_Search_Lucene</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.search.lucene.advanced.html">Advanced</a></div>
+                    </td>
+                </tr>
+            </table>
+<hr />
+<div id="zend.search.lucene.java-lucene" class="section"><div class="info"><h1 class="title">与 Java Lucene 的互操作性</h1></div>
+    
+
+    <div class="section" id="zend.search.lucene.index-creation.file-formats" name="zend.search.lucene.index-creation.file-formats"><div class="info"><h1 class="title">文件格式</h1></div>
+        
+        <p class="para">
+          Zend_Search_Lucene 的索引文件格式和 1.4 或更高版本的 Java Lucene 二进制兼容。
+        </p>
+
+        <p class="para">
+          关于文件格式的更详细的描述在这里：
+          <tt class="uri">http://lucene.apache.org/java/docs/fileformats.html</tt>。
+          <a href="#fnid1" name="fn1"><sup>[1]</sup></a>
+        </p>
+    </div>
+
+    <div class="section" id="zend.search.lucene.index-creation.index-directory" name="zend.search.lucene.index-creation.index-directory"><div class="info"><h1 class="title">索引目录</h1></div>
+        
+
+        <p class="para">
+            在创建了索引之后，索引目录中将包含下列文件：
+        </p>
+
+        <ul class="itemizedlist">
+            <li class="listitem">
+                <p class="para">
+                <var class="filename">segments</var> 文件是一个索引分段的清单。
+                </p>
+            </li>
+            <li class="listitem">
+                <p class="para">
+                <var class="filename">*.cfs</var> 文件包含索引分段。请注意！优化了的索引总是只有一个分段。
+                </p>
+            </li>
+            <li class="listitem">
+                <p class="para">
+                <var class="filename">deletable</var> 文件是一个不再被索引使用但是无法删除的文件清单。
+                </p>
+            </li>
+        </ul>
+    </div>
+
+    <div class="section" id="zend.search.lucene.java-lucene.source-code" name="zend.search.lucene.java-lucene.source-code"><div class="info"><h1 class="title">Java 源代码</h1></div>
+        
+        <p class="para">
+            下面的 Java 程序提供了一个如何使用 Java Lucene 索引文件的例子：
+        </p>
+
+        <div class="programlisting"><div class="cdata"><pre>
+/**
+* Index creation:
+*/
+import org.apache.lucene.index.IndexWriter;
+import org.apache.lucene.document.*;
+
+import java.io.*
+
+...
+
+IndexWriter indexWriter = new IndexWriter(&quot;/data/my_index&quot;,
+                                          new SimpleAnalyzer(), true);
+
+...
+
+String filename = &quot;/path/to/file-to-index.txt&quot;
+File f = new File(filename);
+
+Document doc = new Document();
+doc.add(Field.Text(&quot;path&quot;, filename));
+doc.add(Field.Keyword(&quot;modified&quot;,DateField.timeToString(f.lastModified())));
+doc.add(Field.Text(&quot;author&quot;, &quot;unknown&quot;));
+FileInputStream is = new FileInputStream(f);
+Reader reader = new BufferedReader(new InputStreamReader(is));
+doc.add(Field.Text(&quot;contents&quot;, reader));
+
+indexWriter.addDocument(doc);
+
+</pre></div></div>
+
+    </div>
+<div class="footnote"><a name="fnid1" href="#fn1"><sup>[1]</sup></a><span class="para footnote"> 当前支持的 Lucene 索引文件格式版本是 v2.3（从ZF 1.6 版开始）。</span></div>
+</div>
+        <hr />
+
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.search.lucene.extending.html">扩展性</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.search.lucene.html">Zend_Search_Lucene</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.search.lucene.advanced.html">Advanced</a></div>
+                    </td>
+                </tr>
+            </table>
+</td>
+        <td style="font-size: smaller;" width="15%"> <style type="text/css">
+#leftbar {
+	float: left;
+	width: 186px;
+	padding: 5px;
+	font-size: smaller;
+}
+ul.toc {
+	margin: 0px 5px 5px 5px;
+	padding: 0px;
+}
+ul.toc li {
+	font-size: 85%;
+	margin: 1px 0 1px 1px;
+	padding: 1px 0 1px 11px;
+	list-style-type: none;
+	background-repeat: no-repeat;
+	background-position: center left;
+}
+ul.toc li.header {
+	font-size: 115%;
+	padding: 5px 0px 5px 11px;
+	border-bottom: 1px solid #cccccc;
+	margin-bottom: 5px;
+}
+ul.toc li.active {
+	font-weight: bold;
+}
+ul.toc li a {
+	text-decoration: none;
+}
+ul.toc li a:hover {
+	text-decoration: underline;
+}
+</style>
+ <ul class="toc">
+  <li class="header home"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="reference.html">Zend Framework Reference</a></li>
+  <li class="header up"><a href="zend.search.lucene.html">Zend_Search_Lucene</a></li>
+  <li><a href="zend.search.lucene.overview.html">概述</a></li>
+  <li><a href="zend.search.lucene.index-creation.html">建立索引</a></li>
+  <li><a href="zend.search.lucene.searching.html">搜索索引</a></li>
+  <li><a href="zend.search.lucene.query-language.html">Query Language</a></li>
+  <li><a href="zend.search.lucene.queries.html">查询类型</a></li>
+  <li><a href="zend.search.lucene.charset.html">字符集</a></li>
+  <li><a href="zend.search.lucene.extending.html">扩展性</a></li>
+  <li class="active"><a href="zend.search.lucene.java-lucene.html">与 Java Lucene 的互操作性</a></li>
+  <li><a href="zend.search.lucene.advanced.html">Advanced</a></li>
+  <li><a href="zend.search.lucene.best-practice.html">Best Practices</a></li>
+ </ul>
+ </td>
+    </tr>
+</table>
+</body>
+</html>

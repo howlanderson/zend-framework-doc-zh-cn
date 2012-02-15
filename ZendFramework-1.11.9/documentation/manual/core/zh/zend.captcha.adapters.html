@@ -1,0 +1,288 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <title>Captcha 适配器 - Zend Framework Manual</title>
+
+</head>
+<body>
+<table width="100%">
+    <tr valign="top">
+        <td width="85%">
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.captcha.operation.html">Captcha 操作</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.captcha.html">Zend_Captcha</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.cloud.html">SimpleCloud API: Zend_Cloud</a></div>
+                    </td>
+                </tr>
+            </table>
+<hr />
+<div id="zend.captcha.adapters" class="section"><div class="info"><h1 class="title">Captcha 适配器</h1></div>
+    
+
+    <p class="para">
+        Zend Framework 缺省地带有下列适配器。
+    </p>
+
+    <div class="section" id="zend.captcha.adapters.word" name="zend.captcha.adapters.word"><div class="info"><h1 class="title">Zend_Captcha_Word</h1></div>
+        
+
+        <p class="para">
+            Zend_Captcha_Word 是个摘要适配器，它是 Dumb、Figlet 和 Image 适配器的基础。
+            ，它提供了增变器用来指定字符长度、会话 TTL 、会话命名空间对象，如果你不想
+            使用 Zend_Session_Namespace，它提供了会话命名空间来用于持久。
+            另外，它封装了所有校验逻辑。
+        </p>
+
+        <p class="para">
+            缺省地，字符长度为 8，会话超时为 5 分钟，Zend_Session_Namespace
+            用于持久（使用命名空间&quot;Zend_Form_Captcha_&lt;captcha ID&gt;&quot;）。
+        </p>
+
+        <p class="para">
+            除了 <code class="code">Zend_Captcha_Adapter</code> 接口要求的标准方法外，
+            <code class="code">Zend_Captcha_Word</code> 还有下列方法：
+        </p>
+
+        <ul class="itemizedlist">
+            <li class="listitem"><p class="para">
+                <code class="code">setWordLen($length)</code> 和 <code class="code">getWordLen()</code>
+                指定生成的“字符”的长度和获取当前值。
+            </p></li>
+
+            <li class="listitem"><p class="para">
+                <code class="code">setTimeout($ttl)</code> 和 <code class="code">getTimeout()</code>
+                指定会话令牌的 time-to-live 和获取当前值。<code class="code">$ttl</code> 以秒计。
+            </p></li>
+
+            <li class="listitem"><p class="para">
+                <code class="code">setSessionClass($class)</code> 和
+                <code class="code">getSessionClass()</code> 指定替代的
+                <code class="code">Zend_Session_Namespace</code> 实现来持久 captcha 令牌和获取当前值。
+            </p></li>
+
+            <li class="listitem"><p class="para">
+                <code class="code">getId()</code> 获取当前令牌标识符。
+            </p></li>
+
+            <li class="listitem"><p class="para">
+                <code class="code">getWord()</code> 获取用于 captcha 的生成字符，如果以前没有生成，它将生成一个。
+            </p></li>
+
+            <li class="listitem"><p class="para">
+                <code class="code">setSession(Zend_Session_Namespace $session)</code> 指定一个会话对象用来持久 captcha 令牌；
+                <code class="code">getSession()</code> 获取当前会话对象。
+            </p></li>
+        </ul>
+
+        <p class="para">
+
+            所有字符 captchas 传递一个选项数组给构造器，或者把它们传递给
+            <code class="code">setOptions()</code> （或传递一个 <code class="code">Zend_Config</code> 对象给 <code class="code">setConfig()</code>）。
+            缺省地，可能使用所有的键 <code class="code">wordLen</code>、 <code class="code">timeout</code> 和
+            <code class="code">sessionClass</code> ；每个具体的实现可能定义另外的键或选项。
+        </p>
+
+        <blockquote><p><b class="note">Note</b>: 
+            记住，Word 是个摘要类并且可能不能直接初始化。
+        <br /></p></blockquote>
+    </div>
+
+    <div class="section" id="zend.captcha.adapters.dumb" name="zend.captcha.adapters.dumb"><div class="info"><h1 class="title">Zend_Captcha_Dumb</h1></div>
+        
+
+        <p class="para">
+            Dumb 适配器通常是自解释的。它提供了随机字符串需要用反序输入来校验。
+            这样，它不是一个好的 CAPTCHA 方案，只用于测试或者最后的方案。
+            它继承 <code class="code">Zend_Captcha_Word</code>。
+        </p>
+    </div>
+
+    <div class="section" id="zend.captcha.adapters.figlet" name="zend.captcha.adapters.figlet"><div class="info"><h1 class="title">Zend_Captcha_Figlet</h1></div>
+        
+
+        <p class="para">
+            Figlet 适配器利用 <a href="zend.text.figlet.html" class="link">Zend_Text_Figlet</a> 来展示一个
+            Figlet 给用户。Figlet captchas 只限于字符。
+        </p>
+
+        <p class="para">
+            传递给构造器的选项也可以传递给适配器使用的 <a href="zend.text.figlet.html" class="link">Zend_Text_Figlet</a> 对象。
+            请参考关于配置选项的细节的文档。
+        </p>
+    </div>
+
+    <div class="section" id="zend.captcha.adapters.image" name="zend.captcha.adapters.image"><div class="info"><h1 class="title">Zend_Captcha_Image</h1></div>
+        
+
+        <p class="para">
+            Image 适配器使用生成的字符并解析为图像，并把它变换成难以自动解密。
+            它需要 <a href="http://php.net/gd" class="link external">&raquo; GD extension</a>，使用
+            TrueType 或 Freetype 支持的编译。目前，Image 适配器只能产生 PNG 图像。
+        </p>
+
+        <p class="para">
+            <code class="code">Zend_Captcha_Image</code> 集成
+            <code class="code">Zend_Captcha_Word</code>，并附加了下列方法：
+        </p>
+
+        <ul class="itemizedlist">
+            <li class="listitem"><p class="para">
+                <code class="code">setExpiration($expiration)</code> 和
+                <code class="code">getExpiration()</code> 指定 captcha 图像可以保留在文件系统
+                中的最大生命周期。一般长于会话的生命周期。每次调用 captcha 对象，
+                垃圾收集就运行一次，过期的图像就被清除。过期值以秒计。
+            </p></li>
+
+            <li class="listitem"><p class="para">
+                <code class="code">setGcFreq($gcFreq)</code> 和 <code class="code">getGcFreg()</code>
+                指定垃圾收集运行的频度。每 <code class="code">1/$gcFreq</code> 垃圾收集就运行一次（缺省值为 100）。
+            </p></li>
+
+            <li class="listitem"><p class="para">
+                <code class="code">setFont($font)</code> 和 <code class="code">getFont()</code>
+                指定要用的字体。它是到字体文件的全路径。如果没有设置这个值，captcha
+                就在生成的时候抛出异常。字体是必需的。
+            </p></li>
+
+            <li class="listitem"><p class="para">
+                <code class="code">setFontSize($fsize)</code> 和 <code class="code">getFontSize()</code>
+                指定字体尺寸，以象素为单位，用于生成 captcha。缺省值为 24px。
+            </p></li>
+
+            <li class="listitem"><p class="para">
+                <code class="code">setHeight($height)</code> 和 <code class="code">getHeight()</code>
+                指定生成 captcha 图像的高度，以象素为单位。缺省值为 50px。
+            </p></li>
+
+            <li class="listitem"><p class="para">
+                <code class="code">setWidth($width)</code> 和 <code class="code">getWidth()</code>
+                指定生成 captcha 图像的宽度，以象素为单位。缺省值为 200px 。
+            </p></li>
+
+            <li class="listitem"><p class="para">
+                <code class="code">setImgDir($imgDir)</code> 和 <code class="code">getImgDir()</code>
+                指定 captcha 图像存储的目录。缺省为 &quot;./images/captcha/&quot; ，相对于引导（bootstrap）脚本。
+            </p></li>
+
+            <li class="listitem"><p class="para">
+                <code class="code">setImgUrl($imgUrl)</code> 和 <code class="code">getImgUrl()</code>
+                指定用于 HTML 标记语言的 captcha 图像的相对路径。 缺省为 &quot;/images/captcha/&quot;。
+            </p></li>
+
+            <li class="listitem"><p class="para">
+                <code class="code">setSuffix($suffix)</code> 和 <code class="code">getSuffix()</code>
+                指定文件名后缀。缺省为 &quot;.png&quot; 。注：它的改变不影响产生的图像类型。
+            </p></li>
+        </ul>
+
+        <p class="para">
+            所有上述选项都可作为选项传递给构造器，只要去掉 &#039;set&#039; 方法前缀并
+            把首字母变成小写：如 &quot;suffix&quot;、 &quot;height&quot;、&quot;imgUrl&quot;  等。
+        </p>
+    </div>
+
+    <div class="section" id="zend.captcha.adapters.recaptcha" name="zend.captcha.adapters.recaptcha"><div class="info"><h1 class="title">Zend_Captcha_ReCaptcha</h1></div>
+        
+
+        <p class="para">
+            ReCaptcha 适配器利用 <a href="zend.service.recaptcha.html" class="link">Zend_Service_ReCaptcha</a>
+            来生成校验 captchas。它有下列方法：
+        </p>
+
+        <ul class="itemizedlist">
+            <li class="listitem"><p class="para">
+                <code class="code">setPrivKey($key)</code> 和 <code class="code">getPrivKey()</code>
+                让你指定和 ReCaptcha 服务一起使用的私钥。这必需在构造期间指定，尽管任何时候它都可以被覆盖。
+            </p></li>
+
+            <li class="listitem"><p class="para">
+                <code class="code">setPubKey($key)</code> 和 <code class="code">getPubKey()</code>
+                让你指定和 ReCaptcha 服务一起使用的公钥。这必需在构造期间指定，尽管任何时候它都可以被覆盖。
+            </p></li>
+
+            <li class="listitem"><p class="para">
+                <code class="code">setService(Zend_Service_ReCaptcha $service)</code> 和
+                <code class="code">getService()</code> 让你指定并和 ReCaptcha 服务对象交互使用。
+            </p></li>
+        </ul>
+    </div>
+</div>
+        <hr />
+
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.captcha.operation.html">Captcha 操作</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.captcha.html">Zend_Captcha</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.cloud.html">SimpleCloud API: Zend_Cloud</a></div>
+                    </td>
+                </tr>
+            </table>
+</td>
+        <td style="font-size: smaller;" width="15%"> <style type="text/css">
+#leftbar {
+	float: left;
+	width: 186px;
+	padding: 5px;
+	font-size: smaller;
+}
+ul.toc {
+	margin: 0px 5px 5px 5px;
+	padding: 0px;
+}
+ul.toc li {
+	font-size: 85%;
+	margin: 1px 0 1px 1px;
+	padding: 1px 0 1px 11px;
+	list-style-type: none;
+	background-repeat: no-repeat;
+	background-position: center left;
+}
+ul.toc li.header {
+	font-size: 115%;
+	padding: 5px 0px 5px 11px;
+	border-bottom: 1px solid #cccccc;
+	margin-bottom: 5px;
+}
+ul.toc li.active {
+	font-weight: bold;
+}
+ul.toc li a {
+	text-decoration: none;
+}
+ul.toc li a:hover {
+	text-decoration: underline;
+}
+</style>
+ <ul class="toc">
+  <li class="header home"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="reference.html">Zend Framework Reference</a></li>
+  <li class="header up"><a href="zend.captcha.html">Zend_Captcha</a></li>
+  <li><a href="zend.captcha.introduction.html">简介</a></li>
+  <li><a href="zend.captcha.operation.html">Captcha 操作</a></li>
+  <li class="active"><a href="zend.captcha.adapters.html">Captcha 适配器</a></li>
+ </ul>
+ </td>
+    </tr>
+</table>
+</body>
+</html>

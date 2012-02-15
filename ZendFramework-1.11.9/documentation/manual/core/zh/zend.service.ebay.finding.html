@@ -1,0 +1,278 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <title>Zend_Service_Ebay_Finding - Zend Framework Manual</title>
+
+</head>
+<body>
+<table width="100%">
+    <tr valign="top">
+        <td width="85%">
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.service.ebay.html">Zend_Service_Ebay</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.service.html">Zend_Service</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.service.flickr.html">Zend_Service_Flickr</a></div>
+                    </td>
+                </tr>
+            </table>
+<hr />
+<div id="zend.service.ebay.finding" class="section"><div class="info"><h1 class="title">Zend_Service_Ebay_Finding</h1></div>
+    
+
+    <div class="section" id="zend.service.ebay.finding.introduction" name="zend.service.ebay.finding.introduction"><div class="info"><h1 class="title">Introduction</h1></div>
+        
+
+        <p class="para">
+            <span class="classname">Zend_Service_Ebay_Finding</span> provides a client
+            for the <a href="http://developer.ebay.com/DevZone/finding/CallRef/index.html" class="link external">&raquo; eBay Finding</a>.
+            Per eBay website, &quot;The Finding API provides programmatic access to
+            the next generation search capabilities on the eBay platform. It
+            lets you search and browse for items listed on eBay, and provides
+            useful metadata to refine searches and enhance the search experience.&quot;
+        </p>
+
+        <p class="para">
+            In order to use <span class="classname">Zend_Service_Ebay_Finding</span>,
+            you should already have an eBay Application ID. To get a key and for
+            more information, please visit the
+            <a href="https://developer.ebay.com/Join/default.aspx" class="link external">&raquo; eBay Developers Program</a>
+            web site.
+        </p>
+    </div>
+
+    <div class="section" id="zend.service.ebay.finding.factoring" name="zend.service.ebay.finding.factoring"><div class="info"><h1 class="title">Create a client object</h1></div>
+        
+
+        <p class="para">
+            Instantiate a <span class="classname">Zend_Service_Ebay_Finding</span> object,
+            passing it your private keys:
+        </p>
+        <div class="example"><div class="info"><p><b>Example #1 Creating an instance of the eBay Finding service</b></p></div>
+            
+            <div class="programlisting php"><div class="phpcode"><div class="php" style="font-family: monospace;"><ol><li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #0000ff;">$finding</span> = <span style="color: #000000; font-weight: bold;">new</span> Zend_Service_Ebay_Finding<span style="color: #66cc66;">&#40;</span><span style="color: #ff0000;">'my-app-id'</span><span style="color: #66cc66;">&#41;</span>;</div></li></ol></div></div></div>
+
+        </div>
+
+        <p class="para">
+            Instantiate a <span class="classname">Zend_Service_Ebay_Finding</span> object,
+            passing it your private keys and setting options:
+        </p>
+        <div class="example"><div class="info"><p><b>Example #2 Creating an instance of the eBay Finding service</b></p></div>
+            
+            <div class="programlisting php"><div class="phpcode"><div class="php" style="font-family: monospace;"><ol><li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #0000ff;">$options</span> = <a href="http://www.php.net/array"><span style="color: #000066;">array</span></a><span style="color: #66cc66;">&#40;</span>Zend_Service_Ebay_Abstract::<span style="color: #006600;">OPTION_APP_ID</span>&nbsp; &nbsp; =&gt; <span style="color: #ff0000;">'my-app-id'</span>,</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Zend_Service_Ebay_Abstract::<span style="color: #006600;">OPTION_GLOBAL_ID</span> =&gt; <span style="color: #ff0000;">'EBAY-GB'</span><span style="color: #66cc66;">&#41;</span>;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #0000ff;">$finding</span> = <span style="color: #000000; font-weight: bold;">new</span> Zend_Service_Ebay_Finding<span style="color: #66cc66;">&#40;</span><span style="color: #0000ff;">$options</span><span style="color: #66cc66;">&#41;</span>;</div></li></ol></div></div></div>
+
+        </div>
+    </div>
+
+    <div class="section" id="zend.service.ebay.finding.items" name="zend.service.ebay.finding.items"><div class="info"><h1 class="title">Finding items</h1></div>
+        
+
+        <p class="para">
+            There are five available methods to search items:
+            <ul class="itemizedlist">
+                <li class="listitem">
+                    <p class="para">findItemsByKeywords($keywords)</p>
+                </li>
+                <li class="listitem">
+                    <p class="para">findItemsByProduct($productId)</p>
+                </li>
+                <li class="listitem">
+                    <p class="para">findItemsByCategory($categoryId)</p>
+                </li>
+                <li class="listitem">
+                    <p class="para">findItemsAdvanced($keywords)</p>
+                </li>
+                <li class="listitem">
+                    <p class="para">findItemsInEbayStores($storeName)</p>
+                </li>
+            </ul>
+        </p>
+
+        <div class="example"><div class="info"><p><b>Example #3 Many ways to find items</b></p></div>
+            
+            <div class="programlisting php"><div class="phpcode"><div class="php" style="font-family: monospace;"><ol><li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #0000ff;">$finding</span>&nbsp; = <span style="color: #000000; font-weight: bold;">new</span> Zend_Service_Ebay_Finding<span style="color: #66cc66;">&#40;</span><span style="color: #ff0000;">'my-app-id'</span><span style="color: #66cc66;">&#41;</span>;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #0000ff;">$response</span> = <span style="color: #0000ff;">$finding</span>-&gt;<span style="color: #006600;">findItemsByKeywords</span><span style="color: #66cc66;">&#40;</span><span style="color: #ff0000;">'zend framework book'</span><span style="color: #66cc66;">&#41;</span>;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #b1b100;">foreach</span> <span style="color: #66cc66;">&#40;</span><span style="color: #0000ff;">$response</span>-&gt;<span style="color: #006600;">searchResult</span>-&gt;<span style="color: #006600;">item</span> <span style="color: #b1b100;">as</span> <span style="color: #0000ff;">$item</span><span style="color: #66cc66;">&#41;</span> <span style="color: #66cc66;">&#123;</span></div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; <span style="color: #0000ff;">$item</span>-&gt;<span style="color: #006600;">title</span>;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; <span style="color: #0000ff;">$item</span>-&gt;<span style="color: #006600;">listingInfo</span>-&gt;<span style="color: #006600;">buyItNowPrice</span>; </div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; <span style="color: #0000ff;">$item</span>-&gt;<span style="color: #006600;">listingInfo</span>-&gt;<span style="color: #006600;">viewItemURL</span>;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; <span style="color: #808080; font-style: italic;">// inner call, find for items of same current product</span></div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; <span style="color: #808080; font-style: italic;">// like $finding-&gt;findItemsByProduct($item-&gt;productId, $item-&gt;attributes('productId', 'type'))</span></div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; <span style="color: #0000ff;">$response2</span> = <span style="color: #0000ff;">$item</span>-&gt;<span style="color: #006600;">findItemsByProduct</span><span style="color: #66cc66;">&#40;</span><span style="color: #0000ff;">$finding</span><span style="color: #66cc66;">&#41;</span>;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; <span style="color: #808080; font-style: italic;">// inner call, find for items of same store</span></div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; <span style="color: #808080; font-style: italic;">// like $finding-&gt;findItemsInEbayStores($item-&gt;storeInfo-&gt;storeName)</span></div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; <span style="color: #0000ff;">$response3</span> = <span style="color: #0000ff;">$item</span>-&gt;<span style="color: #006600;">storeInfo</span>-&gt;<span style="color: #006600;">findItems</span><span style="color: #66cc66;">&#40;</span><span style="color: #0000ff;">$finding</span><span style="color: #66cc66;">&#41;</span>; </div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #66cc66;">&#125;</span></div></li></ol></div></div></div>
+
+        </div>
+    </div>
+
+    <div class="section" id="zend.service.ebay.finding.keywords-recomendation" name="zend.service.ebay.finding.keywords-recomendation"><div class="info"><h1 class="title">Keywords Recommendation</h1></div>
+        
+
+        <p class="para">
+            This operation checks specified keywords and returns correctly
+            spelled keywords for best search results.
+        </p>
+
+        <div class="example"><div class="info"><p><b>Example #4 Searching keywords recomendation</b></p></div>
+            
+            <div class="programlisting php"><div class="phpcode"><div class="php" style="font-family: monospace;"><ol><li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #808080; font-style: italic;">// searching keywords</span></div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #0000ff;">$finding</span> = <span style="color: #000000; font-weight: bold;">new</span> Zend_Service_Ebay_Finding<span style="color: #66cc66;">&#40;</span><span style="color: #ff0000;">'my-app-id'</span><span style="color: #66cc66;">&#41;</span>; </div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #0000ff;">$result</span>&nbsp; = <span style="color: #0000ff;">$finding</span>-&gt;<span style="color: #006600;">getSearchKeywordsRecommendation</span><span style="color: #66cc66;">&#40;</span><span style="color: #ff0000;">'zend'</span><span style="color: #66cc66;">&#41;</span>; </div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><a href="http://www.php.net/echo"><span style="color: #000066;">echo</span></a> <span style="color: #ff0000;">'Did you mean '</span> . <span style="color: #0000ff;">$result</span>-&gt;<span style="color: #006600;">keyword</span> . <span style="color: #ff0000;">'?'</span>; </div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #808080; font-style: italic;">// inner call </span></div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #808080; font-style: italic;">// like $finding-&gt;findItemsByKeywords($result-&gt;keyword) </span></div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #0000ff;">$result2</span> = <span style="color: #0000ff;">$result</span>-&gt;<span style="color: #006600;">findItems</span><span style="color: #66cc66;">&#40;</span><span style="color: #0000ff;">$finding</span><span style="color: #66cc66;">&#41;</span>;</div></li></ol></div></div></div>
+
+        </div>
+    </div>
+
+    <div class="section" id="zend.service.ebay.finding.histogram" name="zend.service.ebay.finding.histogram"><div class="info"><h1 class="title">Histograms</h1></div>
+        
+
+        <p class="para">
+            Per eBay website, this operation &quot;category and/or aspect histogram
+            information for the eBay category ID you specify. Histograms are
+            item counts for the associated category or aspect value. Input
+            category ID numbers in the request using the categoryId field&quot;.
+        </p>
+
+        <div class="example"><div class="info"><p><b>Example #5 Fetching histogram</b></p></div>
+            
+            <div class="programlisting php"><div class="phpcode"><div class="php" style="font-family: monospace;"><ol><li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #0000ff;">$finding</span> = <span style="color: #000000; font-weight: bold;">new</span> Zend_Service_Ebay_Finding<span style="color: #66cc66;">&#40;</span><span style="color: #ff0000;">'my-app-id'</span><span style="color: #66cc66;">&#41;</span>; </div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #0000ff;">$result</span>&nbsp; = <span style="color: #0000ff;">$finding</span>-&gt;<span style="color: #006600;">getHistograms</span><span style="color: #66cc66;">&#40;</span><span style="color: #0000ff;">$categoryId</span><span style="color: #66cc66;">&#41;</span>; </div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #b1b100;">foreach</span> <span style="color: #66cc66;">&#40;</span><span style="color: #0000ff;">$result</span>-&gt;<span style="color: #006600;">categoryHistogramContainer</span>-&gt;<span style="color: #006600;">categoryHistogram</span> <span style="color: #b1b100;">as</span> <span style="color: #0000ff;">$category</span><span style="color: #66cc66;">&#41;</span> <span style="color: #66cc66;">&#123;</span> </div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; <span style="color: #0000ff;">$category</span>-&gt;<span style="color: #006600;">categoryId</span>; </div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; <span style="color: #0000ff;">$category</span>-&gt;<span style="color: #006600;">categoryName</span>; </div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; <span style="color: #808080; font-style: italic;">// inner call </span></div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; <span style="color: #808080; font-style: italic;">// like $finding-&gt;findItemsByCategory($category-&gt;categoryId); </span></div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; <span style="color: #0000ff;">$result2</span> = <span style="color: #0000ff;">$category</span>-&gt;<span style="color: #006600;">findItems</span><span style="color: #66cc66;">&#40;</span><span style="color: #0000ff;">$finding</span><span style="color: #66cc66;">&#41;</span>; </div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #66cc66;">&#125;</span></div></li></ol></div></div></div>
+
+        </div>
+    </div>
+
+</div>
+        <hr />
+
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.service.ebay.html">Zend_Service_Ebay</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.service.html">Zend_Service</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.service.flickr.html">Zend_Service_Flickr</a></div>
+                    </td>
+                </tr>
+            </table>
+</td>
+        <td style="font-size: smaller;" width="15%"> <style type="text/css">
+#leftbar {
+	float: left;
+	width: 186px;
+	padding: 5px;
+	font-size: smaller;
+}
+ul.toc {
+	margin: 0px 5px 5px 5px;
+	padding: 0px;
+}
+ul.toc li {
+	font-size: 85%;
+	margin: 1px 0 1px 1px;
+	padding: 1px 0 1px 11px;
+	list-style-type: none;
+	background-repeat: no-repeat;
+	background-position: center left;
+}
+ul.toc li.header {
+	font-size: 115%;
+	padding: 5px 0px 5px 11px;
+	border-bottom: 1px solid #cccccc;
+	margin-bottom: 5px;
+}
+ul.toc li.active {
+	font-weight: bold;
+}
+ul.toc li a {
+	text-decoration: none;
+}
+ul.toc li a:hover {
+	text-decoration: underline;
+}
+</style>
+ <ul class="toc">
+  <li class="header home"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="reference.html">Zend Framework Reference</a></li>
+  <li class="header up"><a href="zend.service.html">Zend_Service</a></li>
+  <li><a href="zend.service.introduction.html">简介</a></li>
+  <li><a href="zend.service.akismet.html">Zend_Service_Akismet</a></li>
+  <li><a href="zend.service.amazon.html">Zend_Service_Amazon</a></li>
+  <li><a href="zend.service.amazon.ec2.html">Zend_Service_Amazon_Ec2</a></li>
+  <li><a href="zend.service.amazon.ec2.instance.html">Zend_Service_Amazon_Ec2: Instances</a></li>
+  <li><a href="zend.service.amazon.ec2.windows.instance.html">Zend_Service_Amazon_Ec2: Windows Instances</a></li>
+  <li><a href="zend.service.amazon.ec2.reserved.instance.html">Zend_Service_Amazon_Ec2: Reserved Instances</a></li>
+  <li><a href="zend.service.amazon.ec2.cloudwatch.html">Zend_Service_Amazon_Ec2: CloudWatch Monitoring</a></li>
+  <li><a href="zend.service.amazon.ec2.images.html">Zend_Service_Amazon_Ec2: Amazon Machine Images (AMI)</a></li>
+  <li><a href="zend.service.amazon.ec2.ebs.html">Zend_Service_Amazon_Ec2: Elastic Block Storage (EBS)</a></li>
+  <li><a href="zend.service.amazon.ec2.elasticip.html">Zend_Service_Amazon_Ec2: Elastic IP Addresses</a></li>
+  <li><a href="zend.service.amazon.ec2.keypairs.html">Zend_Service_Amazon_Ec2: Keypairs</a></li>
+  <li><a href="zend.service.amazon.ec2.zones.html">Zend_Service_Amazon_Ec2: Regions and Availability Zones</a></li>
+  <li><a href="zend.service.amazon.ec2.securitygroups.html">Zend_Service_Amazon_Ec2: Security Groups</a></li>
+  <li><a href="zend.service.amazon.s3.html">Zend_Service_Amazon_S3</a></li>
+  <li><a href="zend.service.amazon.sqs.html">Zend_Service_Amazon_Sqs</a></li>
+  <li><a href="zend.service.audioscrobbler.html">Zend_Service_Audioscrobbler</a></li>
+  <li><a href="zend.service.delicious.html">Zend_Service_Delicious</a></li>
+  <li><a href="zend.service.developergarden.html">Zend_Service_DeveloperGarden</a></li>
+  <li><a href="zend.service.ebay.html">Zend_Service_Ebay</a></li>
+  <li class="active"><a href="zend.service.ebay.finding.html">Zend_Service_Ebay_Finding</a></li>
+  <li><a href="zend.service.flickr.html">Zend_Service_Flickr</a></li>
+  <li><a href="zend.service.livedocx.html">Zend_Service_LiveDocx</a></li>
+  <li><a href="zend.service.nirvanix.html">Zend_Service_Nirvanix</a></li>
+  <li><a href="zend.service.recaptcha.html">Zend_Service_ReCaptcha</a></li>
+  <li><a href="zend.service.short-url.html">Zend_Service_ShortUrl</a></li>
+  <li><a href="zend.service.simpy.html">Zend_Service_Simpy</a></li>
+  <li><a href="zend.service.slideshare.html">Zend_Service_SlideShare</a></li>
+  <li><a href="zend.service.strikeiron.html">Zend_Service_StrikeIron</a></li>
+  <li><a href="zend.service.strikeiron.bundled-services.html">Zend_Service_StrikeIron: Bundled Services</a></li>
+  <li><a href="zend.service.strikeiron.advanced-uses.html">Zend_Service_StrikeIron: Advanced Uses</a></li>
+  <li><a href="zend.service.technorati.html">Zend_Service_Technorati</a></li>
+  <li><a href="zend.service.twitter.html">Zend_Service_Twitter</a></li>
+  <li><a href="zend.service.windowsazure.html">Zend_Service_WindowsAzure</a></li>
+  <li><a href="zend.service.windowsazure.storage.blob.html">Zend_Service_WindowsAzure_Storage_Blob</a></li>
+  <li><a href="zend.service.windowsazure.diagnostics.manager.html">Zend_Service_WindowsAzure_Diagnostics_Manager</a></li>
+  <li><a href="zend.service.windowsazure.storage.queue.html">Zend_Service_WindowsAzure_Storage_Queue</a></li>
+  <li><a href="zend.service.windowsazure.storage.table.html">Zend_Service_WindowsAzure_Storage_Table</a></li>
+  <li><a href="zend.service.yahoo.html">Zend_Service_Yahoo</a></li>
+ </ul>
+ </td>
+    </tr>
+</table>
+</body>
+</html>

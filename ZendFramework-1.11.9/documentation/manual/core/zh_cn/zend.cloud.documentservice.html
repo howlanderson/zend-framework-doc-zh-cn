@@ -1,0 +1,1094 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <title>Document Service Introduction - Zend Framework Manual</title>
+
+</head>
+<body>
+<table width="100%">
+    <tr valign="top">
+        <td width="85%">
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.cloud.html">SimpleCloud API: Zend_Cloud</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.cloud.html">SimpleCloud API: Zend_Cloud</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.cloud.queueservice.html">Queue Service Introduction</a></div>
+                    </td>
+                </tr>
+            </table>
+<hr />
+<div id="zend.cloud.documentservice" class="section"><div class="info"><h1 class="title">Document Service Introduction</h1></div>
+    
+
+    <p class="para">
+        <span class="classname">Zend_Cloud_DocumentService</span> abstracts the interfaces to all major
+        document databases - both in the cloud and locally deployed - so developers can access their
+        common functionality through one API. In other words, an application can make use of these
+        databases and services with no concern over how the application will be deployed. The data
+        source can be chosen through configuration changes alone at the time of deployment.
+    </p>
+
+    <p class="para">
+        Document databases and services are increasingly common in application development. These
+        data sources are somewhat different from traditional relational data sources, as they eschew
+        complex relationships for performance, scalability, and flexibility. Examples of
+        document-oriented services include Amazon SimpleDB and Azure Table Storage.
+    </p>
+
+    <p class="para">
+        The Simple Cloud API offers some flexibility for vendor-specific features with an
+        <var class="varname">$options</var> array in each method signature.  Some adapters require certain
+        options that also must be added to the <var class="varname">$options</var> array. It is a good
+        practice to retrieve these options from a configuration file to maintain compatibility with
+        all services and databases; unrecognized options will simply be discarded, making it
+        possible to use different services based on environment.
+    </p>
+
+    <p class="para">
+        If more vendor-specific requirements are required, the developer should extend the specific
+        <span class="classname">Zend_Cloud_DocumentService</span> adapter to add support for these features.
+        In this manner, vendor-specific features can be called out in the application by referring
+        to the Simple Cloud API extensions in the subclass of the Simple Cloud adapter.
+    </p>
+
+    <div class="section" id="zend.cloud.documentservice.adapterinterface" name="zend.cloud.documentservice.adapterinterface"><div class="info"><h1 class="title">Zend_Cloud_DocumentService_Adapter Interface</h1></div>
+        
+
+        <p class="para">
+            The <span class="classname">Zend_Cloud_DocumentService_Adapter</span> interface defines methods
+            that each concrete document service adapter implements. The following adapters are
+            shipped with the Simple Cloud API: 
+        </p>
+        
+        <ul class="itemizedlist">
+            <li class="listitem">
+                <p class="para">
+                    <a href="http://aws.amazon.com/simpledb/" class="link external">&raquo; <span class="classname">Zend_Cloud_DocumentService_Adapter_SimpleDb</span></a>
+                </p>
+            </li>
+
+            <li class="listitem">
+                <p class="para">
+                    <a href="http://msdn.microsoft.com/en-us/library/dd179423.aspx" class="link external">&raquo; <span class="classname">Zend_Cloud_DocumentService_Adapter_WindowsAzure</span></a>
+                </p>
+            </li>
+        </ul>
+        
+        <p class="para">
+            To instantiate a document service adapter, use the static method
+             <span class="methodname">Zend_Cloud_DocumentService_Factory::getAdapter()</span>, which accepts
+            a configuration array or a <span class="classname">Zend_Config</span> object. The
+            <var class="varname">document_adapter</var> key should specify the concrete adapter class by
+            classname. Adapter-specific keys may also be passed in this configuration parameter.
+        </p>
+        
+        <div class="example"><div class="info"><p><b>Example #1 Example: Using the SimpleDB adapter</b></p></div>
+            
+
+            <div class="programlisting php"><div class="phpcode"><div class="php" style="font-family: monospace;"><ol><li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #0000ff;">$adapterClass</span> = <span style="color: #ff0000;">'Zend_Cloud_DocumentService_Adapter_SimpleDb'</span>;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #0000ff;">$documents</span> = Zend_Cloud_DocumentService_Factory::<span style="color: #006600;">getAdapter</span><span style="color: #66cc66;">&#40;</span><a href="http://www.php.net/array"><span style="color: #000066;">array</span></a><span style="color: #66cc66;">&#40;</span></div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; Zend_Cloud_DocumentService_Factory::<span style="color: #006600;">DOCUMENT_ADAPTER_KEY</span>&nbsp; &nbsp; =&gt; <span style="color: #0000ff;">$adapterClass</span>,</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; Zend_Cloud_DocumentService_Adapter_SimpleDb::<span style="color: #006600;">AWS_ACCESS_KEY</span> =&gt; <span style="color: #0000ff;">$amazonKey</span>,</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; Zend_Cloud_DocumentService_Adapter_SimpleDb::<span style="color: #006600;">AWS_SECRET_KEY</span> =&gt; <span style="color: #0000ff;">$amazonSecret</span></div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #66cc66;">&#41;</span><span style="color: #66cc66;">&#41;</span>;</div></li></ol></div></div></div>
+
+        </div>
+    </div>
+
+    <div class="section" id="zend.cloud.documentservice.adapteroptions" name="zend.cloud.documentservice.adapteroptions"><div class="info"><h1 class="title">Supported Adapter Options</h1></div>
+        
+
+        <table class="doctable table"><div class="info"><caption><b>Zend_Cloud_DocumentService_Adapter Common Options</b></caption></div>
+            
+            
+                <thead valign="middle">
+                    <tr valign="middle">
+                        <th>Option key</th>
+                        <th>Description</th>
+                        <th>Used in</th>
+                        <th>Required</th>
+                        <th>Default</th>
+                    </tr>
+
+                </thead>
+
+
+                <tbody valign="middle" class="tbody">
+                    <tr valign="middle">
+                        <td align="left">document_class</td>
+                        <td align="left">
+                            <p class="para">
+                                Class to use to represent returned documents. The class provided must extend
+                                <span class="classname">Zend_Cloud_DocumentService_Document</span> to ensure
+                                compatibility with all document services. For all methods that
+                                return a document or collection of documents, this class will be
+                                used.
+                            </p>
+                        </td>
+                        <td align="left">Constructor</td>
+                        <td align="left">No</td>
+                        <td align="left"><span class="classname">Zend_Cloud_Document_Service_Document</span></td>
+                    </tr>
+
+
+                    <tr valign="middle">
+                        <td align="left">documentset_class</td>
+                        <td align="left">
+                            <p class="para">
+                                Class to use to represent collections of documents,
+                                <span class="classname">Zend_Cloud_DocumentService_DocumentSet</span> by
+                                default. Typically, objects of this class will be returned by
+                                 <span class="methodname">listDocuments()</span> and
+                                 <span class="methodname">query()</span>. Any class provided for this
+                                configuration value must extend
+                                <span class="classname">Zend_Cloud_DocumentService_DocumentSet</span>.
+                            </p>
+                        </td>
+                        <td align="left">Constructor</td>
+                        <td align="left">No</td>
+                        <td align="left"><span class="classname">Zend_Cloud_DocumentService_DocumentSet</span></td>
+                    </tr>
+
+                </tbody>
+            
+        </table>
+
+
+        <table class="doctable table"><div class="info"><caption><b>Zend_Cloud_DocumentService_Adapter_SimpleDb Options</b></caption></div>
+            
+
+            
+                <thead valign="middle">
+                    <tr valign="middle">
+                        <th>Option key</th>
+                        <th>Description</th>
+                        <th>Used in</th>
+                        <th>Required</th>
+                        <th>Default</th>
+                    </tr>
+
+                </thead>
+
+
+                <tbody valign="middle" class="tbody">
+                    <tr valign="middle">
+                        <td align="left">query_class</td>
+                        <td align="left">
+                            <p class="para">
+                                Class to use for creating and assembling queries for this document
+                                service;  <span class="methodname">select()</span> will create objects of
+                                this class name, as will  <span class="methodname">listDocuments()</span>.
+                            </p>
+                        </td>
+                        <td align="left">Constructor</td>
+                        <td align="left">No</td>
+                        <td align="left"><span class="classname">Zend_Cloud_DocumentService_Adapter_SimpleDb_Query</span></td>
+                    </tr>
+
+
+                    <tr valign="middle">
+                        <td align="left">aws_accesskey</td>
+                        <td align="left">Your Amazon AWS access key</td>
+                        <td align="left">Constructor</td>
+                        <td align="left">Yes</td>
+                        <td align="left">None</td>
+                    </tr>
+
+
+                    <tr valign="middle">
+                        <td align="left">aws_secretkey</td>
+                        <td align="left">Your Amazon AWS secret key</td>
+                        <td align="left">Constructor</td>
+                        <td align="left">Yes</td>
+                        <td align="left">None</td>
+                    </tr>
+
+
+                    <tr valign="middle">
+                        <td align="left">http_adapter</td>
+                        <td align="left">HTTP adapter to use in all access operations</td>
+                        <td align="left">Constructor</td>
+                        <td align="left">No</td>
+                        <td align="left"><span class="classname">Zend_Http_Client_Adapter_Socket</span></td>
+                    </tr>
+
+
+                    <tr valign="middle">
+                        <td align="left">merge</td>
+                        <td align="left">
+                            <p class="para">
+                                If a boolean true, all attribute values are merged.  You may also
+                                specify an array of key pairs, where the key is the attribute key to
+                                merge, and the value indicates whether or not to merge; a boolean
+                                true value will merge the given key. Any attributes not specified in
+                                this array will be replaced.
+                            </p>
+                        </td>
+                        <td align="left"> <span class="methodname">updateDocument()</span></td>
+                        <td align="left">No</td>
+                        <td align="left">True</td>
+                    </tr>
+
+
+                    <tr valign="middle">
+                        <td align="left">return_documents</td>
+                        <td align="left">
+                            <p class="para">
+                                If a boolean true,  <span class="methodname">query()</span> returns a
+                                <span class="classname">Zend_Cloud_DocumentService_DocumentSet</span> object
+                                containing
+                                <span class="classname">Zend_Cloud_DocumentService_Document</span> objects
+                                (default case); otherwise, it returns an array of arrays.
+                            </p>
+                        </td>
+                        <td align="left"> <span class="methodname">query()</span></td>
+                        <td align="left">No</td>
+                        <td align="left">True</td>
+                    </tr>
+
+                </tbody>
+            
+        </table>
+    
+
+        <table class="doctable table"><div class="info"><caption><b>Zend_Cloud_DocumentService_Adapter_WindowsAzure Options</b></caption></div>
+            
+
+            
+                <thead valign="middle">
+                    <tr valign="middle">
+                        <th>Option key</th>
+                        <th>Description</th>
+                        <th>Used in</th>
+                        <th>Required</th>
+                        <th>Default</th>
+                    </tr>
+
+                </thead>
+
+
+                <tbody valign="middle" class="tbody">
+                    <tr valign="middle">
+                        <td align="left">query_class</td>
+                        <td align="left">
+                            <p class="para">
+                                Class to use for creating and assembling queries for this document
+                                service;  <span class="methodname">select()</span> will create objects of
+                                this class name, as will  <span class="methodname">listDocuments()</span>.
+                            </p>
+                        </td>
+                        <td align="left">Constructor</td>
+                        <td align="left">No</td>
+                        <td align="left"><span class="classname">Zend_Cloud_DocumentService_Adapter_WindowsAzure_Query</span></td>
+                    </tr>
+
+
+                    <tr valign="middle">
+                        <td align="left">default_partition_key</td>
+                        <td align="left">
+                            <p class="para">
+                                The default partition key to use if none is specified in the
+                                document identifier. Windows Azure requires a two-fold document ID,
+                                consisting of a PartitionKey and a RowKey. The PartitionKey will
+                                typically be common across your database or a collection, while the
+                                RowKey will vary. As such, this setting allows you to specify the
+                                default PartitionKey to utilize for all documents.
+                            </p>
+
+                            <p class="para">
+                                If not specified, the adapter will default to using the collection
+                                name as the PartitionKey.
+                            </p>
+                        </td>
+                        <td align="left">Constructor,  <span class="methodname">setDefaultPartitionKey()</span></td>
+                        <td align="left">Name of whatever collection the document belongs to</td>
+                    </tr>
+
+
+                    <tr valign="middle">
+                        <td align="left">storage_accountname</td>
+                        <td align="left">Windows Azure account name</td>
+                        <td align="left">Constructor</td>
+                        <td align="left">Yes</td>
+                        <td align="left">None</td>
+                    </tr>
+
+
+                    <tr valign="middle">
+                        <td align="left">storage_accountkey</td>
+                        <td align="left">Windows Azure account key</td>
+                        <td align="left">Constructor</td>
+                        <td align="left">Yes</td>
+                        <td align="left">None</td>
+                    </tr>
+
+
+                    <tr valign="middle">
+                        <td align="left">storage_host</td>
+                        <td align="left">
+                            <p class="para">
+                                Windows Azure access host, default is
+                                <var class="varname">table.core.windows.net</var>
+                            </p>
+                        </td>
+                        <td align="left">Constructor</td>
+                        <td align="left">No</td>
+                        <td align="left"><var class="varname">table.core.windows.net</var></td>
+                    </tr>
+
+
+                    <tr valign="middle">
+                        <td align="left">storage_proxy_host</td>
+                        <td align="left">Proxy hostname</td>
+                        <td align="left">Constructor</td>
+                        <td align="left">No</td>
+                        <td align="left">None</td>
+                    </tr>
+
+
+                    <tr valign="middle">
+                        <td align="left">storage_proxy_port</td>
+                        <td align="left">Proxy port</td>
+                        <td align="left">Constructor</td>
+                        <td align="left">No</td>
+                        <td align="left">8080</td>
+                    </tr>
+
+
+                    <tr valign="middle">
+                        <td align="left">storage_proxy_credentials</td>
+                        <td align="left">Proxy credentials</td>
+                        <td align="left">Constructor</td>
+                        <td align="left">No</td>
+                        <td align="left">None</td>
+                    </tr>
+
+
+                    <tr valign="middle">
+                        <td align="left">HTTP Adapter</td>
+                        <td align="left">HTTP adapter to use in all access operations</td>
+                        <td align="left">Constructor</td>
+                        <td align="left">No</td>
+                        <td align="left">None</td>
+                    </tr>
+
+
+                    <tr valign="middle">
+                        <td align="left">verify_etag</td>
+                        <td align="left">
+                            <p class="para">
+                                Verify ETag on the target document and perform the operation only if the
+                                ETag matches the expected value
+                            </p>
+                        </td>
+                        <td align="left">
+                             <span class="methodname">updateDocument()</span>,
+                             <span class="methodname">replaceDocument()</span>,
+                             <span class="methodname">deleteDocument()</span>
+                        </td>
+                        <td align="left">No</td>
+                        <td align="left">False</td>
+                    </tr>
+
+                </tbody>
+            
+        </table>
+
+    </div>
+
+    <div class="section" id="zend.cloud.documentservice.concepts" name="zend.cloud.documentservice.concepts"><div class="info"><h1 class="title">Basic concepts</h1></div>
+        
+
+        <p class="para">
+            Each document-oriented service and database uses its own terminology and constructs in
+            its API. The SimpleCloud API identifies and abstracts a number of common concepts and
+            operations that are shared among providers.
+        </p>
+
+        <p class="para">
+            Document storage consists of a number of <em class="emphasis">collections</em>, which are
+            logical storage units analogous to database tables in the SQL world. Collections contain
+            <em class="emphasis">documents</em>, which are essentially a set of key-value pairs, along
+            with some metadata specific to the storage engine, and are identified by a unique
+            <em class="emphasis">document ID</em>.
+        </p>
+
+        <p class="para">
+            Each document has its own structure (set of fields) that does not necessarily have to
+            match the structure of any other document, even in the same collection. In fact, you can
+            change this structure after the document is created.
+        </p>
+
+        <p class="para">
+            Documents can be retrieved by ID or by querying a collection.
+        </p>
+
+        <p class="para">
+            Documents are represented by the class
+            <span class="classname">Zend_Cloud_DocumentService_Document</span>.  Note that the document
+            class does not validate the supplied IDs and data, and does not enforce compatibility
+            with each adapter&#039;s requirements.
+        </p> 
+
+        <p class="para">
+            The document fields can be accessed using keys as object properties and as array
+            elements.
+        </p>
+
+        <p class="para">
+            The basic interface of <span class="classname">Zend_Cloud_DocumentService_Document</span> is as
+            follows:
+        </p>
+
+        <div class="programlisting"><div class="cdata"><pre>
+/**
+ * ArrayAccess allows accessing fields by array key:
+ *    $doc[&#039;fieldname&#039;]
+ *
+ * IteratorAggregate allows iterating over all fields:
+ *    foreach ($document as $field =&gt; $value) {
+ *        echo &quot;$field: $value\n&quot;;
+ *    }
+ *
+ * Countable provides a count of all fields:
+ *    count($document)
+ */
+class Zend_Cloud_DocumentService_Document
+    implements ArrayAccess, IteratorAggregate, Countable
+{
+    const KEY_FIELD = &#039;_id&#039;;
+
+    /** 
+     * $fields may be an array or an object implementing ArrayAccess. 
+     * If no $id is provided, it will look for a field matching KEY_FIELD to 
+     * use as the identifier.
+     */
+    public function __construct($fields, $id = null);
+
+    public function setId($id);
+    public function getId();
+    public function getFields();
+    public function getField($name);
+    public function setField($name, $value);
+
+    /**
+     * These allow overloading, so you may access fields as if they were 
+     * native properties of the document
+     */
+    public function __get($name);
+    public function __set($name, $value);
+
+    /**
+     * Alternately, you can acces fields as if via native getters and
+     * setters:
+     *     $document-&gt;setFoo($value);    // set &quot;Foo&quot; field to value
+     *     $value = $document-&gt;getFoo(); // get &quot;Foo&quot; field value
+    public function __call($name, $args);
+}
+</pre></div></div>
+
+
+        <blockquote><p><b class="note">Note</b>: <span class="info"><b>Windows Azure Document Identifiers</b><br /></span>
+            
+
+             
+                Windows Azure technically requires a combination of two fields to uniquely
+                identify documents: the <var class="varname">PartitionKey</var> and
+                <var class="varname">RowKey</var>, and as such, keys are fully qualified by the structure
+                <code class="code">array(PartitionKey, RowKey)</code> -- which makes them non-portable.  In most
+                situations, the <var class="varname">PartitionKey</var> will not differ for documents in a
+                single collection -- and potentially not even across your entire table instance. As
+                such, the DocumentService provides several options for specifying keys:
+            <br />
+
+            <ul class="itemizedlist">
+                <li class="listitem">
+                    <p class="para">
+                        Array keys will always work as expected.
+                    </p>
+                </li>
+
+                <li class="listitem">
+                    <p class="para">
+                        If a string key is provided:
+                    </p>
+
+                    <ul class="itemizedlist">
+                        <li class="listitem">
+                            <p class="para">
+                                If the <var class="varname">default_partition_key</var> setting was provided
+                                to the constructor, or passed to the
+                                 <span class="methodname">setDefaultPartitionKey()</span> method, that value
+                                will be used for the <var class="varname">PartitionKey</var>.
+                            </p>
+                        </li>
+
+                        <li class="listitem">
+                            <p class="para">
+                                Otherwise, the name of the collection on which you are operating
+                                will be used.
+                            </p>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+
+            
+                The takeaway is that you can utilize string keys if you wish to maximize portability
+                of your application. Just be aware that your record will contain a few extra fields
+                to denote the key (<var class="varname">PartitionKey</var>, <var class="varname">RowKey</var>, and
+                the previously undiscussed <var class="varname">Timestamp</var>) should you ever migrate
+                your data to another service.
+            <br />
+        </p></blockquote>
+
+        <div class="example"><div class="info"><p><b>Example #2 Creating a document</b></p></div>
+            
+
+            <div class="programlisting php"><div class="phpcode"><div class="php" style="font-family: monospace;"><ol><li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #0000ff;">$document</span> = <span style="color: #000000; font-weight: bold;">new</span> Zend_Cloud_DocumentService_Document<span style="color: #66cc66;">&#40;</span><a href="http://www.php.net/array"><span style="color: #000066;">array</span></a><span style="color: #66cc66;">&#40;</span></div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; <span style="color: #ff0000;">'key1'</span> =&gt; <span style="color: #ff0000;">'value1'</span>,</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; <span style="color: #ff0000;">'key2'</span> =&gt; <span style="color: #cc66cc;">123</span>,</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; <span style="color: #ff0000;">'key3'</span> =&gt; <span style="color: #ff0000;">'thirdvalue'</span>,</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #66cc66;">&#41;</span>, <span style="color: #ff0000;">&quot;DocumentId&quot;</span><span style="color: #66cc66;">&#41;</span>;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #0000ff;">$document</span>-&gt;<span style="color: #006600;">otherkey</span> = <span style="color: #ff0000;">'some more data'</span>;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><a href="http://www.php.net/echo"><span style="color: #000066;">echo</span></a> <span style="color: #ff0000;">&quot;key 1: &quot;</span> . <span style="color: #0000ff;">$document</span>-&gt;<span style="color: #006600;">key1</span>&nbsp; &nbsp;. <span style="color: #ff0000;">&quot;<span style="color: #000099; font-weight: bold;">\n</span>&quot;</span>; <span style="color: #808080; font-style: italic;">// object notation</span></div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><a href="http://www.php.net/echo"><span style="color: #000066;">echo</span></a> <span style="color: #ff0000;">&quot;key 2: &quot;</span> . <span style="color: #0000ff;">$document</span><span style="color: #66cc66;">&#91;</span><span style="color: #ff0000;">'key2'</span><span style="color: #66cc66;">&#93;</span> . <span style="color: #ff0000;">&quot;<span style="color: #000099; font-weight: bold;">\n</span>&quot;</span>; <span style="color: #808080; font-style: italic;">// array notation</span></div></li></ol></div></div></div>
+
+        </div>
+
+        <div class="example"><div class="info"><p><b>Example #3 Exploring the document data</b></p></div>
+            
+
+            <div class="programlisting php"><div class="phpcode"><div class="php" style="font-family: monospace;"><ol><li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #0000ff;">$document</span> = <span style="color: #0000ff;">$documents</span>-&gt;<span style="color: #006600;">fetchDocument</span><span style="color: #66cc66;">&#40;</span><span style="color: #ff0000;">&quot;mydata&quot;</span>, <span style="color: #0000ff;">$id</span><span style="color: #66cc66;">&#41;</span>;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><a href="http://www.php.net/echo"><span style="color: #000066;">echo</span></a> <span style="color: #ff0000;">&quot;Document ID: &quot;</span> . <span style="color: #0000ff;">$document</span>-&gt;<span style="color: #006600;">getID</span><span style="color: #66cc66;">&#40;</span><span style="color: #66cc66;">&#41;</span> . <span style="color: #ff0000;">&quot;<span style="color: #000099; font-weight: bold;">\n</span>&quot;</span>;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #b1b100;">foreach</span> <span style="color: #66cc66;">&#40;</span><span style="color: #0000ff;">$document</span>-&gt;<span style="color: #006600;">getFields</span><span style="color: #66cc66;">&#40;</span><span style="color: #66cc66;">&#41;</span> <span style="color: #b1b100;">as</span> <span style="color: #0000ff;">$key</span> =&gt; <span style="color: #0000ff;">$value</span><span style="color: #66cc66;">&#41;</span> <span style="color: #66cc66;">&#123;</span></div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; <a href="http://www.php.net/echo"><span style="color: #000066;">echo</span></a> <span style="color: #ff0000;">&quot;Field $key is $value<span style="color: #000099; font-weight: bold;">\n</span>&quot;</span>;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #66cc66;">&#125;</span></div></li></ol></div></div></div>
+
+        </div>
+    </div>
+    
+    <div class="section" id="zend.cloud.documentservice.exceptions" name="zend.cloud.documentservice.exceptions"><div class="info"><h1 class="title">Exceptions</h1></div>
+        
+
+        <p class="para">
+            If some error occurs in the document service,
+            <span class="classname">Zend_Cloud_DocumentService_Exception</span> is thrown.  If the exception
+            was caused by the underlying service driver, you can use the 
+             <span class="methodname">getClientException()</span> method to retrieve the original exception. 
+        </p>
+
+        <p class="para">
+            Since different cloud providers implement different sets of services, some drivers do
+            not implement certain features. In this case, the
+            <span class="classname">Zend_Cloud_OperationNotAvailableException</span> exception is thrown.
+        </p>
+    </div>
+    
+    <div class="section" id="zend.cloud.documentservice.create-collection" name="zend.cloud.documentservice.create-collection"><div class="info"><h1 class="title">Creating a collection</h1></div>
+        
+
+        <p class="para">
+            A new collection is created using  <span class="methodname">createCollection()</span>.
+        </p>
+
+        <div class="example"><div class="info"><p><b>Example #4 Creating collection</b></p></div>
+            
+
+            <div class="programlisting php"><div class="phpcode"><div class="php" style="font-family: monospace;"><ol><li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #0000ff;">$documents</span>-&gt;<span style="color: #006600;">createCollection</span><span style="color: #66cc66;">&#40;</span><span style="color: #ff0000;">&quot;mydata&quot;</span><span style="color: #66cc66;">&#41;</span>;</div></li></ol></div></div></div>
+
+        </div>
+
+        <p class="para">
+            If you call  <span class="methodname">createCollection()</span> with a collection name that
+            already exists, the service will do nothing and leave the existing collection untouched.
+        </p>
+    </div>
+    
+    <div class="section" id="zend.cloud.documentservice.delete-collection" name="zend.cloud.documentservice.delete-collection"><div class="info"><h1 class="title">Deleting a collection</h1></div>
+        
+
+        <p class="para">
+            A collection is deleted by calling  <span class="methodname">deleteCollection()</span>.
+        </p>
+
+        <div class="example"><div class="info"><p><b>Example #5 Deleting a collection</b></p></div>
+            
+
+            <div class="programlisting php"><div class="phpcode"><div class="php" style="font-family: monospace;"><ol><li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #0000ff;">$documents</span>-&gt;<span style="color: #006600;">deleteCollection</span><span style="color: #66cc66;">&#40;</span><span style="color: #ff0000;">&quot;mydata&quot;</span><span style="color: #66cc66;">&#41;</span>;</div></li></ol></div></div></div>
+
+        </div>
+
+        <p class="para">
+            Deleting a collection automatically deletes all documents contained in that collection.
+        </p>
+
+        <blockquote><p><b class="note">Note</b>: 
+            
+                Deleting a collection can take significant time for some services. You cannot
+                re-create a collection with the same name until the collection and all its documents
+                have been completely removed.
+            <br />
+        </p></blockquote>
+
+        <p class="para">
+            Deleting a non-existent collection will have no effect.
+        </p>
+    </div>
+
+    <div class="section" id="zend.cloud.documentservice.list-collections" name="zend.cloud.documentservice.list-collections"><div class="info"><h1 class="title">Listing available collections</h1></div>
+        
+
+        <p class="para">
+            A list of existing collections is returned by
+             <span class="methodname">listCollections()</span>.  This method returns an array of all the
+            names of collections belonging to the account you specified when you created the
+            adapter.
+        </p>
+        
+        <div class="example"><div class="info"><p><b>Example #6 List collections</b></p></div>
+            
+
+            <div class="programlisting php"><div class="phpcode"><div class="php" style="font-family: monospace;"><ol><li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #0000ff;">$list</span> = <span style="color: #0000ff;">$documents</span>-&gt;<span style="color: #006600;">listCollections</span><span style="color: #66cc66;">&#40;</span><span style="color: #66cc66;">&#41;</span>;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #b1b100;">foreach</span> <span style="color: #66cc66;">&#40;</span><span style="color: #0000ff;">$list</span> <span style="color: #b1b100;">as</span> <span style="color: #0000ff;">$collection</span><span style="color: #66cc66;">&#41;</span> <span style="color: #66cc66;">&#123;</span></div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; <a href="http://www.php.net/echo"><span style="color: #000066;">echo</span></a> <span style="color: #ff0000;">&quot;My collection: $collection<span style="color: #000099; font-weight: bold;">\n</span>&quot;</span>;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #66cc66;">&#125;</span></div></li></ol></div></div></div>
+
+        </div>
+    </div>
+    
+    <div class="section" id="zend.cloud.documentservice.insert" name="zend.cloud.documentservice.insert"><div class="info"><h1 class="title">Inserting a document</h1></div>
+        
+
+        <p class="para">
+            To insert a document, you need to provide a
+            <span class="classname">Zend_Cloud_DocumentService_Document</span> object or associative array
+            of data, as well as the collection in which you are inserting it.
+        </p>
+            
+        <p class="para">
+            Many providers require that you provide a document ID with your document. If using a
+            <span class="classname">Zend_Cloud_DocumentService_Document</span>, you can specify this by
+            passing the identifier to the constructor when you instantiate the object. If using an
+            associative array, the key name will be adapter-specific locations; for example, on
+            Azure, the ID is made up of the PartitionKey and RowKey; on Amazon SimpleDB, the ID is
+            the ItemName; you may also specify the key in the <var class="varname">_id</var> field to be
+            more portable.
+        </p>
+
+        <p class="para">
+            As such, the easiest and most compatible way to specify the key is to use
+            a Document object.
+        </p>
+
+        <div class="example"><div class="info"><p><b>Example #7 Inserting a document</b></p></div>
+            
+
+            <div class="programlisting php"><div class="phpcode"><div class="php" style="font-family: monospace;"><ol><li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #808080; font-style: italic;">// Instantiating and creating the document</span></div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #0000ff;">$document</span> = <span style="color: #000000; font-weight: bold;">new</span> Zend_Cloud_DocumentService_Document<span style="color: #66cc66;">&#40;</span><a href="http://www.php.net/array"><span style="color: #000066;">array</span></a><span style="color: #66cc66;">&#40;</span></div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; <span style="color: #ff0000;">'key1'</span> =&gt; <span style="color: #ff0000;">'value1'</span>,</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; <span style="color: #ff0000;">'key2'</span> =&gt; <span style="color: #cc66cc;">123</span>,</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; <span style="color: #ff0000;">'key3'</span> =&gt; <span style="color: #ff0000;">'thirdvalue'</span>,</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #66cc66;">&#41;</span>, <span style="color: #ff0000;">&quot;DocumentID&quot;</span><span style="color: #66cc66;">&#41;</span>;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #808080; font-style: italic;">// inserting into the &quot;mydata&quot; collection</span></div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #0000ff;">$documents</span>-&gt;<span style="color: #006600;">insertDocument</span><span style="color: #66cc66;">&#40;</span><span style="color: #ff0000;">&quot;mydata&quot;</span>, <span style="color: #0000ff;">$document</span><span style="color: #66cc66;">&#41;</span>;</div></li></ol></div></div></div>
+
+        </div>            
+    </div>
+    
+    <div class="section" id="zend.cloud.documentservice.replace" name="zend.cloud.documentservice.replace"><div class="info"><h1 class="title">Replacing a document</h1></div>
+        
+
+        <p class="para">
+            <em class="emphasis">Replacing</em> a document means removing all document data associated with a particular
+            document key and substituting it with a new set of data. Unlike
+            <em class="emphasis">updating</em>, this operation does not merge old and new data but
+            replaces the document as a whole. The replace operation, like
+             <span class="methodname">insertDocument()</span>, accepts a
+            <span class="classname">Zend_Cloud_DocumentService_Document</span> document or an array of
+            key-value pairs that specify names and values of the new fields, and the collection in
+            which the document exists.
+        </p>
+
+        <blockquote><p><b class="note">Note</b>: <span class="info"><b>Document ID is required</b><br /></span>
+            
+
+            
+                To replace the document, the document ID is required. Just like inserting a document,
+                if you use an associative array to describe the document, you will need to provide a
+                provider-specific key indicating the document ID. As such, the most compatible way
+                to replace a document across providers is to utilize a Document object, as shown in
+                the examples.
+            <br />
+        </p></blockquote>
+
+        <div class="example"><div class="info"><p><b>Example #8 Replacing a document</b></p></div>
+            
+
+            <div class="programlisting php"><div class="phpcode"><div class="php" style="font-family: monospace;"><ol><li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #0000ff;">$document</span> = <span style="color: #000000; font-weight: bold;">new</span> Zend_Cloud_DocumentService_Document<span style="color: #66cc66;">&#40;</span><a href="http://www.php.net/array"><span style="color: #000066;">array</span></a><span style="color: #66cc66;">&#40;</span></div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; <span style="color: #ff0000;">'key1'</span> =&gt; <span style="color: #ff0000;">'value1'</span>,</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; <span style="color: #ff0000;">'key2'</span> =&gt; <span style="color: #cc66cc;">123</span>,</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; <span style="color: #ff0000;">'key3'</span> =&gt; <span style="color: #ff0000;">'thirdvalue'</span>,</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #66cc66;">&#41;</span>, <span style="color: #ff0000;">&quot;DocumentID&quot;</span><span style="color: #66cc66;">&#41;</span>;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #808080; font-style: italic;">// Update the document as found in the &quot;mydata&quot; collection</span></div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #0000ff;">$documents</span>-&gt;<span style="color: #006600;">replaceDocument</span><span style="color: #66cc66;">&#40;</span><span style="color: #ff0000;">&quot;mydata&quot;</span>, <span style="color: #0000ff;">$document</span><span style="color: #66cc66;">&#41;</span>;</div></li></ol></div></div></div>
+
+
+            <div class="example-contents"><p>
+                You may also use an existing Document object, re-assign the fields and/or assign new
+                fields, and pass it to the  <span class="methodname">replaceDocument()</span> method:
+            </p></div>
+
+            <div class="programlisting php"><div class="phpcode"><div class="php" style="font-family: monospace;"><ol><li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #0000ff;">$docment</span>-&gt;<span style="color: #006600;">key4</span> = <span style="color: #ff0000;">'4th value'</span>;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #808080; font-style: italic;">// Update the document as found in the &quot;mydata&quot; collection</span></div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #0000ff;">$documents</span>-&gt;<span style="color: #006600;">replaceDocument</span><span style="color: #66cc66;">&#40;</span><span style="color: #ff0000;">&quot;mydata&quot;</span>, <span style="color: #0000ff;">$document</span><span style="color: #66cc66;">&#41;</span>;</div></li></ol></div></div></div>
+
+        </div>            
+    </div>
+    
+    <div class="section" id="zend.cloud.documentservice.update" name="zend.cloud.documentservice.update"><div class="info"><h1 class="title">Updating a document</h1></div>
+        
+
+        <p class="para">
+            <em class="emphasis">Updating</em> a document changes the key/value pairs in an existing
+            document. This operation does not share the <em class="emphasis">replace</em> semantics; the
+            values of the keys that are not specified in the data set will not be changed. You must
+            provide both a document key and data, either via a 
+            <span class="classname">Zend_Cloud_DocumentService_Document</span> document or an array, to this
+            method. If the key is null and a document object is provided, the document key is used.
+        </p>
+
+        <div class="example"><div class="info"><p><b>Example #9 Updating a document</b></p></div>
+            
+
+            <div class="programlisting php"><div class="phpcode"><div class="php" style="font-family: monospace;"><ol><li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #808080; font-style: italic;">// update one field</span></div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #0000ff;">$documents</span>-&gt;<span style="color: #006600;">updateDocument</span><span style="color: #66cc66;">&#40;</span><span style="color: #ff0000;">&quot;mydata&quot;</span>, <span style="color: #ff0000;">&quot;DocumentID&quot;</span>, <a href="http://www.php.net/array"><span style="color: #000066;">array</span></a><span style="color: #66cc66;">&#40;</span><span style="color: #ff0000;">&quot;key2&quot;</span> =&gt; <span style="color: #ff0000;">&quot;new value&quot;</span><span style="color: #66cc66;">&#41;</span><span style="color: #66cc66;">&#41;</span>;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #808080; font-style: italic;">// or with document; this could be a document already retrieved from the service</span></div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #0000ff;">$document</span> = <span style="color: #000000; font-weight: bold;">new</span> Zend_Cloud_DocumentService_Document<span style="color: #66cc66;">&#40;</span><a href="http://www.php.net/array"><span style="color: #000066;">array</span></a><span style="color: #66cc66;">&#40;</span></div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; <span style="color: #ff0000;">'key1'</span> =&gt; <span style="color: #ff0000;">'value1'</span>,</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; <span style="color: #ff0000;">'key2'</span> =&gt; <span style="color: #cc66cc;">123</span>,</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; <span style="color: #ff0000;">'key3'</span> =&gt; <span style="color: #ff0000;">'thirdvalue'</span>,</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #66cc66;">&#41;</span>, <span style="color: #ff0000;">&quot;DocumentID&quot;</span><span style="color: #66cc66;">&#41;</span>;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #0000ff;">$documents</span>-&gt;<span style="color: #006600;">updateDocument</span><span style="color: #66cc66;">&#40;</span><span style="color: #ff0000;">&quot;mydata&quot;</span>, <span style="color: #000000; font-weight: bold;">null</span>, <span style="color: #0000ff;">$document</span><span style="color: #66cc66;">&#41;</span>;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #808080; font-style: italic;">// copy document to another ID</span></div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #0000ff;">$documents</span>-&gt;<span style="color: #006600;">updateDocument</span><span style="color: #66cc66;">&#40;</span><span style="color: #ff0000;">&quot;mydata&quot;</span>, <span style="color: #ff0000;">&quot;AnotherDocumentID&quot;</span>, <span style="color: #0000ff;">$document</span><span style="color: #66cc66;">&#41;</span>;</div></li></ol></div></div></div>
+
+        </div>            
+
+        <p class="para">
+            Amazon SimpleDB supports multi-value fields, so data updates will be merged with the old key
+            value instead of replacing them. Option <span class="property">merge</span> should contain an array
+            of field names to be merged. The array should be key/value pairs, with the key
+            corresponding to the field key, and the value a boolean value indicating merge status
+            (boolean true would merge; false would not). Any keys not specified in the
+            <span class="property">merge</span> option will be replaced instead of merged.
+        </p>
+
+        <div class="example"><div class="info"><p><b>Example #10 Merging document fields</b></p></div>
+            
+
+            <div class="programlisting php"><div class="phpcode"><div class="php" style="font-family: monospace;"><ol><li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #808080; font-style: italic;">// key2 is overwritten, key3 is merged</span></div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #0000ff;">$documents</span>-&gt;<span style="color: #006600;">updateDocument</span><span style="color: #66cc66;">&#40;</span><span style="color: #ff0000;">'mydata'</span>, <span style="color: #ff0000;">'DocumentID'</span>, </div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; <a href="http://www.php.net/array"><span style="color: #000066;">array</span></a><span style="color: #66cc66;">&#40;</span><span style="color: #ff0000;">'key2'</span> =&gt; <span style="color: #ff0000;">'new value'</span>, <span style="color: #ff0000;">'key3'</span> =&gt; <span style="color: #ff0000;">'additional value'</span><span style="color: #66cc66;">&#41;</span>, </div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; <a href="http://www.php.net/array"><span style="color: #000066;">array</span></a><span style="color: #66cc66;">&#40;</span><span style="color: #ff0000;">'merge'</span> =&gt; <a href="http://www.php.net/array"><span style="color: #000066;">array</span></a><span style="color: #66cc66;">&#40;</span><span style="color: #ff0000;">'key3'</span> =&gt; <span style="color: #000000; font-weight: bold;">true</span><span style="color: #66cc66;">&#41;</span><span style="color: #66cc66;">&#41;</span></div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #66cc66;">&#41;</span>;</div></li></ol></div></div></div>
+
+        </div>
+    </div>
+    
+    <div class="section" id="zend.cloud.documentservice.delete" name="zend.cloud.documentservice.delete"><div class="info"><h1 class="title">Deleting a document</h1></div>
+        
+
+        <p class="para">
+            A document can be deleted by passing its key to
+             <span class="methodname">deleteDocument()</span>.  Deleting a non-existant document has no
+            effect.
+        </p>
+
+        <div class="example"><div class="info"><p><b>Example #11 Deleting a document</b></p></div>
+            
+
+            <div class="programlisting php"><div class="phpcode"><div class="php" style="font-family: monospace;"><ol><li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #0000ff;">$documents</span>-&gt;<span style="color: #006600;">deleteDocument</span><span style="color: #66cc66;">&#40;</span><span style="color: #ff0000;">&quot;collectionName&quot;</span>, <span style="color: #ff0000;">&quot;DocumentID&quot;</span><span style="color: #66cc66;">&#41;</span>;</div></li></ol></div></div></div>
+
+        </div>            
+    </div>
+    
+    <div class="section" id="zend.cloud.documentservice.fetch" name="zend.cloud.documentservice.fetch"><div class="info"><h1 class="title">Fetching a document</h1></div>
+        
+
+        <p class="para">
+            You can fetch a specific document by specifying its key.
+             <span class="methodname">fetchDocument()</span> returns one instance of
+            <span class="classname">Zend_Cloud_DocumentService_Document</span>.
+        </p>
+
+        <div class="example"><div class="info"><p><b>Example #12 Fetching a document</b></p></div>
+            
+
+            <div class="programlisting php"><div class="phpcode"><div class="php" style="font-family: monospace;"><ol><li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #0000ff;">$document</span> = <span style="color: #0000ff;">$service</span>-&gt;<span style="color: #006600;">fetchDocument</span><span style="color: #66cc66;">&#40;</span><span style="color: #ff0000;">'collectionName'</span>, <span style="color: #ff0000;">'DocumentID'</span><span style="color: #66cc66;">&#41;</span>;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><a href="http://www.php.net/echo"><span style="color: #000066;">echo</span></a> <span style="color: #ff0000;">&quot;Document ID: &quot;</span> . <a href="http://www.php.net/var_export"><span style="color: #000066;">var_export</span></a><span style="color: #66cc66;">&#40;</span><span style="color: #0000ff;">$document</span>-&gt;<span style="color: #006600;">getID</span><span style="color: #66cc66;">&#40;</span><span style="color: #66cc66;">&#41;</span>, <span style="color: #cc66cc;">1</span><span style="color: #66cc66;">&#41;</span> . <span style="color: #ff0000;">&quot;<span style="color: #000099; font-weight: bold;">\n</span>&quot;</span>;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #b1b100;">foreach</span> <span style="color: #66cc66;">&#40;</span><span style="color: #0000ff;">$document</span>-&gt;<span style="color: #006600;">getFields</span><span style="color: #66cc66;">&#40;</span><span style="color: #66cc66;">&#41;</span> <span style="color: #b1b100;">as</span> <span style="color: #0000ff;">$key</span> =&gt; <span style="color: #0000ff;">$value</span><span style="color: #66cc66;">&#41;</span> <span style="color: #66cc66;">&#123;</span></div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; <a href="http://www.php.net/echo"><span style="color: #000066;">echo</span></a> <span style="color: #ff0000;">&quot;Field $key is $value<span style="color: #000099; font-weight: bold;">\n</span>&quot;</span>;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #66cc66;">&#125;</span></div></li></ol></div></div></div>
+
+        </div>            
+    </div>
+    
+    <div class="section" id="zend.cloud.documentservice.query" name="zend.cloud.documentservice.query"><div class="info"><h1 class="title">Querying a collection</h1></div>
+        
+
+        <p class="para">
+            To find documents in the collection that meet some criteria, use the
+             <span class="methodname">query()</span>method. This method accepts either a string which is an
+            adapter-dependent query and is passed as-is to the concrete adapter, or a structured query
+            object instance of <span class="classname">Zend_Cloud_DocumentService_Query</span>. The return
+            is a <span class="classname">Zend_Cloud_DocumentService_DocumentSet</span>, containing instances
+            of <span class="classname">Zend_Cloud_DocumentService_Document</span> that satisfy the query.
+            The DocumentSet object is iterable and countable.
+        </p>
+
+        <div class="example"><div class="info"><p><b>Example #13 Querying a collection using a string query</b></p></div>
+            
+
+            <div class="programlisting php"><div class="phpcode"><div class="php" style="font-family: monospace;"><ol><li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #0000ff;">$docs</span> = <span style="color: #0000ff;">$documents</span>-&gt;<span style="color: #006600;">query</span><span style="color: #66cc66;">&#40;</span></div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; <span style="color: #ff0000;">&quot;collectionName&quot;</span>, </div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; <span style="color: #ff0000;">&quot;RowKey eq 'rowkey2' or RowKey eq 'rowkey2'&quot;</span></div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #66cc66;">&#41;</span>;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #b1b100;">foreach</span> <span style="color: #66cc66;">&#40;</span><span style="color: #0000ff;">$docs</span> <span style="color: #b1b100;">as</span> <span style="color: #0000ff;">$doc</span><span style="color: #66cc66;">&#41;</span> <span style="color: #66cc66;">&#123;</span></div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; <span style="color: #0000ff;">$id</span> = <span style="color: #0000ff;">$doc</span>-&gt;<span style="color: #006600;">getId</span><span style="color: #66cc66;">&#40;</span><span style="color: #66cc66;">&#41;</span>;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; <a href="http://www.php.net/echo"><span style="color: #000066;">echo</span></a> <span style="color: #ff0000;">&quot;Found document with ID: &quot;</span> </div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; &nbsp; &nbsp; . <a href="http://www.php.net/var_export"><span style="color: #000066;">var_export</span></a><span style="color: #66cc66;">&#40;</span><span style="color: #0000ff;">$id</span>, <span style="color: #cc66cc;">1</span><span style="color: #66cc66;">&#41;</span></div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; &nbsp; &nbsp; . <span style="color: #ff0000;">&quot;<span style="color: #000099; font-weight: bold;">\n</span>&quot;</span>;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #66cc66;">&#125;</span></div></li></ol></div></div></div>
+
+        </div>            
+
+        <p class="para">
+            If using a structured query object, typically, you will retrieve it using the
+             <span class="methodname">select()</span> method. This ensures that the query object is specific
+            to your adapter, which will ensure that it is assembled into a syntax your adapter
+            understands.
+        </p>
+
+        <div class="example"><div class="info"><p><b>Example #14 Querying a collection with structured query</b></p></div>
+            
+
+            <div class="programlisting php"><div class="phpcode"><div class="php" style="font-family: monospace;"><ol><li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #0000ff;">$query</span> = <span style="color: #0000ff;">$service</span>-&gt;<span style="color: #006600;">select</span><span style="color: #66cc66;">&#40;</span><span style="color: #66cc66;">&#41;</span>;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #0000ff;">$query</span>-&gt;<span style="color: #006600;">from</span><span style="color: #66cc66;">&#40;</span><span style="color: #ff0000;">'collectionName'</span><span style="color: #66cc66;">&#41;</span></div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; &nbsp; -&gt;<span style="color: #006600;">where</span><span style="color: #66cc66;">&#40;</span><span style="color: #ff0000;">'year &gt; ?'</span>, <a href="http://www.php.net/array"><span style="color: #000066;">array</span></a><span style="color: #66cc66;">&#40;</span><span style="color: #cc66cc;">1945</span><span style="color: #66cc66;">&#41;</span><span style="color: #66cc66;">&#41;</span></div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; &nbsp; -&gt;<span style="color: #006600;">limit</span><span style="color: #66cc66;">&#40;</span><span style="color: #cc66cc;">3</span><span style="color: #66cc66;">&#41;</span>;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #0000ff;">$docs</span> = <span style="color: #0000ff;">$documents</span>-&gt;<span style="color: #006600;">query</span><span style="color: #66cc66;">&#40;</span><span style="color: #ff0000;">'collectionName'</span>, <span style="color: #0000ff;">$query</span><span style="color: #66cc66;">&#41;</span>;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #b1b100;">foreach</span> <span style="color: #66cc66;">&#40;</span><span style="color: #0000ff;">$docs</span> <span style="color: #b1b100;">as</span> <span style="color: #0000ff;">$doc</span><span style="color: #66cc66;">&#41;</span> <span style="color: #66cc66;">&#123;</span></div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; <span style="color: #0000ff;">$id</span> = <span style="color: #0000ff;">$doc</span>-&gt;<span style="color: #006600;">getId</span><span style="color: #66cc66;">&#40;</span><span style="color: #66cc66;">&#41;</span>;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; <a href="http://www.php.net/echo"><span style="color: #000066;">echo</span></a> <span style="color: #ff0000;">&quot;Found document with ID: &quot;</span> </div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; &nbsp; &nbsp; . <a href="http://www.php.net/var_export"><span style="color: #000066;">var_export</span></a><span style="color: #66cc66;">&#40;</span><span style="color: #0000ff;">$id</span>, <span style="color: #cc66cc;">1</span><span style="color: #66cc66;">&#41;</span></div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; &nbsp; &nbsp; . <span style="color: #ff0000;">&quot;<span style="color: #000099; font-weight: bold;">\n</span>&quot;</span>;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #66cc66;">&#125;</span></div></li></ol></div></div></div>
+
+        </div>            
+
+        <p class="para">
+            <span class="classname">Zend_Cloud_DocumentService_Query</span> classes do not limit which query
+            clauses can be used, but the clause must be supported by the underlying concrete
+            adapter. Currently supported clauses include:
+        </p>
+
+        <ul class="itemizedlist">
+            <li class="listitem">
+                <p class="para">
+                     <span class="methodname">select()</span> - defines which fields are returned in the
+                    result. 
+                </p>
+
+                <blockquote><p><b class="note">Note</b>: 
+                    
+                        Windows Azure ignores this clause&#039;s argument and always returns the whole
+                        document.
+                    <br />
+                </p></blockquote>
+            </li> 
+
+            <li class="listitem">
+                <p class="para">
+                     <span class="methodname">from()</span> - defines the collection name used in the query.
+                </p>
+            </li>
+
+            <li class="listitem">
+                <p class="para">
+                     <span class="methodname">where()</span> - defines the conditions of the query. It
+                    accepts three parameters: condition, array of arguments to replace &quot;?&quot; fields in
+                    the condition, and a conjunction argument which should be &quot;and&quot; or &quot;or&quot;, and
+                    which will be used to join this condition with previous conditions.  Multiple
+                     <span class="methodname">where()</span> clasues may be specified.
+                </p>
+            </li>
+
+            <li class="listitem">
+                <p class="para">
+                     <span class="methodname">whereId()</span> - defines the condition by document ID (key).
+                    The document matching must have the same key. The method accepts one argument -
+                    the required ID (key).
+                </p>
+            </li>
+
+            <li class="listitem">
+                <p class="para">
+                     <span class="methodname">limit()</span> - limits the returned data to specified number
+                    of documents.
+                </p>
+            </li>
+
+            <li class="listitem">
+                <p class="para">
+                     <span class="methodname">order()</span> - sorts the returned data by specified field.
+                    Accepts two arguments - first is the field name and second is &#039;asc&#039; or &#039;desc&#039;
+                    specifying the sort direction. 
+                </p>
+
+                <blockquote><p><b class="note">Note</b>: 
+                    
+                        This clause is not currently supported by Windows Azure.
+                    <br />
+                </p></blockquote>
+            </li>
+        </ul>
+    </div>
+    
+    <div class="section" id="zend.cloud.documentservice.select" name="zend.cloud.documentservice.select"><div class="info"><h1 class="title">Creating a query</h1></div>
+        
+
+        <p class="para">
+            For the user&#039;s convenience, the  <span class="methodname">select()</span> method instantiates a
+            query object specific to the adapter, and sets the SELECT clause for it.
+        </p>
+
+        <div class="example"><div class="info"><p><b>Example #15 Creating a structured query</b></p></div>
+            
+
+            <div class="programlisting php"><div class="phpcode"><div class="php" style="font-family: monospace;"><ol><li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #0000ff;">$query</span> = <span style="color: #0000ff;">$documents</span>-&gt;<span style="color: #006600;">select</span><span style="color: #66cc66;">&#40;</span><span style="color: #66cc66;">&#41;</span></div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;-&gt;<span style="color: #006600;">from</span><span style="color: #66cc66;">&#40;</span><span style="color: #ff0000;">'collectionName'</span><span style="color: #66cc66;">&#41;</span></div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;-&gt;<span style="color: #006600;">where</span><span style="color: #66cc66;">&#40;</span><span style="color: #ff0000;">'year &gt; ?'</span>, <a href="http://www.php.net/array"><span style="color: #000066;">array</span></a><span style="color: #66cc66;">&#40;</span><span style="color: #cc66cc;">1945</span><span style="color: #66cc66;">&#41;</span><span style="color: #66cc66;">&#41;</span></div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;-&gt;<span style="color: #006600;">limit</span><span style="color: #66cc66;">&#40;</span><span style="color: #cc66cc;">3</span><span style="color: #66cc66;">&#41;</span>;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #0000ff;">$docs</span> = <span style="color: #0000ff;">$documents</span>-&gt;<span style="color: #006600;">query</span><span style="color: #66cc66;">&#40;</span><span style="color: #ff0000;">'collectionName'</span>, <span style="color: #0000ff;">$query</span><span style="color: #66cc66;">&#41;</span>;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #b1b100;">foreach</span> <span style="color: #66cc66;">&#40;</span><span style="color: #0000ff;">$docs</span> <span style="color: #b1b100;">as</span> <span style="color: #0000ff;">$doc</span><span style="color: #66cc66;">&#41;</span> <span style="color: #66cc66;">&#123;</span></div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; <span style="color: #0000ff;">$id</span> = <span style="color: #0000ff;">$doc</span>-&gt;<span style="color: #006600;">getId</span><span style="color: #66cc66;">&#40;</span><span style="color: #66cc66;">&#41;</span>;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; <a href="http://www.php.net/echo"><span style="color: #000066;">echo</span></a> <span style="color: #ff0000;">&quot;Found document with ID: &quot;</span> </div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; &nbsp; &nbsp; . <a href="http://www.php.net/var_export"><span style="color: #000066;">var_export</span></a><span style="color: #66cc66;">&#40;</span><span style="color: #0000ff;">$id</span>, <span style="color: #cc66cc;">1</span><span style="color: #66cc66;">&#41;</span></div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; &nbsp; &nbsp; . <span style="color: #ff0000;">&quot;<span style="color: #000099; font-weight: bold;">\n</span>&quot;</span>;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #66cc66;">&#125;</span></div></li></ol></div></div></div>
+
+        </div>            
+    </div>
+    
+    <div class="section" id="zend.cloud.documentservice.adapter" name="zend.cloud.documentservice.adapter"><div class="info"><h1 class="title">Accessing concrete adapters</h1></div>
+        
+
+        <p class="para">
+            Sometimes it is necessary to retrieve the concrete adapter for the service that the
+            Document API is working with. This can be achieved by using the
+             <span class="methodname">getAdapter()</span> method.
+        </p>
+
+        <blockquote><p><b class="note">Note</b>: 
+            
+                Accessing the underlying adapter breaks portability among services, so it should be
+                reserved for exceptional circumstances only.
+            <br />
+        </p></blockquote>
+
+        <div class="example"><div class="info"><p><b>Example #16 Using concrete adapters</b></p></div>
+            
+
+            <div class="programlisting php"><div class="phpcode"><div class="php" style="font-family: monospace;"><ol><li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #808080; font-style: italic;">// Since SimpleCloud Document API doesn't support batch upload, use concrete adapter </span></div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #0000ff;">$amazonSdb</span> = <span style="color: #0000ff;">$documents</span>-&gt;<span style="color: #006600;">getAdapter</span><span style="color: #66cc66;">&#40;</span><span style="color: #66cc66;">&#41;</span>;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #0000ff;">$amazonSdb</span>-&gt;<span style="color: #006600;">batchPutAttributes</span><span style="color: #66cc66;">&#40;</span><span style="color: #0000ff;">$items</span>, <span style="color: #ff0000;">'collectionName'</span><span style="color: #66cc66;">&#41;</span>;</div></li></ol></div></div></div>
+
+        </div>
+    </div>
+</div>
+        <hr />
+
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.cloud.html">SimpleCloud API: Zend_Cloud</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.cloud.html">SimpleCloud API: Zend_Cloud</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.cloud.queueservice.html">Queue Service Introduction</a></div>
+                    </td>
+                </tr>
+            </table>
+</td>
+        <td style="font-size: smaller;" width="15%"> <style type="text/css">
+#leftbar {
+	float: left;
+	width: 186px;
+	padding: 5px;
+	font-size: smaller;
+}
+ul.toc {
+	margin: 0px 5px 5px 5px;
+	padding: 0px;
+}
+ul.toc li {
+	font-size: 85%;
+	margin: 1px 0 1px 1px;
+	padding: 1px 0 1px 11px;
+	list-style-type: none;
+	background-repeat: no-repeat;
+	background-position: center left;
+}
+ul.toc li.header {
+	font-size: 115%;
+	padding: 5px 0px 5px 11px;
+	border-bottom: 1px solid #cccccc;
+	margin-bottom: 5px;
+}
+ul.toc li.active {
+	font-weight: bold;
+}
+ul.toc li a {
+	text-decoration: none;
+}
+ul.toc li a:hover {
+	text-decoration: underline;
+}
+</style>
+ <ul class="toc">
+  <li class="header home"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="reference.html">Zend Framework Reference</a></li>
+  <li class="header up"><a href="zend.cloud.html">SimpleCloud API: Zend_Cloud</a></li>
+  <li class="active"><a href="zend.cloud.documentservice.html">Document Service Introduction</a></li>
+  <li><a href="zend.cloud.queueservice.html">Queue Service Introduction</a></li>
+  <li><a href="zend.cloud.storageservice.html">StorageService Introduction</a></li>
+ </ul>
+ </td>
+    </tr>
+</table>
+</body>
+</html>

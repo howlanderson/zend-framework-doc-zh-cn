@@ -1,0 +1,124 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <title>使用&ldquo;异常&rdquo; - Zend Framework Manual</title>
+
+</head>
+<body>
+<table width="100%">
+    <tr valign="top">
+        <td width="85%">
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.exception.html">Zend_Exception</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.exception.html">Zend_Exception</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.exception.basic.html">Basic usage</a></div>
+                    </td>
+                </tr>
+            </table>
+<hr />
+<div id="zend.exception.using" class="section"><div class="info"><h1 class="title"> 使用“异常” </h1></div>
+
+    
+
+    <p class="para">
+        Zend Framework 抛出的所有异常都必须是 Zend_Exception 的子类的对象。
+    </p>
+
+    <div class="example"><div class="info"><p><b>Example #1  捕捉一个异常的例子 </b></p></div>
+        
+        <div class="programlisting"><div class="cdata"><pre>&lt;?php
+
+try {
+    Zend_Loader::loadClass(&#039;nonexistantclass&#039;);
+} catch (Zend_Exception $e) {
+    echo &quot;Caught exception: &quot; . get_class($e) . &quot;\n&quot;;
+    echo &quot;Message: &quot; . $e-&gt;getMessage() . &quot;\n&quot;;
+    // 处理错误的代码
+}</pre></div></div>
+
+    </div>
+
+    <p class="para">
+        请仔细查看ZF手册，了解具体的每种异常是由哪些方法抛出的，其抛出条件，还有具体是 Zend_Exception 的哪个子类的实例。
+    </p>
+
+</div>
+        <hr />
+
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.exception.html">Zend_Exception</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.exception.html">Zend_Exception</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.exception.basic.html">Basic usage</a></div>
+                    </td>
+                </tr>
+            </table>
+</td>
+        <td style="font-size: smaller;" width="15%"> <style type="text/css">
+#leftbar {
+	float: left;
+	width: 186px;
+	padding: 5px;
+	font-size: smaller;
+}
+ul.toc {
+	margin: 0px 5px 5px 5px;
+	padding: 0px;
+}
+ul.toc li {
+	font-size: 85%;
+	margin: 1px 0 1px 1px;
+	padding: 1px 0 1px 11px;
+	list-style-type: none;
+	background-repeat: no-repeat;
+	background-position: center left;
+}
+ul.toc li.header {
+	font-size: 115%;
+	padding: 5px 0px 5px 11px;
+	border-bottom: 1px solid #cccccc;
+	margin-bottom: 5px;
+}
+ul.toc li.active {
+	font-weight: bold;
+}
+ul.toc li a {
+	text-decoration: none;
+}
+ul.toc li a:hover {
+	text-decoration: underline;
+}
+</style>
+ <ul class="toc">
+  <li class="header home"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="reference.html">Zend Framework Reference</a></li>
+  <li class="header up"><a href="zend.exception.html">Zend_Exception</a></li>
+  <li class="active"><a href="zend.exception.using.html">使用&ldquo;异常&rdquo;</a></li>
+  <li><a href="zend.exception.basic.html">Basic usage</a></li>
+  <li><a href="zend.exception.previous.html">Previous Exceptions</a></li>
+ </ul>
+ </td>
+    </tr>
+</table>
+</body>
+</html>

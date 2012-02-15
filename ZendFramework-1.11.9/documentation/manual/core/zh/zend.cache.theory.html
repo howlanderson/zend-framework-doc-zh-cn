@@ -1,0 +1,200 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <title>缓存原理 - Zend Framework Manual</title>
+
+</head>
+<body>
+<table width="100%">
+    <tr valign="top">
+        <td width="85%">
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.cache.introduction.html">简介</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.cache.html">Zend_Cache</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.cache.frontends.html">Zend_Cache前端</a></div>
+                    </td>
+                </tr>
+            </table>
+<hr />
+<div id="zend.cache.theory" class="section"><div class="info"><h1 class="title">缓存原理</h1></div>
+    
+    <p class="para">
+        在Zend_Cache中有三个关键概念.一是用于标识缓存纪录的唯一标识符(一个字符串).二是<code class="code">&#039;lifeTime&#039;</code>指令,正如例子中所见,
+     它定义了缓存纪录的生命期(超过该值,缓存纪录被销毁).第三个关键概念是条件执行,你的部分代码可用被跳过,以加速性能.
+        前端函数(例如. <code class="code">Zend_Cache_Core::get()</code>)在缓存不命中时返回false,这使用户能处理<code class="code">if(){ ... }</code>
+     语句中的条件,包含代码中他们所要缓存(或者跳过)的部分,最后是否必须保存这些你曾经生成的块(例如: <code class="code">Zend_Cache_Core::save()</code>).
+    </p>
+    <blockquote><p><b class="note">Note</b>: 
+       在有些前端<code class="code">Function</code>中不需要条件执行,例如,当整个逻辑在前端内部实现的时候.
+    <br /></p></blockquote>
+    <blockquote><p><b class="note">Note</b>: 
+    &#039;缓存命中&#039;是一个术语,它表示当一个缓存纪录发现可用,是有效的并且是&#039;fresh&#039;的(换言之,就是还没有过期).&#039;Cache miss&#039; 表示当在缓存中找不到需要的数据时,发生缓存不命中.
+        当一个Cache miss发生是,你必须生成你的数据,并使它被缓存.而对于缓存命中,后端自动透明地从Cache中取回缓存纪录.
+    <br /></p></blockquote>
+    <div class="section" id="zend.cache.factory" name="zend.cache.factory"><div class="info"><h1 class="title"><code class="code">Zend_Cache</code> 工厂方法 </h1></div>
+        
+        <p class="para">
+            下面的示例给出了一个构造<code class="code">Zend_Cache</code>前端实例的好方法:
+        </p>
+        <div class="programlisting"><div class="cdata"><pre>
+// We choose a backend (for example &#039;File&#039; or &#039;Sqlite&#039;...)
+$backendName = &#039;[...]&#039;;
+
+// 选择一个前端(例如&#039;Core&#039;, &#039;Output&#039;, &#039;Page&#039;...)
+$frontendName = &#039;[...]&#039;;
+
+// 为选择的前端设置一个选项数组
+$frontendOptions = array([...]);
+
+// 为选择的后端设置一个选项数组
+$backendOptions = array([...]);
+
+// 创建实例(当然,最后两个参数是可选的)
+$cache = Zend_Cache::factory($frontendName, $backendName, $frontendOptions, $backendOptions);
+
+
+        </pre></div></div>
+
+        <p class="para">
+            在下面的例子中我们假设变量<code class="code">$cache</code>保存有一个有效的,已实例化的前端,并且你知道该如何给你选择的后端传递参数.
+        </p>
+        <blockquote><p><b class="note">Note</b>: 
+            必须使用<code class="code">Zend_Cache::factory()</code>来得到前端实例.你自己 直接实例化的 前端或者后端 不能按照期望工作.
+        <br /></p></blockquote>
+    </div>
+
+    <div class="section" id="zend.cache.tags" name="zend.cache.tags"><div class="info"><h1 class="title">标记纪录</h1></div>
+        
+        <p class="para">
+           标记是给缓存纪录分类的一种方法.当你使用<code class="code">save()</code>方法保存一个缓存时,你可以给该缓存纪录设置一个或多个标记,多个标记以数组形式组织在一起
+           此后你不再需要该缓存纪录使,你可以清除所有指定标记的缓存纪录.
+        </p>
+        <div class="programlisting"><div class="cdata"><pre>
+$cache-&gt;save($huge_data, &#039;myUniqueID&#039;, array(&#039;tagA&#039;, &#039;tagB&#039;, &#039;tagC&#039;));
+
+        </pre></div></div>
+
+        <blockquote><p><b class="note">Note</b>: 
+            note than the <code class="code">save()</code> method accepts an optional fourth argument : <code class="code">$specificLifetime</code>
+            (if != false, it sets a specific lifetime for this particular cache record)
+        <br /></p></blockquote>
+    </div>
+    <div class="section" id="zend.cache.clean" name="zend.cache.clean"><div class="info"><h1 class="title">缓存清理</h1></div>
+        
+        <p class="para">
+            删除特定id的Cache纪录,使用<code class="code">remove()</code>方法:
+        </p>
+        <div class="programlisting"><div class="cdata"><pre>
+$cache-&gt;remove(&#039;idToRemove&#039;);
+
+        </pre></div></div>
+
+        <p class="para">
+            在单个操作中删除多个Cache纪录,可以使用<code class="code">clean()</code>方法.例如,删除所有的缓存纪录:
+        </p>
+        <div class="programlisting"><div class="cdata"><pre>
+// 清除所有缓存纪录
+$cache-&gt;clean(Zend_Cache::CLEANING_MODE_ALL);
+
+// 仅清除过期的
+$cache-&gt;clean(Zend_Cache::CLEANING_MODE_OLD);
+
+
+        </pre></div></div>
+
+        <p class="para">
+            如果你想删除标记为&#039;tagA&#039;和&#039;tagC&#039;的缓存项:
+        </p>
+        <div class="programlisting"><div class="cdata"><pre>
+$cache-&gt;clean(Zend_Cache::CLEANING_MODE_MATCHING_TAG, array(&#039;tagA&#039;, &#039;tagC&#039;));
+
+        </pre></div></div>
+
+        <p class="para">
+            可用的清除模式有:<code class="code">CLEANING_MODE_ALL</code>, <code class="code">CLEANING_MODE_OLD</code>,
+      <code class="code">CLEANING_MODE_MATCHING_TAG</code> 和 <code class="code">CLEANING_MODE_NOT_MATCHING_TAG</code>.
+            后面的,正如它名称所暗示的,在清除操作中组合了一个标记数组,对其中的每个元素作处理.
+        </p>
+    </div>
+</div>
+        <hr />
+
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.cache.introduction.html">简介</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.cache.html">Zend_Cache</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.cache.frontends.html">Zend_Cache前端</a></div>
+                    </td>
+                </tr>
+            </table>
+</td>
+        <td style="font-size: smaller;" width="15%"> <style type="text/css">
+#leftbar {
+	float: left;
+	width: 186px;
+	padding: 5px;
+	font-size: smaller;
+}
+ul.toc {
+	margin: 0px 5px 5px 5px;
+	padding: 0px;
+}
+ul.toc li {
+	font-size: 85%;
+	margin: 1px 0 1px 1px;
+	padding: 1px 0 1px 11px;
+	list-style-type: none;
+	background-repeat: no-repeat;
+	background-position: center left;
+}
+ul.toc li.header {
+	font-size: 115%;
+	padding: 5px 0px 5px 11px;
+	border-bottom: 1px solid #cccccc;
+	margin-bottom: 5px;
+}
+ul.toc li.active {
+	font-weight: bold;
+}
+ul.toc li a {
+	text-decoration: none;
+}
+ul.toc li a:hover {
+	text-decoration: underline;
+}
+</style>
+ <ul class="toc">
+  <li class="header home"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="reference.html">Zend Framework Reference</a></li>
+  <li class="header up"><a href="zend.cache.html">Zend_Cache</a></li>
+  <li><a href="zend.cache.introduction.html">简介</a></li>
+  <li class="active"><a href="zend.cache.theory.html">缓存原理</a></li>
+  <li><a href="zend.cache.frontends.html">Zend_Cache前端</a></li>
+  <li><a href="zend.cache.backends.html">Zend_Cache后端</a></li>
+  <li><a href="zend.cache.cache.manager.html">The Cache Manager</a></li>
+ </ul>
+ </td>
+    </tr>
+</table>
+</body>
+</html>

@@ -1,0 +1,218 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <title>简介 - Zend Framework Manual</title>
+
+</head>
+<body>
+<table width="100%">
+    <tr valign="top">
+        <td width="85%">
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.translate.html">Zend_Translate</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.translate.html">Zend_Translate</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.translate.adapter.html">Zend_Translate适配器</a></div>
+                    </td>
+                </tr>
+            </table>
+<hr />
+<div id="zend.translate.introduction" class="section"><div class="info"><h1 class="title">简介</h1></div>
+
+    
+
+    <p class="para">
+        Zend_Translate是Zend框架为多语言应用程序提供的一个解决方案.
+    </p>
+
+    <p class="para">
+        在多语言应用程序中,内容必须翻译为多种语言,并且根据用户的语言设置显示相应的内容.
+        PHP已经提供了几个方法处理这样的问题,但是存在一些问题:
+    </p>
+
+    <ul class="itemizedlist">
+        <li class="listitem">
+            <p class="para">
+                <em class="emphasis">不一致的API:</em>
+                对于不同的源格式没有单一的API.gettext的使用非常复杂.
+            </p>
+        </li>
+        <li class="listitem">
+            <p class="para">
+                <em class="emphasis">PHP仅支持gettext和原生数组:</em>
+                PHP本生仅为数组和gettext提供支持 . 所有其他的源格式必须自己进行处理,因为没有提供原生的支持.
+            </p>
+        </li>
+        <li class="listitem">
+            <p class="para">
+                <em class="emphasis">不检测默认语言:</em>
+                没有深入的不同浏览器的背景知识,用户的默认语言不能被检测.
+            </p>
+        </li>
+        <li class="listitem">
+            <p class="para">
+                <em class="emphasis">Gettext 是非线程安全的:</em>
+                PHP&#039;的gettext库不是现在安全的,并且它不应该用于多线程环境中.这是由于gettex本生的问题而不是PHP,但却是一个存在的问题.
+            </p>
+        </li>
+    </ul>
+
+    <p class="para">
+        Zend_Translate没有上面的问题.这就是为什么我们推进使用Zend_Translate而不是PHP的原生函数.Zend_Translate的优点有:
+    </p>
+
+    <ul class="itemizedlist">
+        <li class="listitem">
+            <p class="para">
+                <em class="emphasis">
+                    支持多种源格式:
+                </em>
+                Zend_Translate 支持多种源格式,
+                包括被PHP支持的,和其他的格式,包括TMX和CSV文件.
+            </p>
+        </li>
+        <li class="listitem">
+            <p class="para">
+                <em class="emphasis">线程安全的gettext:</em>
+                Zend_Translate 的 gettext reader是线程安全的.在多线程的环境中使用它没有问题.
+            </p>
+        </li>
+        <li class="listitem">
+            <p class="para">
+                <em class="emphasis">简易并且通用的API:</em>
+                Zend_Translate的API非常简单并且只要求少数的函数.因此易于学习和维护.所有的源格式用同样的方法处理,如果你的源格式从Gettext改为TMX,
+                你只需要改变一行代码指定存储适配器.
+            </p>
+        </li>
+        <li class="listitem">
+            <p class="para">
+                <em class="emphasis">
+                    用户的标准语言检测:
+                </em>
+                用户访问站点的首选语言能够通过被检测并被Zend_Translate使用。
+            </p>
+        </li>
+        <li class="listitem">
+      <p class="para">
+       <em class="emphasis"> 自动源文检测：</em>
+        Zend_Translate 能够检测和集成多个源文件并根据文件名或目录另外地检测哪个地方（locale）在用。
+      </p>
+    </li>
+    </ul>
+
+    <div class="section" id="zend.translate.introduction.adapters" name="zend.translate.introduction.adapters"><div class="info"><h1 class="title">开始多语言化</h1></div>
+
+        
+
+        <p class="para">
+            让我们打开多语言Web应用程序的窗口.我们想做的是转换字符串,产生翻译后的输出.
+            否则我们不得不给每种语言都写一个视图,没人愿意这么做.通常,多语言站点在设计中是非常简单的.仅有4个必须做的步骤:
+        </p>
+
+        <ol type="1">
+            <li class="listitem">
+                <p class="para">决定你想使用那个适配器;</p>
+            </li>
+            <li class="listitem">
+                <p class="para">
+                    创建视图并把Zend_Translate集成到你的代码中.
+                </p>
+            </li>
+            <li class="listitem">
+                <p class="para">从你的代码中创建源文件;</p>
+            </li>
+            <li class="listitem">
+                <p class="para">
+                    翻译你的源文件为所期望的语言.
+                </p>
+            </li>
+        </ol>
+
+        <p class="para">
+            下面的章节将指导你通过全部4个步骤.读取接下来的一些页面创建你自己的多语言web应用程序.
+        </p>
+
+    </div>
+
+</div>
+        <hr />
+
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.translate.html">Zend_Translate</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.translate.html">Zend_Translate</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.translate.adapter.html">Zend_Translate适配器</a></div>
+                    </td>
+                </tr>
+            </table>
+</td>
+        <td style="font-size: smaller;" width="15%"> <style type="text/css">
+#leftbar {
+	float: left;
+	width: 186px;
+	padding: 5px;
+	font-size: smaller;
+}
+ul.toc {
+	margin: 0px 5px 5px 5px;
+	padding: 0px;
+}
+ul.toc li {
+	font-size: 85%;
+	margin: 1px 0 1px 1px;
+	padding: 1px 0 1px 11px;
+	list-style-type: none;
+	background-repeat: no-repeat;
+	background-position: center left;
+}
+ul.toc li.header {
+	font-size: 115%;
+	padding: 5px 0px 5px 11px;
+	border-bottom: 1px solid #cccccc;
+	margin-bottom: 5px;
+}
+ul.toc li.active {
+	font-weight: bold;
+}
+ul.toc li a {
+	text-decoration: none;
+}
+ul.toc li a:hover {
+	text-decoration: underline;
+}
+</style>
+ <ul class="toc">
+  <li class="header home"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="reference.html">Zend Framework Reference</a></li>
+  <li class="header up"><a href="zend.translate.html">Zend_Translate</a></li>
+  <li class="active"><a href="zend.translate.introduction.html">简介</a></li>
+  <li><a href="zend.translate.adapter.html">Zend_Translate适配器</a></li>
+  <li><a href="zend.translate.using.html">Using Translation Adapters</a></li>
+  <li><a href="zend.translate.sourcecreation.html">Creating source files</a></li>
+  <li><a href="zend.translate.additional.html">Additional features for translation</a></li>
+  <li><a href="zend.translate.plurals.html">Plural notations for Translation</a></li>
+ </ul>
+ </td>
+    </tr>
+</table>
+</body>
+</html>

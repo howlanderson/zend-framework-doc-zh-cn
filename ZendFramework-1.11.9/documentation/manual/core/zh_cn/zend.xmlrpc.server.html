@@ -1,0 +1,582 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <title>Zend_XmlRpc_Server - Zend Framework Manual</title>
+
+</head>
+<body>
+<table width="100%">
+    <tr valign="top">
+        <td width="85%">
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.xmlrpc.client.html">Zend_XmlRpc_Client</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.xmlrpc.html">Zend_XmlRpc</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zendx.console.process.unix.html">ZendX_Console_Process_Unix</a></div>
+                    </td>
+                </tr>
+            </table>
+<hr />
+<div id="zend.xmlrpc.server" class="section"><div class="info"><h1 class="title">Zend_XmlRpc_Server</h1></div>
+    
+
+    <div class="section" id="zend.xmlrpc.server.introduction" name="zend.xmlrpc.server.introduction"><div class="info"><h1 class="title">介绍</h1></div>
+        
+
+        <p class="para">
+            Zend_XmlRpc_Server 依照 <a href="http://www.xmlrpc.com/spec" class="link external">&raquo; www.xmlrpc.com 上的规格描述</a>
+            实现了一个全功能 XML-RPC 服务器。同时，它还实现了允许批量传输（boxcarring）的 system.multicall()
+            方法。
+        </p>
+    </div>
+
+    <div class="section" id="zend.xmlrpc.server.usage" name="zend.xmlrpc.server.usage"><div class="info"><h1 class="title">基本使用</h1></div>
+        
+
+        <p class="para">
+            最基本的使用实例：
+        </p>
+
+        <div class="programlisting"><div class="cdata"><pre>&lt;?php
+require_once &#039;Zend/XmlRpc/Server.php&#039;;
+require_once &#039;My/Service/Class.php&#039;;
+
+$server = new Zend_XmlRpc_Server();
+$server-&gt;setClass(&#039;My_Service_Class&#039;);
+echo $server-&gt;handle();
+        </pre></div></div>
+
+    </div>
+
+    <div class="section" id="zend.xmlrpc.server.structure" name="zend.xmlrpc.server.structure"><div class="info"><h1 class="title">服务器结构</h1></div>
+        
+
+        <p class="para">
+            Zend_XmlRpc_Server 是由各种不同组件组成，包括服务器自身用于接收请求或进行相应的组件，
+            以及错误对象。
+        </p>
+
+        <p class="para">
+            为了启动 Zend_XmlRpc_Server，开发人员必须通过 <code class="code">setClass()</code>
+            和 <code class="code">addFunction()</code> 方法附加一个或者多个类或函数到服务器。
+        </p>
+
+        <p class="para">
+            完成附加操作后，则可以向 <code class="code">Zend_XmlRpc_Server::handle()</code>
+            传递 <code class="code">Zend_XmlRpc_Request</code> 对象，如果没有提供它将实例化一个
+            <code class="code">Zend_XmlRpc_Request_Http</code> 对象用于从 <code class="code">php://input</code>
+            获取请求。
+        </p>
+
+        <p class="para">
+            这时 <code class="code">Zend_XmlRpc_Server::handle()</code> 将基于请求尝试调度合适的处理程序。
+            它将返回基于 <code class="code">Zend_XmlRpc_Response</code> 的对象或者 <code class="code">Zend_XmlRpc_Server_Fault</code>
+            对象。这些对象都有 <code class="code">__toString()</code> 用来创建合法的，允许直接返回的 XML-RPC 的
+            XML 响应文本。
+        </p>
+    </div>
+
+    <div class="section" id="zend.xmlrpc.server.conventions" name="zend.xmlrpc.server.conventions"><div class="info"><h1 class="title">转换</h1></div>
+        
+        <p class="para">
+            Zend_XmlRpc_Server 允许开发人员附加函数和类方法作为 XML-RPC 方法来调度。通过
+            Zend_Server_Reflection 自省所有附加的方法，使用函数和方法的文档部分(docblocks)
+            决定方法的帮助文档和方法标识。
+        </p>
+
+        <p class="para">
+            XML-RPC 类型不可能与 PHP 类型一一对应。然而程序仍然利用 @param 和 @return
+            的值列表尽可能的猜测最合适的类型。一些 XML-RPC 类型没有合适的 PHP 中的匹配，
+            所以应当在 phpdoc 中对 XML-RPC 类型给予提示。这些包括：
+        </p>
+
+        <ul class="itemizedlist">
+            <li class="listitem"><p class="para">dateTime.iso8601，字符串格式
+                    YYYYMMDDTHH:mm:ss</p></li>
+            <li class="listitem"><p class="para">base64, base64 编码数据</p></li>
+            <li class="listitem"><p class="para">struct, 结构匹配的数组</p></li>
+        </ul>
+
+        <p class="para">
+            下面的例子演示了如何增加这样的提示：
+        </p>
+
+        <div class="programlisting"><div class="cdata"><pre>&lt;?php
+/**
+* 这是一个演示函数
+*
+* @param base64 $val1 Base64-encoded data
+* @param dateTime.iso8601 $val2 An ISO date
+* @param struct $val3 An associative array
+* @return struct
+*/
+function myFunc($val1, $val2, $val3)
+{
+}
+        </pre></div></div>
+
+
+        <p class="para">
+            PhpDocumentor 不会验证参数和返回值的类型，所以这对 API 文档没有任何影响。
+            而且当服务器验证调用方法所提供的参数时，就必须提供提示。
+        </p>
+
+        <p class="para">
+            最有效的办法是未参数和返回值指定多个类型；XML-RPC 文档甚至建议 system.methodSignature
+            应当返回一个数组，含有所有可能的方法标识（例如，参数和返回值的所有可能的组合）。
+            你可以像通常那样在 PhpDocumentor 中使用“|”符号做到这点：
+        </p>
+
+        <div class="programlisting"><div class="cdata"><pre>&lt;?php
+/**
+* 这是一个演示函数
+*
+* @param string|base64 $val1 String or base64-encoded data
+* @param string|dateTime.iso8601 $val2 String or an ISO date
+* @param array|struct $val3 Normal indexed array or an associative array
+* @return boolean|struct
+*/
+function myFunc($val1, $val2, $val3)
+{
+}
+        </pre></div></div>
+
+
+        <p class="para">
+            需要注意的是，允许多个标识可能干扰使用服务的开发人员；一般来说，一个 XML-RPC
+            方法只应该有一个标识。
+        </p>
+    </div>
+
+    <div class="section" id="zend.xmlrpc.server.namespaces" name="zend.xmlrpc.server.namespaces"><div class="info"><h1 class="title">使用命名空间</h1></div>
+        
+
+        <p class="para">
+            XML-RPC 有名字空间的概念；通常，它允许使用“.”分割 XML-RPC 方法到各个命名空间。
+            这有助于防止不同类提供的不同服务方法之间的命名冲突。例如，XML-RPC
+            服务在命名空间“system”中保留了一些方法：
+        </p>
+
+        <ul class="itemizedlist">
+            <li class="listitem"><p class="para">system.listMethods</p></li>
+            <li class="listitem"><p class="para">system.methodHelp</p></li>
+            <li class="listitem"><p class="para">system.methodSignature</p></li>
+        </ul>
+
+        <p class="para">
+            从内部来讲，这些方法映射到 Zend_XmlRpc_Server 的同名方法上。
+        </p>
+
+        <p class="para">
+            如果想要为服务方法增加命名空间，只要在附加一个函数或类时，添加命名空间到适当的方法上：
+        </p>
+
+        <div class="programlisting"><div class="cdata"><pre>&lt;?php
+// My_Service_Class 类的公共方法将被映射为 myservice.METHODNAME
+$server-&gt;setClass(&#039;My_Service_Class&#039;, &#039;myservice&#039;);
+
+// 函数“somefunc”将被映射为 funcs.somefunc
+$server-&gt;addFunction(&#039;somefunc&#039;, &#039;funcs&#039;);
+        </pre></div></div>
+
+    </div>
+
+    <div class="section" id="zend.xmlrpc.server.request" name="zend.xmlrpc.server.request"><div class="info"><h1 class="title">自定义请求对象</h1></div>
+        
+
+        <p class="para">
+            多数情况下，只需要使用 Zend_XmlRpc_Server 默认提供的请求类型
+            Zend_XmlRpc_Request_Http。然而，仍然有可能在 CLI、GUI 或者其他环境使用
+            XML-RPC，亦或需要记录每个请求。需要从 Zend_XmlRpc_Request
+            继承，创建自定义的对象来完成这个工作。最重要的是记得确保实现 getMethod()
+            和 getParams() 方法，这样 XML-RPC 服务器就可以获取必要的信息进行调度。
+        </p>
+    </div>
+
+    <div class="section" id="zend.xmlrpc.server.response" name="zend.xmlrpc.server.response"><div class="info"><h1 class="title">自定义响应对象</h1></div>
+        
+
+        <p class="para">
+            和请求对象一样，Zend_XmlRpc_Server 可以返回自定义响应对象；默认情况下，
+            Zend_XmlRpc_Response_Http 对象被返回，这个对象包含一个合适的用于 XML-RPC 的
+            HTTP Content-Type 头。使用自定义对象的情况可能是需要记录响应，或需要发送响应到
+            STDOUT。
+        </p>
+
+        <p class="para">
+            在调用 handle() 之前使用 Zend_XmlRpc_Server::setResponseClass()
+            指定自定义的响应类。
+        </p>
+    </div>
+
+    <div class="section" id="zend.xmlrpc.server.fault" name="zend.xmlrpc.server.fault"><div class="info"><h1 class="title">处理错误产生的异常</h1></div>
+        
+
+        <p class="para">
+            Zend_XmlRpc_Server 会捕获调度方法产生的一场，同时生成 XML-RPC 失败响应。
+            然而，默认情况下，异常消息和代码不出现在失败响应中。有意设计成如此形式主要是为了保护代码；
+            许多异常会暴露超出预期的大量关于代码和开发环境的信息（常见的例子如数据库抽象层或访问层一场）。
+        </p>
+
+        <p class="para">
+            异常类也可以加入白名单中作为失败响应。要做到这点，只需使用
+            Zend_XmlRpc_Server_Fault::attachFaultException() 添加一个异常类到白名单即可：
+        </p>
+
+        <div class="programlisting"><div class="cdata"><pre>&lt;?php
+Zend_XmlRpc_Server_Fault::attachFaultException(&#039;My_Project_Exception&#039;);
+        </pre></div></div>
+
+
+        <p class="para">
+            如果你使用的是一个继承于其他项目的异常，可以一次将整个类树加入白名单。
+            Zend_XmlRpc_Server_Exceptions 总是在白名单中，用于报告指定的内部错误（如未定义的方法等）。
+        </p>
+
+        <p class="para">
+            一个未在白名单中指定的异常将会返回错误代码“404”，错误消息“Unknown error”（未知错误）。
+        </p>
+    </div>
+
+    <div class="section" id="zend.xmlrpc.server.caching" name="zend.xmlrpc.server.caching"><div class="info"><h1 class="title">在请求之间缓存服务器定义</h1></div>
+        
+        <p class="para">
+            附加多个类到 XML-RPC 服务器实例可能消耗大量的资源；每一个类必须使用反射
+            API 进行自省（通过 Zend_Server_Reflection），生成一个包含有所有可用方法的列表用于服务器调用。
+        </p>
+        <p class="para">
+            为了减少这种性能污点，可以使用 Zend_XmlRpc_Server_Cache 来缓存请求之间的服务器定义。
+            联合 __autoload() 使用，可以极大的提高性能。
+        </p>
+        <p class="para">
+            实例如下：
+        </p>
+        <div class="programlisting"><div class="cdata"><pre>&lt;?php
+require_once &#039;Zend/Loader.php&#039;;
+require_once &#039;Zend/XmlRpc/Server.php&#039;;
+require_once &#039;Zend/XmlRpc/Server/Cache.php&#039;;
+
+function __autoload($class)
+{
+    Zend_Loader::loadClass($class);
+}
+
+$cacheFile = dirname(__FILE__) . &#039;/xmlrpc.cache&#039;;
+$server = new Zend_XmlRpc_Server();
+
+if (!Zend_XmlRpc_Server_Cache::get($cacheFile, $server)) {
+    require_once &#039;My/Services/Glue.php&#039;;
+    require_once &#039;My/Services/Paste.php&#039;;
+    require_once &#039;My/Services/Tape.php&#039;;
+
+    $server-&gt;setClass(&#039;My_Services_Glue&#039;, &#039;glue&#039;);   // glue. namespace
+    $server-&gt;setClass(&#039;My_Services_Paste&#039;, &#039;paste&#039;); // paste. namespace
+    $server-&gt;setClass(&#039;My_Services_Tape&#039;, &#039;tape&#039;);   // tape. namespace
+
+    Zend_XmlRpc_Server_Cache::save($cacheFile, $server);
+}
+
+echo $server-&gt;handle();
+        </pre></div></div>
+
+        <p class="para">
+            上面的例子尝试从当前脚本所在目录下的 xmlrpc.cache 文件获取服务器定义。
+            如果失败的话就加载需要的服务类，附加他们到服务器实例，并尝试使用服务器定义创建新的缓存文件。
+        </p>
+    </div>
+
+    <div class="section" id="zend.xmlrpc.server.use" name="zend.xmlrpc.server.use"><div class="info"><h1 class="title">使用实例</h1></div>
+        
+        <p class="para">
+            下面有一些有用的例子，向开发人员展示了可能用到的各种情况。
+            每一个实例都是建立在前一个实例基础上的扩充。
+        </p>
+        <div class="section" id="zend.xmlrpc.server.use.case1" name="zend.xmlrpc.server.use.case1"><div class="info"><h1 class="title">基本使用</h1></div>
+            
+
+            <p class="para">
+                下面的例子演示了附加一个函数作为 XML-RPC 的调度方法，并用其处理请求。
+            </p>
+
+            <div class="programlisting"><div class="cdata"><pre>&lt;?php
+require_once &#039;Zend/XmlRpc/Server.php&#039;;
+
+/**
+ * 返回 MD5 值
+ *
+ * @param string $value Value to md5sum
+ * @return string MD5 sum of value
+ */
+function md5Value($value)
+{
+    return md5($value);
+}
+
+$server = new Zend_XmlRpc_Server();
+$server-&gt;addFunction(&#039;md5Value&#039;);
+echo $server-&gt;handle();
+            </pre></div></div>
+
+        </div>
+
+        <div class="section" id="zend.xmlrpc.server.use.case2" name="zend.xmlrpc.server.use.case2"><div class="info"><h1 class="title">附加一个类</h1></div>
+            
+
+            <p class="para">
+                下面的例子演示了附加一个类的公共方法作为 XML-RPC 的调度方法。
+            </p>
+
+            <div class="programlisting"><div class="cdata"><pre>&lt;?php
+require_once &#039;Zend/XmlRpc/Server.php&#039;;
+require_once &#039;Services/Comb.php&#039;;
+
+$server = new Zend_XmlRpc_Server();
+$server-&gt;setClass(&#039;Services_Comb&#039;);
+echo $server-&gt;handle();
+            </pre></div></div>
+
+        </div>
+
+        <div class="section" id="zend.xmlrpc.server.use.case3" name="zend.xmlrpc.server.use.case3"><div class="info"><h1 class="title">利用命名空间附加多个类</h1></div>
+            
+
+            <p class="para">
+                下面的例子演示了附加多个类，每个类都有自己的命名空间。
+            </p>
+
+            <div class="programlisting"><div class="cdata"><pre>&lt;?php
+require_once &#039;Zend/XmlRpc/Server.php&#039;;
+require_once &#039;Services/Comb.php&#039;;
+require_once &#039;Services/Brush.php&#039;;
+require_once &#039;Services/Pick.php&#039;;
+
+$server = new Zend_XmlRpc_Server();
+$server-&gt;setClass(&#039;Services_Comb&#039;, &#039;comb&#039;);   // methods called as comb.*
+$server-&gt;setClass(&#039;Services_Brush&#039;, &#039;brush&#039;); // methods called as brush.*
+$server-&gt;setClass(&#039;Services_Pick&#039;, &#039;pick&#039;);   // methods called as pick.*
+echo $server-&gt;handle();
+            </pre></div></div>
+
+        </div>
+
+        <div class="section" id="zend.xmlrpc.server.use.case4" name="zend.xmlrpc.server.use.case4"><div class="info"><h1 class="title">指定异常作为合法的失败响应</h1></div>
+            
+
+            <p class="para">
+                下面的例子允许任何 Services_Exception 的派生类作为失败响应返回其代码和消息。
+            </p>
+
+            <div class="programlisting"><div class="cdata"><pre>&lt;?php
+require_once &#039;Zend/XmlRpc/Server.php&#039;;
+require_once &#039;Zend/XmlRpc/Server/Fault.php&#039;;
+require_once &#039;Services/Exception.php&#039;;
+require_once &#039;Services/Comb.php&#039;;
+require_once &#039;Services/Brush.php&#039;;
+require_once &#039;Services/Pick.php&#039;;
+
+// 允许 Services_Exceptions 作为响应失败输出
+Zend_XmlRpc_Server_Fault::attachFaultException(&#039;Services_Exception&#039;);
+
+$server = new Zend_XmlRpc_Server();
+$server-&gt;setClass(&#039;Services_Comb&#039;, &#039;comb&#039;);   // methods called as comb.*
+$server-&gt;setClass(&#039;Services_Brush&#039;, &#039;brush&#039;); // methods called as brush.*
+$server-&gt;setClass(&#039;Services_Pick&#039;, &#039;pick&#039;);   // methods called as pick.*
+echo $server-&gt;handle();
+            </pre></div></div>
+
+        </div>
+
+        <div class="section" id="zend.xmlrpc.server.use.case5" name="zend.xmlrpc.server.use.case5"><div class="info"><h1 class="title">设置自定义请求对象</h1></div>
+            
+
+            <p class="para">
+                下面的例子演示了实例化自定义请求对象并将其传递到服务器进行处理。
+            </p>
+
+            <div class="programlisting"><div class="cdata"><pre>&lt;?php
+require_once &#039;Zend/XmlRpc/Server.php&#039;;
+require_once &#039;Zend/XmlRpc/Server/Fault.php&#039;;
+require_once &#039;Services/Request.php&#039;;
+require_once &#039;Services/Exception.php&#039;;
+require_once &#039;Services/Comb.php&#039;;
+require_once &#039;Services/Brush.php&#039;;
+require_once &#039;Services/Pick.php&#039;;
+
+// 允许 Services_Exceptions 作为响应失败输出
+Zend_XmlRpc_Server_Fault::attachFaultException(&#039;Services_Exception&#039;);
+
+$server = new Zend_XmlRpc_Server();
+$server-&gt;setClass(&#039;Services_Comb&#039;, &#039;comb&#039;);   // methods called as comb.*
+$server-&gt;setClass(&#039;Services_Brush&#039;, &#039;brush&#039;); // methods called as brush.*
+$server-&gt;setClass(&#039;Services_Pick&#039;, &#039;pick&#039;);   // methods called as pick.*
+
+// 创建请求对象
+$request = new Services_Request();
+
+echo $server-&gt;handle($request);
+            </pre></div></div>
+
+        </div>
+
+        <div class="section" id="zend.xmlrpc.server.use.case6" name="zend.xmlrpc.server.use.case6"><div class="info"><h1 class="title">设置自定义响应对象</h1></div>
+            
+
+            <p class="para">
+                下面的例子演示了指定自定义类作为响应返回。
+            </p>
+
+            <div class="programlisting"><div class="cdata"><pre>&lt;?php
+require_once &#039;Zend/XmlRpc/Server.php&#039;;
+require_once &#039;Zend/XmlRpc/Server/Fault.php&#039;;
+require_once &#039;Services/Request.php&#039;;
+require_once &#039;Services/Response.php&#039;;
+require_once &#039;Services/Exception.php&#039;;
+require_once &#039;Services/Comb.php&#039;;
+require_once &#039;Services/Brush.php&#039;;
+require_once &#039;Services/Pick.php&#039;;
+
+// 允许 Services_Exceptions 作为响应失败输出
+Zend_XmlRpc_Server_Fault::attachFaultException(&#039;Services_Exception&#039;);
+
+$server = new Zend_XmlRpc_Server();
+$server-&gt;setClass(&#039;Services_Comb&#039;, &#039;comb&#039;);   // methods called as comb.*
+$server-&gt;setClass(&#039;Services_Brush&#039;, &#039;brush&#039;); // methods called as brush.*
+$server-&gt;setClass(&#039;Services_Pick&#039;, &#039;pick&#039;);   // methods called as pick.*
+
+// 创建请求对象
+$request = new Services_Request();
+
+// 设置自定义响应
+$server-&gt;setResponseClass(&#039;Services_Response&#039;);
+
+echo $server-&gt;handle($request);
+            </pre></div></div>
+
+        </div>
+
+        <div class="section" id="zend.xmlrpc.server.use.case7" name="zend.xmlrpc.server.use.case7"><div class="info"><h1 class="title">在请求之间缓存服务器定义</h1></div>
+            
+
+            <p class="para">
+                下面的例子演示了在请求之间缓存服务器定义。
+            </p>
+
+            <div class="programlisting"><div class="cdata"><pre>&lt;?php
+require_once &#039;Zend/XmlRpc/Server.php&#039;;
+require_once &#039;Zend/XmlRpc/Server/Fault.php&#039;;
+require_once &#039;Zend/XmlRpc/Server/Cache.php&#039;;
+require_once &#039;Services/Request.php&#039;;
+require_once &#039;Services/Response.php&#039;;
+require_once &#039;Services/Exception.php&#039;;
+require_once &#039;Services/Comb.php&#039;;
+require_once &#039;Services/Brush.php&#039;;
+require_once &#039;Services/Pick.php&#039;;
+
+// 指定一个缓存文件
+$cacheFile = dirname(__FILE__) . &#039;/xmlrpc.cache&#039;;
+
+// 允许 Services_Exceptions 作为响应失败输出
+Zend_XmlRpc_Server_Fault::attachFaultException(&#039;Services_Exception&#039;);
+
+$server = new Zend_XmlRpc_Server();
+
+// 尝试从缓存中获取服务器定义
+if (!Zend_XmlRpc_Server_Cache::get($cacheFile, $server)) {
+    $server-&gt;setClass(&#039;Services_Comb&#039;, &#039;comb&#039;);   // methods called as comb.*
+    $server-&gt;setClass(&#039;Services_Brush&#039;, &#039;brush&#039;); // methods called as brush.*
+    $server-&gt;setClass(&#039;Services_Pick&#039;, &#039;pick&#039;);   // methods called as pick.*
+
+    // 保存缓存
+    Zend_XmlRpc_Server_Cache::save($cacheFile, $server));
+}
+
+// 创建请求对象
+$request = new Services_Request();
+
+// 设置自定义响应
+$server-&gt;setResponseClass(&#039;Services_Response&#039;);
+
+echo $server-&gt;handle($request);
+            </pre></div></div>
+
+        </div>
+    </div>
+</div>
+        <hr />
+
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.xmlrpc.client.html">Zend_XmlRpc_Client</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.xmlrpc.html">Zend_XmlRpc</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zendx.console.process.unix.html">ZendX_Console_Process_Unix</a></div>
+                    </td>
+                </tr>
+            </table>
+</td>
+        <td style="font-size: smaller;" width="15%"> <style type="text/css">
+#leftbar {
+	float: left;
+	width: 186px;
+	padding: 5px;
+	font-size: smaller;
+}
+ul.toc {
+	margin: 0px 5px 5px 5px;
+	padding: 0px;
+}
+ul.toc li {
+	font-size: 85%;
+	margin: 1px 0 1px 1px;
+	padding: 1px 0 1px 11px;
+	list-style-type: none;
+	background-repeat: no-repeat;
+	background-position: center left;
+}
+ul.toc li.header {
+	font-size: 115%;
+	padding: 5px 0px 5px 11px;
+	border-bottom: 1px solid #cccccc;
+	margin-bottom: 5px;
+}
+ul.toc li.active {
+	font-weight: bold;
+}
+ul.toc li a {
+	text-decoration: none;
+}
+ul.toc li a:hover {
+	text-decoration: underline;
+}
+</style>
+ <ul class="toc">
+  <li class="header home"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="reference.html">Zend Framework Reference</a></li>
+  <li class="header up"><a href="zend.xmlrpc.html">Zend_XmlRpc</a></li>
+  <li><a href="zend.xmlrpc.introduction.html">Introduction</a></li>
+  <li><a href="zend.xmlrpc.client.html">Zend_XmlRpc_Client</a></li>
+  <li class="active"><a href="zend.xmlrpc.server.html">Zend_XmlRpc_Server</a></li>
+ </ul>
+ </td>
+    </tr>
+</table>
+</body>
+</html>

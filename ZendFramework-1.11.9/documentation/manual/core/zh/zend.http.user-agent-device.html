@@ -1,0 +1,743 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <title>The UserAgent Device Interface - Zend Framework Manual</title>
+
+</head>
+<body>
+<table width="100%">
+    <tr valign="top">
+        <td width="85%">
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.http.user-agent.html">Zend_Http_UserAgent</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.http.html">Zend_Http</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.http.user-agent-features.html">The UserAgent Features Adapter</a></div>
+                    </td>
+                </tr>
+            </table>
+<hr />
+<div id="zend.http.user-agent-device" class="section"><div class="info"><h1 class="title">The UserAgent Device Interface</h1></div>
+    
+
+    <div class="section" id="zend.http.user-agent-device.intro" name="zend.http.user-agent-device.intro"><div class="info"><h1 class="title">Overview</h1></div>
+        
+
+        <p class="para">
+            Once the User-Agent has been parsed and capabilities retrieved from the <a href="zend.http.user-agent-features.html" class="link">Features adapter</a>, you will be
+            returned an object that represents the discovered brower device. This interface
+            describes the various capabilities you may now introspect.
+        </p>
+
+        <p class="para">
+            Additionally, the various device classes define algorithms for matching the devices they
+            describe. By implementing this interface, you may provide additional logic around these
+            capabilities.
+        </p>
+    </div>
+
+    <div class="section" id="zend.http.user-agent-device.quick-start" name="zend.http.user-agent-device.quick-start"><div class="info"><h1 class="title">Quick Start</h1></div>
+        
+
+        <p class="para">
+            The <span class="interfacename">Zend_Http_UserAgent_Device</span> interface defines the
+            following methods.
+        </p>
+
+        <div class="programlisting php"><div class="phpcode"><div class="php" style="font-family: monospace;"><ol><li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #000000; font-weight: bold;">interface</span> Zend_Http_UserAgent_Device <span style="color: #000000; font-weight: bold;">extends</span> Serializable</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #66cc66;">&#123;</span></div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; <span style="color: #000000; font-weight: bold;">public</span> <span style="color: #000000; font-weight: bold;">function</span> __construct<span style="color: #66cc66;">&#40;</span><span style="color: #0000ff;">$userAgent</span> = <span style="color: #000000; font-weight: bold;">null</span>, <a href="http://www.php.net/array"><span style="color: #000066;">array</span></a> <span style="color: #0000ff;">$server</span> = <a href="http://www.php.net/array"><span style="color: #000066;">array</span></a><span style="color: #66cc66;">&#40;</span><span style="color: #66cc66;">&#41;</span>, <a href="http://www.php.net/array"><span style="color: #000066;">array</span></a> <span style="color: #0000ff;">$config</span> = <a href="http://www.php.net/array"><span style="color: #000066;">array</span></a><span style="color: #66cc66;">&#40;</span><span style="color: #66cc66;">&#41;</span><span style="color: #66cc66;">&#41;</span>;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; <span style="color: #000000; font-weight: bold;">public</span> <a href="http://www.php.net/static"><span style="color: #000066;">static</span></a> <span style="color: #000000; font-weight: bold;">function</span> match<span style="color: #66cc66;">&#40;</span><span style="color: #0000ff;">$userAgent</span>, <span style="color: #0000ff;">$server</span><span style="color: #66cc66;">&#41;</span>;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; <span style="color: #000000; font-weight: bold;">public</span> <span style="color: #000000; font-weight: bold;">function</span> getAllFeatures<span style="color: #66cc66;">&#40;</span><span style="color: #66cc66;">&#41;</span>;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; <span style="color: #000000; font-weight: bold;">public</span> <span style="color: #000000; font-weight: bold;">function</span> getAllGroups<span style="color: #66cc66;">&#40;</span><span style="color: #66cc66;">&#41;</span>;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; <span style="color: #000000; font-weight: bold;">public</span> <span style="color: #000000; font-weight: bold;">function</span> getBrowser<span style="color: #66cc66;">&#40;</span><span style="color: #66cc66;">&#41;</span>;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; <span style="color: #000000; font-weight: bold;">public</span> <span style="color: #000000; font-weight: bold;">function</span> getBrowserVersion<span style="color: #66cc66;">&#40;</span><span style="color: #66cc66;">&#41;</span>;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; <span style="color: #000000; font-weight: bold;">public</span> <span style="color: #000000; font-weight: bold;">function</span> getGroup<span style="color: #66cc66;">&#40;</span><span style="color: #0000ff;">$group</span><span style="color: #66cc66;">&#41;</span>;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; <span style="color: #000000; font-weight: bold;">public</span> <span style="color: #000000; font-weight: bold;">function</span> getImageFormatSupport<span style="color: #66cc66;">&#40;</span><span style="color: #66cc66;">&#41;</span>;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; <span style="color: #000000; font-weight: bold;">public</span> <span style="color: #000000; font-weight: bold;">function</span> getImages<span style="color: #66cc66;">&#40;</span><span style="color: #66cc66;">&#41;</span>;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; <span style="color: #000000; font-weight: bold;">public</span> <span style="color: #000000; font-weight: bold;">function</span> getMaxImageHeight<span style="color: #66cc66;">&#40;</span><span style="color: #66cc66;">&#41;</span>;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; <span style="color: #000000; font-weight: bold;">public</span> <span style="color: #000000; font-weight: bold;">function</span> getMaxImageWidth<span style="color: #66cc66;">&#40;</span><span style="color: #66cc66;">&#41;</span>;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; <span style="color: #000000; font-weight: bold;">public</span> <span style="color: #000000; font-weight: bold;">function</span> getPhysicalScreenHeight<span style="color: #66cc66;">&#40;</span><span style="color: #66cc66;">&#41;</span>;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; <span style="color: #000000; font-weight: bold;">public</span> <span style="color: #000000; font-weight: bold;">function</span> getPhysicalScreenWidth<span style="color: #66cc66;">&#40;</span><span style="color: #66cc66;">&#41;</span>;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; <span style="color: #000000; font-weight: bold;">public</span> <span style="color: #000000; font-weight: bold;">function</span> getPreferredMarkup<span style="color: #66cc66;">&#40;</span><span style="color: #66cc66;">&#41;</span>;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; <span style="color: #000000; font-weight: bold;">public</span> <span style="color: #000000; font-weight: bold;">function</span> getUserAgent<span style="color: #66cc66;">&#40;</span><span style="color: #66cc66;">&#41;</span>;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; <span style="color: #000000; font-weight: bold;">public</span> <span style="color: #000000; font-weight: bold;">function</span> getXhtmlSupportLevel<span style="color: #66cc66;">&#40;</span><span style="color: #66cc66;">&#41;</span>;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; <span style="color: #000000; font-weight: bold;">public</span> <span style="color: #000000; font-weight: bold;">function</span> hasFlashSupport<span style="color: #66cc66;">&#40;</span><span style="color: #66cc66;">&#41;</span>;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; <span style="color: #000000; font-weight: bold;">public</span> <span style="color: #000000; font-weight: bold;">function</span> hasPdfSupport<span style="color: #66cc66;">&#40;</span><span style="color: #66cc66;">&#41;</span>;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; <span style="color: #000000; font-weight: bold;">public</span> <span style="color: #000000; font-weight: bold;">function</span> hasPhoneNumber<span style="color: #66cc66;">&#40;</span><span style="color: #66cc66;">&#41;</span>;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; <span style="color: #000000; font-weight: bold;">public</span> <span style="color: #000000; font-weight: bold;">function</span> httpsSupport<span style="color: #66cc66;">&#40;</span><span style="color: #66cc66;">&#41;</span>;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #66cc66;">&#125;</span></div></li></ol></div></div></div>
+
+
+        <p class="para">
+            The static function  <span class="methodname">match()</span> should be used to determine whether
+            the provided User-Agent and environment (represented by the <var class="varname">$server</var>
+            variable) match this device. If they do, the <span class="classname">Zend_Http_UserAgent</span>
+            class will then create an instance of the class, passing it the User-Agent,
+            <var class="varname">$server</var> array, and any configuration available; at this time, it is
+            expected that the Device class will consult with a features adapter, if present, and
+            populate itself with discovered capabilities.
+        </p>
+
+        <p class="para">
+            In practice, you will likely extend
+            <span class="classname">Zend_Http_UserAgent_AbstractDevice</span>, which provides functionality
+            around discovering capabilities from the User-Agent string itself, as well as
+            discovering and querying a <a href="zend.http.user-agent-features.html" class="link">Features
+                adapter</a>. 
+        </p>
+    </div>
+
+    <div class="section" id="zend.http.user-agent-device.options" name="zend.http.user-agent-device.options"><div class="info"><h1 class="title">Configuration Options</h1></div>
+        
+
+        <p class="para">
+            Configuration options are defined on a per-device basis. The following options are
+            defined in <span class="classname">Zend_Http_UserAgent_AbstractDevice</span>. Like all options,
+            the &quot;.&quot; character represents an additional level of depth to the configuration array.
+        </p>
+
+        <dl>
+<div class="info"><h1 class="title">Device Options</h1></div>
+            
+
+            <dt>
+
+                <dt class="term">features.classname</dt>
+
+                <dd>
+
+                    <p class="para">
+                        The name of a <a href="zend.http.user-agent-features.html" class="link">Features
+                            adapter</a> class that has either been previously loaded or which is
+                        discoverable via autoloading, or used in conjunction with the
+                        <var class="varname">features.path</var> option. This class must implement the
+                        <span class="interfacename">Zend_Http_UserAgent_Features_Adapter</span>
+                        interface.
+                    </p>
+                </dd>
+
+            </dt>
+
+
+            <dt>
+
+                <dt class="term">features.path</dt>
+
+                <dd>
+
+                    <p class="para">
+                        If provided, the filesystem path to the features adapter class being used.
+                        The path must either be an absolute path or discoverable via the
+                        <var class="varname">include_path</var>.
+                    </p>
+                </dd>
+
+            </dt>
+
+
+        </dl>
+
+    </div>
+
+    <div class="section" id="zend.http.user-agent-device.methods" name="zend.http.user-agent-device.methods"><div class="info"><h1 class="title">Available Methods</h1></div>
+        
+
+        <dl>
+
+            <dt id="zend.http.user-agent-device.methods.constructor">
+                <dt class="term">
+                    <div class="methodsynopsis dc-description">
+                         <span class="methodname">__construct</span>
+                        <span class="methodparam">( 
+                            <code_funcparams class="funcparams">$userAgent = null, array $server = array(), array $config =
+                                array()</code_funcparams>
+                         )</span>
+                    </div>
+
+                </dt>
+
+                <dd>
+
+                    <p class="para">
+                        Expects a User-Agent string, an array representing the HTTP environment, and an
+                        array of configuration values. The values are all optional, as they may be
+                        populated during deserialization.
+                    </p>
+                </dd>
+
+            </dt>
+
+
+            <dt id="zend.http.user-agent-device.methods.match">
+                <dt class="term">
+                    <div class="methodsynopsis dc-description">
+                         <span class="methodname">match</span>
+                        <span class="methodparam">( 
+                            <code_funcparams class="funcparams">$userAgent, $server</code_funcparams>
+                         )</span>
+                    </div>
+
+                </dt>
+
+                <dd>
+
+                    <p class="para">
+                        This method is static.
+                    </p>
+
+                    <p class="para">
+                        Provided the <var class="varname">$userAgent</var> string and an array representing the
+                        HTTP headers provided in the request, determine if they match the capabilities
+                        of this device. This method should return a boolean.
+                    </p>
+                </dd>
+
+            </dt>
+
+
+            <dt id="zend.http.user-agent-device.methods.get-all-features">
+                <dt class="term">
+                    <div class="methodsynopsis dc-description">
+                         <span class="methodname">getAllFeatures</span>
+                    </div>
+
+                </dt>
+
+                <dd>
+
+                    <p class="para">
+                        Returns an array of key/value pairs representing the features supported by
+                        this device instance.
+                    </p>
+                </dd>
+
+            </dt>
+
+
+            <dt id="zend.http.user-agent-device.methods.get-all-groups">
+                <dt class="term">
+                    <div class="methodsynopsis dc-description">
+                         <span class="methodname">getAllGroups</span>
+                    </div>
+
+                </dt>
+
+                <dd>
+
+                    <p class="para">
+                        Similar to  <span class="methodname">getAllFeatures()</span>, this retrieves all
+                        features, but grouped by type.
+                    </p>
+                </dd>
+
+            </dt>
+
+
+            <dt id="zend.http.user-agent-device.methods.has-feature">
+                <dt class="term">
+                    <div class="methodsynopsis dc-description">
+                         <span class="methodname">hasFeature</span>
+                        <span class="methodparam">( 
+                            <code_funcparams class="funcparams">$feature</code_funcparams>
+                         )</span>
+                    </div>
+
+                </dt>
+
+                <dd>
+
+                    <p class="para">
+                        Query the device to determine if it contains information on a specific
+                        feature.
+                    </p>
+                </dd>
+
+            </dt>
+
+
+            <dt id="zend.http.user-agent-device.methods.get-feature">
+                <dt class="term">
+                    <div class="methodsynopsis dc-description">
+                         <span class="methodname">getFeature</span>
+                        <span class="methodparam">( 
+                            <code_funcparams class="funcparams">$feature</code_funcparams>
+                         )</span>
+                    </div>
+
+                </dt>
+
+                <dd>
+
+                    <p class="para">
+                        Retrieve the value of a specific device feature, if present. Typically, this
+                        will return a boolean <b><tt>false</tt></b> or a
+                        <b><tt>null</tt></b> value if the feature is not defined.
+                    </p>
+                </dd>
+
+            </dt>
+
+
+            <dt id="zend.http.user-agent-device.methods.get-browser">
+                <dt class="term">
+                    <div class="methodsynopsis dc-description">
+                         <span class="methodname">getBrowser</span>
+                    </div>
+
+                </dt>
+
+                <dd>
+
+                    <p class="para">
+                        Returns the browser string as discoverd from the User-Agent string.
+                    </p>
+                </dd>
+
+            </dt>
+
+
+            <dt id="zend.http.user-agent-device.methods.get-browser-version">
+                <dt class="term">
+                    <div class="methodsynopsis dc-description">
+                         <span class="methodname">getBrowserVersion</span>
+                    </div>
+
+                </dt>
+
+                <dd>
+
+                    <p class="para">
+                        Retrieve the browser version as discovered from the User-Agent string.
+                    </p>
+                </dd>
+
+            </dt>
+
+
+            <dt id="zend.http.user-agent-device.methods.get-group">
+                <dt class="term">
+                    <div class="methodsynopsis dc-description">
+                         <span class="methodname">getGroup</span>
+                        <span class="methodparam">( 
+                            <code_funcparams class="funcparams">$group</code_funcparams>
+                         )</span>
+                    </div>
+
+                </dt>
+
+                <dd>
+
+                    <p class="para">
+                        Get all features from a given feature group.
+                    </p>
+                </dd>
+
+            </dt>
+
+
+            <dt id="zend.http.user-agent-device.methods.get-image-format-support">
+                <dt class="term">
+                    <div class="methodsynopsis dc-description">
+                         <span class="methodname">getImageFormatSupport</span>
+                    </div>
+
+                </dt>
+
+                <dd>
+
+                    <p class="para">
+                        Retrieve a list of supported image types.
+                    </p>
+                </dd>
+
+            </dt>
+
+
+            <dt id="zend.http.user-agent-device.methods.get-images">
+                <dt class="term">
+                    <div class="methodsynopsis dc-description">
+                         <span class="methodname">getImages</span>
+                    </div>
+
+                </dt>
+
+                <dd>
+
+                    <p class="para">
+                        Alias for  <span class="methodname">getImageFormatSupport()</span>.
+                    </p>
+                </dd>
+
+            </dt>
+
+
+            <dt id="zend.http.user-agent-device.methods.get-max-image-height">
+                <dt class="term">
+                    <div class="methodsynopsis dc-description">
+                         <span class="methodname">getMaxImageHeight</span>
+                    </div>
+
+                </dt>
+
+                <dd>
+
+                    <p class="para">
+                        Retrieve the maximum supported image height for the current device instance.
+                    </p>
+                </dd>
+
+            </dt>
+
+
+            <dt id="zend.http.user-agent-device.methods.get-max-image-width">
+                <dt class="term">
+                    <div class="methodsynopsis dc-description">
+                         <span class="methodname">getMaxImageWidth</span>
+                    </div>
+
+                </dt>
+
+                <dd>
+
+                    <p class="para">
+                        Retrieve the maximum supported image width for the current device instance.
+                    </p>
+                </dd>
+
+            </dt>
+
+
+            <dt id="zend.http.user-agent-device.methods.get-physical-screen-height">
+                <dt class="term">
+                    <div class="methodsynopsis dc-description">
+                         <span class="methodname">getPhysicalScreenHeight</span>
+                    </div>
+
+                </dt>
+
+                <dd>
+
+                    <p class="para">
+                        Retrieve the physical screen height for the current device instance.
+                    </p>
+                </dd>
+
+            </dt>
+
+
+            <dt id="zend.http.user-agent-device.methods.get-physical-screen-width">
+                <dt class="term">
+                    <div class="methodsynopsis dc-description">
+                         <span class="methodname">getPhysicalScreenWidth</span>
+                    </div>
+
+                </dt>
+
+                <dd>
+
+                    <p class="para">
+                        Retrieve the physical screen width for the current device instance.
+                    </p>
+                </dd>
+
+            </dt>
+
+
+            <dt id="zend.http.user-agent-device.methods.get-preferred-markup">
+                <dt class="term">
+                    <div class="methodsynopsis dc-description">
+                         <span class="methodname">getPreferredMarkup</span>
+                    </div>
+
+                </dt>
+
+                <dd>
+
+                    <p class="para">
+                        Retrieve the preferred markup format for the current device instance.
+                    </p>
+                </dd>
+
+            </dt>
+
+
+            <dt id="zend.http.user-agent-device.methods.get-user-agent">
+                <dt class="term">
+                    <div class="methodsynopsis dc-description">
+                         <span class="methodname">getUserAgent</span>
+                    </div>
+
+                </dt>
+
+                <dd>
+
+                    <p class="para">
+                        Retrieve the User-Agent string for the current device instance.
+                    </p>
+                </dd>
+
+            </dt>
+
+
+            <dt id="zend.http.user-agent-device.methods.get-xhtml-support-level">
+                <dt class="term">
+                    <div class="methodsynopsis dc-description">
+                         <span class="methodname">getXhtmlSupportLevel</span>
+                    </div>
+
+                </dt>
+
+                <dd>
+
+                    <p class="para">
+                        Retrieve the supported X/HTML version for the current device instance.
+                    </p>
+                </dd>
+
+            </dt>
+
+
+            <dt id="zend.http.user-agent-device.methods.has-flash-support">
+                <dt class="term">
+                    <div class="methodsynopsis dc-description">
+                         <span class="methodname">hasFlashSupport</span>
+                    </div>
+
+                </dt>
+
+                <dd>
+
+                    <p class="para">
+                        Determine if the current device instance supports Flash.
+                    </p>
+                </dd>
+
+            </dt>
+
+
+            <dt id="zend.http.user-agent-device.methods.has-pdf-support">
+                <dt class="term">
+                    <div class="methodsynopsis dc-description">
+                         <span class="methodname">hasPdfSupport</span>
+                    </div>
+
+                </dt>
+
+                <dd>
+
+                    <p class="para">
+                        Determine if the current device instance supports PDF.
+                    </p>
+                </dd>
+
+            </dt>
+
+
+            <dt id="zend.http.user-agent-device.methods.has-phone-number">
+                <dt class="term">
+                    <div class="methodsynopsis dc-description">
+                         <span class="methodname">hasPhoneNumber</span>
+                    </div>
+
+                </dt>
+
+                <dd>
+
+                    <p class="para">
+                        Determine if the device has an associated phone number. Note: does not
+                        retrieve the phone number. This can be useful for determining if the device
+                        is a mobile phone versus another wireless capable device.
+                    </p>
+                </dd>
+
+            </dt>
+
+
+            <dt id="zend.http.user-agent-device.methods.https-support">
+                <dt class="term">
+                    <div class="methodsynopsis dc-description">
+                         <span class="methodname">httpsSupport</span>
+                    </div>
+
+                </dt>
+
+                <dd>
+
+                    <p class="para">
+                        Determine if the current device instance supports HTTPS. 
+                    </p>
+                </dd>
+
+            </dt>
+
+        </dl>
+
+    </div>
+
+    <div class="section" id="zend.http.user-agent-device.examples" name="zend.http.user-agent-device.examples"><div class="info"><h1 class="title">Examples</h1></div>
+        
+
+        <div class="example"><div class="info"><p><b>Example #1 Determining Supported Features</b></p></div>
+            
+
+            <div class="example-contents"><p>
+                You may wish to direct the user to specific areas of your site based on features
+                supported by the device they are using. For instance, if a particular app works only
+                in Flash, you might direct a non-Flash-capable device to a page indicating the
+                application will not work on their device; or for a device not capable of HTTPS, you
+                may indicate certain actions, such as purchases, are not available.
+            </p></div>
+
+            <div class="programlisting php"><div class="phpcode"><div class="php" style="font-family: monospace;"><ol><li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #0000ff;">$userAgent</span> = <span style="color: #000000; font-weight: bold;">new</span> Zend_Http_UserAgent<span style="color: #66cc66;">&#40;</span><span style="color: #66cc66;">&#41;</span>;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #0000ff;">$device</span>&nbsp; &nbsp; = <span style="color: #0000ff;">$userAgent</span>-&gt;<span style="color: #006600;">getDevice</span><span style="color: #66cc66;">&#40;</span><span style="color: #66cc66;">&#41;</span>;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #808080; font-style: italic;">// Redirect to a Flash version of the app:</span></div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #b1b100;">if</span> <span style="color: #66cc66;">&#40;</span><span style="color: #0000ff;">$device</span>-&gt;<span style="color: #006600;">hasFlashSupport</span><span style="color: #66cc66;">&#40;</span><span style="color: #66cc66;">&#41;</span><span style="color: #66cc66;">&#41;</span> <span style="color: #66cc66;">&#123;</span></div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; <a href="http://www.php.net/header"><span style="color: #000066;">header</span></a><span style="color: #66cc66;">&#40;</span><span style="color: #ff0000;">'Location: /flash/app'</span><span style="color: #66cc66;">&#41;</span>;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; <a href="http://www.php.net/exit"><span style="color: #000066;">exit</span></a>;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #66cc66;">&#125;</span></div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #808080; font-style: italic;">// Determine whether to show a &quot;purchase&quot; link:</span></div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #b1b100;">if</span> <span style="color: #66cc66;">&#40;</span><span style="color: #0000ff;">$device</span>-&gt;<span style="color: #006600;">httpsSupport</span><span style="color: #66cc66;">&#40;</span><span style="color: #66cc66;">&#41;</span><span style="color: #66cc66;">&#41;</span> <span style="color: #66cc66;">&#123;</span></div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; <a href="http://www.php.net/echo"><span style="color: #000066;">echo</span></a> <span style="color: #ff0000;">'&lt;a href=&quot;https://store-site.com/purchase&quot;&gt;Purchase!&lt;/a&gt;'</span>;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #66cc66;">&#125;</span> <span style="color: #b1b100;">else</span> <span style="color: #66cc66;">&#123;</span></div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; <a href="http://www.php.net/echo"><span style="color: #000066;">echo</span></a> <span style="color: #ff0000;">'Purchasing is unavailable on this device.'</span>;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #66cc66;">&#125;</span></div></li></ol></div></div></div>
+
+        </div>
+
+        <div class="example"><div class="info"><p><b>Example #2 Dynamically Scaling Images</b></p></div>
+            
+
+            <div class="example-contents"><p>
+                You may wish to alter the image sizes present in order to achieve a specific design
+                within mobile devices. You may use a variety of methods in the device object to make
+                this happen.
+            </p></div>
+
+            <div class="programlisting php"><div class="phpcode"><div class="php" style="font-family: monospace;"><ol><li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #0000ff;">$userAgent</span> = <span style="color: #000000; font-weight: bold;">new</span> Zend_Http_UserAgent<span style="color: #66cc66;">&#40;</span><span style="color: #66cc66;">&#41;</span>;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #0000ff;">$device</span>&nbsp; &nbsp; = <span style="color: #0000ff;">$userAgent</span>-&gt;<span style="color: #006600;">getDevice</span><span style="color: #66cc66;">&#40;</span><span style="color: #66cc66;">&#41;</span>;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #808080; font-style: italic;">// Get the maximum image width and height</span></div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #0000ff;">$maxWidth</span>&nbsp; = <span style="color: #0000ff;">$device</span>-&gt;<span style="color: #006600;">getMaxImageWidth</span><span style="color: #66cc66;">&#40;</span><span style="color: #66cc66;">&#41;</span>;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #0000ff;">$maxHeight</span> = <span style="color: #0000ff;">$device</span>-&gt;<span style="color: #006600;">getMaxImageHeight</span><span style="color: #66cc66;">&#40;</span><span style="color: #66cc66;">&#41;</span>;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #808080; font-style: italic;">// Create an &lt;img&gt; tag with appropriate sizes</span></div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><a href="http://www.php.net/echo"><span style="color: #000066;">echo</span></a> <span style="color: #ff0000;">'&lt;img src=&quot;/images/foo.png&quot;'</span>;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #b1b100;">if</span> <span style="color: #66cc66;">&#40;</span><span style="color: #66cc66;">&#40;</span><span style="color: #000000; font-weight: bold;">null</span> !== <span style="color: #0000ff;">$maxWidth</span><span style="color: #66cc66;">&#41;</span> &amp;&amp; <span style="color: #66cc66;">&#40;</span><span style="color: #0000ff;">$maxWidth</span> &lt; <span style="color: #cc66cc;">328</span><span style="color: #66cc66;">&#41;</span><span style="color: #66cc66;">&#41;</span> <span style="color: #66cc66;">&#123;</span></div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; <a href="http://www.php.net/echo"><span style="color: #000066;">echo</span></a> <span style="color: #ff0000;">' width=&quot;'</span> . <span style="color: #0000ff;">$maxWidth</span> . <span style="color: #ff0000;">'&quot;'</span>;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #66cc66;">&#125;</span></div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #b1b100;">if</span> <span style="color: #66cc66;">&#40;</span><span style="color: #66cc66;">&#40;</span><span style="color: #000000; font-weight: bold;">null</span> !== <span style="color: #0000ff;">$maxHeight</span><span style="color: #66cc66;">&#41;</span> &amp;&amp; <span style="color: #66cc66;">&#40;</span><span style="color: #0000ff;">$maxHeight</span> &lt; <span style="color: #cc66cc;">400</span><span style="color: #66cc66;">&#41;</span><span style="color: #66cc66;">&#41;</span> <span style="color: #66cc66;">&#123;</span></div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; <a href="http://www.php.net/echo"><span style="color: #000066;">echo</span></a> <span style="color: #ff0000;">' height=&quot;'</span> . <span style="color: #0000ff;">$maxHeight</span> . <span style="color: #ff0000;">'&quot;'</span>;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #66cc66;">&#125;</span></div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><a href="http://www.php.net/echo"><span style="color: #000066;">echo</span></a> <span style="color: #ff0000;">'/&gt;'</span>;</div></li></ol></div></div></div>
+
+        </div>
+
+        <blockquote><p><b class="note">Note</b>: <span class="info"><b>Markup- based scaling is not ideal</b><br /></span>
+            
+
+            
+                Markup-based scaling such as in the example above is not the best approach, as
+                it means that the full-sized image is still delivered to the device. A better
+                approach is to pre-scale your images to a variety of sizes representing the
+                devices you wish to support, and then using the device capabilities to determine
+                which image to use.
+            <br />
+
+            
+                Another approach is to use third-party services. Zend Framework provides one
+                such capability via the <a href="" class="link">TinySrc view helper</a>.
+            <br />
+        </p></blockquote>
+    </div>
+</div>
+        <hr />
+
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.http.user-agent.html">Zend_Http_UserAgent</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.http.html">Zend_Http</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.http.user-agent-features.html">The UserAgent Features Adapter</a></div>
+                    </td>
+                </tr>
+            </table>
+</td>
+        <td style="font-size: smaller;" width="15%"> <style type="text/css">
+#leftbar {
+	float: left;
+	width: 186px;
+	padding: 5px;
+	font-size: smaller;
+}
+ul.toc {
+	margin: 0px 5px 5px 5px;
+	padding: 0px;
+}
+ul.toc li {
+	font-size: 85%;
+	margin: 1px 0 1px 1px;
+	padding: 1px 0 1px 11px;
+	list-style-type: none;
+	background-repeat: no-repeat;
+	background-position: center left;
+}
+ul.toc li.header {
+	font-size: 115%;
+	padding: 5px 0px 5px 11px;
+	border-bottom: 1px solid #cccccc;
+	margin-bottom: 5px;
+}
+ul.toc li.active {
+	font-weight: bold;
+}
+ul.toc li a {
+	text-decoration: none;
+}
+ul.toc li a:hover {
+	text-decoration: underline;
+}
+</style>
+ <ul class="toc">
+  <li class="header home"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="reference.html">Zend Framework Reference</a></li>
+  <li class="header up"><a href="zend.http.html">Zend_Http</a></li>
+  <li><a href="zend.http.client.html">Zend_Http_Client - 介绍</a></li>
+  <li><a href="zend.http.client.advanced.html">Zend_Http_Client - Advanced Usage</a></li>
+  <li><a href="zend.http.client.adapters.html">Zend_Http_Client - Connection Adapters</a></li>
+  <li><a href="zend.http.cookies.html">Zend_Http_Cookie and Zend_Http_CookieJar</a></li>
+  <li><a href="zend.http.response.html">Zend_Http_Response</a></li>
+  <li><a href="zend.http.user-agent.html">Zend_Http_UserAgent</a></li>
+  <li class="active"><a href="zend.http.user-agent-device.html">The UserAgent Device Interface</a></li>
+  <li><a href="zend.http.user-agent-features.html">The UserAgent Features Adapter</a></li>
+  <li><a href="zend.http.user-agent-features-wurfl.html">The WURFL UserAgent Features Adapter</a></li>
+  <li><a href="zend.http.user-agent-features-device-atlas.html">The DeviceAtlas UserAgent Features Adapter</a></li>
+  <li><a href="zend.http.user-agent-features-tera-wurfl.html">The TeraWurfl UserAgent Features Adapter</a></li>
+  <li><a href="zend.http.user-agent-storage.html">The UserAgent Storage Interface</a></li>
+  <li><a href="zend.http.user-agent-storage-session.html">The Session UserAgent Storage Adapter</a></li>
+ </ul>
+ </td>
+    </tr>
+</table>
+</body>
+</html>

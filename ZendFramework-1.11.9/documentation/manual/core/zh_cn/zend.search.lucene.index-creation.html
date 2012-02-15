@@ -1,0 +1,190 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <title>建立索引 - Zend Framework Manual</title>
+
+</head>
+<body>
+<table width="100%">
+    <tr valign="top">
+        <td width="85%">
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.search.lucene.overview.html">概述</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.search.lucene.html">Zend_Search_Lucene</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.search.lucene.searching.html">搜索索引</a></div>
+                    </td>
+                </tr>
+            </table>
+<hr />
+<div id="zend.search.lucene.index-creation" class="section"><div class="info"><h1 class="title">建立索引</h1></div>
+    
+
+    <div class="section" id="zend.search.lucene.index-creation.creating" name="zend.search.lucene.index-creation.creating"><div class="info"><h1 class="title">创建新索引</h1></div>
+        
+
+        <p class="para">
+            在 Zend_Search_Lucene 模块和 Java Lucene 中实现了索引的创建和更新机制。你都可以使用。
+        </p>
+
+        <p class="para">
+            下面的 PHP 代码提供了一个如何使用 Zend_Search_Lucene 索引 API 的例子：
+        </p>
+
+        <div class="programlisting"><div class="cdata"><pre>&lt;?php
+
+// Setting the second argument to TRUE creates a new index
+$index = new Zend_Search_Lucene(&#039;/data/my-index&#039;, true);
+
+$doc = new Zend_Search_Lucene_Document();
+
+// Store document URL to identify it in search result.
+$doc-&gt;addField(Zend_Search_Lucene_Field::Text(&#039;url&#039;, $docUrl));
+
+// Index document content
+$doc-&gt;addField(Zend_Search_Lucene_Field::UnStored(&#039;contents&#039;, $docContent));
+
+// Add document to the index.
+$index-&gt;addDocument($doc);
+
+// Write changes to the index.
+$index-&gt;commit();
+?&gt;</pre></div></div>
+
+
+        <p class="para">
+            在进行了 commit 提交操作之后，新添加的文档就可以被检索了。
+        </p>
+        <p class="para">
+            <code class="code">Zend_Search_Lucene::commit()</code> 会在脚本执行结束前以及任意搜索请求开始之前被自动调用。
+        </p>
+        <p class="para">
+            每一次 commit() 调用产生新的索引分段。因此尽可能少的请求它。当然另一方面，在一步中提交大量的文档需要更多的内存。
+        </p>
+        <p class="para">
+            字段分段管理优化是 Zend_Search_Lucene 未来要增强的内容。
+        </p>
+    </div>
+
+    <div class="section" id="zend.search.lucene.index-creation.updating" name="zend.search.lucene.index-creation.updating"><div class="info"><h1 class="title">更新索引</h1></div>
+        
+
+        <p class="para">
+            同样的过程可以用于更新现存的索引。唯一的区别是打开相应的索引是不需要第二个参数：
+        </p>
+
+        <div class="programlisting"><div class="cdata"><pre>&lt;?php
+
+// Open existing index
+$index = new Zend_Search_Lucene(&#039;/data/my-index&#039;);
+
+$doc = new Zend_Search_Lucene_Document();
+// Store document URL to identify it in search result.
+$doc-&gt;addField(Zend_Search_Lucene_Field::Text(&#039;url&#039;, $docUrl));
+// Index document content
+$doc-&gt;addField(Zend_Search_Lucene_Field::UnStored(&#039;contents&#039;, $docContent));
+
+// Add document to the index.
+$index-&gt;addDocument($doc);
+
+// Write changes to the index.
+$index-&gt;commit();
+?&gt;</pre></div></div>
+
+
+        <p class="para">
+            每一次 commit() 调用(显式的或者隐式的)产生新的索引分段。
+        </p>
+        <p class="para">
+            Zend_Search_Lucene 不会自动管理分段。因此你应该关注分段的大小。一方面一个大的分段可能更加理想，另一方面在创建时需要更大的内存。
+        </p>
+        <p class="para">
+            Lucene Java 和 Luke (Lucene Index Toolbox - <a href="http://www.getopt.org/luke/" class="link external">&raquo; http://www.getopt.org/luke/</a>)可以用于优化这个版本的 Zend_Search_Lucene 产生的索引。
+        </p>
+    </div>
+</div>
+        <hr />
+
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.search.lucene.overview.html">概述</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.search.lucene.html">Zend_Search_Lucene</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.search.lucene.searching.html">搜索索引</a></div>
+                    </td>
+                </tr>
+            </table>
+</td>
+        <td style="font-size: smaller;" width="15%"> <style type="text/css">
+#leftbar {
+	float: left;
+	width: 186px;
+	padding: 5px;
+	font-size: smaller;
+}
+ul.toc {
+	margin: 0px 5px 5px 5px;
+	padding: 0px;
+}
+ul.toc li {
+	font-size: 85%;
+	margin: 1px 0 1px 1px;
+	padding: 1px 0 1px 11px;
+	list-style-type: none;
+	background-repeat: no-repeat;
+	background-position: center left;
+}
+ul.toc li.header {
+	font-size: 115%;
+	padding: 5px 0px 5px 11px;
+	border-bottom: 1px solid #cccccc;
+	margin-bottom: 5px;
+}
+ul.toc li.active {
+	font-weight: bold;
+}
+ul.toc li a {
+	text-decoration: none;
+}
+ul.toc li a:hover {
+	text-decoration: underline;
+}
+</style>
+ <ul class="toc">
+  <li class="header home"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="reference.html">Zend Framework Reference</a></li>
+  <li class="header up"><a href="zend.search.lucene.html">Zend_Search_Lucene</a></li>
+  <li><a href="zend.search.lucene.overview.html">概述</a></li>
+  <li class="active"><a href="zend.search.lucene.index-creation.html">建立索引</a></li>
+  <li><a href="zend.search.lucene.searching.html">搜索索引</a></li>
+  <li><a href="zend.search.lucene.query-language.html">Query Language</a></li>
+  <li><a href="zend.search.lucene.queries.html">查询类型</a></li>
+  <li><a href="zend.search.lucene.charset.html">字符集</a></li>
+  <li><a href="zend.search.lucene.extending.html">扩展性</a></li>
+  <li><a href="zend.search.lucene.java-lucene.html">与 Java Lucene 的互操作性</a></li>
+  <li><a href="zend.search.lucene.advanced.html">Advanced</a></li>
+  <li><a href="zend.search.lucene.best-practice.html">Best Practices</a></li>
+ </ul>
+ </td>
+    </tr>
+</table>
+</body>
+</html>

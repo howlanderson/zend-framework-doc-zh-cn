@@ -1,0 +1,128 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <title>过滤器链 - Zend Framework Manual</title>
+
+</head>
+<body>
+<table width="100%">
+    <tr valign="top">
+        <td width="85%">
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.filter.set.html">标准过滤器类</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.filter.html">Zend_Filter</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.filter.writing_filters.html">编写过滤器</a></div>
+                    </td>
+                </tr>
+            </table>
+<hr />
+<div id="zend.filter.filter_chains" class="section"><div class="info"><h1 class="title">过滤器链</h1></div>
+
+    
+
+    <p class="para">
+        通常，多个过滤器可以以一个特定的顺序应用到某个值上。例如，登录表单的用户名，应为英文字符且小写。<code class="code">Zend_Filter</code>提供了一个简单的方法，使过滤器可以链接在一起。下面的代码描述了怎样把2个过滤器链接起来且应用到提交上来的用户名值上：
+
+        <div class="programlisting"><div class="cdata"><pre>
+// Create a filter chain and add filters to the chain
+$filterChain = new Zend_Filter();
+$filterChain-&gt;addFilter(new Zend_Filter_Alpha())
+            -&gt;addFilter(new Zend_Filter_StringToLower());
+
+// Filter the username
+$username = $filterChain-&gt;filter($_POST[&#039;username&#039;]);
+
+        </pre></div></div>
+
+
+       过滤器按照他们被添加到<code class="code">Zend_Filter</code>中去的顺序依次执行。上面的例子中，用户名首先被移除任何非英文字母的字符，然后将所有大写字符转化为小写字符。
+
+    </p>
+
+    <p class="para">
+        任何实现了<code class="code">Zend_Filter_Interface</code>接口的，都可被添加到过滤器链中。
+    </p>
+
+</div>
+        <hr />
+
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.filter.set.html">标准过滤器类</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.filter.html">Zend_Filter</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.filter.writing_filters.html">编写过滤器</a></div>
+                    </td>
+                </tr>
+            </table>
+</td>
+        <td style="font-size: smaller;" width="15%"> <style type="text/css">
+#leftbar {
+	float: left;
+	width: 186px;
+	padding: 5px;
+	font-size: smaller;
+}
+ul.toc {
+	margin: 0px 5px 5px 5px;
+	padding: 0px;
+}
+ul.toc li {
+	font-size: 85%;
+	margin: 1px 0 1px 1px;
+	padding: 1px 0 1px 11px;
+	list-style-type: none;
+	background-repeat: no-repeat;
+	background-position: center left;
+}
+ul.toc li.header {
+	font-size: 115%;
+	padding: 5px 0px 5px 11px;
+	border-bottom: 1px solid #cccccc;
+	margin-bottom: 5px;
+}
+ul.toc li.active {
+	font-weight: bold;
+}
+ul.toc li a {
+	text-decoration: none;
+}
+ul.toc li a:hover {
+	text-decoration: underline;
+}
+</style>
+ <ul class="toc">
+  <li class="header home"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="reference.html">Zend Framework Reference</a></li>
+  <li class="header up"><a href="zend.filter.html">Zend_Filter</a></li>
+  <li><a href="zend.filter.introduction.html">简介</a></li>
+  <li><a href="zend.filter.set.html">标准过滤器类</a></li>
+  <li class="active"><a href="zend.filter.filter_chains.html">过滤器链</a></li>
+  <li><a href="zend.filter.writing_filters.html">编写过滤器</a></li>
+  <li><a href="zend.filter.input.html">Zend_Filter_Input</a></li>
+  <li><a href="zend.filter.inflector.html">Zend_Filter_Inflector</a></li>
+ </ul>
+ </td>
+    </tr>
+</table>
+</body>
+</html>

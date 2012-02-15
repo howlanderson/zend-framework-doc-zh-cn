@@ -1,0 +1,317 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <title>Zend_Dom_Query - Zend Framework Manual</title>
+
+</head>
+<body>
+<table width="100%">
+    <tr valign="top">
+        <td width="85%">
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.dom.introduction.html">简介</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.dom.html">Zend_Dom</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.exception.html">Zend_Exception</a></div>
+                    </td>
+                </tr>
+            </table>
+<hr />
+<div id="zend.dom.query" class="section"><div class="info"><h1 class="title">Zend_Dom_Query</h1></div>
+    
+
+    <p class="para">
+        <code class="code">Zend_Dom_Query</code> 为利用 XPath 或 CSS 选择器来查询 XML 和
+        (X)HTML 文档提供了机制。
+        它为帮助 MVC 应用的功能测试而开发，但也用于 screen scrapers 的快速开发。
+    </p>
+
+    <p class="para">
+        当用 XML 结构查询文档时，对于 web 开发者来说，CSS 选择器符号简单而熟悉。
+        对开发过 Cascading Style Sheets  或用过提供使用 CSS 选择器
+        （<a href="http://prototypejs.org/api/utility/dollar-dollar" class="link external">&raquo; Prototype&#039;s
+            $$()</a> 和
+        <a href="http://api.dojotoolkit.org/jsdoc/dojo/HEAD/dojo.query" class="link external">&raquo; Dojo&#039;s
+            dojo.query</a> 都是组件的灵魂）选择节点的功能的 Javascript 工具箱的开发者来说，符号应当很熟悉。
+    </p>
+
+    <div class="section" id="zend.dom.query.operation" name="zend.dom.query.operation"><div class="info"><h1 class="title"> 操作理论 </h1></div>
+        
+
+        <p class="para">
+            要使用 <code class="code">Zend_Dom_Query</code>，你需要初始化一个
+            <code class="code">Zend_Dom_Query</code> 对象，并可选地传递一个文档到查询（一字符串）。
+            一旦你有一个文档，可以使用 <code class="code">query()</code> 或 <code class="code">queryXpath()</code> 方法；
+            每个方法将返回带有任何匹配节点的 <code class="code">Zend_Dom_Query_Result</code> 对象。
+        </p>
+
+        <p class="para">
+            <code class="code">Zend_Dom_Query</code> 和使用 DOMDocument + DOMXPath 的主要不同之处是可以依靠 CSS 选择器来选择。
+            你可以使用下列的任何组合：
+        </p>
+
+        <ul class="itemizedlist">
+            <li class="listitem"><p class="para">
+                <em class="emphasis">element types</em>: 提供一个元素类型来匹配：
+                &#039;div&#039;、 &#039;a&#039;、 &#039;span&#039;、 &#039;h2&#039; 等。
+            </p></li>
+
+            <li class="listitem"><p class="para">
+                <em class="emphasis">style attributes</em>:
+                匹配 &#039;.error&#039;、 &#039;div.error&#039;、 &#039;label.required&#039; 等的 CSS 风格属性。
+                如果任何元素定义了超过一个风格，只要命名的风格出现在风格声明的任何地方，它将匹配。
+            </p></li>
+
+            <li class="listitem"><p class="para">
+                <em class="emphasis">id attributes</em>:
+                匹配 &#039;#content&#039;、 &#039;div#nav&#039; 等的元素 ID 属性。
+            </p></li>
+
+            <li class="listitem">
+                <p class="para">
+                    <em class="emphasis">arbitrary attributes</em>: 用于匹配的属性元素的属性。
+                    有三个不同的匹配类型：
+                </p>
+
+                <ul class="itemizedlist">
+                    <li class="listitem"><p class="para">
+                        <em class="emphasis">exact match</em>: 属性和字符串精确地匹配：
+                        &#039;div[bar=&quot;baz&quot;]&#039; 表示带有 &quot;bar&quot; 属性的 div 元素精确地匹配值 &quot;baz&quot;。
+                    </p></li>
+
+                    <li class="listitem"><p class="para">
+                        <em class="emphasis">word match</em>: 包含匹配字符串 &#039;div[bar~=&quot;baz&quot;]&#039; 的字符的
+                        属性将匹配一个带有包含 &quot;baz&quot;字符的 &quot;bar&quot;属性的 div 元素。
+                        &#039;&lt;div bar=&quot;foo baz&quot;&gt;&#039; 匹配，而&#039;&lt;div bar=&quot;foo bazbat&quot;&gt;&#039;不匹配。
+                    </p></li>
+
+                    <li class="listitem"><p class="para">
+                        <em class="emphasis">substring match</em>:
+                        包含 &#039;div[bar*=&quot;baz&quot;]&#039; 字符串的属性将匹配一个带有在它内部
+                        任何地方包含字符串 &quot;baz&quot; 的 &quot;bar&quot; 属性的 div 元素。
+                    </p></li>
+                </ul>
+             </li>
+
+                <li class="listitem"><p class="para">
+                    <em class="emphasis">direct descendents</em>:
+                    利用在选择器之间的 &#039;&gt;&#039;表示直接的子孙。&#039;div &gt; span&#039;将只选择 &#039;div&#039;直接的子孙 &#039;span&#039; 元素。
+                    它可用于任何上述的选择器。
+                </p></li>
+
+                <li class="listitem">
+                    <p class="para">
+                        <em class="emphasis">descendents</em>:
+                        把多个选择器集中成一字符串来表示一个搜索的层次。
+                        &#039;div .foo span #one&#039; 选择一个 id &#039;one&#039; 的元素，它是在 &#039;span&#039; 元素下任意深度的子孙，
+                        它也是 &#039;foo&#039; 类下面任意深度的子孙，而 &#039;foo&#039; 元素是 &#039;div&#039; 元素下任意深度的子孙。
+                        例如，在下面列表中，它将匹配带有 &#039;One&#039; 字符的链接：
+                    </p>
+
+                    <div class="programlisting"><div class="cdata"><pre>
+&lt;div&gt;
+    &lt;table&gt;
+        &lt;tr&gt;
+            &lt;td class=&quot;foo&quot;&gt;
+                &lt;div&gt;
+                    Lorem ipsum &lt;span class=&quot;bar&quot;&gt;
+                        &lt;a href=&quot;/foo/bar&quot; id=&quot;one&quot;&gt;One&lt;/a&gt;
+                        &lt;a href=&quot;/foo/baz&quot; id=&quot;two&quot;&gt;Two&lt;/a&gt;
+                        &lt;a href=&quot;/foo/bat&quot; id=&quot;three&quot;&gt;Three&lt;/a&gt;
+                        &lt;a href=&quot;/foo/bla&quot; id=&quot;four&quot;&gt;Four&lt;/a&gt;
+                    &lt;/span&gt;
+                &lt;/div&gt;
+            &lt;/td&gt;
+        &lt;/tr&gt;
+    &lt;/table&gt;
+&lt;/div&gt;
+
+</pre></div></div>
+
+          </li>
+        </ul>
+
+        <p class="para">
+            一旦你执行了查询，你可以使用结果对象来确定节点的信息，同时，你也可以
+            把它们和/或它们的内容拿出来检查和处理。
+            <code class="code">Zend_Dom_Query_Result</code> 实现 <code class="code">Countable</code>
+            和 <code class="code">Iterator</code> 并在内部存储结果为
+            DOMNodes/DOMElements。
+            作为例子，考虑下列的调用，它依靠上述的 HTML 来选择：
+        </p>
+
+        <div class="programlisting"><div class="cdata"><pre>
+$dom = new Zend_Dom_Query($html);
+$results = $dom-&gt;query(&#039;.foo .bar a&#039;);
+
+$count = count($results); // get number of matches: 4
+foreach ($results as $result) {
+    // $result is a DOMElement
+}
+
+        </pre></div></div>
+
+
+        <p class="para">
+            <code class="code">Zend_Dom_Query</code> 也允许利用 <code class="code">queryXpath()</code> method 直接 XPath 查询；
+            你可以传递任何有效的 XPath 查询给这个方法，它将返回一个
+            <code class="code">Zend_Dom_Query_Result</code> 对象。
+        </p>
+    </div>
+
+    <div class="section" id="zend.dom.query.methods" name="zend.dom.query.methods"><div class="info"><h1 class="title"> 可用方法 </h1></div>
+        
+
+        <p class="para">
+            <code class="code">Zend_Dom_Query</code> 类家族有下列方法可用。
+        </p>
+
+        <div class="section" id="zend.dom.query.methods.zenddomquery" name="zend.dom.query.methods.zenddomquery"><div class="info"><h1 class="title">Zend_Dom_Query</h1></div>
+            
+
+            <p class="para">
+                下列方法对 <code class="code">Zend_Dom_Query</code> 可用:
+            </p>
+
+            <ul class="itemizedlist">
+                <li class="listitem"><p class="para">
+                    <code class="code">setDocumentXml($document)</code>: 指定一个查询使用的 XML 字符串。
+                </p></li>
+
+                <li class="listitem"><p class="para">
+                    <code class="code">setDocumentXhtml($document)</code>: 指定一个查询使用的 XHTML 字符串。
+                </p></li>
+
+                <li class="listitem"><p class="para">
+                    <code class="code">setDocumentHtml($document)</code>: 指定一个查询使用的 HTML 字符串。
+                </p></li>
+
+                <li class="listitem"><p class="para">
+                    <code class="code">setDocument($document)</code>: 指定一个查询使用的字符串；
+                    <code class="code">Zend_Dom_Query</code> 将尝试自动检查文档类型。
+                </p></li>
+
+                <li class="listitem"><p class="para">
+                    <code class="code">getDocument()</code>: 获取提供给对象的原始文档字符串。
+                </p></li>
+
+                <li class="listitem"><p class="para">
+                    <code class="code">getDocumentType()</code>: 获取提供给对象的文档的类型；是
+                    <code class="code">DOC_XML</code>、 <code class="code">DOC_XHTML</code> 或
+                    <code class="code">DOC_HTML</code> 类常量其中之一。
+                </p></li>
+
+                <li class="listitem"><p class="para">
+                    <code class="code">query($query)</code>: 使用 CSS 选择器符号查询文档。
+                </p></li>
+
+                <li class="listitem"><p class="para">
+                    <code class="code">queryXpath($xPathQuery)</code>: 使用 XPath 符号查询文档。
+                </p></li>
+            </ul>
+        </div>
+
+        <div class="section" id="zend.dom.query.methods.zenddomqueryresult" name="zend.dom.query.methods.zenddomqueryresult"><div class="info"><h1 class="title">Zend_Dom_Query_Result</h1></div>
+            
+
+            <p class="para">
+                如前所述，<code class="code">Zend_Dom_Query_Result</code>
+                实现 <code class="code">Iterator</code> 和 <code class="code">Countable</code>，
+                可用于 <code class="code">foreach</code> 循环和 <code class="code">count()</code> 函数。
+                另外，它有下列方法：
+            </p>
+
+            <ul class="itemizedlist">
+                <li class="listitem"><p class="para">
+                    <code class="code">getCssQuery()</code>: 返回用于处理结果（如果有的话）的 CSS 选择器查询。
+                </p></li>
+
+                <li class="listitem"><p class="para">
+                    <code class="code">getXpathQuery()</code>: 返回用于处理结果的 XPath 查询。
+                    在内部，<code class="code">Zend_Dom_Query</code> 转换 CSS 选择器查选为 XPath，所以这个值将永远被组装。
+                </p></li>
+
+                <li class="listitem"><p class="para">
+                    <code class="code">getDocument()</code>: 获取选择使用的文档。
+                </p></li>
+            </ul>
+        </div>
+    </div>
+</div>
+        <hr />
+
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.dom.introduction.html">简介</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.dom.html">Zend_Dom</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.exception.html">Zend_Exception</a></div>
+                    </td>
+                </tr>
+            </table>
+</td>
+        <td style="font-size: smaller;" width="15%"> <style type="text/css">
+#leftbar {
+	float: left;
+	width: 186px;
+	padding: 5px;
+	font-size: smaller;
+}
+ul.toc {
+	margin: 0px 5px 5px 5px;
+	padding: 0px;
+}
+ul.toc li {
+	font-size: 85%;
+	margin: 1px 0 1px 1px;
+	padding: 1px 0 1px 11px;
+	list-style-type: none;
+	background-repeat: no-repeat;
+	background-position: center left;
+}
+ul.toc li.header {
+	font-size: 115%;
+	padding: 5px 0px 5px 11px;
+	border-bottom: 1px solid #cccccc;
+	margin-bottom: 5px;
+}
+ul.toc li.active {
+	font-weight: bold;
+}
+ul.toc li a {
+	text-decoration: none;
+}
+ul.toc li a:hover {
+	text-decoration: underline;
+}
+</style>
+ <ul class="toc">
+  <li class="header home"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="reference.html">Zend Framework Reference</a></li>
+  <li class="header up"><a href="zend.dom.html">Zend_Dom</a></li>
+  <li><a href="zend.dom.introduction.html">简介</a></li>
+  <li class="active"><a href="zend.dom.query.html">Zend_Dom_Query</a></li>
+ </ul>
+ </td>
+    </tr>
+</table>
+</body>
+</html>

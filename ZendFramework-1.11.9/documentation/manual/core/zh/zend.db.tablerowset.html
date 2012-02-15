@@ -1,0 +1,208 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <title>Zend_Db_Table_Rowset - Zend Framework Manual</title>
+
+</head>
+<body>
+<table width="100%">
+    <tr valign="top">
+        <td width="85%">
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.db.table.row.html">Zend_Db_Table_Row</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.db.html">Zend_Db</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.db.table.relationships.html">Zend_Db_Table Relationships</a></div>
+                    </td>
+                </tr>
+            </table>
+<hr />
+<div id="zend.db.tablerowset" class="section"><div class="info"><h1 class="title">Zend_Db_Table_Rowset</h1></div>
+
+    
+
+    <div class="section" id="zend.db.table.rowset.introduction" name="zend.db.table.rowset.introduction"><div class="info"><h1 class="title">简介</h1></div>
+
+        
+
+        <p class="para">
+            Zend_Db_Table_Rowset是 Zend_Db_Table_Row对象集合的迭代器.通常来说,你不可以自己实例化Zend_Db_Table_Rowset,
+            而是通过调用Zend_Db_Table::find()方法或者fetchAll()方法将Zend_Db_Table_Rowset作为
+            结果数据返回过来.接下来就可以遍历Zend_Db_Table_Row对象集合并进行修改.
+        </p>
+
+    </div>
+
+    <div class="section" id="zend.db.table.rowset.fetch" name="zend.db.table.rowset.fetch"><div class="info"><h1 class="title">取回结果集</h1></div>
+
+        
+
+        <p class="para">
+            首先,需要实例化一个Zend_Db_Table类.
+        </p>
+
+        <div class="programlisting"><div class="cdata"><pre>&lt;?php
+// 设置一个 adapter
+require_once &#039;Zend/Db.php&#039;;
+$params = array (
+    &#039;host&#039;     =&gt; &#039;127.0.0.1&#039;,
+    &#039;username&#039; =&gt; &#039;malory&#039;,
+    &#039;password&#039; =&gt; &#039;******&#039;,
+    &#039;dbname&#039;   =&gt; &#039;camelot&#039;
+);
+
+$db = Zend_Db::factory(&#039;PDO_MYSQL&#039;, $params);
+
+// 为所有的Zend_Db_Table对象设置默认
+require_once &#039;Zend/Db/Table.php&#039;;
+Zend_Db_Table::setDefaultAdapter($db);
+
+// 连接数据库表
+class RoundTable extends Zend_Db_Table {}
+$table = new RoundTable();
+?&gt;
+        </pre></div></div>
+
+
+        <p class="para">
+            接下来,可以使用Zend_Db_Table::find()方法和多个键值,或者使用Zend_Db_Table::fetchAll()方法对数据库进行查询,
+            返回的结果是一个Zend_Db_Table_Rowset对象,可以通过该对象遍历结果集中的每一个Zend_Db_Table_Row对象.
+         </p>
+
+        <div class="programlisting"><div class="cdata"><pre>&lt;?php
+// 从表中取回多条记录
+$rowset = $table-&gt;fetchAll();
+
+//
+// $rowset现在是一个Zend_Db_Table_Rowset对象,该对象中每条记录就是一个Zend_Db_Table_Row对象
+//
+?&gt;
+        </pre></div></div>
+
+
+    </div>
+
+    <div class="section" id="zend.db.table.rowset.iterate" name="zend.db.table.rowset.iterate"><div class="info"><h1 class="title">遍历结果集</h1></div>
+
+        
+
+        <p class="para">
+            Zend_Db_Table_Rowset实现了简单程序设计语言的迭代器接口,也就是说,可以对Zend_Db_Table_Rowset
+            对象进行循环处理,就像使用foreach()函数处理数组一样.使用这种方法取回的每一个值都是一个对应表
+            中数据的Zend_Db_Table_Row对象,你可以查看,修改和保存该对象的属性(即表中的字段值.)
+        </p>
+
+        <div class="programlisting"><div class="cdata"><pre>&lt;?php
+// 连接到数据库中的表
+class RoundTable extends Zend_Db_Table {}
+$table = new RoundTable();
+
+// 从表中取回多条记录
+$rowset = $table-&gt;fetchAll();
+
+// 显示所有的记录
+foreach ($rowset as $row) {
+    // $row 是一个 Zend_Db_Table_Row 对象
+    echo &quot;&lt;p&gt;&quot; . htmlspecialchars($row-&gt;nobleTitle) . &quot; &quot;
+       . htmlspecialchars($row-&gt;firstName) . &quot;&#039;s &quot;
+       . &quot;favorite color is &quot; . htmlspecialchars($row-&gt;favoriteColor)
+       . &quot;.&lt;/p&gt;\n&quot;;
+
+    // 更新我们显示改行的次数
+    // (对应表中的&quot;times_displayed&quot;字段)
+    $row-&gt;timesDisplayed ++;
+
+    // 保存新记录.
+    $row-&gt;save();
+}
+?&gt;
+        </pre></div></div>
+
+
+    </div>
+
+</div>
+        <hr />
+
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.db.table.row.html">Zend_Db_Table_Row</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.db.html">Zend_Db</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.db.table.relationships.html">Zend_Db_Table Relationships</a></div>
+                    </td>
+                </tr>
+            </table>
+</td>
+        <td style="font-size: smaller;" width="15%"> <style type="text/css">
+#leftbar {
+	float: left;
+	width: 186px;
+	padding: 5px;
+	font-size: smaller;
+}
+ul.toc {
+	margin: 0px 5px 5px 5px;
+	padding: 0px;
+}
+ul.toc li {
+	font-size: 85%;
+	margin: 1px 0 1px 1px;
+	padding: 1px 0 1px 11px;
+	list-style-type: none;
+	background-repeat: no-repeat;
+	background-position: center left;
+}
+ul.toc li.header {
+	font-size: 115%;
+	padding: 5px 0px 5px 11px;
+	border-bottom: 1px solid #cccccc;
+	margin-bottom: 5px;
+}
+ul.toc li.active {
+	font-weight: bold;
+}
+ul.toc li a {
+	text-decoration: none;
+}
+ul.toc li a:hover {
+	text-decoration: underline;
+}
+</style>
+ <ul class="toc">
+  <li class="header home"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="reference.html">Zend Framework Reference</a></li>
+  <li class="header up"><a href="zend.db.html">Zend_Db</a></li>
+  <li><a href="zend.db.adapter.html">Zend_Db_Adapter</a></li>
+  <li><a href="zend.db.statement.html">Zend_Db_Statement</a></li>
+  <li><a href="zend.db.profiler.html">Zend_Db_Profiler</a></li>
+  <li><a href="zend.db.select.html">Zend_Db_Select</a></li>
+  <li><a href="zend.db.table.html">Zend_Db_Table</a></li>
+  <li><a href="zend.db.table.row.html">Zend_Db_Table_Row</a></li>
+  <li class="active"><a href="zend.db.tablerowset.html">Zend_Db_Table_Rowset</a></li>
+  <li><a href="zend.db.table.relationships.html">Zend_Db_Table Relationships</a></li>
+  <li><a href="zend.db.table.definition.html">Zend_Db_Table_Definition</a></li>
+ </ul>
+ </td>
+    </tr>
+</table>
+</body>
+</html>

@@ -1,0 +1,377 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <title>查询类型 - Zend Framework Manual</title>
+
+</head>
+<body>
+<table width="100%">
+    <tr valign="top">
+        <td width="85%">
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.search.lucene.query-language.html">Query Language</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.search.lucene.html">Zend_Search_Lucene</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.search.lucene.charset.html">字符集</a></div>
+                    </td>
+                </tr>
+            </table>
+<hr />
+<div id="zend.search.lucene.queries" class="section"><div class="info"><h1 class="title">查询类型</h1></div>
+    
+
+    <div class="section" id="zend.search.lucene.queries.term-query" name="zend.search.lucene.queries.term-query"><div class="info"><h1 class="title">单项查询</h1></div>
+        
+        <p class="para">
+        单项查询用于搜索一个搜索项。
+        </p>
+
+        <p class="para">
+        两种搜索方式都可以用于单项查询。
+        </p>
+
+        <p class="para">
+        查询字串：
+        <div class="programlisting"><div class="cdata"><pre>
+    $hits = $index-&gt;find(&#039;word1&#039;);
+        </pre></div></div>
+
+        </p>
+
+        <p class="para">或者</p>
+
+        <p class="para">
+        通过 API 创建查询：
+        <div class="programlisting"><div class="cdata"><pre>&lt;?php
+
+    $term  = new Zend_Search_Lucene_Index_Term(&#039;word1&#039;);
+    $query = new Zend_Search_Lucene_Search_Query_Term($term);
+    $hits  = $index-&gt;find($query);
+
+?&gt;</pre></div></div>
+
+        </p>
+    </div>
+
+    <div class="section" id="zend.search.lucene.queries.multiterm-query" name="zend.search.lucene.queries.multiterm-query"><div class="info"><h1 class="title">多项查询</h1></div>
+        
+        <p class="para">
+            多项查询用于搜索一组搜索项。
+        </p>
+
+        <p class="para">
+            每一个搜索项可以被定义为必须的、禁止的或者既不必须也不禁止(可选)的。
+
+            <ul class="itemizedlist">
+                <li class="listitem">
+                    <p class="para">
+                    必须的意思是文档如果不匹配这个搜索项，那么它就不匹配整个查询；
+                    </p>
+                </li>
+                <li class="listitem">
+                    <p class="para">
+                    禁止的意思是文档如果匹配这个搜索项，那么它就不匹配整个查询；
+                    </p>
+                </li>
+                <li class="listitem">
+                    <p class="para">
+                    可选的，这种情况下文档对搜索项的匹配既不是必须的也不是禁止的。无论如何，文档必须匹配至少一个搜索项才能匹配整个查询。
+                    </p>
+                </li>
+            </ul>
+        </p>
+
+        <p class="para">
+            这意味着，如果一个包含必须的搜索项的查询中加入了可选的搜索项，返回的搜索结果集合是一样的，但是那些包含可选搜索项的搜索结果，将会上升到结果清单的前面。
+        </p>
+
+        <p class="para">
+            两种搜索方式都可以用于单项查询。
+        </p>
+
+        <p class="para">
+            查询字串：
+        <div class="programlisting"><div class="cdata"><pre>&lt;?php
+
+$hits = $index-&gt;find(&#039;+word1 author:word2 -word3&#039;);
+
+?&gt;</pre></div></div>
+
+
+        <ul class="itemizedlist">
+            <li class="listitem"><p class="para">&#039;+&#039; 用于定义必须的搜索项。</p></li>
+            <li class="listitem"><p class="para">&#039;-&#039; 用于定义禁止的搜索项。</p></li>
+            <li class="listitem">
+                <p class="para">
+            &#039;field:&#039; 用于指明要搜索的字段。如果没有提供，则默认的是&#039;contents&#039;。
+                </p>
+            </li>
+        </ul>
+        </p>
+
+        <p class="para">或者</p>
+
+        <p class="para">
+        通过 API 创建查询：
+        <div class="programlisting"><div class="cdata"><pre>&lt;?php
+
+    $query = new Zend_Search_Lucene_Search_Query_MultiTerm();
+
+    $query-&gt;addTerm(new Zend_Search_Lucene_Index_Term(&#039;word1&#039;), true);
+    $query-&gt;addTerm(new Zend_Search_Lucene_Index_Term(&#039;word2&#039;), null);
+    $query-&gt;addTerm(new Zend_Search_Lucene_Index_Term(&#039;word3&#039;), false);
+
+    $hits  = $index-&gt;find($query);
+
+?&gt;</pre></div></div>
+
+        </p>
+
+        <p class="para">
+            <code class="code">$signs</code> 数组包含了搜索项的类型：
+            <ul class="itemizedlist">
+                <li class="listitem"><p class="para">true 用于定义必须的搜索项。</p></li>
+                <li class="listitem"><p class="para">false 用于定义禁止的搜索项。</p></li>
+                <li class="listitem">
+                    <p class="para">
+                null 用于定义既不必须也不禁止的搜索项。
+                    </p>
+                </li>
+            </ul>
+        </p>
+    </div>
+
+    <div class="section" id="zend.search.lucene.queries.phrase-query" name="zend.search.lucene.queries.phrase-query"><div class="info"><h1 class="title">短语查询</h1></div>
+        
+        <p class="para">
+            短语查询用于搜索短语。
+        </p>
+
+        <p class="para">
+            短语查询非常灵活，既可以搜索精确的短语，也可以搜索模糊的短语。精确短语可以包含搜索项和空隙(译注，所谓空隙也就是支持形如“word1 ... word2”的短语)。(可以使用分需程序生成以用于不同的用途。此外，搜索项可以被复制以提升该搜索项的权重或着一些同义词可以放在相同的地方。)因此目前短语查询只能通过 API 创建：
+        </p>
+
+        <div class="programlisting"><div class="cdata"><pre>&lt;?php
+$query1 = new Zend_Search_Lucene_Search_Query_Phrase();
+
+// Add &#039;word1&#039; at 0 relative position.
+$query1-&gt;addTerm(new Zend_Search_Lucene_Index_Term(&#039;word1&#039;));
+
+// Add &#039;word2&#039; at 1 relative position.
+$query1-&gt;addTerm(new Zend_Search_Lucene_Index_Term(&#039;word2&#039;));
+
+// Add &#039;word3&#039; at 3 relative position.
+$query1-&gt;addTerm(new Zend_Search_Lucene_Index_Term(&#039;word3&#039;), 3);
+
+...
+
+$query2 = new Zend_Search_Lucene_Search_Query_Phrase(
+                array(&#039;word1&#039;, &#039;word2&#039;, &#039;word3&#039;), array(0,1,3));
+
+...
+
+// Query without a gap.
+$query3 = new Zend_Search_Lucene_Search_Query_Phrase(
+                array(&#039;word1&#039;, &#039;word2&#039;, &#039;word3&#039;));
+
+...
+
+$query4 = new Zend_Search_Lucene_Search_Query_Phrase(
+                array(&#039;word1&#039;, &#039;word2&#039;), array(0,1), &#039;annotation&#039;);
+
+?&gt;</pre></div></div>
+
+
+
+        <p class="para">
+            短语查询可以使用类的构造方法一次性创建，也可以使用
+            <code class="code">Zend_Search_Lucene_Search_Query_Phrase::addTerm()</code> 方法一步步的创建。
+        </p>
+
+        <p class="para">
+            类 Zend_Search_Lucene_Search_Query_Phrase 的构造方法有三个可选的参数：
+        <div class="programlisting"><div class="cdata"><pre>Zend_Search_Lucene_Search_Query_Phrase([array $terms[, array $offsets[, string $field]]]);</pre></div></div>
+
+        </p>
+
+        <p class="para">
+            <code class="code">$terms</code> 是字符串数组，包含一组短语搜索项。如果它被省略或者为 null，那么将会创建一个空查询。
+        </p>
+
+        <p class="para">
+            <code class="code">$offsets</code> 是一个整数数组，包含短语搜索项的偏移值。如果它被省略或者为 null，那么搜索项的位置被认为是 <code class="code">array(0, 1, 2, 3, ...)</code>。
+        </p>
+
+        <p class="para">
+            <code class="code">$field</code> 是一个字符串，表示要搜索的文档字段。如果它被省略或者为 null，那么默认的字段会被搜索。在这个版本的 Zend_Search_Lucene 中是“contents”，但是下个版本中计划变更为“any field”。
+        </p>
+
+        <p class="para">
+            因此：
+        <div class="programlisting"><div class="cdata"><pre>$query = new Zend_Search_Lucene_Search_Query_Phrase(array(&#039;zend&#039;, &#039;framework&#039;));</pre></div></div>
+
+            将会搜索短语&#039;zend framework&#039;。
+
+        <div class="programlisting"><div class="cdata"><pre>&lt;$query = new Zend_Search_Lucene_Search_Query_Phrase(array(&#039;zend&#039;, &#039;download&#039;), array(0, 2));</pre></div></div>
+
+            将会搜索短语“zend ????? download”并匹配&#039;zend platform download&#039;、 &#039;zend studio download&#039;、 &#039;zend core download&#039;、 &#039;zend framework download&#039;这样的内容。
+
+        <div class="programlisting"><div class="cdata"><pre>$query = new Zend_Search_Lucene_Search_Query_Phrase(array(&#039;zend&#039;, &#039;framework&#039;), null, &#039;title&#039;);</pre></div></div>
+
+            将会搜索在&#039;title&#039;字段中搜索短语“zend framework”。
+        </p>
+
+
+        <p class="para">
+            方法 <code class="code">Zend_Search_Lucene_Search_Query_Phrase::addTerm()</code> 有两个参数。必须的
+          <code class="code">Zend_Search_Lucene_Index_Term</code> 对象和可选的位置：
+        <div class="programlisting"><div class="cdata"><pre>Zend_Search_Lucene_Search_Query_Phrase::addTerm(Zend_Search_Lucene_Index_Term $term[, integer $position]);</pre></div></div>
+
+        </p>
+
+        <p class="para">
+            <code class="code">$term</code> 描述了短语中的下一个搜索项。它必须位于上一个搜索项同样的字段中。否则将会抛出异常。
+        </p>
+
+        <p class="para">
+            <code class="code">$position</code> 指出了它的位置。
+        </p>
+
+        <p class="para">
+            因此：
+        <div class="programlisting"><div class="cdata"><pre>$query = new Zend_Search_Lucene_Search_Query_Phrase();
+$query-&gt;addTerm(new Zend_Search_Lucene_Index_Term(&#039;zend&#039;));
+$query-&gt;addTerm(new Zend_Search_Lucene_Index_Term(&#039;framework&#039;));</pre></div></div>
+
+            将会搜索短语&#039;zend framework&#039;。
+
+        <div class="programlisting"><div class="cdata"><pre>$query = new Zend_Search_Lucene_Search_Query_Phrase();
+$query-&gt;addTerm(new Zend_Search_Lucene_Index_Term(&#039;zend&#039;), 0);
+$query-&gt;addTerm(new Zend_Search_Lucene_Index_Term(&#039;framework&#039;), 2);</pre></div></div>
+
+            将会搜索短语&#039;zend ????? download&#039;并匹配&#039;zend platform download&#039;、 &#039;zend studio download&#039;、 &#039;zend core download&#039;、 &#039;zend framework download&#039;这样的内容。
+
+        <div class="programlisting"><div class="cdata"><pre>$query = new Zend_Search_Lucene_Search_Query_Phrase();
+$query-&gt;addTerm(new Zend_Search_Lucene_Index_Term(&#039;zend&#039;, &#039;title&#039;));
+$query-&gt;addTerm(new Zend_Search_Lucene_Index_Term(&#039;framework&#039;, &#039;title&#039;));</pre></div></div>
+
+            将会搜索在&#039;title&#039;字段中搜索短语“zend framework”。
+        </p>
+
+
+        <p class="para">
+            模糊因子设置了查询短语中两个词之间允许出现的其它词的数量。如果是 0，那么这是一个精确短语搜索。如果是一个较大的值，那么这工作起来像是具有(WITHIN)或者附近(NEAR)操作。
+        </p>
+        <p class="para">
+            模糊因子事实上是一个“编辑距离”，表示移动搜索项移动到查询短语以外的位置上相对应的移动单位。例如，交换两个词的顺序需要两次移动(一次把一个词放到另一个前面)，因此要允许短语的重新排序，模糊因子至少必须为 2。
+        </p>
+        <p class="para">
+            更精确的匹配相比更模糊的匹配得分更高，因此搜索结果将按照精确度排序。模糊因子默认为 0，也就是需要精确匹配。
+        </p>
+        <p class="para">
+            模糊因子可以在查询创建后赋值：
+        </p>
+        <div class="programlisting"><div class="cdata"><pre>&lt;?php
+
+// Query without a gap.
+$query = new Zend_Search_Lucene_Search_Query_Phrase(array(&#039;word1&#039;, &#039;word2&#039;));
+
+// Search for &#039;word1 word2&#039;, &#039;word1 ... word2&#039;
+$query-&gt;setSlop(1);
+$hits1 = $index-&gt;find($query);
+
+// Search for &#039;word1 word2&#039;, &#039;word1 ... word2&#039;,
+// &#039;word1 ... ... word2&#039;, &#039;word2 word1&#039;
+$query-&gt;setSlop(2);
+$hits2 = $index-&gt;find($query);
+
+?&gt;</pre></div></div>
+
+
+    </div>
+</div>
+        <hr />
+
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.search.lucene.query-language.html">Query Language</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.search.lucene.html">Zend_Search_Lucene</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.search.lucene.charset.html">字符集</a></div>
+                    </td>
+                </tr>
+            </table>
+</td>
+        <td style="font-size: smaller;" width="15%"> <style type="text/css">
+#leftbar {
+	float: left;
+	width: 186px;
+	padding: 5px;
+	font-size: smaller;
+}
+ul.toc {
+	margin: 0px 5px 5px 5px;
+	padding: 0px;
+}
+ul.toc li {
+	font-size: 85%;
+	margin: 1px 0 1px 1px;
+	padding: 1px 0 1px 11px;
+	list-style-type: none;
+	background-repeat: no-repeat;
+	background-position: center left;
+}
+ul.toc li.header {
+	font-size: 115%;
+	padding: 5px 0px 5px 11px;
+	border-bottom: 1px solid #cccccc;
+	margin-bottom: 5px;
+}
+ul.toc li.active {
+	font-weight: bold;
+}
+ul.toc li a {
+	text-decoration: none;
+}
+ul.toc li a:hover {
+	text-decoration: underline;
+}
+</style>
+ <ul class="toc">
+  <li class="header home"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="reference.html">Zend Framework Reference</a></li>
+  <li class="header up"><a href="zend.search.lucene.html">Zend_Search_Lucene</a></li>
+  <li><a href="zend.search.lucene.overview.html">概述</a></li>
+  <li><a href="zend.search.lucene.index-creation.html">建立索引</a></li>
+  <li><a href="zend.search.lucene.searching.html">搜索索引</a></li>
+  <li><a href="zend.search.lucene.query-language.html">Query Language</a></li>
+  <li class="active"><a href="zend.search.lucene.queries.html">查询类型</a></li>
+  <li><a href="zend.search.lucene.charset.html">字符集</a></li>
+  <li><a href="zend.search.lucene.extending.html">扩展性</a></li>
+  <li><a href="zend.search.lucene.java-lucene.html">与 Java Lucene 的互操作性</a></li>
+  <li><a href="zend.search.lucene.advanced.html">Advanced</a></li>
+  <li><a href="zend.search.lucene.best-practice.html">Best Practices</a></li>
+ </ul>
+ </td>
+    </tr>
+</table>
+</body>
+</html>

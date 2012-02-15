@@ -1,0 +1,131 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <title>操作理论 - Zend Framework Manual</title>
+
+</head>
+<body>
+<table width="100%">
+    <tr valign="top">
+        <td width="85%">
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.config.introduction.html">简介</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.config.html">Zend_Config</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.config.adapters.ini.html">Zend_Config_Ini</a></div>
+                    </td>
+                </tr>
+            </table>
+<hr />
+<div id="zend.config.theory_of_operation" class="section"><div class="info"><h1 class="title">操作理论</h1></div>
+    
+    <p class="para">
+        配置数据在<code class="code">Zend_Config</code>构造器通过关联数组(associative arrary)可访问，为了支持从通用到特殊组织数据，它可以是多维的。具体的适配器类函数为<code class="code">Zend_Config</code>的构造器从存储到处理关联数组来适应配置数据。用户脚本可以直接提供这样的数组给<code class="code">Zend_Config</code>构造器，不需要使用适配器类，因为它可以很好地工作在特定的情形下。
+    </p>
+    <p class="para">
+        为了很容易简单地访问配置数据，<code class="code">Zend_Config</code>实现了<code class="code">Countable</code> 和 <code class="code">Iterator</code> 接口。这样，可以基于<code class="code">Zend_Config</code>对象使用<a href="http://php.net/count" class="link external">&raquo; <code class="code">count()</code></a>函数和PHP语句如<a href="http://php.net/foreach" class="link external">&raquo; <code class="code">foreach</code></a>。
+    </p>
+    <p class="para">
+        缺省地，配置数据通过<code class="code">Zend_Config</code>可用是只读的，并且赋值（例如，<code class="code">
+$config-&gt;database-&gt;host = &#039;example.com&#039;</code>）导致抛出异常。这个缺省的行为可以通过构造器重载，然而，需要允许修改数据值。并且，当修改被允许时，<code class="code">Zend_Config</code>支持未设定的值（例如 <code class="code">
+unset($config-&gt;database-&gt;host);</code>）。
+        <blockquote><p><b class="note">Note</b>: 
+            
+                不要混淆如在内存中更改和保存配置数据到指定的存储媒体很重要。创建和更改配置数据给不同的存储媒体的工具超出了<code class="code">Zend_Config</code>的范围。为创建和更改配置数据给不同的存储媒体的第三方开源方案很容易实现。
+            <br />
+        </p></blockquote>
+    </p>
+    <p class="para">
+        适配器类从<code class="code">Zend_Config</code>类继承，因为它们使用它的函数。
+    </p>
+    <p class="para">
+        <code class="code">Zend_Config</code>函数家族把配置数据组织成节（section）。<code class="code">Zend_Config</code>适配器对象可以带一个指定的节加载，或者带有多个指定的节，或者所有节（如果没有指定）。
+    </p>
+    <p class="para">
+        <code class="code">Zend_Config</code>适配器类支持单继承模型，它允许配置数据从一个节到另一个节被继承，这是为了为不同目的而减少或消除复制配置数据而提供的。一个继承的节也可以重写从父节继承过来的值。象PHP类继承，一个节可以从一个父节继承，这个父节可能是从祖父节继承的，等等，但是多重继承（例如，节C直接从父节A和B继承）不被支持。
+    </p>
+    <p class="para">
+        如果你有两个<code class="code">Zend_Config</code>对象，你可以用<code class="code">merge()</code>函数把它们合并成一个单个的对象。例如，对<code class="code">$config</code>和<code class="code">$localConfig</code>，使用<code class="code">$config-&gt;merge($localConfig);</code>，你可以把数据从<code class="code">$localConfig</code>合并到<code class="code">$config</code>。在<code class="code">$localConfig</code>中的条目将覆盖在<code class="code">$config</code>中同名的条目。
+    </p>
+</div>
+        <hr />
+
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.config.introduction.html">简介</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.config.html">Zend_Config</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.config.adapters.ini.html">Zend_Config_Ini</a></div>
+                    </td>
+                </tr>
+            </table>
+</td>
+        <td style="font-size: smaller;" width="15%"> <style type="text/css">
+#leftbar {
+	float: left;
+	width: 186px;
+	padding: 5px;
+	font-size: smaller;
+}
+ul.toc {
+	margin: 0px 5px 5px 5px;
+	padding: 0px;
+}
+ul.toc li {
+	font-size: 85%;
+	margin: 1px 0 1px 1px;
+	padding: 1px 0 1px 11px;
+	list-style-type: none;
+	background-repeat: no-repeat;
+	background-position: center left;
+}
+ul.toc li.header {
+	font-size: 115%;
+	padding: 5px 0px 5px 11px;
+	border-bottom: 1px solid #cccccc;
+	margin-bottom: 5px;
+}
+ul.toc li.active {
+	font-weight: bold;
+}
+ul.toc li a {
+	text-decoration: none;
+}
+ul.toc li a:hover {
+	text-decoration: underline;
+}
+</style>
+ <ul class="toc">
+  <li class="header home"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="reference.html">Zend Framework Reference</a></li>
+  <li class="header up"><a href="zend.config.html">Zend_Config</a></li>
+  <li><a href="zend.config.introduction.html">简介</a></li>
+  <li class="active"><a href="zend.config.theory_of_operation.html">操作理论</a></li>
+  <li><a href="zend.config.adapters.ini.html">Zend_Config_Ini</a></li>
+  <li><a href="zend.config.adapters.json.html">Zend_Config_Json</a></li>
+  <li><a href="zend.config.adapters.xml.html">Zend_Config_Xml</a></li>
+  <li><a href="zend.config.adapters.yaml.html">Zend_Config_Yaml</a></li>
+ </ul>
+ </td>
+    </tr>
+</table>
+</body>
+</html>

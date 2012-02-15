@@ -1,0 +1,295 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <title>The Session UserAgent Storage Adapter - Zend Framework Manual</title>
+
+</head>
+<body>
+<table width="100%">
+    <tr valign="top">
+        <td width="85%">
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.http.user-agent-storage.html">The UserAgent Storage Interface</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.http.html">Zend_Http</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.infocard.html">Zend_InfoCard</a></div>
+                    </td>
+                </tr>
+            </table>
+<hr />
+<div id="zend.http.user-agent-storage-session" class="section"><div class="info"><h1 class="title">The Session UserAgent Storage Adapter</h1></div>
+    
+
+    <div class="section" id="zend.http.user-agent-storage-session.intro" name="zend.http.user-agent-storage-session.intro"><div class="info"><h1 class="title">Overview</h1></div>
+        
+
+        <p class="para">
+            This <a href="zend.http.user-agent-storage.html" class="link">storage adapter</a> utilizes
+            <span class="classname">Zend_Session_Namespace</span> for persisting discovered device
+            capabilities for a given user session.
+        </p>
+    </div>
+
+    <div class="section" id="zend.http.user-agent-storage-session.quick-start" name="zend.http.user-agent-storage-session.quick-start"><div class="info"><h1 class="title">Quick Start</h1></div>
+        
+
+        <p class="para">
+            This particular storage adapter is used by default with
+            <span class="classname">Zend_Http_UserAgent</span>. As such, you will benefit from it from the
+            outset without any real configuration necessary.
+        </p>
+
+        <p class="para">
+            You can alter the behavior slightly, however, by altering the namespace used, and the
+            key (or <em class="emphasis">member</em>) in which data is written. You may do so by
+            specifying the <var class="varname">browser_type</var> (mapped to namespace) and
+            <var class="varname">member</var> options in your configuration.
+        </p>
+
+        <div class="programlisting ini"><div class="inicode"><div class="ini" style="font-family: monospace;"><ol><li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">resources.useragent.storage.<span style="color: #000099;">adapter </span>= <span style="color: #933;">&quot;Session&quot;</span></div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">resources.useragent.storage.options.<span style="color: #000099;">browser_type </span>= <span style="color: #933;">&quot;all&quot;</span></div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">resources.useragent.storage.options.<span style="color: #000099;">member </span>= <span style="color: #933;">&quot;data&quot;</span></div></li></ol></div></div></div>
+
+
+        <p class="para">
+            Typically, you will not pass the <var class="varname">browser_type</var> option, and instead let
+            this be populated by the value discovered by the <span class="classname">UserAgent</span> class.
+        </p>
+    </div>
+
+    <div class="section" id="zend.http.user-agent-storage-session.options" name="zend.http.user-agent-storage-session.options"><div class="info"><h1 class="title">Configuration Options</h1></div>
+        
+
+        <dl>
+<div class="info"><h1 class="title">Session Storage Options</h1></div>
+            
+
+            <dt>
+
+                <dt class="term">browser_type</dt>
+
+                <dd>
+
+                    <p class="para">
+                        Provide this in order to hardcode the session namespace in which you wish to
+                        store the User-Agent data. By default, the currently discovered browser type
+                        will be used, or, if not provided, the value &quot;Zend_Http_UserAgent&quot;.
+                    </p>
+                </dd>
+
+            </dt>
+
+
+            <dt>
+
+                <dt class="term">member</dt>
+
+                <dd>
+
+                    <p class="para">
+                        This is the specific variable member within the session namespace in which
+                        the data will be stored. By default, the value &quot;storage&quot; will be used.
+                    </p>
+                </dd>
+
+            </dt>
+
+        </dl>
+
+    </div>
+
+    <div class="section" id="zend.http.user-agent-storage-session.methods" name="zend.http.user-agent-storage-session.methods"><div class="info"><h1 class="title">Available Methods</h1></div>
+        
+
+        <dl>
+
+            <dt id="zend.http.user-agent-storage-session.methods.constructor">
+                <dt class="term">
+                    <div class="methodsynopsis dc-description">
+                         <span class="methodname">__construct</span>
+                        <span class="methodparam">( 
+                            <code_funcparams class="funcparams">$options = null</code_funcparams>
+                         )</span>
+                    </div>
+
+                </dt>
+
+                <dd>
+
+                    <p class="para">
+                        Accepts an array or object containing options. See the <a href="zend.http.user-agent-storage-session.html#zend.http.user-agent-storage-session.options" class="link">configuration options
+                            section</a> for details on the <var class="varname">$options</var> variable.
+                    </p>
+                </dd>
+
+            </dt>
+
+
+            <dt id="zend.http.user-agent-storage-session.methods.is-empty">
+                <dt class="term">
+                    <div class="methodsynopsis dc-description">
+                         <span class="methodname">isEmpty</span>
+                    </div>
+
+                </dt>
+
+                <dd>
+
+                    <p class="para">
+                        Used to determine whether or not the storage has been populated yet.
+                    </p>
+                </dd>
+
+            </dt>
+
+
+            <dt id="zend.http.user-agent-storage-session.methods.read">
+                <dt class="term">
+                    <div class="methodsynopsis dc-description">
+                         <span class="methodname">read</span>
+                    </div>
+
+                </dt>
+
+                <dd>
+
+                    <p class="para">
+                        Retrieve previously stored data from the storage adapter.
+                    </p>
+                </dd>
+
+            </dt>
+
+
+            <dt id="zend.http.user-agent-storage-session.methods.write">
+                <dt class="term">
+                    <div class="methodsynopsis dc-description">
+                         <span class="methodname">write</span>
+                        <span class="methodparam">( 
+                            <code_funcparams class="funcparams">$contents</code_funcparams>
+                         )</span>
+                    </div>
+
+                </dt>
+
+                <dd>
+
+                    <p class="para">
+                        Write data to the storage adapter for later retrieval.
+                        <var class="varname">$contents</var> should be a string containing the serialized
+                        <span class="classname">UserAgent</span> object.
+                    </p>
+                </dd>
+
+            </dt>
+
+
+            <dt id="zend.http.user-agent-storage-session.methods.clear">
+                <dt class="term">
+                    <div class="methodsynopsis dc-description">
+                         <span class="methodname">clear</span>
+                    </div>
+
+                </dt>
+
+                <dd>
+
+                    <p class="para">
+                        Clear the storage of any data.
+                    </p>
+                </dd>
+
+            </dt>
+
+        </dl>
+
+    </div>
+</div>
+        <hr />
+
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.http.user-agent-storage.html">The UserAgent Storage Interface</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.http.html">Zend_Http</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.infocard.html">Zend_InfoCard</a></div>
+                    </td>
+                </tr>
+            </table>
+</td>
+        <td style="font-size: smaller;" width="15%"> <style type="text/css">
+#leftbar {
+	float: left;
+	width: 186px;
+	padding: 5px;
+	font-size: smaller;
+}
+ul.toc {
+	margin: 0px 5px 5px 5px;
+	padding: 0px;
+}
+ul.toc li {
+	font-size: 85%;
+	margin: 1px 0 1px 1px;
+	padding: 1px 0 1px 11px;
+	list-style-type: none;
+	background-repeat: no-repeat;
+	background-position: center left;
+}
+ul.toc li.header {
+	font-size: 115%;
+	padding: 5px 0px 5px 11px;
+	border-bottom: 1px solid #cccccc;
+	margin-bottom: 5px;
+}
+ul.toc li.active {
+	font-weight: bold;
+}
+ul.toc li a {
+	text-decoration: none;
+}
+ul.toc li a:hover {
+	text-decoration: underline;
+}
+</style>
+ <ul class="toc">
+  <li class="header home"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="reference.html">Zend Framework Reference</a></li>
+  <li class="header up"><a href="zend.http.html">Zend_Http</a></li>
+  <li><a href="zend.http.client.html">Zend_Http_Client - 介绍</a></li>
+  <li><a href="zend.http.client.advanced.html">Zend_Http_Client - Advanced Usage</a></li>
+  <li><a href="zend.http.client.adapters.html">Zend_Http_Client - Connection Adapters</a></li>
+  <li><a href="zend.http.cookies.html">Zend_Http_Cookie and Zend_Http_CookieJar</a></li>
+  <li><a href="zend.http.response.html">Zend_Http_Response</a></li>
+  <li><a href="zend.http.user-agent.html">Zend_Http_UserAgent</a></li>
+  <li><a href="zend.http.user-agent-device.html">The UserAgent Device Interface</a></li>
+  <li><a href="zend.http.user-agent-features.html">The UserAgent Features Adapter</a></li>
+  <li><a href="zend.http.user-agent-features-wurfl.html">The WURFL UserAgent Features Adapter</a></li>
+  <li><a href="zend.http.user-agent-features-device-atlas.html">The DeviceAtlas UserAgent Features Adapter</a></li>
+  <li><a href="zend.http.user-agent-features-tera-wurfl.html">The TeraWurfl UserAgent Features Adapter</a></li>
+  <li><a href="zend.http.user-agent-storage.html">The UserAgent Storage Interface</a></li>
+  <li class="active"><a href="zend.http.user-agent-storage-session.html">The Session UserAgent Storage Adapter</a></li>
+ </ul>
+ </td>
+    </tr>
+</table>
+</body>
+</html>

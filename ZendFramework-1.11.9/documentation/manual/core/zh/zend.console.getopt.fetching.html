@@ -1,0 +1,236 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <title>读取（Fetching）选项和参数 - Zend Framework Manual</title>
+
+</head>
+<body>
+<table width="100%">
+    <tr valign="top">
+        <td width="85%">
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.console.getopt.rules.html">声明 Getopt 规则</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.console.getopt.html">Zend_Console_Getopt</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.console.getopt.configuration.html">配置 Zend_Console_Getopt</a></div>
+                    </td>
+                </tr>
+            </table>
+<hr />
+<div id="zend.console.getopt.fetching" class="section"><div class="info"><h1 class="title"> 读取（Fetching）选项和参数 </h1></div>
+    
+    <p class="para">
+        在声明 <code class="code">Zend_Console_Getopt</code> 对象认可的选项和从命令行或数组提供参数后，可以查询这个对象来找出哪个选项被用户在程序中给定的命令行调用中被指定。这个类实现魔术方法，所以可以用名字来查询选项。
+    </p>
+    <p class="para">
+        数据的解析被延迟到第一个依靠 <code class="code">Zend_Console_Getopt</code> 对象查询是否发现一个选项被给出，然后这个对象来执行解析。它允许在解析发生之前使用若干个方法调用来配置选项、参数、帮助内容和配置选项。
+    </p>
+
+    <div class="section" id="zend.console.getopt.fetching.exceptions" name="zend.console.getopt.fetching.exceptions"><div class="info"><h1 class="title"> 操作 Getopt 异常 </h1></div>
+        
+        <p class="para">
+            如果用户在命令行中给出任何无效选项，解析函数抛出一个<code class="code">Zend_Console_Getopt_Exception</code>。你应当在程序代码理捕捉这个异常。可以使用<code class="code">parse()</code>方法强制对象来解析参数。这很有用，因为可以在<code class="code">try</code> 块中调用<code class="code">parse()</code>。如果通过，解析不再抛出异常。异常的抛出有一个定制的方法 <code class="code">getUsageMessage()</code>，它作为字符串返回，这个字符串是所有被声明的选项的用法信息。
+        </p>
+        <div class="example"><div class="info"><p><b>Example #1  捕捉 Getopt 异常 </b></p></div>
+            
+            <div class="programlisting"><div class="cdata"><pre>
+try {
+    $opts = new Zend_Console_Getopt(&#039;abp:&#039;);
+    $opts-&gt;parse();
+} catch (Zend_Console_Getopt_Exception $e) {
+    echo $e-&gt;getUsageMessage();
+    exit;
+}
+
+            </pre></div></div>
+
+        </div>
+        <p class="para">
+            解析抛出异常的情况包括：
+        </p>
+        <ul class="itemizedlist">
+            <li class="listitem">
+                <p class="para">
+                    给出的选项不被认可。
+                </p>
+            </li>
+            <li class="listitem">
+                <p class="para">
+                    选项需要参数，但没有给出。
+                </p>
+            </li>
+            <li class="listitem">
+                <p class="para">
+                    选项参数类型错误。例如，当要求整数却给出一个非数字字符串。
+                </p>
+            </li>
+        </ul>
+    </div>
+
+    <div class="section" id="zend.console.getopt.fetching.byname" name="zend.console.getopt.fetching.byname"><div class="info"><h1 class="title"> 通过名字读取 （Fetching）选项 </h1></div>
+        
+        <p class="para">
+            可以使用 <code class="code">getOption()</code> 方法来查询选项的值。如果选项有一个参数，这个方法返回参数的值。如果选项不带参数但用户的确在命令行中指定了，这个方法返回<code class="code">true</code>，否则，返回<code class="code">null</code>。
+        </p>
+        <div class="example"><div class="info"><p><b>Example #2  使用 getOption()</b></p></div>
+            
+            <div class="programlisting"><div class="cdata"><pre>
+$opts = new Zend_Console_Getopt(&#039;abp:&#039;);
+$b = $opts-&gt;getOption(&#039;b&#039;);
+$p_parameter = $opts-&gt;getOption(&#039;p&#039;);
+
+            </pre></div></div>
+
+        </div>
+        <p class="para">
+            另外，可以使用魔术函数 <code class="code">__get()</code> 来获取选项的值，好像它是类成员变量。 <code class="code">__isset()</code> 魔术方法也可以实现。
+        </p>
+        <div class="example"><div class="info"><p><b>Example #3  使用 __get() 和 __isset() 魔术方法 </b></p></div>
+            
+            <div class="programlisting"><div class="cdata"><pre>
+$opts = new Zend_Console_Getopt(&#039;abp:&#039;);
+if (isset($opts-&gt;b)) {
+    echo &quot;I got the b option.\n&quot;;
+}
+$p_parameter = $opts-&gt;p; // null if not set
+
+            </pre></div></div>
+
+        </div>
+        <p class="para">
+            如果选项被带有别名声明，在上面的方法中可以使用任何别名。
+        </p>
+    </div>
+
+    <div class="section" id="zend.console.getopt.fetching.reporting" name="zend.console.getopt.fetching.reporting"><div class="info"><h1 class="title"> 报告选项 </h1></div>
+        
+        <p class="para">
+            有若干方法来报告由用户在当前命令行给出的选项的全集。
+        </p>
+        <ul class="itemizedlist">
+            <li class="listitem">
+                <p class="para">
+                    作为字符串：使用<code class="code">toString()</code>方法。选项被返回为用空格分隔的&quot;<code class="code">flag=value</code>&quot;对的字符串。没有参数的选项值是字面上的&quot;<code class="code">true</code>&quot;。
+                </p>
+            </li>
+            <li class="listitem">
+                <p class="para">
+                    作为数组：使用<code class="code">toArray()</code>方法。选项被返回在一个简单的整数索引的字符串数组，flag 字符串在参数字符串之后，如果有的话。
+                </p>
+            </li>
+            <li class="listitem">
+                <p class="para">
+                    作为包含JSON数据的字符串：使用 <code class="code">toJson()</code> 方法。
+                </p>
+            </li>
+            <li class="listitem">
+                <p class="para">
+                    作为包含 XML 数据的字符串： 使用 <code class="code">toXml()</code> 方法。
+                </p>
+            </li>
+        </ul>
+        <p class="para">
+            在上述所有的方法中，flag 字符串是对应于别名列表中的第一个字符串。例如：如果选项别名被声明如&quot;<code class="code">verbose|v</code>&quot;，那么第一个字符串，&quot;<code class="code">verbose</code>&quot;，被用作选项的规范名称。选项flag的名称不包括任何前面所述的短横线。
+        </p>
+    </div>
+
+    <div class="section" id="zend.console.getopt.fetching.remainingargs" name="zend.console.getopt.fetching.remainingargs"><div class="info"><h1 class="title"> 读取非选项参数 </h1></div>
+        
+        <p class="para">
+            在选项参数和它们的参数从命令行中解析后，可能还有另外的参数剩余。可以使用<code class="code">getRemainingArgs()</code>方法来查询这些参数。这个方法返回一个不属于任何选项的字符串数组。
+        </p>
+        <div class="example"><div class="info"><p><b>Example #4  使用 getRemainingArgs()</b></p></div>
+            
+            <div class="programlisting"><div class="cdata"><pre>
+$opts = new Zend_Console_Getopt(&#039;abp:&#039;);
+$opts-&gt;setArguments(array(&#039;-p&#039;, &#039;p_parameter&#039;, &#039;filename&#039;));
+$args = $opts-&gt;getRemainingArgs(); // returns array(&#039;filename&#039;)
+
+            </pre></div></div>
+
+        </div>
+        <p class="para">
+            <code class="code">Zend_Console_Getopt</code>支持 GNU 惯例，在参数中包含双短横线表示选项的结尾。在这个符号后面的任何参数必须当作非选项参数。如果有以一个短横线开头的非选项参数，这很有用。例如：&quot;<strong class="command">rm -- -filename-with-dash</strong>&quot;。
+        </p>
+    </div>
+
+</div>
+        <hr />
+
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.console.getopt.rules.html">声明 Getopt 规则</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.console.getopt.html">Zend_Console_Getopt</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.console.getopt.configuration.html">配置 Zend_Console_Getopt</a></div>
+                    </td>
+                </tr>
+            </table>
+</td>
+        <td style="font-size: smaller;" width="15%"> <style type="text/css">
+#leftbar {
+	float: left;
+	width: 186px;
+	padding: 5px;
+	font-size: smaller;
+}
+ul.toc {
+	margin: 0px 5px 5px 5px;
+	padding: 0px;
+}
+ul.toc li {
+	font-size: 85%;
+	margin: 1px 0 1px 1px;
+	padding: 1px 0 1px 11px;
+	list-style-type: none;
+	background-repeat: no-repeat;
+	background-position: center left;
+}
+ul.toc li.header {
+	font-size: 115%;
+	padding: 5px 0px 5px 11px;
+	border-bottom: 1px solid #cccccc;
+	margin-bottom: 5px;
+}
+ul.toc li.active {
+	font-weight: bold;
+}
+ul.toc li a {
+	text-decoration: none;
+}
+ul.toc li a:hover {
+	text-decoration: underline;
+}
+</style>
+ <ul class="toc">
+  <li class="header home"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="reference.html">Zend Framework Reference</a></li>
+  <li class="header up"><a href="zend.console.getopt.html">Zend_Console_Getopt</a></li>
+  <li><a href="zend.console.getopt.introduction.html">Getopt 简介</a></li>
+  <li><a href="zend.console.getopt.rules.html">声明 Getopt 规则</a></li>
+  <li class="active"><a href="zend.console.getopt.fetching.html">读取（Fetching）选项和参数</a></li>
+  <li><a href="zend.console.getopt.configuration.html">配置 Zend_Console_Getopt</a></li>
+ </ul>
+ </td>
+    </tr>
+</table>
+</body>
+</html>

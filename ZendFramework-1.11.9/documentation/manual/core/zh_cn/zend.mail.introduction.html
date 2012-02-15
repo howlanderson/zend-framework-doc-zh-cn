@@ -1,0 +1,217 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <title>简介 - Zend Framework Manual</title>
+
+</head>
+<body>
+<table width="100%">
+    <tr valign="top">
+        <td width="85%">
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.mail.html">Zend_Mail</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.mail.html">Zend_Mail</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.mail.sending.html">通过SMTP发送邮件</a></div>
+                    </td>
+                </tr>
+            </table>
+<hr />
+<div id="zend.mail.introduction" class="section"><div class="info"><h1 class="title"> 简介 </h1></div>
+
+    
+
+    <div class="section" id="zend.mail.introduction.getting-started" name="zend.mail.introduction.getting-started"><div class="info"><h1 class="title"> 起步 </h1></div>
+
+        
+
+        <p class="para">
+            <code class="code">Zend_Mail</code> 提供了通用化的功能来撰写和发送文本以及兼容 MIME 标准的含有多个段的邮件消息。邮件在 <code class="code">Zend_Mail</code> 里通过缺省的 <code class="code">Zend_Mail_Transport_Sendmail</code> 传输或通过 <code class="code">Zend_Mail_Transport_Smtp</code> 来发送。
+        </p>
+
+        <div class="example"><div class="info"><p><b>Example #1  使用Zend_Mail发送简单邮件 </b></p></div>
+
+            
+
+            <div class="example-contents"><p>
+                一个简单邮件由一个或者几个收件人，一个主题，一个邮件主体和一个发件人组成。下面的步骤，使用 <code class="code">Zend_Mail_Transport_Sendmail</code> 来发送邮件：
+            </p></div>
+
+            <div class="programlisting"><div class="cdata"><pre>&lt;?php
+require_once &#039;Zend/Mail.php&#039;;
+$mail = new Zend_Mail();
+$mail-&gt;setBodyText(&#039;This is the text of the mail.&#039;);
+$mail-&gt;setFrom(&#039;somebody@example.com&#039;, &#039;Some Sender&#039;);
+$mail-&gt;addTo(&#039;somebody_else@example.com&#039;, &#039;Some Recipient&#039;);
+$mail-&gt;setSubject(&#039;TestSubject&#039;);
+$mail-&gt;send();
+            </pre></div></div>
+
+
+        </div>
+
+        <blockquote><p><b class="note">Note</b>: <span class="info"><b>Minimum definitions</b><br /></span>
+            
+            
+                使用<code class="code">Zend_Mail</code>来发送邮件，你至少得指定一个收件人, 一个发件人(例如通过<code class="code">setFrom()</code>方法)和一个邮件消息主体(文本 和/或者 HTML)。
+            <br />
+        </p></blockquote>
+
+        <p class="para">
+            通过“get”方法可以读取绝大多数储存在“mail”对象中的邮件属性，更进一步的细节请参阅API文档。<code class="code">getRecipients()</code>是一个特例，它返回一个含有所有先前被加入的收件人地址的数组。
+        </p>
+
+        <p class="para">
+            出于安全原因，<code class="code">Zend_Mail</code> 过滤了邮件头中所有字段，以防止基于换行符(<code class="code">\n</code>)邮件头注入(header injection)漏洞攻击。
+        </p>
+
+        <p class="para">
+            你也可以使用大部分带有方便的 fluent interface 的 <code class="code">Zend_Mail</code> 对象的方法。 Fluent interface 意思是每个方法返回一个引用到它被调用的对象，所以你可以立即调用其它方法。
+        </p>
+
+        <div class="programlisting"><div class="cdata"><pre>&lt;?php
+require_once &#039;Zend/Mail.php&#039;;
+$mail = new Zend_Mail();
+$mail-&gt;setBodyText(&#039;This is the text of the mail.&#039;)
+    -&gt;setFrom(&#039;somebody@example.com&#039;, &#039;Some Sender&#039;)
+    -&gt;addTo(&#039;somebody_else@example.com&#039;, &#039;Some Recipient&#039;)
+    -&gt;setSubject(&#039;TestSubject&#039;)
+    -&gt;send();
+        </pre></div></div>
+
+
+    </div>
+
+    <div class="section" id="zend.mail.introduction.sendmail" name="zend.mail.introduction.sendmail"><div class="info"><h1 class="title"> 配置缺省的 sendmail 传送器（transport） </h1></div>
+
+        
+
+        <p class="para">
+            <code class="code">Zend_Mail</code> 实例的缺省的传送器是 <code class="code">Zend_Mail_Transport_Sendmail</code>，它是 PHP <a href="http://php.net/mail" class="link external">&raquo; <code class="code">mail()</code></a> 函数的基本封装。如果你想传递另外的参数给 <a href="http://php.net/mail" class="link external">&raquo; <code class="code">mail()</code></a>  函数，只需要创建一个新的传送器实例并传递参数给构造器。新的传送器实例可以当作缺省的 <code class="code">Zend_Mail</code> 的传送器，或者它可以被传递给 <code class="code">Zend_Mail</code> 的 <code class="code">send()</code> 方法。
+        </p>
+
+        <div class="example"><div class="info"><p><b>Example #2  传递另外的参数给 Zend_Mail_Transport_Sendmail 传送器 </b></p></div>
+
+            
+
+            <div class="example-contents"><p>
+                这个例子示范如何修改 <a href="http://php.net/mail" class="link external">&raquo; <code class="code">mail()</code></a> 函数的返回路径。
+            </p></div>
+
+            <div class="programlisting"><div class="cdata"><pre>&lt;?php
+require_once &#039;Zend/Mail.php&#039;;
+require_once &#039;Zend/Mail/Transport/Sendmail.php&#039;;
+
+$tr = new Zend_Mail_Transport_Sendmail(&#039;-freturn_to_me@example.com&#039;);
+Zend_Mail::setDefaultTransport($tr);
+
+$mail = new Zend_Mail();
+$mail-&gt;setBodyText(&#039;This is the text of the mail.&#039;);
+$mail-&gt;setFrom(&#039;somebody@example.com&#039;, &#039;Some Sender&#039;);
+$mail-&gt;addTo(&#039;somebody_else@example.com&#039;, &#039;Some Recipient&#039;);
+$mail-&gt;setSubject(&#039;TestSubject&#039;);
+$mail-&gt;send();
+            </pre></div></div>
+
+
+        </div>
+
+        <blockquote><p><b class="note">Note</b>: <span class="info"><b> 安全模式限制 </b><br /></span>
+            
+            
+                如果 PHP 运行在安全模式，另外的可选参数将导致 <a href="http://php.net/mail" class="link external">&raquo; <code class="code">mail()</code></a> 函数失败。
+            <br />
+        </p></blockquote>
+
+    </div>
+
+</div>
+        <hr />
+
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.mail.html">Zend_Mail</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.mail.html">Zend_Mail</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.mail.sending.html">通过SMTP发送邮件</a></div>
+                    </td>
+                </tr>
+            </table>
+</td>
+        <td style="font-size: smaller;" width="15%"> <style type="text/css">
+#leftbar {
+	float: left;
+	width: 186px;
+	padding: 5px;
+	font-size: smaller;
+}
+ul.toc {
+	margin: 0px 5px 5px 5px;
+	padding: 0px;
+}
+ul.toc li {
+	font-size: 85%;
+	margin: 1px 0 1px 1px;
+	padding: 1px 0 1px 11px;
+	list-style-type: none;
+	background-repeat: no-repeat;
+	background-position: center left;
+}
+ul.toc li.header {
+	font-size: 115%;
+	padding: 5px 0px 5px 11px;
+	border-bottom: 1px solid #cccccc;
+	margin-bottom: 5px;
+}
+ul.toc li.active {
+	font-weight: bold;
+}
+ul.toc li a {
+	text-decoration: none;
+}
+ul.toc li a:hover {
+	text-decoration: underline;
+}
+</style>
+ <ul class="toc">
+  <li class="header home"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="reference.html">Zend Framework Reference</a></li>
+  <li class="header up"><a href="zend.mail.html">Zend_Mail</a></li>
+  <li class="active"><a href="zend.mail.introduction.html">简介</a></li>
+  <li><a href="zend.mail.sending.html">通过SMTP发送邮件</a></li>
+  <li><a href="zend.mail.multiple-emails.html">通过一个SMTP连接发送多个邮</a></li>
+  <li><a href="zend.mail.different-transports.html">使用不同的Transport对象</a></li>
+  <li><a href="zend.mail.html-mails.html">HTML邮件</a></li>
+  <li><a href="zend.mail.attachments.html">附件</a></li>
+  <li><a href="zend.mail.adding-recipients.html">增加收件人</a></li>
+  <li><a href="zend.mail.boundary.html">控制MIME分界线</a></li>
+  <li><a href="zend.mail.additional-headers.html">外加邮件头信息</a></li>
+  <li><a href="zend.mail.character-sets.html">字符集</a></li>
+  <li><a href="zend.mail.encoding.html">编码</a></li>
+  <li><a href="zend.mail.smtp-authentication.html">SMTP 身份验证</a></li>
+  <li><a href="zend.mail.smtp-secure.html">Securing SMTP Transport</a></li>
+  <li><a href="zend.mail.read.html">Reading Mail Messages</a></li>
+ </ul>
+ </td>
+    </tr>
+</table>
+</body>
+</html>

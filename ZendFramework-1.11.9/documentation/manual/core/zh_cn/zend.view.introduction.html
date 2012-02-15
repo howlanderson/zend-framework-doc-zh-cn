@@ -1,0 +1,292 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <title>简介 - Zend Framework Manual</title>
+
+</head>
+<body>
+<table width="100%">
+    <tr valign="top">
+        <td width="85%">
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.view.html">Zend_View</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.view.html">Zend_View</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.view.controllers.html">控制器脚本</a></div>
+                    </td>
+                </tr>
+            </table>
+<hr />
+<div id="zend.view.introduction" class="section"><div class="info"><h1 class="title">简介</h1></div>
+    
+
+    <p class="para">
+        <code class="code">Zend_View</code>是用来在MVC模式中处理View（视图）部份的一个类。也就是说它用来使视图部份的代码与Model及controller部分分离。它提供了helper,output filter,variable escaping等几个功能组件。
+    </p>
+
+    <p class="para">
+        <code class="code">Zend_View</code>使用PHP本身作为你的模板，或者你也可以建立其它模板引擎的实例，并用你的view代码来对其进行操作。
+    </p>
+
+    <p class="para">
+        使用<code class="code">Zend_View</code>主要有两步： 1. 你的Controller建立一个<code class="code">Zend_View</code>实例，并将需要的变量传递给它； 2. Controller告诉<code class="code">Zend_View</code>解析一个特定的视图，生成View输出的内容。
+    </p>
+
+    <div class="section" id="zend.view.introduction.controller" name="zend.view.introduction.controller"><div class="info"><h1 class="title">控制器脚本</h1></div>
+        
+
+        <p class="para">
+            下面是一个简单的例子。假设你有一个书籍清单，想把它打印出来。控制器代码可能看起来是这样的：
+        </p>
+
+        <div class="programlisting"><div class="cdata"><pre>&lt;?php
+//使用一个模型来获取书籍作者和标题相关数据。
+$data = array(
+    array(
+        &#039;author&#039; =&gt; &#039;Hernando de Soto&#039;,
+        &#039;title&#039; =&gt; &#039;The Mystery of Capitalism&#039;
+    ),
+    array(
+        &#039;author&#039; =&gt; &#039;Henry Hazlitt&#039;,
+        &#039;title&#039; =&gt; &#039;Economics in One Lesson&#039;
+    ),
+    array(
+        &#039;author&#039; =&gt; &#039;Milton Friedman&#039;,
+        &#039;title&#039; =&gt; &#039;Free to Choose&#039;
+    )
+);
+
+//传递数据给Zend_View类的实例　
+Zend_Loader::loadClass(&#039;Zend_View&#039;);
+$view = new Zend_View();
+$view-&gt;books = $data;
+
+//解析一段View代码&quot;booklist.php&quot;来显示数据
+echo $view-&gt;render(&#039;booklist.php&#039;);
+        </pre></div></div>
+
+
+    </div>
+
+    <div class="section" id="zend.view.introduction.view" name="zend.view.introduction.view"><div class="info"><h1 class="title">视图脚本</h1></div>
+
+        
+
+        <p class="para">
+            现在我们看看相关的视图代码&quot;booklist.php&quot;。这是一段普通的代码，但是有一点特别：它是在<code class="code">Zend_View</code>实例的内部运行的，所以$this指向的是<code class="code">Zend_View</code>实例和类方法。(controller传递给<code class="code">Zend_View</code>实例的变量是public的)。一段非常基本的视图代码看起来是这样的：
+        </p>
+
+        <div class="programlisting"><div class="cdata"><pre>&lt;?php if ($this-&gt;books): ?&gt;
+
+    &lt;!-- 包含几本书信息的HTML表格. --&gt;
+    &lt;table&gt;
+        &lt;tr&gt;
+            &lt;th&gt;Author&lt;/th&gt;
+            &lt;th&gt;Title&lt;/th&gt;
+        &lt;/tr&gt;
+
+        &lt;?php foreach ($this-&gt;books as $key =&gt; $val): ?&gt;
+        &lt;tr&gt;
+            &lt;td&gt;&lt;?php echo $this-&gt;escape($val[&#039;author&#039;]) ?&gt;&lt;/td&gt;
+            &lt;td&gt;&lt;?php echo $this-&gt;escape($val[&#039;title&#039;]) ?&gt;&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;?php endforeach; ?&gt;
+
+    &lt;/table&gt;
+
+&lt;?php else: ?&gt;
+
+    &lt;p&gt;There are no books to display.&lt;/p&gt;
+
+&lt;?php endif; ?&gt;
+        </pre></div></div>
+
+
+        <p class="para">
+            注意我们使用escape()来转义输出。
+        </p>
+
+    </div>
+
+    <div class="section" id="zend.view.introduction.options" name="zend.view.introduction.options"><div class="info"><h1 class="title">选项</h1></div>
+        
+
+        <p class="para">
+            <code class="code">Zend_View</code>有若干选项来配置视图脚本的运行。
+        </p>
+
+        <ul class="itemizedlist">
+            <li class="listitem">
+                <p class="para">
+                    <code class="code">basePath</code>: 指示一个基本路径，可以在下面设置script、 helper 和 filter 路径。目录结构如下：
+                </p>
+
+                <div class="programlisting"><div class="cdata"><pre>
+base/path/
+    helpers/
+    filters/
+    scripts/
+                </pre></div></div>
+
+
+                <p class="para">
+                    可以通过 <code class="code">setBasePath()</code>、<code class="code">addBasePath()</code>、或 <code class="code">basePath</code>设置给构造器。
+                </p>
+            </li>
+
+            <li class="listitem"><p class="para">
+                <code class="code">encoding</code>: 指定 <code class="code">htmlentities()</code>、<code class="code">htmlspecialchars()</code>和其它操作所采用的字符集，缺省为 ISO-8859-1 (latin1)。也可以通过<code class="code">setEncoding()</code> 或 <code class="code">encoding</code> 设置给构造器。
+            </p></li>
+
+            <li class="listitem"><p class="para">
+                <code class="code">escape</code>: 指定<code class="code">escape()</code>所使用的回调函数（callback）。也可以通过<code class="code">setEscape()</code>或<code class="code">escape</code>设置给构造器。
+            </p></li>
+
+            <li class="listitem"><p class="para">
+                <code class="code">filter</code>: 指示在解析视图脚本后使用的过滤器。可以通过<code class="code">setFilter()</code>、<code class="code">addFilter()</code>或者<code class="code">filter</code>设置给构造器。
+            </p></li>
+
+            <li class="listitem"><p class="para">
+                <code class="code">strictVars</code>: 指定某些未初始化的视图变量被访问时，<code class="code">Zend_View</code>必须发出通知和警告。可以通过调用<code class="code">strictVars(true)</code> 或传递<code class="code">strictVars</code>给构造器来设置。
+            </p></li>
+        </ul>
+    </div>
+
+    <div class="section" id="zend.view.introduction.accessors" name="zend.view.introduction.accessors"><div class="info"><h1 class="title">实用访问器</h1></div>
+        
+
+        <p class="para">
+            一般来说，你只需要调用<code class="code">assign()</code>、<code class="code">render()</code>或其中之一来设置/添加过滤器、助手类、和脚本路径。然而，如果希望扩展<code class="code">Zend_View</code>或需要访问它的内部，有许多访问器（Accessor）可用：
+        </p>
+
+        <ul class="itemizedlist">
+            <li class="listitem">
+                <p class="para">
+                    <code class="code">getVars()</code> 将返回所有已赋值的变量。
+                </p>
+            </li>
+
+            <li class="listitem">
+                <p class="para">
+                    <code class="code">clearVars()</code> 将清除所有已赋值的变量；当你想重新使用同一个视图对象，并决定哪些变量可用时，这个功能很有用。
+                </p>
+            </li>
+
+            <li class="listitem">
+                <p class="para">
+                    <code class="code">getScriptPath($script)</code> 将获取指定的视图脚本的路径。
+                </p>
+            </li>
+
+            <li class="listitem">
+                <p class="para">
+                    <code class="code">getScriptPaths()</code> 将获取所有注册的脚本路径。
+                </p>
+            </li>
+
+            <li class="listitem">
+                <p class="para">
+                    <code class="code">getHelperPath($helper)</code> 将获取已命名的助手类的路径。
+                </p>
+            </li>
+
+            <li class="listitem">
+                <p class="para">
+                    <code class="code">getHelperPaths()</code> 将获取所有注册的助手路径。
+                </p>
+            </li>
+
+            <li class="listitem">
+                <p class="para">
+                    <code class="code">getFilterPath($filter)</code> 将获取已命名的过滤器类的路径。
+                </p>
+            </li>
+
+            <li class="listitem">
+                <p class="para">
+                    <code class="code">getFilterPaths()</code> 将获取所有注册的过滤器文件的路径。
+                </p>
+            </li>
+        </ul>
+    </div>
+</div>
+        <hr />
+
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.view.html">Zend_View</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.view.html">Zend_View</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.view.controllers.html">控制器脚本</a></div>
+                    </td>
+                </tr>
+            </table>
+</td>
+        <td style="font-size: smaller;" width="15%"> <style type="text/css">
+#leftbar {
+	float: left;
+	width: 186px;
+	padding: 5px;
+	font-size: smaller;
+}
+ul.toc {
+	margin: 0px 5px 5px 5px;
+	padding: 0px;
+}
+ul.toc li {
+	font-size: 85%;
+	margin: 1px 0 1px 1px;
+	padding: 1px 0 1px 11px;
+	list-style-type: none;
+	background-repeat: no-repeat;
+	background-position: center left;
+}
+ul.toc li.header {
+	font-size: 115%;
+	padding: 5px 0px 5px 11px;
+	border-bottom: 1px solid #cccccc;
+	margin-bottom: 5px;
+}
+ul.toc li.active {
+	font-weight: bold;
+}
+ul.toc li a {
+	text-decoration: none;
+}
+ul.toc li a:hover {
+	text-decoration: underline;
+}
+</style>
+ <ul class="toc">
+  <li class="header home"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="reference.html">Zend Framework Reference</a></li>
+  <li class="header up"><a href="zend.view.html">Zend_View</a></li>
+  <li class="active"><a href="zend.view.introduction.html">简介</a></li>
+  <li><a href="zend.view.controllers.html">控制器脚本</a></li>
+  <li><a href="zend.view.scripts.html">视图脚本</a></li>
+  <li><a href="zend.view.helpers.html">视图助手（View Helper）</a></li>
+  <li><a href="zend.view.abstract.html">Zend_View_Abstract</a></li>
+ </ul>
+ </td>
+    </tr>
+</table>
+</body>
+</html>

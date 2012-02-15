@@ -1,0 +1,1461 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <title>Dojo 视图助手 - Zend Framework Manual</title>
+
+</head>
+<body>
+<table width="100%">
+    <tr valign="top">
+        <td width="85%">
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.dojo.data.html">Zend_Dojo_Data: dojo.data Envelopes</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.dojo.html">Zend_Dojo</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.dojo.form.html">Dojo 表单元素和装饰器</a></div>
+                    </td>
+                </tr>
+            </table>
+<hr />
+<div id="zend.dojo.view" class="section"><div class="info"><h1 class="title">Dojo 视图助手</h1></div>
+    
+
+    <p class="para">
+        Zend Framework 提供下列 Dojo-specific 视图助手：
+    </p>
+
+    <ul class="itemizedlist">
+        <li class="listitem"><p class="para">
+            <em class="emphasis">dojo():</em> 给你的页面设置 Dojo 环境，
+            包括 dojo 配置值、定制模块路径、模块请求语句、主题风格、是否使用 CDN 等等。
+        </p></li>
+    </ul>
+
+    <div class="example"><div class="info"><p><b>Example #1 使用 Dojo 视图助手</b></p></div>
+        
+
+        <div class="example-contents"><p>
+            为了使用 Dojo 视图助手，你需要告诉视图对象到哪里去找它们，调用
+            <code class="code">addHelperPath()</code>：
+        </p></div>
+
+        <div class="programlisting"><div class="cdata"><pre>
+$view-&gt;addHelperPath(&#039;Zend/Dojo/View/Helper/&#039;, &#039;Zend_Dojo_View_Helper&#039;);
+
+        </pre></div></div>
+
+
+        <div class="example-contents"><p>
+            另外，你也可以使用 <code class="code">Zend_Dojo</code> 的
+            <code class="code">enableView()</code> 方法来做：
+        </p></div>
+
+        <div class="programlisting"><div class="cdata"><pre>
+Zend_Dojo::enableView($view);
+
+        </pre></div></div>
+
+    </div>
+
+    <div class="section" id="zend.dojo.view.dojo" name="zend.dojo.view.dojo"><div class="info"><h1 class="title">dojo() 视图助手</h1></div>
+    
+
+    <p class="para">
+        <code class="code">dojo()</code> 视图助手用来简化设置 Dojo 环境，包括下列职责:
+    </p>
+
+    <ul class="itemizedlist">
+        <li class="listitem"><p class="para">指定一个 CDN 或一个本地路径给 Dojo 安装。</p></li>
+        <li class="listitem"><p class="para">指定路径给定制的 Dojo 模块。</p></li>
+        <li class="listitem"><p class="para">指定 dojo.require 语句。</p></li>
+        <li class="listitem"><p class="para">指定 dijit 风格主题来使用。 </p></li>
+        <li class="listitem"><p class="para">指定 dojo.addOnLoad() 事件。</p></li>
+    </ul>
+
+    <p class="para">
+        <code class="code">dojo()</code> 视图助手实现是占位符实现的一个范例；数据集在视图对象之间持久，
+        并可能从布局脚本被直接显示。
+    </p>
+
+    <div class="example"><div class="info"><p><b>Example #2 dojo() 视图助手用法范例</b></p></div>
+        
+
+        <div class="example-contents"><p>
+            对本范例，假设开发者将从本地路径使用 Dojo 表单，需要请求若干个 dijits，
+            并将使用 Tundra dijit 主题。
+        </p></div>
+
+        <div class="example-contents"><p>
+            在许多页面上，开发者可能根本不使用 Dojo。所以，我们集中精力在需要 Dojo 的视图脚本上，
+            然后是布局脚本，在那里，我们将设置一个 Dojo 环境和解析它。
+        </p></div>
+
+        <div class="example-contents"><p>
+            首先，我们需要告诉视图对象使用 Dojo 视图助手路径。这可以在引导文件里或早期运行的插件里做；
+            简单地抓取你的视图对象并执行下列代码：
+        </p></div>
+
+        <div class="programlisting"><div class="cdata"><pre>
+$view-&gt;addHelperPath(&#039;Zend/Dojo/View/Helper/&#039;, &#039;Zend_Dojo_View_Helper&#039;);
+</pre></div></div>
+
+
+        <div class="example-contents"><p>
+            接着是视图脚本。在本例中，我们打算指定使用 FilteringSelect － 它需要基于 QueryReadStore 的定制的存储，
+            我们将调用 &#039;PairedStore&#039; 并存储到我们的 &#039;custom&#039; 模块。
+        </p></div>
+
+        <div class="programlisting"><div class="cdata"><pre>
+&lt;? // setup data store for FilteringSelect ?&gt;
+&lt;div dojoType=&quot;custom.PairedStore&quot; jsId=&quot;stateStore&quot;
+    url=&quot;/data/autocomplete/type/state/format/ajax&quot;
+    requestMethod=&quot;get&quot;&gt;&lt;/div&gt;
+
+&lt;? // Input element: ?&gt;
+State: &lt;input id=&quot;state&quot; dojoType=&quot;dijit.form.FilteringSelect&quot;
+    store=&quot;stateStore&quot; pageSize=&quot;5&quot; /&gt;
+
+&lt;? // setup required dojo elements:
+$this-&gt;dojo()-&gt;enable()
+             -&gt;setDjConfigOption(&#039;parseOnLoad&#039;, true)
+             -&gt;registerModulePath(&#039;../custom/&#039;)
+             -&gt;requireModule(&#039;dijit.form.FilteringSelect&#039;)
+             -&gt;requireModule(&#039;custom.PairedStore&#039;);
+</pre></div></div>
+
+
+        <div class="example-contents"><p>
+            在布局脚本中，我们接着检查是否开启了 Dojo，如果是，我们将做一些基本配置和组装：
+        </p></div>
+
+        <div class="programlisting"><div class="cdata"><pre>
+&lt;?= $this-&gt;doctype() ?&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;?= $this-&gt;headTitle() ?&gt;
+    &lt;?= $this-&gt;headMeta() ?&gt;
+    &lt;?= $this-&gt;headLink() ?&gt;
+    &lt;?= $this-&gt;headStyle() ?&gt;
+&lt;? if ($this-&gt;dojo()-&gt;isEnabled()):
+    $this-&gt;dojo()-&gt;setLocalPath(&#039;/js/dojo/dojo.js&#039;)
+                 -&gt;addStyleSheetModule(&#039;dijit.themes.tundra&#039;);
+    echo $this-&gt;dojo();
+?&gt;
+    &lt;?= $this-&gt;headScript() ?&gt;
+&lt;/head&gt;
+&lt;body class=&quot;tundra&quot;&gt;
+    &lt;?= $this-&gt;layout()-&gt;content ?&gt;
+    &lt;?= $this-&gt;inlineScript() ?&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre></div></div>
+
+
+        <div class="example-contents"><p>
+            在这点上，你只需要确保你的文件在正确的位置并且你已经为 FilteringSelect 创建了终点动作！
+        </p></div>
+    </div>
+
+    <div class="section" id="zend.dojo.view.dojo.declarative" name="zend.dojo.view.dojo.declarative"><div class="info"><h1 class="title"> Dojo 的 Programmatic 和 Declarative 用法</h1></div>
+        
+
+        <p class="para">
+            Dojo 在其许多功能上使用 <em class="emphasis">declarative</em> 和
+            <em class="emphasis">programmatic</em>。
+            <em class="emphasis">Declarative</em> 用法使用标准的带有当页面加载时解析的非标准属性的 HTML 元素。
+            虽然强大并且语法简单，对大多数开发者来说，它在页面校验时容易出问题。
+        </p>
+
+        <p class="para">
+            <em class="emphasis">Programmatic</em> 用法让开发者通过用ID或 CSS 选择器把它们来出来并解析
+            到合适的在 Dojo 里的对象构造器来装饰存在的元素。因为没有使用非标准 HTML 属性，页面可以继续校验。
+        </p>
+
+        <p class="para">
+            在实践中，当禁止 javascript 或不能获取部分 Dojo 脚本资源，上述两个用例都考虑了完美的降级。
+            为提升标准和文档校验， Zend Framework 缺省使用 programmatic 用法，各种
+            视图助手将生成 javascript 并压到 <code class="code">dojo()</code> 视图助手，在解析时包含。
+        </p>
+
+        <p class="para">
+            用这个技术的开发者可能也想探索写自己的页面 programmatic 装饰器。
+            一个好处是可以指定 dijit 事件的句柄。
+        </p>
+
+        <p class="para">
+            为使用此功能，同时也使用 declarative 语法，有许多静态方法可以全局使用。
+        </p>
+
+        <div class="example"><div class="info"><p><b>Example #3 指定 Declarative 和 Programmatic Dojo 用法范例</b></p></div>
+            
+
+            <div class="example-contents"><p>
+                为指定 declarative 用法，简单地调用静态方法
+                <code class="code">setUseDeclarative()</code>：
+            </p></div>
+
+            <div class="programlisting"><div class="cdata"><pre>
+Zend_Dojo_View_Helper_Dojo::setUseDeclarative();
+</pre></div></div>
+
+
+            <div class="example-contents"><p>
+                如果你决定使用 programmatic 用法，调用静态方法
+                <code class="code">setUseProgrammatic()</code>：
+            </p></div>
+
+            <div class="programlisting"><div class="cdata"><pre>
+Zend_Dojo_View_Helper_Dojo::setUseProgrammatic();
+</pre></div></div>
+
+
+            <div class="example-contents"><p>
+                最后，如果你想生成自己的 programmatic 规则，你应当指定 programmatic 用法，
+                但是传递值 &#039;-1&#039;；在这种情况下，不生成用于装饰 dijit 的 javascript。
+            </p></div>
+
+            <div class="programlisting"><div class="cdata"><pre>
+Zend_Dojo_View_Helper_Dojo::setUseProgrammatic(-1);
+</pre></div></div>
+
+        </div>
+    </div>
+
+    <div class="section" id="zend.dojo.view.dojo.themes" name="zend.dojo.view.dojo.themes"><div class="info"><h1 class="title">主题</h1></div>
+        
+
+        <p class="para">
+            Dojo 允许为它的 dijits（小部件）生成主题。你可以通过传递模块路径来选择一个：
+        </p>
+
+        <div class="programlisting"><div class="cdata"><pre>
+$view-&gt;dojo()-&gt;addStylesheetModule(&#039;dijit.themes.tundra&#039;);
+</pre></div></div>
+
+
+        <p class="para">
+            模块路径通过使用字符 &#039;.&#039;作为目录分隔符和在主题目录里列表中最后的值作为CSS文件的名称来找出。
+            在上述例子中，Dojo 在 &#039;dijit/themes/tundra/tundra.css&#039; 中寻找主题。
+        </p>
+
+        <p class="para">
+            当使用主题时，记住传递主题类很重要，至少，传递在你使用的 dijits 周围的容器；
+            最常用的用例是在 body 里传递它：
+        </p>
+
+        <div class="programlisting"><div class="cdata"><pre>
+&lt;body class=&quot;tundra&quot;&gt;
+</pre></div></div>
+
+    </div>
+
+    <div class="section" id="zend.dojo.view.dojo.layers" name="zend.dojo.view.dojo.layers"><div class="info"><h1 class="title">使用 Layers （定制）</h1></div>
+        
+
+        <p class="para">
+            缺省地，当你使用 dojo.require 语句，dojo 将请求服务器抓取适当的 javascript 文件。
+            如果你有许多 dijits ，将导致许多对服务器请求，－ 这不是很理想。
+        </p>
+
+        <p class="para">
+            Dojo 的解决方案是提供生成 <em class="emphasis">定制</em> 的能力，定制做如下事情：
+        </p>
+
+        <ul class="itemizedlist">
+            <li class="listitem"><p class="para">
+                把请求文件集中到 <em class="emphasis">layers</em>，layer 把所有的请求
+                文件集中成一个单个的 JS 文件。（Hence the name of this section.）
+            </p></li>
+
+            <li class="listitem"><p class="para">
+                &quot;Interns&quot; non-javascript files used by dijits (typically,
+                template files). These are also grouped in the same JS file as
+                the layer.
+            </p></li>
+
+            <li class="listitem"><p class="para">
+                通过 ShrinkSafe 传递文件，它剥离了空白字符和注释，还缩短了短变量名。
+            </p></li>
+        </ul>
+
+        <p class="para">
+            有些文件不能被 layered，但定制处理将生成一个特别的目录来放 layer 文件和其它所有文件。
+            这会对你的站点或应用需求减少发行定制。
+        </p>
+
+        <p class="para">
+            为了使用 layer，<code class="code">dojo()</code> 视图助手有一个
+            <code class="code">addLayer()</code> 方法来添加路径到请求 layers:
+        </p>
+
+        <div class="programlisting"><div class="cdata"><pre>
+$view-&gt;dojo()-&gt;addLayer(&#039;/js/foo/foo.js&#039;);
+</pre></div></div>
+
+
+        <p class="para">
+            更多关于生成定制的信息，请 <a href="http://dojotoolkit.org/book/dojo-book-0-9/part-4-meta-dojo/package-system-and-custom-builds" class="link external">&raquo; refer
+            参考 Dojo 构造文档</a>.
+        </p>
+    </div>
+
+    <div class="section" id="zend.dojo.view.dojo.methods" name="zend.dojo.view.dojo.methods"><div class="info"><h1 class="title">可用方法</h1></div>
+        
+
+        <p class="para">
+            <code class="code">dojo()</code> 视图助手总返回 dojo 占位符容器的实例。
+            这容器对象有下列方法可用：
+        </p>
+
+        <ul class="itemizedlist">
+            <li class="listitem"><p class="para"><code class="code">setView(Zend_View_Interface $view)</code>:
+                    在容器中设置一个视图实例。</p></li>
+            <li class="listitem"><p class="para"><code class="code">enable()</code>: 显式地开启 Dojo
+                    集成。</p></li>
+            <li class="listitem"><p class="para"><code class="code">disable()</code>: 关闭 Dojo
+                    集成。</p></li>
+            <li class="listitem"><p class="para"><code class="code">isEnabled()</code>: 确定是否
+                    Dojo 集成已经开启。</p></li>
+            <li class="listitem"><p class="para"><code class="code">requireModule($module)</code>: 设置一条
+                    <code class="code">dojo.require</code> 语句。</p></li>
+            <li class="listitem"><p class="para"><code class="code">getModules()</code>: 确定模块
+                    已经被请求。</p></li>
+            <li class="listitem"><p class="para"><code class="code">registerModulePath($module, $path)</code>:
+                    注册一个定制的 Dojo 模块路径。</p></li>
+            <li class="listitem"><p class="para"><code class="code">getModulePaths()</code>:
+                    获得已注册模块路径列表。</p></li>
+            <li class="listitem"><p class="para"><code class="code">addLayer($path)</code>: 添加一个 layer （定制）
+                    路径。</p></li>
+            <li class="listitem"><p class="para"><code class="code">getLayers()</code>:
+                    获得已注册的 layer 路径（定制）的列表。</p></li>
+            <li class="listitem"><p class="para"><code class="code">removeLayer($path)</code>:
+                    从已注册的 layers （定制）列表里删除匹配 <code class="code">$path</code> 的 layer。
+                    </p></li>
+            <li class="listitem"><p class="para"><code class="code">setCdnBase($url)</code>: 为  CDN 设置基础 URL；
+                    一般地是
+                    <code class="code">Zend_Dojo::CDN_BASE_AOL</code> 或
+                    <code class="code">Zend_Dojo::CDN_BASE_GOOGLE</code> 其中之一，
+                    但它只需要在版本号之前的 URL 字符串。
+                    </p></li>
+            <li class="listitem"><p class="para"><code class="code">getCdnBase()</code>: 获取基础 CDN url
+                     </p></li>
+            <li class="listitem"><p class="para"><code class="code">setCdnVersion($version = null)</code>:
+                    从 CDN 设置 Dojo 的版本。
+                    </p></li>
+            <li class="listitem"><p class="para"><code class="code">getCdnVersion()</code>:
+                    从将要用的 CDN 获取 Dojo 的版本。
+                    </p></li>
+            <li class="listitem"><p class="para"><code class="code">setCdnDojoPath($path)</code>:
+                    在一个 CDN 中设置 dojo.js 或 dojo.xd.js 文件的相对路径 ；
+                    一般地是 <code class="code">Zend_Dojo::CDN_DOJO_PATH_AOL</code> 或
+                    <code class="code">Zend_Dojo::CDN_DOJO_PATH_GOOGLE</code> 其中之一，但
+                    它只需要是带版本号的路径字符串。
+                    </p></li>
+            <li class="listitem"><p class="para"><code class="code">getCdnDojoPath()</code>:
+                    获取最后的 CDN url 指向 dojo.js文件的路径段。
+                    </p></li>
+            <li class="listitem"><p class="para"><code class="code">useCdn()</code>:
+                    告诉容器使用 CDN；显式地开启集成。
+                    </p></li>
+            <li class="listitem"><p class="para"><code class="code">setLocalPath($path)</code>:
+                    告诉容器指向本地 Dojo 安装（和服务器相关的路径，包括 dojo.js 文件自己）
+                    的路径。显式地开启集成。
+                    </p></li>
+            <li class="listitem"><p class="para"><code class="code">getLocalPath()</code>:
+                    确定使用哪个本地 Dojo 路径。
+                    </p></li>
+            <li class="listitem"><p class="para"><code class="code">useLocalPath()</code>:
+                    是否集成使用 Dojo 本地路径？
+                    </p></li>
+            <li class="listitem"><p class="para"><code class="code">setDjConfig(array $config)</code>:
+                    设置 dojo/dijit 配置值（需要联合数组）。
+                    </p></li>
+            <li class="listitem"><p class="para"><code class="code">setDjConfigOption($option, $value)</code>:
+                    设置一单个的 dojo/dijit 配置值。
+                    </p></li>
+            <li class="listitem"><p class="para"><code class="code">getDjConfig()</code>:
+                    获取所有的 dojo/dijit 配置值。
+                    </p></li>
+            <li class="listitem"><p class="para"><code class="code">getDjConfigOption($option, $default =
+                    null)</code>:
+                    获取一单个的 dojo/dijit 配置值。
+                    </p></li>
+            <li class="listitem"><p class="para"><code class="code">addStylesheetModule($module)</code>:
+                    基于模块主题添加风格。
+                    </p></li>
+            <li class="listitem"><p class="para"><code class="code">getStylesheetModules()</code>:
+                    获取注册为模块主题的风格。
+                    </p></li>
+            <li class="listitem"><p class="para"><code class="code">addStylesheet($path)</code>:
+                    添加一个本地风格来和 Dojo 一起使用。
+                    </p></li>
+            <li class="listitem"><p class="para"><code class="code">getStylesheets()</code>:
+                    获取本地 Dojo 风格。
+                    </p></li>
+            <li class="listitem"><p class="para"><code class="code">addOnLoad($spec, $function = null)</code>:
+                    为 dojo.onLoad 添加一个 lambda 来调用。如果传递一个参数，那就是
+                    函数名或一个 javascript closure。如果传递两个参数，第一参数是
+                    对象实例变量的名字，第二个参数是该对象的方法名或使用这个对象的
+                    一个 closure。
+                    </p></li>
+            <li class="listitem"><p class="para"><code class="code">getOnLoadActions()</code>:
+                    获取所有用容器注册的 dojo.onLoad 动作，将是一个数组的数组。
+                    </p></li>
+            <li class="listitem"><p class="para"><code class="code">onLoadCaptureStart($obj = null)</code>:
+                    为 dojo.onLoad() 抓取用做 lambda 的数据。如果提供了 $obj，
+                    那么 JS 抓取代码被认为是一个和 Javascript 对象一起使用的 closure 。
+                    </p></li>
+            <li class="listitem"><p class="para"><code class="code">onLoadCaptureEnd($obj = null)</code>:
+                    停止为使用 dojo.onLoad() 抓取数据。
+                    </p></li>
+            <li class="listitem"><p class="para"><code class="code">javascriptCaptureStart()</code>:
+                 抓取任意的 javascript 包含到 Dojo JS （onLoad、 require 等语句）。
+                 </p></li>
+         <li class="listitem"><p class="para"><code class="code">javascriptCaptureEnd()</code>:
+                  停止抓取 javascript。
+                  </p></li>
+            <li class="listitem"><p class="para"><code class="code">__toString()</code>:
+                    转换容器为字符串；解析所有的 HTMl 风格和脚本元素。
+                    </p></li>
+        </ul>
+    </div>
+</div>
+    <div class="section" id="zend.dojo.view.dijit" name="zend.dojo.view.dijit"><div class="info"><h1 class="title">Dijit-Specific 视图助手 </h1></div>
+    
+
+    <p class="para">
+        引用一下 Dojo 手册：“Dijit 是基于 dojo 之上的一个小部件系统”，Dijit 有
+        许多布局和表单小部件，用来提供访问、本地化和标准化（和可主题化）的观感。
+    </p>
+
+    <p class="para">
+        Zend Framework 带有许多视图助手让你在视图脚本里解析和使用 dijits。有三个基本类型：
+    </p>
+
+    <ul class="itemizedlist">
+        <li class="listitem">
+            <p class="para">
+                <em class="emphasis">布局容器</em>:
+                这些设计上在视图脚本理使用或由表单装饰器用于表单、子表单和显示组。
+                它们封装了 dijit.layout 提供的各种类。每个 dijit 布局视图助手有下面的参数：
+            </p>
+
+            <ul class="itemizedlist">
+                <li class="listitem"><p class="para">
+                        <code class="code">$id</code>: 容器名或 DOM ID。
+                </p></li>
+
+                <li class="listitem"><p class="para">
+                        <code class="code">$content</code>: 在布局容器里封装的内容。
+                </p></li>
+
+                <li class="listitem"><p class="para">
+                        <code class="code">$params</code> (optional): dijit-specific 参数。
+                        基本上是任何非 HTML 属性，可用于配置 dijit 布局容器。
+                </p></li>
+
+                <li class="listitem"><p class="para">
+                        <code class="code">$attribs</code> （可选）：任何用于解析容器 div 的附加的 HTML 属性。
+                        如果在这个数组里传递了键 &#039;id&#039;，它将被用于表单元素 DOM id，并且 <code class="code">$id</code>
+                        将用于它的名字。
+                </p></li>
+            </ul>
+
+            <p class="para">
+                如果不传递参数给 dijit 布局视图助手，那么助手将返回自己。
+                它允许你抓取内容，通常是更容易的传递内容给布局容器的方法。
+                本章的后面将用范例来示范这个功能。
+            </p>
+        </li>
+
+        <li class="listitem">
+            <p class="para">
+                <em class="emphasis">Form Dijit</em>: dijit.form.Form dijit，虽然对于使用 dijit
+                表单元素不是完全必要，但是它可以确保如果提交没有根据客户端校验而校验的表单时，
+                提交就被终止并且产生校验错误消息。该表单 dijit 视图助手可带有下列参数：
+            </p>
+
+            <ul class="itemizedlist">
+                <li class="listitem"><p class="para">
+                        <code class="code">$id</code>: 容器名或 DOM ID。
+                </p></li>
+
+                <li class="listitem"><p class="para">
+                        <code class="code">$attribs</code> （可选）：任何用于解析容器 div 的附加的 HTML 属性。
+                </p></li>
+
+                <li class="listitem"><p class="para">
+                        <code class="code">$content</code> （可选）：要封装到表单的内容。如果没有，将使用空的字符串。
+                </p></li>
+            </ul>
+
+            <p class="para">
+                为了和标准的 <code class="code">form()</code> 视图助手保持兼容，参数顺序和其它 dijit 有些不同。
+            </p>
+        </li>
+
+        <li class="listitem">
+            <p class="para">
+                <em class="emphasis"> 表单元素 </em>：设计上和 <code class="code">Zend_Form</code> 一起使用，但也
+                可以在视图脚本中独立使用。每个 dijit 元素视图助手可以使用下列参数：
+            </p>
+
+            <ul class="itemizedlist">
+                <li class="listitem"><p class="para">
+                        <code class="code">$id</code>: 元素名或 DOM ID。
+                </p></li>
+
+                <li class="listitem"><p class="para">
+                        <code class="code">$value</code> （可选）：元素的当前值。
+                </p></li>
+
+                <li class="listitem"><p class="para">
+                        <code class="code">$params</code> （可选）： dijit-specific 参数。
+                        基本上是任何用于配置 dijit 的非 HTML 属性。
+                </p></li>
+
+                <li class="listitem"><p class="para">
+                        <code class="code">$attribs</code> （可选）：任何用于解析 dijit的附加的 HTML 属性。
+                        如果键 &#039;id&#039; 在这个数组中传递，它将被用于表单元素的 DOM id，
+                        并且 <code class="code">$id</code> 将被用于它的名字。
+                </p></li>
+            </ul>
+
+            <p class="para">
+                一些元素要求更多的参数，将在个别元素助手的描述中注明。
+            </p>
+        </li>
+    </ul>
+
+    <p class="para">
+        为了使用这些视图助手，你需要用视图对象来注册路径给 dojo 视图助手。
+    </p>
+
+    <div class="example"><div class="info"><p><b>Example #4  注册 Dojo 视图助手前缀路径 </b></p></div>
+        
+
+        <div class="programlisting"><div class="cdata"><pre>
+$view-&gt;addHelperPath(&#039;Zend/Dojo/View/Helper&#039;, &#039;Zend_Dojo_View_Helper&#039;);
+</pre></div></div>
+
+    </div>
+
+    <div class="section" id="zend.dojo.view.dijit.layout" name="zend.dojo.view.dijit.layout"><div class="info"><h1 class="title">Dijit 布局元素 </h1></div>
+        
+
+        <p class="para">
+            dijit.layout 元素家族用来生成定制的、可预计的布局。任何关于用法的问题
+            <a href="http://dojotoolkit.org/book/dojo-book-0-9/part-2-dijit/layout" class="link external">&raquo; 
+            请阅读 Dojo 手册</a>。
+        </p>
+
+        <p class="para">
+            所有的 dijit 布局元素都有签名 <code class="code">string ($id = null, $content = &#039;&#039;, array $params =
+                array(), array $attribs = array())</code>。
+            对于所有情况，如果不传递参数，就返回助手对象自己。
+            访问 <code class="code">captureStart()</code> 和 <code class="code">captureEnd()</code> 方法，它让你
+            抓取内容而不是传递它给布局容器。
+        </p>
+
+        <ul class="itemizedlist">
+            <li class="listitem">
+                <p class="para">
+                    <em class="emphasis">AccordionContainer</em>：dijit.layout.AccordionContainer。
+                    垂直堆放所有的 pane ，点击一个 pane 的 titlebar 就会展开并显示特定的 pane。
+                </p>
+
+                <div class="programlisting"><div class="cdata"><pre>
+&lt;?= $view-&gt;accordionContainer(
+    &#039;foo&#039;,
+    $content,
+    array(
+        &#039;duration&#039; =&gt; 200,
+    ),
+    array(
+        &#039;style&#039; =&gt; &#039;width: 200px; height: 300px;&#039;,
+    ),
+); ?&gt;
+</pre></div></div>
+
+            </li>
+
+            <li class="listitem">
+                <p class="para">
+                    <em class="emphasis">AccordionPane</em>: dijit.layout.AccordionPane.
+                    在 AccordionContainer 内使用。
+                </p>
+
+                <div class="programlisting"><div class="cdata"><pre>
+&lt;?= $view-&gt;accordionPane(
+    &#039;foo&#039;,
+    $content,
+    array(
+        &#039;title&#039; =&gt; &#039;Pane Title&#039;,
+    ),
+    array(
+        &#039;style&#039; =&gt; &#039;background-color: lightgray;&#039;,
+    ),
+); ?&gt;
+</pre></div></div>
+
+            </li>
+
+            <li class="listitem">
+                <p class="para">
+                    <em class="emphasis">BorderContainer</em>：dijit.layout.BorderContainer。
+                    用象传统程序中的可改变尺寸的 pane 来完成布局。
+                </p>
+
+                <div class="programlisting"><div class="cdata"><pre>
+&lt;?= $view-&gt;borderContainer(
+    &#039;foo&#039;,
+    $content,
+    array(
+        &#039;design&#039; =&gt; &#039;headline&#039;,
+    ),
+    array(
+        &#039;style&#039; =&gt; &#039;width: 100%; height: 100%&#039;,
+    ),
+); ?&gt;
+</pre></div></div>
+
+            </li>
+
+            <li class="listitem">
+                <p class="para">
+                    <em class="emphasis">ContentPane</em>: dijit.layout.ContentPane。
+                    用在除了 AccordionContainer 以外的任何容器内部。
+                </p>
+
+                <div class="programlisting"><div class="cdata"><pre>
+&lt;?= $view-&gt;contentPane(
+    &#039;foo&#039;,
+    $content,
+    array(
+        &#039;title&#039;  =&gt; &#039;Pane Title&#039;,
+        &#039;region&#039; =&gt; &#039;left&#039;,
+    ),
+    array(
+        &#039;style&#039; =&gt; &#039;width: 120px; background-color: lightgray;&#039;,
+    ),
+); ?&gt;
+</pre></div></div>
+
+            </li>
+
+            <li class="listitem">
+                <p class="para">
+                    <em class="emphasis">SplitContainer</em>：dijit.layout.SplitContainer。
+                    允许可变尺寸的内容 pane；在 Dojo 里废除转而使用 BorderContainer。
+                </p>
+
+                <div class="programlisting"><div class="cdata"><pre>
+&lt;?= $view-&gt;splitContainer(
+    &#039;foo&#039;,
+    $content,
+    array(
+        &#039;orientation&#039;  =&gt; &#039;horizontal&#039;,
+        &#039;sizerWidth&#039;   =&gt; 7,
+        &#039;activeSizing&#039; =&gt; true,
+    ),
+    array(
+        &#039;style&#039; =&gt; &#039;width: 400px; height: 500px;&#039;,
+    ),
+); ?&gt;
+</pre></div></div>
+
+            </li>
+
+            <li class="listitem">
+                <p class="para">
+                    <em class="emphasis">StackContainer</em>：dijit.layout.StackContainer。
+                    所有在 StackContainer 里的 pane 放在一个堆栈里，生成按钮或功能一次显示一个。
+                </p>
+
+                <div class="programlisting"><div class="cdata"><pre>
+&lt;?= $view-&gt;stackContainer(
+    &#039;foo&#039;,
+    $content,
+    array(),
+    array(
+        &#039;style&#039; =&gt; &#039;width: 400px; height: 500px; border: 1px;&#039;,
+    ),
+); ?&gt;
+</pre></div></div>
+
+            </li>
+
+            <li class="listitem">
+                <p class="para">
+                    <em class="emphasis">TabContainer</em>：dijit.layout.TabContainer。
+                    所有在 TabContainer 里的 pane 放在一个堆栈里，并带有 tab 的位置，用于切换。
+                </p>
+
+                <div class="programlisting"><div class="cdata"><pre>
+&lt;?= $view-&gt;stackContainer(
+    &#039;foo&#039;,
+    $content,
+    array(),
+    array(
+        &#039;style&#039; =&gt; &#039;width: 400px; height: 500px; border: 1px;&#039;,
+    ),
+); ?&gt;
+</pre></div></div>
+
+            </li>
+        </ul>
+
+        <p class="para">
+            下列的抓取方法对所有的布局容器都可用：
+        </p>
+
+        <ul class="itemizedlist">
+            <li class="listitem">
+                <p class="para">
+                    <code class="code">captureStart($id, array $params = array(), array $attribs = array())</code>：
+                    开始抓取内容到容器。<code class="code">$params</code> 是和容器一起使用的 dijit 参数，
+                    <code class="code">$attribs</code> 指的是任何一般的 HTML 属性。
+                </p>
+
+                <p class="para">
+                    <em class="emphasis"> 只要 ids 没有重复 </em>，容器在抓取的时候可以嵌套。
+                </p>
+            </li>
+
+            <li class="listitem">
+                <p class="para">
+                    <code class="code">captureEnd($id)</code>：
+                    完成抓取内容到容器。<code class="code">$id</code> 是指先前和  <code class="code">captureStart()</code>
+                    调用一起使用的 id。返回一个字符串表示容器和它的内容，就好像传递内容给助手自己。
+                </p>
+            </li>
+        </ul>
+
+        <div class="example"><div class="info"><p><b>Example #5 BorderContainer 布局 dijit 范例</b></p></div>
+            
+
+            <div class="example-contents"><p>
+                BorderContainers, 特别是当和抓取内容耦合时，对复杂的布局效果特别有用。
+            </p></div>
+
+            <div class="programlisting"><div class="cdata"><pre>
+$view-&gt;borderContainer()-&gt;captureStart(&#039;masterLayout&#039;, array(&#039;design&#039; =&gt; &#039;headline&#039;));
+
+echo $view-&gt;contentPane(
+    &#039;menuPane&#039;,
+    &#039;This is the menu pane&#039;,
+    array(&#039;region&#039; =&gt; &#039;top&#039;),
+    array(&#039;style&#039; =&gt; &#039;background-color: darkblue;&#039;)
+);
+
+echo  $view-&gt;contentPane(
+    &#039;navPane&#039;,
+    &#039;This is the navigation pane&#039;,
+    array(&#039;region&#039; =&gt; &#039;left&#039;),
+    array(&#039;style&#039; =&gt; &#039;width: 200px; background-color: lightblue;&#039;)
+);
+
+echo $view-&gt;contentPane(
+    &#039;mainPane&#039;,
+    &#039;This is the main content pane area&#039;,
+    array(&#039;region&#039; =&gt; &#039;center&#039;),
+    array(&#039;style&#039; =&gt; &#039;background-color: white;&#039;)
+);
+
+echo $view-&gt;contentPane(
+    &#039;statusPane&#039;,
+    &#039;Status area&#039;,
+    array(&#039;region&#039; =&gt; &#039;bottom&#039;),
+    array(&#039;style&#039; =&gt; &#039;background-color: lightgray;&#039;)
+);
+
+echo $view-&gt;borderContainer()-&gt;captureEnd(&#039;masterLayout&#039;);
+</pre></div></div>
+
+        </div>
+    </div>
+
+    <div class="section" id="zend.dojo.view.dijit.form" name="zend.dojo.view.dijit.form"><div class="info"><h1 class="title">Dijit 表单元素 </h1></div>
+        
+
+        <p class="para">
+            Dojo 的表单校验和输入 dijit 在 dijit.form 树中。
+            更多关于这些元素的一般用法和可接受的参数，请
+            <a href="http://dojotoolkit.org/book/dojo-book-0-9/part-2-dijit/form-validation-specialized-input" class="link external">&raquo; 访问
+                dijit.form 文档</a>.
+        </p>
+
+        <p class="para">
+            下列 dijit 表单元素在 Zend Framework 里可用。
+            除非注明，都有签名 <code class="code">string ($id,
+                $value = &#039;&#039;, array $params = array(), array $attribs =
+                array())</code>.
+        </p>
+
+        <ul class="itemizedlist">
+            <li class="listitem">
+                <p class="para">
+                    <em class="emphasis">Button</em>: dijit.form.Button. 显示一个表单按钮
+                </p>
+
+                <div class="programlisting"><div class="cdata"><pre>
+&lt;?= $view-&gt;button(
+    &#039;foo&#039;,
+    &#039;Show Me!&#039;,
+    array(&#039;iconClass&#039; =&gt; &#039;myButtons&#039;),
+); ?&gt;
+</pre></div></div>
+
+            </li>
+
+            <li class="listitem">
+                <p class="para">
+                    <em class="emphasis">CheckBox</em>：dijit.form.CheckBox.
+                    显示一个 checkbox。接受可选的第五个参数，<code class="code">$checkedOptions</code> 数组，
+                    包含：
+                </p>
+
+                <ul class="itemizedlist">
+                    <li class="listitem"><p class="para">
+                            按顺序带两个值的索引数组，一个选中的值和一个未选中的值；或者
+                    </p></li>
+
+                    <li class="listitem"><p class="para">
+                            带键 &#039;checkedValue&#039; 和 &#039;unCheckedValue&#039;的联合数组。
+                    </p></li>
+                </ul>
+
+                <p class="para">
+                    如果没有提供 <code class="code">$checkedOptions</code> 就假定为 1 和 0 。
+                </p>
+
+                <div class="programlisting"><div class="cdata"><pre>
+&lt;?= $view-&gt;checkBox(
+    &#039;foo&#039;,
+    &#039;bar&#039;,
+    array(),
+    array(),
+    array(&#039;checkedValue&#039; =&gt; &#039;foo&#039;, &#039;unCheckedValue&#039; =&gt; &#039;bar&#039;)
+); ?&gt;
+</pre></div></div>
+
+            </li>
+
+            <li class="listitem">
+                <p class="para">
+                    <em class="emphasis">ComboBox</em>：dijit.layout.ComboBox.
+                    组合框是一个混合体，包括选择框和带有自动完成的文字框。
+                    关键是在列表里没有相应的选项的时候可以手工输入，而且是有效的。
+                    它接受可选的第五个参数：联合数组 <code class="code">$options</code>；如果提供
+                    了该参数，ComboBox 就当作 <code class="code">select</code> 被解析。也要注意
+                    <code class="code">$options</code> 数组的 <em class="emphasis">标签值</em> 在表单中返回，
+                    而不选项值自己。
+                </p>
+
+                <p class="para">
+                    另外，也可以传递关于和元素一起使用的 dojo.data 数据存储的信息。
+                    如果提供该参数，ComboBox 就当作 <code class="code">input</code> 被解析，
+                    并且将通过那个数据存储来取出它的选项。
+                </p>
+
+                <p class="para">
+                    为了指定数据存储，请提供下列 <code class="code">$params</code> 键组合之一：
+                </p>
+
+                <ul class="itemizedlist">
+                    <li class="listitem">
+                        <p class="para">
+                            键 &#039;store&#039;，带有一个数组值；数组应包含下列键：
+                        </p>
+
+                        <ul class="itemizedlist">
+                            <li class="listitem"><p class="para">
+                                <em class="emphasis">store</em>：表示数据存储的 javascript 变量名
+                                （this could be the name you would like for it to use）。
+                            </p></li>
+
+                            <li class="listitem"><p class="para">
+                                <em class="emphasis">type</em>：数据存储类型；例如：&#039;dojo.data.ItemFileReadStore&#039;。
+                            </p></li>
+
+                            <li class="listitem"><p class="para">
+                                <em class="emphasis">params</em> （可选）：一个键/值对的联合数组，用来配置数据存储。
+                                &#039;url&#039; 参数是个典型的例子。
+                            </p></li>
+                        </ul>
+                    </li>
+
+                    <li class="listitem">
+                        <p class="para">
+                            键：
+                        </p>
+
+                        <ul class="itemizedlist">
+                            <li class="listitem"><p class="para">
+                                <em class="emphasis">store</em>：表示数据存储名的字符串。
+                            </p></li>
+
+                            <li class="listitem"><p class="para">
+                                <em class="emphasis">storeType</em>：表示数据存储 dojo.data 类型的字符传（例如 &#039;dojo.data.ItemFileReadStore&#039;）。
+                            </p></li>
+
+                            <li class="listitem"><p class="para">
+                                <em class="emphasis">storeParams</em>：一个键/值对联合数组，用于配置数据存储。
+                            </p></li>
+                        </ul>
+                    </li>
+                </ul>
+
+                <div class="programlisting"><div class="cdata"><pre>
+// As a select element:
+echo $view-&gt;comboBox(
+    &#039;foo&#039;,
+    &#039;bar&#039;,
+    array(
+        &#039;autocomplete&#039; =&gt; false,
+    ),
+    array(),
+    array(
+        &#039;foo&#039; =&gt; &#039;Foo&#039;,
+        &#039;bar&#039; =&gt; &#039;Bar&#039;,
+        &#039;baz&#039; =&gt; &#039;Baz&#039;,
+    )
+);
+
+// As a dojo.data-enabled element:
+echo $view-&gt;comboBox(
+    &#039;foo&#039;,
+    &#039;bar&#039;,
+    array(
+        &#039;autocomplete&#039; =&gt; false,
+        &#039;store&#039;        =&gt; &#039;stateStore&#039;,
+        &#039;storeType&#039;    =&gt; &#039;dojo.data.ItemFileReadStore&#039;,
+        &#039;storeParams&#039;  =&gt; array(&#039;url&#039; =&gt; &#039;/js/states.json&#039;),
+    ),
+);
+</pre></div></div>
+
+            </li>
+
+            <li class="listitem">
+                <p class="para">
+                    <em class="emphasis">CurrencyTextBox</em>：dijit.form.CurrencyTextBox。
+                    从 ValidationTextBox 继承，并提供货币的客户端校验。
+                    它期望 dijit 参数 &#039;currency&#039; 的值是适当的三字符货币代码。
+                    可以为 ValidationTextBox 和 TextBox 指定任何有效的 dijit 参数。
+                </p>
+
+                <div class="programlisting"><div class="cdata"><pre>
+echo $view-&gt;currencyTextBox(
+    &#039;foo&#039;,
+    &#039;$25.00&#039;,
+    array(&#039;currency&#039; =&gt; &#039;USD&#039;),
+    array(&#039;maxlength&#039; =&gt; 20)
+);
+</pre></div></div>
+
+
+                <blockquote><p><b class="note">Note</b>: <span class="info"><b>Issues with Builds</b><br /></span>
+                    
+
+                    
+                        目前有这些 <a href="http://trac.dojotoolkit.org/ticket/7183" class="link external">&raquo; 
+                        和 build 层一起使用的 CurrencyTextBox 的已知问题
+                        </a>.
+                        一个解决办法是确保文档的 Content-Type http-equiv meta tag 把字符集设置为 utf-8，
+                        可通过调用下列方法来完成：
+                    <br />
+
+                    <div class="programlisting"><div class="cdata"><pre>
+$view-&gt;headMeta()-&gt;appendHttpEquiv(&#039;Content-Type&#039;, &#039;text/html; charset=utf-8&#039;);
+?&gt;</pre></div></div>
+
+
+                    
+                        这当然意味着你需要确保 <code class="code">headMeta()</code> 占位符在布局脚本中。
+                    <br />
+                </p></blockquote>
+            </li>
+
+            <li class="listitem">
+                <p class="para">
+                    <em class="emphasis">DateTextBox</em>：dijit.form.DateTextBox.
+                    从 ValidationTextBox 继承，提供客户端的日期校验和下拉式日历。
+                    你可以指定任何 dijit 可用的参数给 ValidationTextBox 或 TextBox。
+                </p>
+
+                <div class="programlisting"><div class="cdata"><pre>
+echo $view-&gt;dateTextBox(
+    &#039;foo&#039;,
+    &#039;2008-07-11&#039;,
+    array(&#039;required&#039; =&gt; true)
+);
+</pre></div></div>
+
+            </li>
+
+            <li class="listitem">
+                <p class="para">
+                    <em class="emphasis">FilteringSelect</em>：dijit.form.FilteringSelect。
+                    和 ComboBox 类似，这是个选择/文字混合体，它可以从提供的选项列表
+                    里读取或者从 dojo.data 数据存储里抓取。和 ComboBox 不一样的地方是
+                    FilteringSelect 不允许输入不在列表里的选项。另外，它的操作和标准选择
+                    一样，从选项值里选择而不是从标签里选择，当表单提交时返回它们。
+                </p>
+
+                <p class="para">
+                    请参考上述关于 ComboBox 范例和定义数据存储的可用选项的信息。
+                </p>
+            </li>
+
+            <li class="listitem">
+                <p class="para">
+                    <em class="emphasis">HorizontalSlider</em> 和
+                    <em class="emphasis">VerticalSlider</em>：
+                    dijit.form.HorizontalSlider 和 dijit.form.VerticalSlider.
+                    滑尺是 UI 小部件，用来在给定范围内选择数值的，这两个一个是水平的，一个是垂直的。
+                </p>
+
+                <p class="para">
+                    至少，它们需要 dijit 参数
+                    &#039;minimum&#039;、 &#039;maximum&#039; 和 &#039;discreteValues&#039;，来定义值的范围。
+                    其它通用的选项有：
+                </p>
+
+                <ul class="itemizedlist">
+                    <li class="listitem"><p class="para">
+                        &#039;intermediateChanges&#039; 用来表明当 handle 被拖的时候是否需要发出 onChange 事件。
+                    </p></li>
+
+                    <li class="listitem"><p class="para">
+                        &#039;clickSelect&#039; 用来允许在滑尺上点击来设置其值。
+                    </p></li>
+
+                    <li class="listitem"><p class="para">
+                        &#039;pageIncrement&#039; 通过 pageUp 和 pageDown 来增加/减少值。
+                    </p></li>
+
+                    <li class="listitem"><p class="para">
+                        &#039;showButtons&#039; 设置来允许在滑尺的一端显示按钮来操作数值。
+                    </p></li>
+                </ul>
+
+                <p class="para">
+                    Zend Framework 实现生成一个隐藏的元素来存储滑尺的数值。
+                </p>
+
+                <p class="para">
+                    你可以可选地为滑尺显示尺子或标签，可通过分配一个或多个 dijit 参数
+                    &#039;topDecoration&#039; 和/或 &#039;bottomDecoration&#039;(水平滑尺） 或 &#039;leftDecoration&#039; 和/或
+                    &#039;rightDecoration&#039; （垂直滑尺）来完成。它们有下列选项：
+                </p>
+
+                <ul class="itemizedlist">
+                    <li class="listitem"><p class="para">
+                        <em class="emphasis">container</em>：容器名称。
+                    </p></li>
+
+                    <li class="listitem"><p class="para">
+                        <em class="emphasis">labels</em> （可选）：标签数组。
+                        在滑尺的一端使用空字符串只为内部值提供标签。
+                        当指定一个 &#039;Labels&#039; dijit 变量时必需。
+                    </p></li>
+
+                    <li class="listitem"><p class="para">
+                        <em class="emphasis">dijit</em> （可选）：
+                        HorizontalRule、HorizontalRuleLabels、 VerticalRule 或
+                        VerticalRuleLabels 中的一个，缺省为尺子 dijits 之一。
+                    </p></li>
+
+                    <li class="listitem">
+                        <p class="para">
+                            <em class="emphasis">params</em> （可选）：
+                            配置尺子 dijit 的 dijit 参数，参数规范包括：
+                        </p>
+
+                        <ul class="itemizedlist">
+                            <li class="listitem"><p class="para">
+                                <em class="emphasis">container</em> （可选）：
+                                尺子容器的属性和参数的数组。
+                            </p></li>
+
+                            <li class="listitem"><p class="para">
+                                <em class="emphasis">labels</em> （可选）：
+                                标签列表容器的属性和参数的数组。
+                            </p></li>
+                        </ul>
+                    </li>
+
+                    <li class="listitem"><p class="para">
+                        <em class="emphasis">attribs</em> （可选）：
+                        和尺子/标签一起使用的 HTML 属性，遵循  <code class="code">params</code> 选项格式并
+                        且是一个带有键 &#039;container&#039; 和 &#039;labels&#039;  的联合数组。
+                    </p></li>
+                </ul>
+
+                <div class="programlisting"><div class="cdata"><pre>
+echo $view-&gt;horizontalSlider(
+    &#039;foo&#039;,
+    1,
+    array(
+        &#039;minimum&#039;             =&gt; -10,
+        &#039;maximum&#039;             =&gt; 10,
+        &#039;discreteValues&#039;      =&gt; 11,
+        &#039;intermediateChanges&#039; =&gt; true,
+        &#039;showButtons&#039;         =&gt; true,
+        &#039;topDecoration&#039;       =&gt; array(
+            &#039;container&#039; =&gt; &#039;topContainer&#039;
+            &#039;dijit&#039;     =&gt; &#039;HorizontalRuleLabels&#039;,
+            &#039;labels&#039;    =&gt; array(
+                &#039; &#039;,
+                &#039;20%&#039;,
+                &#039;40%&#039;,
+                &#039;60%&#039;,
+                &#039;80%&#039;,
+                &#039; &#039;,
+            ),
+            &#039;params&#039; =&gt; array(
+                &#039;container&#039; =&gt; array(
+                    &#039;style&#039; =&gt; &#039;height:1.2em; font-size=75%;color:gray;&#039;,
+                ),
+                &#039;labels&#039; =&gt; array(
+                    &#039;style&#039; =&gt; &#039;height:1em; font-size=75%;color:gray;&#039;,
+                ),
+            ),
+        ),
+        &#039;bottomDecoration&#039;    =&gt; array(
+            &#039;container&#039; =&gt; &#039;bottomContainer&#039;
+            &#039;labels&#039;    =&gt; array(
+                &#039;0%&#039;,
+                &#039;50%&#039;,
+                &#039;100%&#039;,
+            ),
+            &#039;params&#039; =&gt; array(
+                &#039;container&#039; =&gt; array(
+                    &#039;style&#039; =&gt; &#039;height:1.2em; font-size=75%;color:gray;&#039;,
+                ),
+                &#039;labels&#039; =&gt; array(
+                    &#039;style&#039; =&gt; &#039;height:1em; font-size=75%;color:gray;&#039;,
+                ),
+            ),
+        ),
+    )
+);
+</pre></div></div>
+
+            </li>
+
+            <li class="listitem">
+                <p class="para">
+                    <em class="emphasis">NumberSpinner</em>：dijit.form.NumberSpinner。
+                    数字输入文本框，按钮用来增减值。
+                </p>
+
+                <p class="para">
+                    期望用于 dijit 参数 &#039;constraints&#039; 的联合数值或者键 &#039;min&#039;、&#039;max&#039; 和 &#039;places&#039;
+                    （这些也期望 constraints 参数的条目）。
+                    &#039;places&#039; 可用于指示微调数的增加和减少的数值。
+                </p>
+
+                <div class="programlisting"><div class="cdata"><pre>
+echo $view-&gt;numberSpinner(
+    &#039;foo&#039;,
+    5,
+    array(
+        &#039;min&#039;    =&gt; -10,
+        &#039;max&#039;    =&gt; 10,
+        &#039;places&#039; =&gt; 2,
+    ),
+    array(
+        &#039;maxlenth&#039; =&gt; 3,
+    )
+);
+</pre></div></div>
+
+            </li>
+
+            <li class="listitem">
+                <p class="para">
+                    <em class="emphasis">NumberTextBox</em>：dijit.form.NumberTextBox。
+                    NumberTextBox 可选地依靠给定的限制以本地化方式格式化和显示数字条目，同时也校验数字条目。
+                </p>
+
+                <div class="programlisting"><div class="cdata"><pre>
+echo $view-&gt;numberTextBox(
+    &#039;foo&#039;,
+    5,
+    array(
+        &#039;places&#039; =&gt; 4,
+        &#039;type&#039;   =&gt; &#039;percent&#039;,
+    ),
+    array(
+        &#039;maxlength&#039; =&gt; 20,
+    )
+);
+</pre></div></div>
+
+            </li>
+
+            <li class="listitem">
+                <p class="para">
+                    <em class="emphasis">PasswordTextBox</em>：
+                    和密码输入相关的 dijit.form.ValidationTextBox。
+                    PasswordTextBox 生成密码输入，并和当前的 dijit 主题匹配，同时也做客户端校验。
+                </p>
+
+                <div class="programlisting"><div class="cdata"><pre>
+echo $view-&gt;passwordTextBox(
+    &#039;foo&#039;,
+    &#039;&#039;,
+    array(
+        &#039;required&#039; =&gt; true,
+    ),
+    array(
+        &#039;maxlength&#039; =&gt; 20,
+    )
+);
+</pre></div></div>
+
+            </li>
+
+            <li class="listitem">
+                <p class="para">
+                    <em class="emphasis">RadioButton</em>：dijit.form.RadioButton。
+                     一组选项，但只能选一个，除了视觉上和其它 dijits 保持一致，
+                     其它方面都和普通的单选（radio，也叫无线电按钮）元素一样。
+                </p>
+
+                <p class="para">
+                    RadioButton 接受可选的第五个参数，<code class="code">$options</code>，
+                    是个联合数组，值/标签对用作radio选项。
+                    你可以以 <code class="code">$attribs</code> 键 <code class="code">options</code> 来传递。
+                </p>
+
+                <div class="programlisting"><div class="cdata"><pre>
+echo $view-&gt;radioButton(
+    &#039;foo&#039;,
+    &#039;bar&#039;,
+    array(),
+    array(),
+    array(
+        &#039;foo&#039; =&gt; &#039;Foo&#039;,
+        &#039;bar&#039; =&gt; &#039;Bar&#039;,
+        &#039;baz&#039; =&gt; &#039;Baz&#039;,
+    )
+);
+</pre></div></div>
+
+            </li>
+
+            <li class="listitem">
+                <p class="para">
+                    <em class="emphasis">SubmitButton</em>：和提交元素相关的 dijit.form.Button。
+                     参见按钮视图助手有更多的细节。主要的区别是这个按钮可以提交一个表单。
+                </p>
+            </li>
+
+            <li class="listitem">
+                <p class="para">
+                    <em class="emphasis">Textarea</em>：dijit.form.Textarea.
+                    除了有很多行以外，和普通的文本区域一样，它们按照用户类型来扩展。
+                    宽度通过风格来设定。
+                </p>
+
+                <div class="programlisting"><div class="cdata"><pre>
+echo $view-&gt;textarea(
+    &#039;foo&#039;,
+    &#039;Start writing here...&#039;,
+    array(),
+    array(&#039;style&#039; =&gt; &#039;width: 300px;&#039;)
+);
+</pre></div></div>
+
+            </li>
+
+            <li class="listitem">
+                <p class="para">
+                    <em class="emphasis">TextBox</em>：dijit.form.TextBox。
+                    该元素主要用来在不同的 dijit 元素之间提供一个通用的外观，
+                    并对其它 TextBox 派生的类 （ValidationTextBox、 NumberTextBox、 CurrencyTextBox、
+                    DateTextBox 和 TimeTextBox）提供基本功能。
+                </p>
+
+                <p class="para">
+                    普通的 dijit 参数标志包括 &#039;lowercase&#039; （转换成小写）、
+                    &#039;uppercase&#039; （转换成大写）、
+                    &#039;propercase&#039; （转换成合适的大小写）和 trim （修剪引导和拖尾的空白字符）；
+                    它们都接受布尔值。另外，你可以指定参数 &#039;size&#039; 和 &#039;maxLength&#039;。
+                </p>
+
+                <div class="programlisting"><div class="cdata"><pre>
+echo $view-&gt;textBox(
+    &#039;foo&#039;,
+    &#039;some text&#039;,
+    array(
+        &#039;trim&#039;       =&gt; true,
+        &#039;propercase&#039; =&gt; true,
+        &#039;maxLength&#039;  =&gt; 20,
+    ),
+    array(
+        &#039;size&#039; =&gt; 20,
+    )
+);
+</pre></div></div>
+
+            </li>
+
+            <li class="listitem">
+                <p class="para">
+                    <em class="emphasis">TimeTextBox</em>： dijit.form.TimeTextBox。
+                    也包含在 TextBox 家族，TimeTextBox 提供一个下拉式时间选择器。
+                    Dijit 参数让你指定可用的时间增量以及有效的时间的可见范围。
+                </p>
+
+                <div class="programlisting"><div class="cdata"><pre>
+echo $view-&gt;timeTextBox(
+    &#039;foo&#039;,
+    &#039;&#039;,
+    array(
+        &#039;am.pm&#039;            =&gt; true,
+        &#039;visibleIncrement&#039; =&gt; &#039;T00:05:00&#039;, // 5-minute increments
+        &#039;visibleRange&#039;     =&gt; &#039;T02:00:00&#039;, // show 2 hours of increments
+    ),
+    array(
+        &#039;size&#039; =&gt; 20,
+    )
+);
+
+</pre></div></div>
+
+            </li>
+
+            <li class="listitem">
+                <p class="para">
+                    <em class="emphasis">ValidationTextBox</em>：dijit.form.ValidateTextBox。
+                    为文本元素提供客户端校验。从 TextBox 继承。
+                </p>
+
+                <p class="para">
+                    普通的 dijit 参数包括：
+                </p>
+
+                <ul class="itemizedlist">
+                    <li class="listitem"><p class="para">
+                        <em class="emphasis">invalidMessage</em>：当检测到一个无效的输入，就显示一条消息。
+                    </p></li>
+
+                    <li class="listitem"><p class="para">
+                        <em class="emphasis">promptMessage</em>：工具提示帮助信息。
+                    </p></li>
+
+                    <li class="listitem"><p class="para">
+                        <em class="emphasis">regExp</em>：用于校验文本的正则表达式，不需要边界记号。
+                    </p></li>
+
+                    <li class="listitem"><p class="para">
+                        <em class="emphasis">required</em>：确定元素是否必需。如果需要就把元素嵌入
+                         dijit.form.Form，它将被标记为无效并防止提交。
+                    </p></li>
+                </ul>
+
+                <div class="programlisting"><div class="cdata"><pre>
+echo $view-&gt;validationTextBox(
+    &#039;foo&#039;,
+    &#039;&#039;,
+    array(
+        &#039;required&#039; =&gt; true,
+        &#039;regExp&#039;   =&gt; &#039;[\w]+&#039;,
+        &#039;invalidMessage&#039; =&gt; &#039;No spaces or non-word characters allowed&#039;,
+        &#039;promptMessage&#039;  =&gt; &#039;Single word consisting of alphanumeric characters and underscores only&#039;,
+    ),
+    array(
+        &#039;maxlength&#039; =&gt; 20,
+    )
+);
+</pre></div></div>
+
+            </li>
+        </ul>
+    </div>
+</div>
+</div>
+        <hr />
+
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.dojo.data.html">Zend_Dojo_Data: dojo.data Envelopes</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.dojo.html">Zend_Dojo</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.dojo.form.html">Dojo 表单元素和装饰器</a></div>
+                    </td>
+                </tr>
+            </table>
+</td>
+        <td style="font-size: smaller;" width="15%"> <style type="text/css">
+#leftbar {
+	float: left;
+	width: 186px;
+	padding: 5px;
+	font-size: smaller;
+}
+ul.toc {
+	margin: 0px 5px 5px 5px;
+	padding: 0px;
+}
+ul.toc li {
+	font-size: 85%;
+	margin: 1px 0 1px 1px;
+	padding: 1px 0 1px 11px;
+	list-style-type: none;
+	background-repeat: no-repeat;
+	background-position: center left;
+}
+ul.toc li.header {
+	font-size: 115%;
+	padding: 5px 0px 5px 11px;
+	border-bottom: 1px solid #cccccc;
+	margin-bottom: 5px;
+}
+ul.toc li.active {
+	font-weight: bold;
+}
+ul.toc li a {
+	text-decoration: none;
+}
+ul.toc li a:hover {
+	text-decoration: underline;
+}
+</style>
+ <ul class="toc">
+  <li class="header home"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="reference.html">Zend Framework Reference</a></li>
+  <li class="header up"><a href="zend.dojo.html">Zend_Dojo</a></li>
+  <li><a href="zend.dojo.introduction.html">简介</a></li>
+  <li><a href="zend.dojo.data.html">Zend_Dojo_Data: dojo.data Envelopes</a></li>
+  <li class="active"><a href="zend.dojo.view.html">Dojo 视图助手</a></li>
+  <li><a href="zend.dojo.form.html">Dojo 表单元素和装饰器</a></li>
+  <li><a href="zend.dojo.build-layers.html">Zend_Dojo build layer support</a></li>
+ </ul>
+ </td>
+    </tr>
+</table>
+</body>
+</html>

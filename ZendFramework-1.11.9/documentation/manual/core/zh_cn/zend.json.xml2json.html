@@ -1,0 +1,193 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <title>XML 到 JSON 转换 - Zend Framework Manual</title>
+
+</head>
+<body>
+<table width="100%">
+    <tr valign="top">
+        <td width="85%">
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.json.objects.html">JSON 对象</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.json.html">Zend_Json</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.json.server.html">Zend_Json_Server - JSON-RPC server</a></div>
+                    </td>
+                </tr>
+            </table>
+<hr />
+<div id="zend.json.xml2json" class="section"><div class="info"><h1 class="title"> XML 到 JSON 转换 </h1></div>
+    
+    <p class="para">
+        提供了方便的方法来转换数据格式从 XML 到 JSON。这个功能从一篇 <a href="http://www.ibm.com/developerworks/xml/library/x-xml2jsonphp/" class="link external">&raquo;  IBM developerWorks 文章 </a> 的到启发。
+    </p>
+
+    <p class="para">
+        <code class="code">Zend_Json</code> 包括一个叫做 <code class="code">Zend_Json::fromXml()</code> 的静态方法，它将从给定的 XML 的输入生成 JSON。它用任何任意的 XML 字符串作为输入参数；它也带有一个可选的布尔输入参数来指示转换逻辑在转换过程中是否忽略 XML 属性，如果没有给出这个参数，那么缺省的行为就是忽略 XML 属性。本函数的调用示范如下：
+    </p>
+    <div class="programlisting"><div class="cdata"><pre>
+        // fromXml function simply takes a String containing XML contents as input.
+        $jsonContents = Zend_Json::fromXml($xmlStringContents, true);?&gt;
+    </pre></div></div>
+
+
+    <p class="para">
+        <code class="code">Zend_Json::fromXml()</code> 函数执行 XML 格式的字符串输入和返回等同的 JSON 格式字符串的输出的转换，如果有任何 XML 输入格式错误或者转换逻辑错误，它将抛出一个异常。转换逻辑也使用递归技术来遍历 XML 树，它支持 25 级递归，如果递归超过这个深度，它将抛出一个 <code class="code">Zend_Json_Exception</code> 。在 Zend Framework 的测试目录里有若干不同复杂度的 XML 文件，可用来测试 xml2json 功能。
+     </p>
+
+    <p class="para">
+        下面一个简单的例子来示例被传递的 XML 输入字符串和从 <code class="code">Zend_Json::fromXml()</code> 函数返回的 JSON 字符串。本例使用可选的参数控制在转换过程中不忽略 XML 属性，因此，你会注意到在 JSON 结果字符串中包含了在 XML 输入字符串中的 XML 属性的表达。
+    </p>
+
+    <p class="para">
+        XML 输入字符串传递给 <code class="code">Zend_Json::fromXml()</code> 函数：
+    </p>
+
+    <div class="programlisting"><div class="cdata"><pre>
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;books&gt;
+    &lt;book id=&quot;1&quot;&gt;
+        &lt;title&gt;Code Generation in Action&lt;/title&gt;
+        &lt;author&gt;&lt;first&gt;Jack&lt;/first&gt;&lt;last&gt;Herrington&lt;/last&gt;&lt;/author&gt;
+        &lt;publisher&gt;Manning&lt;/publisher&gt;
+    &lt;/book&gt;
+
+    &lt;book id=&quot;2&quot;&gt;
+        &lt;title&gt;PHP Hacks&lt;/title&gt;
+        &lt;author&gt;&lt;first&gt;Jack&lt;/first&gt;&lt;last&gt;Herrington&lt;/last&gt;&lt;/author&gt;
+        &lt;publisher&gt;O&#039;Reilly&lt;/publisher&gt;
+    &lt;/book&gt;
+
+    &lt;book id=&quot;3&quot;&gt;
+        &lt;title&gt;Podcasting Hacks&lt;/title&gt;
+        &lt;author&gt;&lt;first&gt;Jack&lt;/first&gt;&lt;last&gt;Herrington&lt;/last&gt;&lt;/author&gt;
+        &lt;publisher&gt;O&#039;Reilly&lt;/publisher&gt;
+    &lt;/book&gt;
+&lt;/books&gt; ?&gt;
+    </pre></div></div>
+
+
+    <p class="para">
+        从 <code class="code">Zend_Json::fromXml()</code> 函数返回的 JSON 输出字符串:
+    </p>
+
+    <div class="programlisting"><div class="cdata"><pre>
+{
+   &quot;books&quot; : {
+      &quot;book&quot; : [ {
+         &quot;@attributes&quot; : {
+            &quot;id&quot; : &quot;1&quot;
+         },
+         &quot;title&quot; : &quot;Code Generation in Action&quot;,
+         &quot;author&quot; : {
+            &quot;first&quot; : &quot;Jack&quot;, &quot;last&quot; : &quot;Herrington&quot;
+         },
+         &quot;publisher&quot; : &quot;Manning&quot;
+      }, {
+         &quot;@attributes&quot; : {
+            &quot;id&quot; : &quot;2&quot;
+         },
+         &quot;title&quot; : &quot;PHP Hacks&quot;, &quot;author&quot; : {
+            &quot;first&quot; : &quot;Jack&quot;, &quot;last&quot; : &quot;Herrington&quot;
+         },
+         &quot;publisher&quot; : &quot;O&#039;Reilly&quot;
+      }, {
+         &quot;@attributes&quot; : {
+            &quot;id&quot; : &quot;3&quot;
+         },
+         &quot;title&quot; : &quot;Podcasting Hacks&quot;, &quot;author&quot; : {
+            &quot;first&quot; : &quot;Jack&quot;, &quot;last&quot; : &quot;Herrington&quot;
+         },
+         &quot;publisher&quot; : &quot;O&#039;Reilly&quot;
+      }
+   ]}
+}  ?&gt;
+    </pre></div></div>
+
+
+    <p class="para">
+        关于 xml2json 特性的更多信息和以从它自己原始的提案中找到：<a href="http://tinyurl.com/2tfa8z" class="link external">&raquo; Zend_xml2json 提案 </a>。
+    </p>
+
+</div>
+        <hr />
+
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.json.objects.html">JSON 对象</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.json.html">Zend_Json</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.json.server.html">Zend_Json_Server - JSON-RPC server</a></div>
+                    </td>
+                </tr>
+            </table>
+</td>
+        <td style="font-size: smaller;" width="15%"> <style type="text/css">
+#leftbar {
+	float: left;
+	width: 186px;
+	padding: 5px;
+	font-size: smaller;
+}
+ul.toc {
+	margin: 0px 5px 5px 5px;
+	padding: 0px;
+}
+ul.toc li {
+	font-size: 85%;
+	margin: 1px 0 1px 1px;
+	padding: 1px 0 1px 11px;
+	list-style-type: none;
+	background-repeat: no-repeat;
+	background-position: center left;
+}
+ul.toc li.header {
+	font-size: 115%;
+	padding: 5px 0px 5px 11px;
+	border-bottom: 1px solid #cccccc;
+	margin-bottom: 5px;
+}
+ul.toc li.active {
+	font-weight: bold;
+}
+ul.toc li a {
+	text-decoration: none;
+}
+ul.toc li a:hover {
+	text-decoration: underline;
+}
+</style>
+ <ul class="toc">
+  <li class="header home"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="reference.html">Zend Framework Reference</a></li>
+  <li class="header up"><a href="zend.json.html">Zend_Json</a></li>
+  <li><a href="zend.json.introduction.html">简介</a></li>
+  <li><a href="zend.json.basics.html">基本用法</a></li>
+  <li><a href="zend.json.objects.html">JSON 对象</a></li>
+  <li class="active"><a href="zend.json.xml2json.html">XML 到 JSON 转换</a></li>
+  <li><a href="zend.json.server.html">Zend_Json_Server - JSON-RPC server</a></li>
+ </ul>
+ </td>
+    </tr>
+</table>
+</body>
+</html>

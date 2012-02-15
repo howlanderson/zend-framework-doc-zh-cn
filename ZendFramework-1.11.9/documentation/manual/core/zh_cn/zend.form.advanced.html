@@ -1,0 +1,734 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <title>Zend_Form 的高级用法 - Zend Framework Manual</title>
+
+</head>
+<body>
+<table width="100%">
+    <tr valign="top">
+        <td width="85%">
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.form.i18n.html">Zend_Form 的国际化</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.form.html">Zend_Form</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.gdata.html">Zend_Gdata</a></div>
+                    </td>
+                </tr>
+            </table>
+<hr />
+<div id="zend.form.advanced" class="section"><div class="info"><h1 class="title">Zend_Form 的高级用法 </h1></div>
+    
+
+    <p class="para">
+        <code class="code">Zend_Form</code> 有丰富的函数，其中许多面向有经验的开发者。这一章打算用例子和用例来介绍这些函数。
+    </p>
+
+    <div class="section" id="zend.form.advanced.arrayNotation" name="zend.form.advanced.arrayNotation"><div class="info"><h1 class="title"> 数组符号（Notation）</h1></div>
+        
+
+        <p class="para">
+            许多有经验的 web 开发者喜欢在元素名上用数组符号把相关的表单元素组成组。例如，如果有两个地址在表单上，一个邮寄地址和一个帐单地址，你可能会有相同的元素，通过把它们用数组组成组，你可以确保它们能分别被抓取。用下面的表单做个例子：
+        </p>
+
+        <div class="programlisting"><div class="cdata"><pre>
+&lt;form&gt;
+    &lt;fieldset&gt;
+        &lt;legend&gt;Shipping Address&lt;/legend&gt;
+        &lt;dl&gt;
+            &lt;dt&gt;&lt;label for=&quot;recipient&quot;&gt;Ship to:&lt;/label&gt;&lt;/dt&gt;
+            &lt;dd&gt;&lt;input name=&quot;recipient&quot; type=&quot;text&quot; value=&quot;&quot; /&gt;&lt;/dd&gt;
+
+            &lt;dt&gt;&lt;label for=&quot;address&quot;&gt;Address:&lt;/label&gt;&lt;/dt&gt;
+            &lt;dd&gt;&lt;input name=&quot;address&quot; type=&quot;text&quot; value=&quot;&quot; /&gt;&lt;/dd&gt;
+
+            &lt;dt&gt;&lt;label for=&quot;municipality&quot;&gt;City:&lt;/label&gt;&lt;/dt&gt;
+            &lt;dd&gt;&lt;input name=&quot;municipality&quot; type=&quot;text&quot; value=&quot;&quot; /&gt;&lt;/dd&gt;
+
+            &lt;dt&gt;&lt;label for=&quot;province&quot;&gt;State:&lt;/label&gt;&lt;/dt&gt;
+            &lt;dd&gt;&lt;input name=&quot;province&quot; type=&quot;text&quot; value=&quot;&quot; /&gt;&lt;/dd&gt;
+
+            &lt;dt&gt;&lt;label for=&quot;postal&quot;&gt;Postal Code:&lt;/label&gt;&lt;/dt&gt;
+            &lt;dd&gt;&lt;input name=&quot;postal&quot; type=&quot;text&quot; value=&quot;&quot; /&gt;&lt;/dd&gt;
+        &lt;/dl&gt;
+    &lt;/fieldset&gt;
+
+    &lt;fieldset&gt;
+        &lt;legend&gt;Billing Address&lt;/legend&gt;
+        &lt;dl&gt;
+            &lt;dt&gt;&lt;label for=&quot;payer&quot;&gt;Bill To:&lt;/label&gt;&lt;/dt&gt;
+            &lt;dd&gt;&lt;input name=&quot;payer&quot; type=&quot;text&quot; value=&quot;&quot; /&gt;&lt;/dd&gt;
+
+            &lt;dt&gt;&lt;label for=&quot;address&quot;&gt;Address:&lt;/label&gt;&lt;/dt&gt;
+            &lt;dd&gt;&lt;input name=&quot;address&quot; type=&quot;text&quot; value=&quot;&quot; /&gt;&lt;/dd&gt;
+
+            &lt;dt&gt;&lt;label for=&quot;municipality&quot;&gt;City:&lt;/label&gt;&lt;/dt&gt;
+            &lt;dd&gt;&lt;input name=&quot;municipality&quot; type=&quot;text&quot; value=&quot;&quot; /&gt;&lt;/dd&gt;
+
+            &lt;dt&gt;&lt;label for=&quot;province&quot;&gt;State:&lt;/label&gt;&lt;/dt&gt;
+            &lt;dd&gt;&lt;input name=&quot;province&quot; type=&quot;text&quot; value=&quot;&quot; /&gt;&lt;/dd&gt;
+
+            &lt;dt&gt;&lt;label for=&quot;postal&quot;&gt;Postal Code:&lt;/label&gt;&lt;/dt&gt;
+            &lt;dd&gt;&lt;input name=&quot;postal&quot; type=&quot;text&quot; value=&quot;&quot; /&gt;&lt;/dd&gt;
+        &lt;/dl&gt;
+    &lt;/fieldset&gt;
+
+    &lt;dl&gt;
+        &lt;dt&gt;&lt;label for=&quot;terms&quot;&gt;I agree to the Terms of Service&lt;/label&gt;&lt;/dt&gt;
+        &lt;dd&gt;&lt;input name=&quot;terms&quot; type=&quot;checkbox&quot; value=&quot;&quot; /&gt;&lt;/dd&gt;
+
+        &lt;dt&gt;&lt;/dt&gt;
+        &lt;dd&gt;&lt;input name=&quot;save&quot; type=&quot;submit&quot; value=&quot;Save&quot; /&gt;&lt;/dd&gt;
+    &lt;/dl&gt;
+&lt;/form&gt;
+</pre></div></div>
+
+
+        <p class="para">
+            在本例中，帐单地址和邮寄地址包含一些相同的字段，这意味着一个可能会覆盖另一个。我们可以用数组符号来解决这个问题：
+        </p>
+
+        <div class="programlisting"><div class="cdata"><pre>
+&lt;form&gt;
+    &lt;fieldset&gt;
+        &lt;legend&gt;Shipping Address&lt;/legend&gt;
+        &lt;dl&gt;
+            &lt;dt&gt;&lt;label for=&quot;shipping-recipient&quot;&gt;Ship to:&lt;/label&gt;&lt;/dt&gt;
+            &lt;dd&gt;&lt;input name=&quot;shipping[recipient]&quot; id=&quot;shipping-recipient&quot;
+                type=&quot;text&quot; value=&quot;&quot; /&gt;&lt;/dd&gt;
+
+            &lt;dt&gt;&lt;label for=&quot;shipping-address&quot;&gt;Address:&lt;/label&gt;&lt;/dt&gt;
+            &lt;dd&gt;&lt;input name=&quot;shipping[address]&quot; id=&quot;shipping-address&quot;
+                type=&quot;text&quot; value=&quot;&quot; /&gt;&lt;/dd&gt;
+
+            &lt;dt&gt;&lt;label for=&quot;shipping-municipality&quot;&gt;City:&lt;/label&gt;&lt;/dt&gt;
+            &lt;dd&gt;&lt;input name=&quot;shipping[municipality]&quot; id=&quot;shipping-municipality&quot;
+                type=&quot;text&quot; value=&quot;&quot; /&gt;&lt;/dd&gt;
+
+            &lt;dt&gt;&lt;label for=&quot;shipping-province&quot;&gt;State:&lt;/label&gt;&lt;/dt&gt;
+            &lt;dd&gt;&lt;input name=&quot;shipping[province]&quot; id=&quot;shipping-province&quot;
+                type=&quot;text&quot; value=&quot;&quot; /&gt;&lt;/dd&gt;
+
+            &lt;dt&gt;&lt;label for=&quot;shipping-postal&quot;&gt;Postal Code:&lt;/label&gt;&lt;/dt&gt;
+            &lt;dd&gt;&lt;input name=&quot;shipping[postal]&quot; id=&quot;shipping-postal&quot;
+                type=&quot;text&quot; value=&quot;&quot; /&gt;&lt;/dd&gt;
+        &lt;/dl&gt;
+    &lt;/fieldset&gt;
+
+    &lt;fieldset&gt;
+        &lt;legend&gt;Billing Address&lt;/legend&gt;
+        &lt;dl&gt;
+            &lt;dt&gt;&lt;label for=&quot;billing-payer&quot;&gt;Bill To:&lt;/label&gt;&lt;/dt&gt;
+            &lt;dd&gt;&lt;input name=&quot;billing[payer]&quot; id=&quot;billing-payer&quot;
+                type=&quot;text&quot; value=&quot;&quot; /&gt;&lt;/dd&gt;
+
+            &lt;dt&gt;&lt;label for=&quot;billing-address&quot;&gt;Address:&lt;/label&gt;&lt;/dt&gt;
+            &lt;dd&gt;&lt;input name=&quot;billing[address]&quot; id=&quot;billing-address&quot;
+                type=&quot;text&quot; value=&quot;&quot; /&gt;&lt;/dd&gt;
+
+            &lt;dt&gt;&lt;label for=&quot;billing-municipality&quot;&gt;City:&lt;/label&gt;&lt;/dt&gt;
+            &lt;dd&gt;&lt;input name=&quot;billing[municipality]&quot; id=&quot;billing-municipality&quot;
+                type=&quot;text&quot; value=&quot;&quot; /&gt;&lt;/dd&gt;
+
+            &lt;dt&gt;&lt;label for=&quot;billing-province&quot;&gt;State:&lt;/label&gt;&lt;/dt&gt;
+            &lt;dd&gt;&lt;input name=&quot;billing[province]&quot; id=&quot;billing-province&quot;
+                type=&quot;text&quot; value=&quot;&quot; /&gt;&lt;/dd&gt;
+
+            &lt;dt&gt;&lt;label for=&quot;billing-postal&quot;&gt;Postal Code:&lt;/label&gt;&lt;/dt&gt;
+            &lt;dd&gt;&lt;input name=&quot;billing[postal]&quot; id=&quot;billing-postal&quot;
+                type=&quot;text&quot; value=&quot;&quot; /&gt;&lt;/dd&gt;
+        &lt;/dl&gt;
+    &lt;/fieldset&gt;
+
+    &lt;dl&gt;
+        &lt;dt&gt;&lt;label for=&quot;terms&quot;&gt;I agree to the Terms of Service&lt;/label&gt;&lt;/dt&gt;
+        &lt;dd&gt;&lt;input name=&quot;terms&quot; type=&quot;checkbox&quot; value=&quot;&quot; /&gt;&lt;/dd&gt;
+
+        &lt;dt&gt;&lt;/dt&gt;
+        &lt;dd&gt;&lt;input name=&quot;save&quot; type=&quot;submit&quot; value=&quot;Save&quot; /&gt;&lt;/dd&gt;
+    &lt;/dl&gt;
+&lt;/form&gt;
+</pre></div></div>
+
+
+        <p class="para">
+            在上例中，我们有了两个单独的地址。在提交的表单，我们有三个元素，&#039;save&#039; 元素表示提交，和两个数组 &#039;shipping&#039; 和 &#039;billing&#039;，每个都有键对应它们的元素。
+        </p>
+
+        <p class="para">
+            <code class="code">Zend_Form</code> 尝试用 <a href="zend.form.forms.html#zend.form.forms.subforms" class="link">sub forms</a> 自动完成这个过程。缺省地，子表单用前面 HTML 表单列表包括 ids 所示的数组符号来解析，数组名基于子表单名，键基于包含在子表单中的元素。子表单的嵌套有任意深度，这将生成嵌套数组来反映它的结构。另外，<code class="code">Zend_Form</code> 中不同的校验程序遵循数组结构，不论子表单的嵌套有多深，都确保表单校验正确。你不需要做任何事情来获得这些好处，缺省是打开（enabled）的。
+        </p>
+
+        <p class="para">
+            另外，有工具让你有条件地打开数组符号，也可以指定特定的数组给元素和集合所属的（子表单或表单）：
+        </p>
+
+        <ul class="itemizedlist">
+            <li class="listitem">
+                <p class="para">
+                    <code class="code">Zend_Form::setIsArray($flag)</code>：通过设置标志为 true，你可以让整个表单当作数组。缺省地，表单名将是数组名，除非调用了 <code class="code">setElementsBelongTo()</code>。如果表单没有名称，或如果 <code class="code">setElementsBelongTo()</code> 没有设置，这个标志将被忽略（因为没有数组名给元素所属于的表单）。
+                </p>
+
+                <p class="para">
+                    你可以用 <code class="code">isArray()</code> 访问器来决定一个表单是否被当作数组。
+                </p>
+            </li>
+
+            <li class="listitem"><p class="para">
+                    <code class="code">Zend_Form::setElementsBelongTo($array)</code>：用这个方法，你可以指定数组名给元素所属的表单，也可以使用 <code class="code">getElementsBelongTo()</code> 访问器来确定（获得？）它的名字。
+            </p></li>
+        </ul>
+
+        <p class="para">
+            另外，在元素一级，你可以用 <code class="code">Zend_Form_Element::setBelongsTo()</code> 方法指定可能属于特定的数组的独立的元素。
+            为了找出这个值是什么 － 是否显式或隐式地通过表单 － 可以用 <code class="code">getBelongsTo()</code> 访问器来做。
+        </p>
+    </div>
+
+    <div class="section" id="zend.form.advanced.multiPage" name="zend.form.advanced.multiPage"><div class="info"><h1 class="title"> 多页表单 </h1></div>
+        
+
+        <p class="para">
+            目前，<code class="code">Zend_Form</code> 没有正式支持多页表单，然而，可以用一些额外的工具来实现。
+        </p>
+
+        <p class="para">
+            生成多页表单的关键是利用子表单，但每个页面只显示一个子表单。这让你一次提交一个单个的表单并校验它，直到所有表单都提交了才处理。
+        </p>
+
+        <div class="example"><div class="info"><p><b>Example #1  注册表单示例 </b></p></div>
+            
+
+            <div class="example-contents"><p>
+                让我们用注册表单作为例子，我们的意图是在第一页上读取期望的用户名和密码，还有用户的元数据 －－ 用户的名字、姓和地点 －－ 最后让他们决定使用哪个邮件列表（如果有的话）。
+            </p></div>
+
+            <div class="example-contents"><p>
+                首先，来生成表单，并在里面定义一些子表单：
+            </p></div>
+
+            <div class="programlisting"><div class="cdata"><pre>&lt;?php
+class My_Form_Registration extends Zend_Form
+{
+    public function init()
+    {
+        // Create user sub form: username and password
+        $user = new Zend_Form_SubForm();
+        $user-&gt;addElements(array(
+            new Zend_Form_Element_Text(&#039;username&#039;, array(
+                &#039;required&#039;   =&gt; true,
+                &#039;label&#039;      =&gt; &#039;Username:&#039;,
+                &#039;filters&#039;    =&gt; array(&#039;StringTrim&#039;, &#039;StringToLower&#039;),
+                &#039;validators&#039; =&gt; array(
+                    &#039;Alnum&#039;,
+                    array(&#039;Regex&#039;, false, array(&#039;/^[a-z][a-z0-9]{2,}$/&#039;))
+                )
+            )),
+
+            new Zend_Form_Element_Password(&#039;password&#039;, array(
+                &#039;required&#039;   =&gt; true,
+                &#039;label&#039;      =&gt; &#039;Password:&#039;,
+                &#039;filters&#039;    =&gt; array(&#039;StringTrim&#039;),
+                &#039;validators&#039; =&gt; array(
+                    &#039;NotEmpty&#039;,
+                    array(&#039;StringLength&#039;, false, array(6))
+                )
+            )),
+        ));
+
+        // Create demographics sub form: given name, family name, and location
+        $demog = new Zend_Form_SubForm();
+        $demog-&gt;addElements(array(
+            new Zend_Form_Element_Text(&#039;givenName&#039;, array(
+                &#039;required&#039;   =&gt; true,
+                &#039;label&#039;      =&gt; &#039;Given (First) Name:&#039;,
+                &#039;filters&#039;    =&gt; array(&#039;StringTrim&#039;),
+                &#039;validators&#039; =&gt; array(
+                    array(&#039;Regex&#039;, false, array(&#039;/^[a-z][a-z0-9., \&#039;-]{2,}$/i&#039;))
+                )
+            )),
+
+            new Zend_Form_Element_Text(&#039;familyName&#039;, array(
+                &#039;required&#039;   =&gt; true,
+                &#039;label&#039;      =&gt; &#039;Family (Last) Name:&#039;,
+                &#039;filters&#039;    =&gt; array(&#039;StringTrim&#039;),
+                &#039;validators&#039; =&gt; array(
+                    array(&#039;Regex&#039;, false, array(&#039;/^[a-z][a-z0-9., \&#039;-]{2,}$/i&#039;))
+                )
+            )),
+
+            new Zend_Form_Element_Text(&#039;location&#039;, array(
+                &#039;required&#039;   =&gt; true,
+                &#039;label&#039;      =&gt; &#039;Your Location:&#039;,
+                &#039;filters&#039;    =&gt; array(&#039;StringTrim&#039;),
+                &#039;validators&#039; =&gt; array(
+                    array(&#039;StringLength&#039;, false, array(2))
+                )
+            )),
+        ));
+
+        // Create mailing lists sub form
+        $listOptions = array(
+            &#039;none&#039;        =&gt; &#039;No lists, please&#039;,
+            &#039;fw-general&#039;  =&gt;  &#039;Zend Framework General List&#039;,
+            &#039;fw-mvc&#039;      =&gt;  &#039;Zend Framework MVC List&#039;,
+            &#039;fw-auth&#039;     =&gt;  &#039;Zend Framwork Authentication and ACL List&#039;,
+            &#039;fw-services&#039; =&gt; &#039;Zend Framework Web Services List&#039;,
+        );
+        $lists = new Zend_Form_SubForm();
+        $lists-&gt;addElements(array(
+            new Zend_Form_Element_MultiCheckbox(&#039;subscriptions&#039;, array(
+                &#039;label&#039;        =&gt; &#039;Which lists would you like to subscribe to?&#039;,
+                &#039;multiOptions&#039; =&gt; $listOptions,
+                &#039;required&#039;     =&gt; true,
+                &#039;filters&#039;      =&gt; array(&#039;StringTrim&#039;),
+                &#039;validators&#039;   =&gt; array(
+                    array(&#039;InArray&#039;, false, array(array_keys($listOptions)))
+                )
+            )),
+        ));
+
+        // Attach sub forms to main form
+        $this-&gt;addSubForms(array(
+            &#039;user&#039;  =&gt; $user,
+            &#039;demog&#039; =&gt; $demog,
+            &#039;lists&#039; =&gt; $lists
+        ));
+    }
+}
+</pre></div></div>
+
+
+            <div class="example-contents"><p>
+                注意还没有提交按钮，而起我们对子表单的装饰器也没有做任何事情 －－ 意思是缺省地他们作为字段（fieldsets）显示。我们将能够 override 这些因为我们显示每个独立的子表单，并加入提交按钮这样我们就可以处理它们了 －－ 也要求有动作和方法（注：这里的方法是 &#039;post&#039; 或 &#039;get&#039;）属性。来给我们的类添砖加瓦让它提供那些信息：
+            </p></div>
+
+            <div class="programlisting"><div class="cdata"><pre>
+class My_Form_Registration extends Zend_Form
+{
+    // ...
+
+    /**
+     * Prepare a sub form for display
+     *
+     * @param  string|Zend_Form_SubForm $spec
+     * @return Zend_Form_SubForm
+     */
+    public function prepareSubForm($spec)
+    {
+        if (is_string($spec)) {
+            $subForm = $this-&gt;{$spec};
+        } elseif ($spec instanceof Zend_Form_SubForm) {
+            $subForm = $spec;
+        } else {
+            throw new Exception(&#039;Invalid argument passed to &#039; . __FUNCTION__ . &#039;()&#039;);
+        }
+        $this-&gt;setSubFormDecorators($subForm)
+             -&gt;addSubmitButton($subForm)
+             -&gt;addSubFormActions($subForm);
+        return $subForm;
+    }
+
+    /**
+     * Add form decorators to an individual sub form
+     *
+     * @param  Zend_Form_SubForm $subForm
+     * @return My_Form_Registration
+     */
+    public function setSubFormDecorators(Zend_Form_SubForm $subForm)
+    {
+        $subForm-&gt;setDecorators(array(
+            &#039;FormElements&#039;,
+            array(&#039;HtmlTag&#039;, array(&#039;tag&#039; =&gt; &#039;dl&#039;, &#039;class&#039; =&gt; &#039;zend_form&#039;)),
+            &#039;Form&#039;,
+        ));
+        return $this;
+    }
+
+    /**
+     * Add a submit button to an individual sub form
+     *
+     * @param  Zend_Form_SubForm $subForm
+     * @return My_Form_Registration
+     */
+    public function addSubmitButton(Zend_Form_SubForm $subForm)
+    {
+        $subForm-&gt;addElement(new Zend_Form_Element_Submit(
+            &#039;save&#039;,
+            array(
+                &#039;label&#039;    =&gt; &#039;Save and continue&#039;,
+                &#039;required&#039; =&gt; false,
+                &#039;ignore&#039;   =&gt; true,
+            )
+        ));
+        return $this;
+    }
+
+    /**
+     * Add action and method to sub form
+     *
+     * @param  Zend_Form_SubForm $subForm
+     * @return My_Form_Registration
+     */
+    public function addSubFormActions(Zend_Form_SubForm $subForm)
+    {
+        $subForm-&gt;setAction(&#039;/registration/process&#039;)
+                -&gt;setMethod(&#039;post&#039;);
+        return $this;
+    }
+}
+</pre></div></div>
+
+
+            <div class="example-contents"><p>
+                接着，我们也需要为动作控制器添加一些辅助东西，并有若干考虑。首先，我们需要确保在请求之间保持表单数据，这样可以确定何时退出。第二，我们需要一些逻辑来确定表单的哪部分已经提交，哪个子表单需要基于这些信息来显示。我们使用 <code class="code">Zend_Session_Namespace</code> 来保持数据，它也会告诉我们提交哪个表单。
+            </p></div>
+
+            <div class="example-contents"><p>
+                让我们来创建控制器，并添加用于获取表单实例的方法：
+            </p></div>
+
+            <div class="programlisting"><div class="cdata"><pre>&lt;?php
+class RegistrationController extends Zend_Controller_Action
+{
+    protected $_form;
+
+    public function getForm()
+    {
+        if (null === $this-&gt;_form) {
+            require_once &#039;My/Form/Registration.php&#039;;
+            $this-&gt;_form = new My_Form_Registration();
+        }
+        return $this-&gt;_form;
+    }
+}
+</pre></div></div>
+
+
+            <div class="example-contents"><p>
+                现在，添加一些函数来确定显示哪个表单。基本上，直到整个表单被认为有效，我们才需要继续显示表单片段。另外，我们可能想确保它们是按一定的顺序：用户、demog 和 列表。我们在可以通过检查出现在每个子表单上的特定键的会话命名空间确定哪个数据被提交。
+            </p></div>
+
+            <div class="programlisting"><div class="cdata"><pre>
+class RegistrationController extends Zend_Controller_Action
+{
+    // ...
+
+    protected $_namespace = &#039;RegistrationController&#039;;
+    protected $_session;
+
+    /**
+     * Get the session namespace we&#039;re using
+     *
+     * @return Zend_Session_Namespace
+     */
+    public function getSessionNamespace()
+    {
+        if (null === $this-&gt;_session) {
+            require_once &#039;Zend/Session/Namespace.php&#039;;
+            $this-&gt;_session = new Zend_Session_Namespace($this-&gt;_namespace);
+        }
+
+        return $this-&gt;_session;
+    }
+
+    /**
+     * Get a list of forms already stored in the session
+     *
+     * @return array
+     */
+    public function getStoredForms()
+    {
+        $stored = array();
+        foreach ($this-&gt;getSessionNamespace() as $key =&gt; $value) {
+            $stored[] = $key;
+        }
+
+        return $stored;
+    }
+
+    /**
+     * Get list of all subforms available
+     *
+     * @return array
+     */
+    public function getPotentialForms()
+    {
+        return array_keys($this-&gt;getForm()-&gt;getSubForms());
+    }
+
+    /**
+     * What sub form was submitted?
+     *
+     * @return false|Zend_Form_SubForm
+     */
+    public function getCurrentSubForm()
+    {
+        $request = $this-&gt;getRequest();
+        if (!$request-&gt;isPost()) {
+            return false;
+        }
+
+        foreach ($this-&gt;getPotentialForms() as $name) {
+            if ($data = $request-&gt;getPost($name, false)) {
+                if (is_array($data)) {
+                    return $this-&gt;getForm()-&gt;getSubForm($name);
+                    break;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Get the next sub form to display
+     *
+     * @return Zend_Form_SubForm|false
+     */
+    public function getNextSubForm()
+    {
+        $storedForms    = $this-&gt;getStoredForms();
+        $potentialForms = $this-&gt;getPotentialForms();
+
+        foreach ($potentialForms as $name) {
+            if (!in_array($name, $storedForms)) {
+                return $this-&gt;getForm()-&gt;getSubForm($name);
+            }
+        }
+
+        return false;
+    }
+}
+</pre></div></div>
+
+
+            <div class="example-contents"><p>
+                上述方法让我们使用符合如 &quot;<code class="code">$subForm = $this-&gt;getCurrentSubForm();</code>&quot; 来读取当前子表单来校验，或者 &quot;<code class="code">$next = $this-&gt;getNextSubForm();</code>&quot; 来获得下一个来显示。
+            </p></div>
+
+            <div class="example-contents"><p>
+                现在，让我们看一下如何处理和显示不同的子表单。我们可以使用 <code class="code">getCurrentSubForm()</code> 来确定表单是否提交（返回 false 值表示没有显示或提交），并且用 <code class="code">getNextSubForm()</code> 来获取表单来显示。我们还可以用表单的 <code class="code">prepareSubForm()</code> 方法来确保表单已准备好显示。
+            </p></div>
+
+            <div class="example-contents"><p>
+                当我们收到表单提交，可以校验子表单并接着检查是否整个表单有效。为完成这些任务，我们需要另外的方法确保提交的数据添加到会话和什么时候校验整个表单，我们依靠从会话来的所有片段（segments）来校验：
+            </p></div>
+
+            <div class="programlisting"><div class="cdata"><pre>&lt;?php
+class My_Form_Registration extends Zend_Form
+{
+    // ...
+
+    /**
+     * Is the sub form valid?
+     *
+     * @param  Zend_Form_SubForm $subForm
+     * @param  array $data
+     * @return bool
+     */
+    public function subFormIsValid(Zend_Form_SubForm $subForm, array $data)
+    {
+        $name = $subForm-&gt;getName();
+        if ($subForm-&gt;isValid($data)) {
+            $this-&gt;getSessionNamespace()-&gt;$name = $subForm-&gt;getValues();
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Is the full form valid?
+     *
+     * @return bool
+     */
+    public function formIsValid()
+    {
+        $data = array();
+        foreach ($this-&gt;getSessionNamespace() as $key =&gt; $info) {
+            $data[$key] = $info;
+        }
+
+        return $this-&gt;getForm()-&gt;isValid($data);
+    }
+}
+</pre></div></div>
+
+
+            <div class="example-contents"><p>
+                八字已经画了一撇，让我们来为控制器构造一个动作。我们需要为表单做一个 landing 页面，接着&#039;process&#039; 动作来处理表单。
+            </p></div>
+
+            <div class="programlisting"><div class="cdata"><pre>&lt;?php
+class RegistrationController extends Zend_Controller_Action
+{
+    // ...
+
+    public function indexAction()
+    {
+        // Either re-display the current page, or grab the &quot;next&quot; (first)
+        // sub form
+        if (!$form = $this-&gt;getCurrentSubForm()) {
+            $form = $this-&gt;getNextSubForm();
+        }
+        $this-&gt;view-&gt;form = $this-&gt;getForm()-&gt;prepareSubForm($form);
+    }
+
+    public function processAction()
+    {
+        if (!$form = $this-&gt;getCurrentSubForm()) {
+            return $this-&gt;_forward(&#039;index&#039;);
+        }
+
+        if (!$this-&gt;subFormIsValid($form, $this-&gt;getRequest()-&gt;getPost())) {
+            $this-&gt;view-&gt;form = $this-&gt;getForm()-&gt;prepareSubForm($form);
+            return $this-&gt;render(&#039;index&#039;);
+        }
+
+        if (!$this-&gt;formIsValid()) {
+            $form = $this-&gt;getNextSubForm();
+            $this-&gt;view-&gt;form = $this-&gt;getForm()-&gt;prepareSubForm($form);
+            return $this-&gt;render(&#039;index&#039;);
+        }
+
+        // Valid form!
+        // Render information in a verification page
+        $this-&gt;view-&gt;info = $this-&gt;getSessionNamespace();
+        $this-&gt;render(&#039;verification&#039;);
+    }
+}
+</pre></div></div>
+
+
+            <div class="example-contents"><p>
+                正如你注意到的，处理表单的代码相当简单。我们检查是否有一个子表单提交，如果没有，就回到 landing 页面。如果我们确实有一个子表单，就尝试校验它，如果失败，重新显示。如果子表单有效，那么我们就检查表单是否有效，它将指示我们是否完成，如果没有，我们就显示下一个表单片段。最后，我们显示一个确认过的带有会话内容的页面。
+            </p></div>
+
+            <div class="example-contents"><p>
+                The view scripts are very simple:
+            </p></div>
+
+            <div class="programlisting"><div class="cdata"><pre>
+&lt;? // registration/index.phtml ?&gt;
+&lt;h2&gt;Registration&lt;/h2&gt;
+&lt;?= $this-&gt;form ?&gt;
+
+&lt;? // registration/verification.phtml ?&gt;
+&lt;h2&gt;Thank you for registering!&lt;/h2&gt;
+&lt;p&gt;
+    这里是你所提供的信息：
+&lt;/p&gt;
+
+&lt;?
+// Have to do this construct due to how items are stored in session namespaces
+foreach ($this-&gt;info as $info):
+    foreach ($info as $form =&gt; $data): ?&gt;
+&lt;h4&gt;&lt;?= ucfirst($form) ?&gt;:&lt;/h4&gt;
+&lt;dl&gt;
+    &lt;? foreach ($data as $key =&gt; $value): ?&gt;
+    &lt;dt&gt;&lt;?= ucfirst($key) ?&gt;&lt;/dt&gt;
+    &lt;? if (is_array($value)):
+        foreach ($value as $label =&gt; $val): ?&gt;
+    &lt;dd&gt;&lt;?= $val ?&gt;&lt;/dd&gt;
+        &lt;? endforeach;
+       else: ?&gt;
+    &lt;dd&gt;&lt;?= $this-&gt;escape($value) ?&gt;&lt;/dd&gt;
+    &lt;? endif;
+    endforeach; ?&gt;
+&lt;/dl&gt;
+&lt;? endforeach;
+endforeach ?&gt;
+</pre></div></div>
+
+
+            <div class="example-contents"><p>
+                Zend Framework 的下次发行将通过抽象会话和顺序逻辑来提供制作多页面表单的组件。在这期间，上述例子对如何为你的站点生成多页面是个合理的指南。
+            </p></div>
+        </div>
+    </div>
+</div>
+        <hr />
+
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.form.i18n.html">Zend_Form 的国际化</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.form.html">Zend_Form</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.gdata.html">Zend_Gdata</a></div>
+                    </td>
+                </tr>
+            </table>
+</td>
+        <td style="font-size: smaller;" width="15%"> <style type="text/css">
+#leftbar {
+	float: left;
+	width: 186px;
+	padding: 5px;
+	font-size: smaller;
+}
+ul.toc {
+	margin: 0px 5px 5px 5px;
+	padding: 0px;
+}
+ul.toc li {
+	font-size: 85%;
+	margin: 1px 0 1px 1px;
+	padding: 1px 0 1px 11px;
+	list-style-type: none;
+	background-repeat: no-repeat;
+	background-position: center left;
+}
+ul.toc li.header {
+	font-size: 115%;
+	padding: 5px 0px 5px 11px;
+	border-bottom: 1px solid #cccccc;
+	margin-bottom: 5px;
+}
+ul.toc li.active {
+	font-weight: bold;
+}
+ul.toc li a {
+	text-decoration: none;
+}
+ul.toc li a:hover {
+	text-decoration: underline;
+}
+</style>
+ <ul class="toc">
+  <li class="header home"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="reference.html">Zend Framework Reference</a></li>
+  <li class="header up"><a href="zend.form.html">Zend_Form</a></li>
+  <li><a href="zend.form.introduction.html">Zend_Form</a></li>
+  <li><a href="zend.form.quickstart.html">Zend_Form 快速起步</a></li>
+  <li><a href="zend.form.elements.html">使用 Zend_Form_Element 生成表单元素</a></li>
+  <li><a href="zend.form.forms.html">使用 Zend_Form 生成表单</a></li>
+  <li><a href="zend.form.decorators.html">使用 Zend_Form_Decorator 生成定制的表单标识（Markup）</a></li>
+  <li><a href="zend.form.standardElements.html">Zend Framework 带有的标准表单元素</a></li>
+  <li><a href="zend.form.standardDecorators.html">Zend Framework 带有的标准表单装饰器（Decorators）</a></li>
+  <li><a href="zend.form.i18n.html">Zend_Form 的国际化</a></li>
+  <li class="active"><a href="zend.form.advanced.html">Zend_Form 的高级用法</a></li>
+ </ul>
+ </td>
+    </tr>
+</table>
+</body>
+</html>

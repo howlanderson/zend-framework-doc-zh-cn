@@ -1,0 +1,253 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <title>加载插件 - Zend Framework Manual</title>
+
+</head>
+<body>
+<table width="100%">
+    <tr valign="top">
+        <td width="85%">
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.loader.autoloader-resource.html">Resource Autoloaders</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.loader.html">Zend_Loader</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.locale.html">Zend_Locale</a></div>
+                    </td>
+                </tr>
+            </table>
+<hr />
+<div id="zend.loader.pluginloader" class="section"><div class="info"><h1 class="title"> 加载插件 </h1></div>
+    
+
+    <p class="para">
+        很多 Zend Framework 组件支持插件，允许通过指定类的前缀和到类的文件（不需要在 <code class="code">include_path</code> 或不需要遵循传统命名约定的文件）的路径动态加载函数。<code class="code">Zend_Loader_PluginLoader</code> 提供了普通的函数来完成这个工作。
+    </p>
+
+    <p class="para">
+        <code class="code">PluginLoader</code> 的基本用法遵循 Zend Framework 的命名约定（一个文件一个类），解析路径时，使用下划线作为路径分隔符。当决定是否加载特别的插件类，允许传递可选的类前缀来预处理。另外，路径按 LIFO 顺序来搜索。由于 LIFO 搜索和类的前缀，允许命名空间给插件，这样可以从早期注册的路径来覆盖插件。
+    </p>
+
+    <div class="section" id="zend.loader.pluginloader.usage" name="zend.loader.pluginloader.usage"><div class="info"><h1 class="title"> 基本用例 </h1></div>
+        
+
+        <p class="para">
+            首先，假定下面的目录结构和类文件，并且根（toplevel）目录和库目录在 include_path 中：
+        </p>
+
+        <div class="programlisting"><div class="cdata"><pre>
+application/
+    modules/
+        foo/
+            views/
+                helpers/
+                    FormLabel.php
+                    FormSubmit.php
+        bar/
+            views/
+                helpers/
+                    FormSubmit.php
+library/
+    Zend/
+        View/
+            Helper/
+                FormLabel.php
+                FormSubmit.php
+                FormText.php
+</pre></div></div>
+
+
+        <p class="para">
+            现在，创建一个插件加载器来使各种各样的视图助手仓库可用：
+        </p>
+
+        <div class="programlisting"><div class="cdata"><pre>&lt;?php
+$loader = new Zend_Loader_PluginLoader();
+$loader-&gt;addPrefixPath(&#039;Zend_View_Helper&#039;, &#039;Zend/View/Helper/&#039;)
+       -&gt;addPrefixPath(&#039;Foo_View_Helper&#039;, &#039;application/modules/foo/views/helpers&#039;)
+       -&gt;addPrefixPath(&#039;Bar_View_Helper&#039;, &#039;application/modules/bar/views/helpers&#039;);
+?&gt;</pre></div></div>
+
+
+        <p class="para">
+            接着用类名中添加路径时定义的前缀后面的部分来加载一个给定的视图助手：
+        </p>
+
+        <div class="programlisting"><div class="cdata"><pre>&lt;?php
+// load &#039;FormText&#039; helper:
+$formTextClass = $loader-&gt;load(&#039;FormText&#039;); // &#039;Zend_View_Helper_FormText&#039;;
+
+// load &#039;FormLabel&#039; helper:
+$formLabelClass = $loader-&gt;load(&#039;FormLabel&#039;); // &#039;Foo_View_Helper_FormLabel&#039;
+
+// load &#039;FormSubmit&#039; helper:
+$formSubmitClass = $loader-&gt;load(&#039;FormSubmit&#039;); // &#039;Bar_View_Helper_FormSubmit&#039;
+?&gt;</pre></div></div>
+
+
+        <p class="para">
+            类加载后，就可以实例化了。
+        </p>
+
+        <blockquote><p><b class="note">Note</b>: <span class="info"><b> 为一个前缀注册多个路径 </b><br /></span>
+            
+
+            
+                有时候，多个路径使用相同的前缀，<code class="code">Zend_Loader_PluginLoader</code> 实际上为每个给定的前缀注册一个路径数组；最后注册的被首先检查，当你使用孵化器里的组件时，这相当有用。
+            <br />
+        </p></blockquote>
+
+        <blockquote><p><b class="note">Note</b>: <span class="info"><b> 实例化时定义路径 </b><br /></span>
+            
+
+            
+                你可以提供给构造器一个可选的“前缀/路径”对（或“前缀/多个路径”）数组参数：
+            <br />
+
+            <div class="programlisting"><div class="cdata"><pre>&lt;?php
+$loader = new Zend_Loader_PluginLoader(array(
+    &#039;Zend_View_Helper&#039; =&gt; &#039;Zend/View/Helper/&#039;,
+    &#039;Foo_View_Helper&#039;  =&gt; &#039;application/modules/foo/views/helpers&#039;,
+    &#039;Bar_View_Helper&#039;  =&gt; &#039;application/modules/bar/views/helpers&#039;
+));
+?&gt;</pre></div></div>
+
+        </p></blockquote>
+
+        <p class="para">
+            <code class="code">Zend_Loader_PluginLoader</code> 在不需要使用单态实例的情况下，也可选地允许共享插件，这是通过静态注册表来完成的，在实例化时需要注册表名作为构造器的第二个参数：
+
+        </p>
+
+        <div class="programlisting"><div class="cdata"><pre>&lt;?php
+// Store plugins in static registry &#039;foobar&#039;:
+$loader = new Zend_Loader_PluginLoader(array(), &#039;foobar&#039;);
+?&gt;</pre></div></div>
+
+
+        <p class="para">
+            其它使用同名注册表来实例化 <code class="code">PluginLoader</code> 的组件将可以访问已经加载的路径和插件。
+        </p>
+    </div>
+
+    <div class="section" id="zend.loader.pluginloader.paths" name="zend.loader.pluginloader.paths"><div class="info"><h1 class="title"> 处理插件路径 </h1></div>
+        
+
+        <p class="para">
+            上节的例子示例如何给插件加载器添加路径，那么如何确定已经加载的路径或删除他们呢？
+        </p>
+
+        <ul class="itemizedlist">
+            <li class="listitem"><p class="para">
+                    如果没有提供 <code class="code">$prefix</code>，<code class="code">getPaths($prefix = null)</code> 以“前缀/路径”对返回所有的路径；或者如果提供了 <code class="code">$prefix</code>，<code class="code">getPaths($prefix = null)</code> 返回为给定的前缀注册的路径。
+            </p></li>
+
+            <li class="listitem"><p class="para">
+                    <code class="code">clearPaths($prefix = null)</code> 将缺省地清除所有的已注册路径，或者如果提供了 <code class="code">$prefix</code> 并放在堆栈里，只清除和那些和给定前缀关联的路径。
+            </p></li>
+
+            <li class="listitem"><p class="para">
+                    <code class="code">removePrefixPath($prefix, $path = null)</code> 允许有选择地清除和给定前缀相关的特定的路径。如果没有提供 <code class="code">$path</code> ，所有的和前缀相关的路径被清除，如果提供了 <code class="code">$path</code> 并且相应的前缀存在，只有这个相关的路径被清除。
+            </p></li>
+        </ul>
+    </div>
+
+    <div class="section" id="zend.loader.pluginloader.checks" name="zend.loader.pluginloader.checks"><div class="info"><h1 class="title"> 测试插件和获取类的名字 </h1></div>
+        
+
+        <p class="para">
+            有时候你想确定在执行一个动作之前是否插件类已经加载，<code class="code">isLoaded()</code> 返回插件名的状态。
+        </p>
+
+        <p class="para">
+            <code class="code">PluginLoader</code> 的另一个普通用例是确定已加载类的完全合格的插件类名，<code class="code">getClassName()</code> 提供该功能。一般地，这个和 <code class="code">isLoaded()</code> 联合使用：
+        </p>
+
+        <div class="programlisting"><div class="cdata"><pre>&lt;?php
+if ($loader-&gt;isLoaded(&#039;Adapter&#039;)) {
+    $class   = $loader-&gt;getClassName(&#039;Adapter&#039;);
+    $adapter = call_user_func(array($class, &#039;getInstance&#039;));
+}
+?&gt;</pre></div></div>
+
+    </div>
+</div>
+        <hr />
+
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.loader.autoloader-resource.html">Resource Autoloaders</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.loader.html">Zend_Loader</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.locale.html">Zend_Locale</a></div>
+                    </td>
+                </tr>
+            </table>
+</td>
+        <td style="font-size: smaller;" width="15%"> <style type="text/css">
+#leftbar {
+	float: left;
+	width: 186px;
+	padding: 5px;
+	font-size: smaller;
+}
+ul.toc {
+	margin: 0px 5px 5px 5px;
+	padding: 0px;
+}
+ul.toc li {
+	font-size: 85%;
+	margin: 1px 0 1px 1px;
+	padding: 1px 0 1px 11px;
+	list-style-type: none;
+	background-repeat: no-repeat;
+	background-position: center left;
+}
+ul.toc li.header {
+	font-size: 115%;
+	padding: 5px 0px 5px 11px;
+	border-bottom: 1px solid #cccccc;
+	margin-bottom: 5px;
+}
+ul.toc li.active {
+	font-weight: bold;
+}
+ul.toc li a {
+	text-decoration: none;
+}
+ul.toc li a:hover {
+	text-decoration: underline;
+}
+</style>
+ <ul class="toc">
+  <li class="header home"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="reference.html">Zend Framework Reference</a></li>
+  <li class="header up"><a href="zend.loader.html">Zend_Loader</a></li>
+  <li><a href="zend.loader.load.html">动态加载文件和类</a></li>
+  <li><a href="zend.loader.autoloader.html">The Autoloader</a></li>
+  <li><a href="zend.loader.autoloader-resource.html">Resource Autoloaders</a></li>
+  <li class="active"><a href="zend.loader.pluginloader.html">加载插件</a></li>
+ </ul>
+ </td>
+    </tr>
+</table>
+</body>
+</html>

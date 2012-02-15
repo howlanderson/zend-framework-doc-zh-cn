@@ -1,0 +1,275 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <title>基本方法 - Zend Framework Manual</title>
+
+</head>
+<body>
+<table width="100%">
+    <tr valign="top">
+        <td width="85%">
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.date.definition.theory.html">操作理论</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.date.html">Zend_Date</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.date.overview.html">Zend_Date API 概述</a></div>
+                    </td>
+                </tr>
+            </table>
+<hr />
+<div id="zend.date.basic" class="section"><div class="info"><h1 class="title">基本方法</h1></div>
+
+    
+
+    <p class="para">
+        下面的章节用例子来说明 <code class="code">Zend_Date</code> 的基本用法。对于本手册，&quot;dates&quot; 总是暗示
+        带有时间的日历日期，即使没有显式说明，反之亦然。没有指定的部分就在内部缺省为 “零”。
+        这样，添加一个没有日历日期和一个时间值为 12 小时到另一个只包含日历日期的日期上，就变成那个被添加的日期的“中午”。
+    </p>
+
+    <p class="para">
+        只设置一个指定的日期，没有时间部分，那么时间就设置为 00:00:00。相反，只设置一个指定的时间暗示在内部日期
+        设置为 01.01.1970 加上等同已经发生的小时，分钟和秒的秒数。一般来说，人们从开始点测量东西，如 A.D. 0年。
+        然而，许多软件系统使用1970年的第一秒作为开始点，并表示为时间戳偏移量。
+    </p>
+
+    <div class="section" id="zend.date.basic.creation" name="zend.date.basic.creation"><div class="info"><h1 class="title">当前日期</h1></div>
+
+        
+
+        <p class="para">
+            不带任何参数，构造一个实例缺省地返回一个用PHP的 <code class="code">time()</code>函数获得 <a href="http://en.wikipedia.org/wiki/Unix_Time" class="link external">&raquo; UNIX 时间戳</a>
+            当前本地日期的对象。请确认你的PHP环境有正确的 <a href="zend.date.introduction.html#zend.date.setdefaulttimezone" class="link">缺省时区</a>。
+        </p>
+
+        <div class="example"><div class="info"><p><b>Example #1 生成当前日期</b></p></div>
+            
+            <div class="programlisting"><div class="cdata"><pre>
+$date = new Zend_Date();
+
+// Output of the current timestamp
+print $date;
+
+            </pre></div></div>
+
+        </div>
+
+    </div>
+
+    <div class="section" id="zend.date.basic.functions" name="zend.date.basic.functions"><div class="info"><h1 class="title">Zend_Date 的例子</h1></div>
+
+        
+
+        <p class="para">
+            对于不熟悉在其他语言或框架中的日期对象的开发者，回顾一下 <code class="code">Zend_Date</code> 的基本方法是一个好的开始。
+            下面对每个方法提供了一个小的范例。
+        </p>
+
+        <div class="section" id="zend.date.simple.functions.get" name="zend.date.simple.functions.get"><div class="info"><h1 class="title">输出日期</h1></div>
+
+            
+
+            <p class="para">
+                在 <code class="code">Zend_Date</code> 对象里的日期可用 <code class="code">get()</code> 方法获得为本地化的整数或字符串。
+                在后面的章节，我们将解释许多可用的选项。
+            </p>
+
+            <div class="example"><div class="info"><p><b>Example #2 get() - 输出日期</b></p></div>
+                
+                <div class="programlisting"><div class="cdata"><pre>
+$date = new Zend_Date();
+
+// Output of the desired date
+print $date-&gt;get();
+
+                </pre></div></div>
+
+            </div>
+
+        </div>
+
+        <div class="section" id="zend.date.simple.functions.set" name="zend.date.simple.functions.set"><div class="info"><h1 class="title">设置日期</h1></div>
+
+            
+
+            <p class="para">
+                <code class="code">set()</code> 方法修改存储在对象里的日期，并以时间戳（不是对象）的形式返回最终的日期值。
+                再强调一下， 在后面的章节，我们将解释许多可用的选项。
+            </p>
+
+            <div class="example"><div class="info"><p><b>Example #3 set() - 设置日期</b></p></div>
+                
+                <div class="programlisting"><div class="cdata"><pre>
+$date = new Zend_Date();
+
+// Setting of a new time
+$date-&gt;set(&#039;13:00:00&#039;,Zend_Date::TIMES);
+print $date-&gt;get(Zend_Date::W3C);
+
+                </pre></div></div>
+
+            </div>
+
+        </div>
+
+        <div class="section" id="zend.date.simple.functions.add" name="zend.date.simple.functions.add"><div class="info"><h1 class="title">加减日期</h1></div>
+
+            
+
+            <p class="para">
+                用 <code class="code">add()</code> 来加两个日期常常是以时间的形式把一个真是的日期加到一个表示日期部分的假的时间戳，
+                如下面例子所示的12小时。<code class="code">add()</code> 和 <code class="code">sub()</code> 都使用相同的选项 <code class="code">set()</code>，
+                我们将在后面解释。
+            </p>
+
+            <div class="example"><div class="info"><p><b>Example #4 add() - 加日期</b></p></div>
+                
+                <div class="programlisting"><div class="cdata"><pre>
+$date = new Zend_Date();
+
+// changes $date by adding 12 hours
+$date-&gt;add(&#039;12:00:00&#039;, Zend_Date::TIMES);
+
+echo &quot;Date via get() = &quot;, $date-&gt;get(Zend_Date::W3C), &quot;\n&quot;;
+
+// use magic __toString() method to call Zend_Date&#039;s toString()
+echo &quot;Date via toString() = &quot;, $date, &quot;\n&quot;;
+
+                </pre></div></div>
+
+            </div>
+
+        </div>
+
+        <div class="section" id="zend.date.simple.functions.compare" name="zend.date.simple.functions.compare"><div class="info"><h1 class="title">比较日期</h1></div>
+
+            
+
+            <p class="para">
+                所有基本的 <code class="code">Zend_Date</code> 方法都可以操作整个包含在对象里的日期，或者日期部分，如和一个绝对值比较分钟数。
+                例如使用 <code class="code">compare()</code> 比较当前时间里的当前分钟可以和一个特定的分钟数，示例如下。
+            </p>
+
+            <div class="example"><div class="info"><p><b>Example #5 compare() - 比较日期</b></p></div>
+                
+                <div class="programlisting"><div class="cdata"><pre>
+$date = new Zend_Date();
+
+// Comparation of both times
+if ($date-&gt;compare(10, Zend_Date::MINUTE) == -1) {
+    print &quot;This hour is less than 10 minutes old&quot;;
+} else {
+    print &quot;This hour is at least 10 minutes old&quot;;
+}
+
+                </pre></div></div>
+
+            </div>
+
+            <p class="para">
+                对简单的相等比较，使用 <code class="code">equals()</code>，它返回一个布尔值。
+            </p>
+
+            <div class="example"><div class="info"><p><b>Example #6 equals() - 识别日期或日期部分</b></p></div>
+                
+                <div class="programlisting"><div class="cdata"><pre>
+$date = new Zend_Date();
+
+// Comparation of the two dates
+if ($date-&gt;equals(10, Zend_Date::HOUR)) {
+    print &quot;It&#039;s 10 o&#039;clock. Time to get to work.&quot;;
+} else {
+    print &quot;It is not 10 o&#039;clock. You can keep sleeping.&quot;;
+}
+
+                </pre></div></div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+        <hr />
+
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.date.definition.theory.html">操作理论</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.date.html">Zend_Date</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.date.overview.html">Zend_Date API 概述</a></div>
+                    </td>
+                </tr>
+            </table>
+</td>
+        <td style="font-size: smaller;" width="15%"> <style type="text/css">
+#leftbar {
+	float: left;
+	width: 186px;
+	padding: 5px;
+	font-size: smaller;
+}
+ul.toc {
+	margin: 0px 5px 5px 5px;
+	padding: 0px;
+}
+ul.toc li {
+	font-size: 85%;
+	margin: 1px 0 1px 1px;
+	padding: 1px 0 1px 11px;
+	list-style-type: none;
+	background-repeat: no-repeat;
+	background-position: center left;
+}
+ul.toc li.header {
+	font-size: 115%;
+	padding: 5px 0px 5px 11px;
+	border-bottom: 1px solid #cccccc;
+	margin-bottom: 5px;
+}
+ul.toc li.active {
+	font-weight: bold;
+}
+ul.toc li a {
+	text-decoration: none;
+}
+ul.toc li a:hover {
+	text-decoration: underline;
+}
+</style>
+ <ul class="toc">
+  <li class="header home"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="reference.html">Zend Framework Reference</a></li>
+  <li class="header up"><a href="zend.date.html">Zend_Date</a></li>
+  <li><a href="zend.date.introduction.html">简介</a></li>
+  <li><a href="zend.date.definition.theory.html">操作理论</a></li>
+  <li class="active"><a href="zend.date.basic.html">基本方法</a></li>
+  <li><a href="zend.date.overview.html">Zend_Date API 概述</a></li>
+  <li><a href="zend.date.creation.html">生成日期</a></li>
+  <li><a href="zend.date.constants.html">一般日期函数的常量</a></li>
+  <li><a href="zend.date.additional.html">Working 范例</a></li>
+ </ul>
+ </td>
+    </tr>
+</table>
+</body>
+</html>

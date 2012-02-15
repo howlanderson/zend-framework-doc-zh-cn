@@ -1,0 +1,647 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <title>Zend_Form 快速起步 - Zend Framework Manual</title>
+
+</head>
+<body>
+<table width="100%">
+    <tr valign="top">
+        <td width="85%">
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.form.introduction.html">Zend_Form</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.form.html">Zend_Form</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.form.elements.html">使用 Zend_Form_Element 生成表单元素</a></div>
+                    </td>
+                </tr>
+            </table>
+<hr />
+<div id="zend.form.quickstart" class="section"><div class="info"><h1 class="title">Zend_Form 快速起步 </h1></div>
+    
+
+    <p class="para">
+        本快速起步指南覆盖使用 <code class="code">Zend_Form</code> 创建、校验和解析表单的基础。
+    </p>
+
+    <div class="section" id="zend.form.quickstart.create" name="zend.form.quickstart.create"><div class="info"><h1 class="title"> 创建表单对象 </h1></div>
+        
+
+        <p class="para">
+            创建表单对象非常简单：只要实现 <code class="code">Zend_Form</code>：
+        </p>
+
+        <div class="programlisting"><div class="cdata"><pre>&lt;?php
+$form = new Zend_Form;
+?&gt;</pre></div></div>
+
+
+        <p class="para">
+            对于高级用例，需要创建 <code class="code">Zend_Form</code> 的子类，但对于简单的表单，程序可以用 <code class="code">Zend_Form</code> 的对象来创建。
+        </p>
+
+        <p class="para">
+            如果想指定表单的动作和方法（总是好主意），用 <code class="code">setAction()</code> 和 <code class="code">setMethod()</code> 来完成：
+        </p>
+
+        <div class="programlisting"><div class="cdata"><pre>&lt;?php
+$form-&gt;setAction(&#039;/resource/process&#039;)
+     -&gt;setMethod(&#039;post&#039;);
+?&gt;</pre></div></div>
+
+
+        <p class="para">
+            上述代码设置表单动作为部分 URL &quot;/resource/process&quot; 和表单方法为 HTTP POST，这将在解析的最后期间表现出来。
+        </p>
+
+        <p class="para">
+            你可以通过使用 setAttrib() 或 setAttribs() 方法为 <code class="code">&lt;form&gt;</code> 标签设置另外的 HTML 属性，例如：如果想设置 id, 则设置 &quot;id&quot; 属性：
+        </p>
+
+        <div class="programlisting"><div class="cdata"><pre>&lt;?php
+$form-&gt;setAttrib(&#039;id&#039;, &#039;login&#039;);
+?&gt;</pre></div></div>
+
+    </div>
+
+    <div class="section" id="zend.form.quickstart.elements" name="zend.form.quickstart.elements"><div class="info"><h1 class="title"> 添加表单元素 </h1></div>
+        
+
+        <p class="para">
+            没有元素，表单就什么都不是。<code class="code">Zend_Form</code> 带有一些缺省的通过 <code class="code">Zend_View</code> 助手解析 XHTML 的元素：
+        </p>
+
+        <ul class="itemizedlist">
+            <li class="listitem"><p class="para">
+                button
+            </p></li>
+
+            <li class="listitem"><p class="para">
+                checkbox (or many checkboxes at once with multiCheckbox)
+            </p></li>
+
+            <li class="listitem"><p class="para">
+                hidden
+            </p></li>
+
+            <li class="listitem"><p class="para">
+                image
+            </p></li>
+
+            <li class="listitem"><p class="para">
+                password
+            </p></li>
+
+            <li class="listitem"><p class="para">
+                radio
+            </p></li>
+
+            <li class="listitem"><p class="para">
+                reset
+            </p></li>
+
+            <li class="listitem"><p class="para">
+                select (both regular and multi-select types)
+            </p></li>
+
+            <li class="listitem"><p class="para">
+                submit
+            </p></li>
+
+            <li class="listitem"><p class="para">
+                text
+            </p></li>
+
+            <li class="listitem"><p class="para">
+                textarea
+            </p></li>
+        </ul>
+
+        <p class="para">
+            有两个方法添加表单元素：实例化具体的元素并传递这些对象，或者传递元素类型并使 <code class="code">Zend_Form</code> 实例化一个正确类型的对象。
+        </p>
+
+        <p class="para">
+            一些例子：
+        </p>
+
+        <div class="programlisting"><div class="cdata"><pre>&lt;?php
+// Instantiating an element and passing to the form object:
+$form-&gt;addElement(new Zend_Form_Element_Text(&#039;username&#039;));
+
+// Passing a form element type to the form object:
+$form-&gt;addElement(&#039;text&#039;, &#039;username&#039;);
+?&gt;</pre></div></div>
+
+
+        <p class="para">
+            缺省地，这些没有校验器和过滤器，你需要用最基本的校验器和可能的过滤器来配置元素。有三个方法：(a) 在传递元素给表单之前，(b) 通过用 <code class="code">Zend_Form</code> 创建元素时传递的配置选项，(c) 从表单把元素拉出来并在以后配置。
+        </p>
+
+        <p class="para">
+            让我们首先看看为一个具体的元素实例创建校验器。可以传递 <code class="code">Zend_Validate_*</code> 对象，或校验器的名称：
+        </p>
+
+        <div class="programlisting"><div class="cdata"><pre>&lt;?php
+$username = new Zend_Form_Element_Text(&#039;username&#039;);
+
+// Passing a Zend_Validate_* object:
+$username-&gt;addValidator(new Zend_Validate_Alnum());
+
+// Passing a validator name:
+$username-&gt;addValidator(&#039;alnum&#039;);
+?&gt;</pre></div></div>
+
+
+        <p class="para">
+            当使用第二个方法，如果校验器可接受构造器参数，可以把它们放到数组里作为第三个参数：
+        </p>
+
+        <div class="programlisting"><div class="cdata"><pre>&lt;?php
+// Pass a pattern
+$username-&gt;addValidator(&#039;regex&#039;, false, array(&#039;/^[a-z]/i&#039;));
+?&gt;</pre></div></div>
+
+
+        <p class="para">
+            （第二个参数用来指示是否这个校验失败时停止后面的校验，缺省为 false。）
+        </p>
+
+        <p class="para">
+            你也可能希望指定一个必需的元素，可以通过使用访问器或当创建该元素时传递一个选项来完成，在前面的例子中：
+        </p>
+
+        <div class="programlisting"><div class="cdata"><pre>&lt;?php
+// 使这个元素成为必需：
+$username-&gt;setRequired(true);
+?&gt;</pre></div></div>
+
+
+        <p class="para">
+            当一个元素是必需的，一个 &#039;NotEmpty&#039; 校验器被添加到校验器链的顶部，确保该元素有一个值。
+        </p>
+
+        <p class="para">
+            过滤器会像校验器一样注册，为了演示，让我们添加一个来把最终值变小写的过滤器：
+        </p>
+
+        <div class="programlisting"><div class="cdata"><pre>&lt;?php
+$username-&gt;addFilter(&#039;StringtoLower&#039;);
+?&gt;</pre></div></div>
+
+
+        <p class="para">
+            这样，最终元素设置看起来像这样：
+        </p>
+
+        <div class="programlisting"><div class="cdata"><pre>&lt;?php
+$username-&gt;addValidator(&#039;alnum&#039;)
+         -&gt;addValidator(&#039;regex&#039;, false, array(&#039;/^[a-z]/&#039;))
+         -&gt;setRequired(true)
+         -&gt;addFilter(&#039;StringToLower&#039;);
+
+// or, more compactly:
+$username-&gt;addValidators(array(&#039;alnum&#039;,
+        array(&#039;regex&#039;, false, &#039;/^[a-z]/i&#039;)
+    ))
+    -&gt;setRequired(true)
+    -&gt;addFilters(array(&#039;StringToLower&#039;));
+?&gt;</pre></div></div>
+
+
+
+        <p class="para">
+            就算这样简单，在表单中为每个元素都做这样的工作也是单调乏味的。让我们试一试上述的方法(b)，当使用工厂模式 <code class="code">Zend_Form::addElement()</code> 创建一个新元素，我们可以可选地传递配置选项，包括校验器和过滤器。这样，可以简单地完成上述任务：
+        </p>
+
+        <div class="programlisting"><div class="cdata"><pre>&lt;?php
+$form-&gt;addElement(&#039;text&#039;, &#039;username&#039;, array(
+    &#039;validators&#039; =&gt; array(
+        &#039;alnum&#039;,
+        array(&#039;regex&#039;, false, &#039;/^[a-z]/i&#039;)
+    ),
+    &#039;required&#039; =&gt; true,
+    &#039;filters&#039;  =&gt; array(&#039;StringToLower&#039;),
+));
+?&gt;</pre></div></div>
+
+
+        <blockquote><p><b class="note">Note</b>: 
+            如果你发现在许多地方用同样的选项来设置元素，可以考虑创建自己的 <code class="code">Zend_Form_Element</code> 的子类并使用它，这样长远来说会减少很多打字的任务。
+        <br /></p></blockquote>
+    </div>
+
+    <div class="section" id="zend.form.quickstart.render" name="zend.form.quickstart.render"><div class="info"><h1 class="title"> 解析（Render）表单 </h1></div>
+        
+
+        <p class="para">
+            解析表单很简单，大部分元素使用  <code class="code">Zend_View</code> 助手来解析，这样需要视图对象来解析。除了这以外，还有两个方法：使用表单的 render() 方法或简单地 echo 它。
+        </p>
+
+        <div class="programlisting"><div class="cdata"><pre>&lt;?php
+// Explicitly calling render(), and passing an optional view object:
+echo $form-&gt;render($view);
+
+// Assuming a view object has been previously set via setView():
+echo $form;
+?&gt;</pre></div></div>
+
+
+        <p class="para">
+            缺省地，<code class="code">Zend_Form</code> 和 <code class="code">Zend_Form_Element</code> 将企图使用在 <code class="code">ViewRenderer</code> 中初始化过的视图对象，你不需要在Zend Framework MVC 中手工设置视图。在视图脚本中解析表单是如此的简单：
+        </p>
+
+        <div class="programlisting"><div class="cdata"><pre>
+&lt;?= $this-&gt;form ?&gt;
+</pre></div></div>
+
+
+        <p class="para">
+            在内部，<code class="code">Zend_Form</code> 使用 &quot;decorators&quot; （装饰器） 来执行解析，这些装饰器可以替换内容、追加内容或预先准备内容，并拥有传递给它们的元素的 full introspection 。结果，你可以组合多个装饰器来完成定制效果。缺省地，<code class="code">Zend_Form_Element</code> 实际上组合了四个装饰器来完成输出，参见下例的设置：
+        </p>
+
+        <div class="programlisting"><div class="cdata"><pre>&lt;?php
+$element-&gt;addDecorators(array(
+    &#039;ViewHelper&#039;,
+    &#039;Errors&#039;,
+    array(&#039;HtmlTag&#039;, array(&#039;tag&#039; =&gt; &#039;dd&#039;)),
+    array(&#039;Label&#039;, array(&#039;tag&#039; =&gt; &#039;dt&#039;)),
+));
+?&gt;</pre></div></div>
+
+
+        <p class="para">
+            （ &lt;HELPERNAME&gt; 是视图助手的名称，并根据元素不同而不同）
+        </p>
+
+        <p class="para">
+            上述的例子创建的输出如下：
+        </p>
+
+        <div class="programlisting"><div class="cdata"><pre>
+&lt;dt&gt;&lt;label for=&quot;username&quot; class=&quot;required&quot;&gt;Username&lt;/dt&gt;
+&lt;dd&gt;
+    &lt;input type=&quot;text&quot; name=&quot;username&quot; value=&quot;123-abc&quot; /&gt;
+    &lt;ul class=&quot;errors&quot;&gt;
+        &lt;li&gt;&#039;123-abc&#039; has not only alphabetic and digit characters&lt;/li&gt;
+        &lt;li&gt;&#039;123-abc&#039; does not match against pattern &#039;/^[a-z]/i&#039;&lt;/li&gt;
+    &lt;/ul&gt;
+&lt;/dd&gt;
+</pre></div></div>
+
+
+        <p class="para">
+            （虽然没有使用相同的格式。）
+        </p>
+
+        <p class="para">
+            如果你想输出不同的东西，可以修改由元素使用的装饰器，参见装饰器一节有更多内容。
+        </p>
+
+        <p class="para">
+            表单循环检查所有元素，并把它们放到 HTML <code class="code">&lt;form&gt;</code>。当设置表单时，你提供的动作和方法被提供给 <code class="code">&lt;form&gt;</code> 标签，还有任何通过 <code class="code">setAttribs()</code> 和它的家族设置的属性。
+        </p>
+
+        <p class="para">
+            元素或者按注册的顺序循环，或者如果元素包含顺序属性，就按这个顺序循环。可以使用下列方法设置元素顺序：
+        </p>
+
+        <div class="programlisting"><div class="cdata"><pre>&lt;?php
+$element-&gt;setOrder(10);
+?&gt;</pre></div></div>
+
+
+        <p class="para">
+            或者，当创建元素，作为一个选项传递给它：
+        </p>
+
+        <div class="programlisting"><div class="cdata"><pre>&lt;?php
+$form-&gt;addElement(&#039;text&#039;, &#039;username&#039;, array(&#039;order&#039; =&gt; 10));
+?&gt;</pre></div></div>
+
+    </div>
+
+    <div class="section" id="zend.form.quickstart.validate" name="zend.form.quickstart.validate"><div class="info"><h1 class="title"> 检查表单是否有效 </h1></div>
+        
+
+        <p class="para">
+            表单提交之后，需要检查它是否能通过校验。每个元素根据提供的数据来检查，如果匹配元素名的键没有出现，并该条目被标记为必需，就用 null 值来校验。
+        </p>
+
+        <p class="para">
+            数据从哪里来？用 <code class="code">$_POST</code> 或 <code class="code">$_GET</code> 或者其它手头上的数据源 （例如 web 服务请求）：
+        </p>
+
+        <div class="programlisting"><div class="cdata"><pre>&lt;?php
+if ($form-&gt;isValid($_POST)) {
+    // success!
+} else {
+    // failure!
+}
+?&gt;</pre></div></div>
+
+
+        <p class="para">
+            用 AJAX 请求， 有时候可以侥幸成功校验单个元素或一组元素。<code class="code">isValidPartial()</code> 将校验局部的表单，不像 <code class="code">isValid()</code>，如果特定的键没有出现，那个特定部分的元素就不校验：
+        </p>
+
+        <div class="programlisting"><div class="cdata"><pre>&lt;?php
+if ($form-&gt;isValidPartial($_POST)) {
+    // elements present all passed validations
+} else {
+    // one or more elements tested failed validations
+}
+?&gt;</pre></div></div>
+
+
+        <p class="para">
+            一个可选的方法，<code class="code">processAjax()</code>，也可以用来校验局部表单，不像 <code class="code">isValidPartial()</code>，如果失败，它返回一个包含错误消息的 JSON 格式的字符串。
+        </p>
+
+        <p class="para">
+            假设校验都通过，现在就可以取得过滤后的值：
+        </p>
+
+        <div class="programlisting"><div class="cdata"><pre>&lt;?php
+$values = $form-&gt;getValues();
+?&gt;</pre></div></div>
+
+
+        <p class="para">
+            如果任何时候需要没有过滤的值，使用：
+        </p>
+
+        <div class="programlisting"><div class="cdata"><pre>&lt;?php
+$unfiltered = $form-&gt;getUnfilteredValues();
+?&gt;</pre></div></div>
+
+    </div>
+
+    <div class="section" id="zend.form.quickstart.errorstatus" name="zend.form.quickstart.errorstatus"><div class="info"><h1 class="title"> 获得错误状态 </h1></div>
+        
+
+        <p class="para">
+            如果表单校验失败，在大多数情况下，可以再次解析表单，如果使用了缺省的装饰器，错误信息就会显示出来：
+        </p>
+
+        <div class="programlisting"><div class="cdata"><pre>&lt;?php
+if (!$form-&gt;isValid($_POST)) {
+    echo $form;
+
+    // or assign to the view object and render a view...
+    $this-&gt;view-&gt;form = $form;
+    return $this-&gt;render(&#039;form&#039;);
+}
+?&gt;</pre></div></div>
+
+
+        <p class="para">
+            如果想插入错误消息，有两个方法： <code class="code">getErrors()</code> 返回一个元素名/代码对的联合数组（这里的代码是指一个错误代码数组）。<code class="code">getMessages()</code> 返回一个元素名/消息对的联合数组（这里的消息是指错误代码/错误消息对的联合数组）。如果给定的元素没有任何错误，数组就不包含它。
+        </p>
+    </div>
+
+    <div class="section" id="zend.form.quickstart.puttingtogether" name="zend.form.quickstart.puttingtogether"><div class="info"><h1 class="title"> 放到一起 </h1></div>
+        
+
+        <p class="para">
+            来创建一个简单的登录表单，我们需要这些元素：
+        </p>
+
+        <ul class="itemizedlist">
+            <li class="listitem"><p class="para">username</p></li>
+            <li class="listitem"><p class="para">password</p></li>
+            <li class="listitem"><p class="para">submit</p></li>
+        </ul>
+
+        <p class="para">
+            让我们假设有效的用户名应当只是字母数字字符，以字母开头，最少 6 个字符，最长 20 个字符，最后格式化成小写；密码最少 6 个字符，当完成这些，我们就提交，保持未校验。
+        </p>
+
+        <p class="para">
+            我们使用 <code class="code">Zend_Form</code> 的配置选项的能力来建立表单：
+        </p>
+
+        <div class="programlisting"><div class="cdata"><pre>&lt;?php
+
+
+$form = new Zend_Form();
+$form-&gt;setAction(&#039;/user/login&#039;)
+     -&gt;setMethod(&#039;post&#039;);
+
+// Create and configure username element:
+$username = $form-&gt;createElement(&#039;text&#039;, &#039;username&#039;);
+$username-&gt;addValidator(&#039;alnum&#039;)
+         -&gt;addValidator(&#039;regex&#039;, false, array(&#039;/^[a-z]+/&#039;))
+         -&gt;addValidator(&#039;stringLength&#039;, false, array(6, 20))
+         -&gt;setRequired(true)
+         -&gt;addFilter(&#039;StringToLower&#039;);
+
+// Create and configure password element:
+$password = $form-&gt;createElement(&#039;password&#039;, &#039;password&#039;);
+$password-&gt;addValidator(&#039;StringLength&#039;, false, array(6))
+         -&gt;setRequired(true);
+
+// Add elements to form:
+$form-&gt;addElement($username)
+     -&gt;addElement($password)
+     // use addElement() as a factory to create &#039;Login&#039; button:
+     -&gt;addElement(&#039;submit&#039;, &#039;login&#039;, array(&#039;label&#039; =&gt; &#039;Login&#039;));
+?&gt;</pre></div></div>
+
+
+        <p class="para">
+            接着，我们将创建控制器来处理这些：
+        </p>
+
+        <div class="programlisting"><div class="cdata"><pre>&lt;?php
+class UserController extends Zend_Controller_Action
+{
+    public function getForm()
+    {
+        // create form as above
+        return $form;
+    }
+
+    public function indexAction()
+    {
+        // render user/form.phtml
+        $this-&gt;view-&gt;form = $this-&gt;getForm();
+        $this-&gt;render(&#039;form&#039;);
+    }
+
+    public function loginAction()
+    {
+        if (!$this-&gt;getRequest()-&gt;isPost()) {
+            return $this-&gt;_forward(&#039;index&#039;);
+        }
+        $form = $this-&gt;getForm();
+        if (!$form-&gt;isValid($_POST)) {
+            // Failed validation; redisplay form
+            $this-&gt;view-&gt;form = $form;
+            return $this-&gt;render(&#039;form&#039;);
+        }
+
+        $values = $form-&gt;getValues();
+        // now try and authenticate....
+    }
+}
+?&gt;</pre></div></div>
+
+
+        <p class="para">
+            和一个视图脚本来显示表单：
+        </p>
+
+<div class="programlisting"><div class="cdata"><pre>
+&lt;h2&gt;Please login:&lt;/h2&gt;
+&lt;?= $this-&gt;form ?&gt;
+</pre></div></div>
+
+
+        <p class="para">
+            注意在控制器代码中，还有很多需要做：例如在提交后，需要用 <code class="code">Zend_Auth</code> 来认证。
+        </p>
+    </div>
+
+    <div class="section" id="zend.form.quickstart.config" name="zend.form.quickstart.config"><div class="info"><h1 class="title"> 使用 Zend_Config 对象 </h1></div>
+        
+
+        <p class="para">
+            所有 <code class="code">Zend_Form</code> 类可以用 <code class="code">Zend_Config</code> 来配置，可以传递 <code class="code">Zend_Config</code> 对象给构造器或者通过 <code class="code">setConfig()</code> 来传递。来看一下如何用 INI 文件来创建上述表单，首先，遵循建议，把配置放到反映发行位置的节里面，并集中到 &#039;development&#039; 节，接着，为给定控制器（&#039;user&#039;）设置一个节，为表单（&#039;login&#039;）设置一个键：
+        </p>
+
+        <div class="programlisting"><div class="cdata"><pre>
+[development]
+; general form metainformation
+user.login.action = &quot;/user/login&quot;
+user.login.method = &quot;post&quot;
+
+; username element
+user.login.elements.username.type = &quot;text&quot;
+user.login.elements.username.options.validators.alnum.validator = &quot;alnum&quot;
+user.login.elements.username.options.validators.regex.validator = &quot;regex&quot;
+user.login.elements.username.options.validators.regex.options.pattern = &quot;/^[a-z]/i&quot;
+user.login.elements.username.options.validators.strlen.validator = &quot;StringLength&quot;
+user.login.elements.username.options.validators.strlen.options.min = &quot;6&quot;
+user.login.elements.username.options.validators.strlen.options.max = &quot;20&quot;
+user.login.elements.username.options.required = true
+user.login.elements.username.options.filters.lower.filter = &quot;StringToLower&quot;
+
+; password element
+user.login.elements.password.type = &quot;password&quot;
+user.login.elements.password.options.validators.strlen.validator = &quot;StringLength&quot;
+user.login.elements.password.options.validators.strlen.options.min = &quot;6&quot;
+user.login.elements.password.options.required = true
+
+; submit element
+user.login.elements.submit.type = &quot;submit&quot;
+</pre></div></div>
+
+
+        <p class="para">
+            接着，你可以把它传递给表单构造器：
+        </p>
+
+        <div class="programlisting"><div class="cdata"><pre>&lt;?php
+$config = new Zend_Config_Ini($configFile, &#039;development&#039;);
+$form   = new Zend_Form($config-&gt;user-&gt;login);
+?&gt;</pre></div></div>
+
+
+        <p class="para">
+            整个表单就定义好了。
+        </p>
+    </div>
+
+    <div class="section" id="zend.form.quickstart.conclusion" name="zend.form.quickstart.conclusion"><div class="info"><h1 class="title"> 结论 </h1></div>
+        
+
+        <p class="para">
+            希望通过这个小教程，你能接触和理解 <code class="code">Zend_Form</code> 的强大和灵活性，然后接着读更深的资料！
+        </p>
+    </div>
+</div>
+        <hr />
+
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.form.introduction.html">Zend_Form</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.form.html">Zend_Form</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.form.elements.html">使用 Zend_Form_Element 生成表单元素</a></div>
+                    </td>
+                </tr>
+            </table>
+</td>
+        <td style="font-size: smaller;" width="15%"> <style type="text/css">
+#leftbar {
+	float: left;
+	width: 186px;
+	padding: 5px;
+	font-size: smaller;
+}
+ul.toc {
+	margin: 0px 5px 5px 5px;
+	padding: 0px;
+}
+ul.toc li {
+	font-size: 85%;
+	margin: 1px 0 1px 1px;
+	padding: 1px 0 1px 11px;
+	list-style-type: none;
+	background-repeat: no-repeat;
+	background-position: center left;
+}
+ul.toc li.header {
+	font-size: 115%;
+	padding: 5px 0px 5px 11px;
+	border-bottom: 1px solid #cccccc;
+	margin-bottom: 5px;
+}
+ul.toc li.active {
+	font-weight: bold;
+}
+ul.toc li a {
+	text-decoration: none;
+}
+ul.toc li a:hover {
+	text-decoration: underline;
+}
+</style>
+ <ul class="toc">
+  <li class="header home"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="reference.html">Zend Framework Reference</a></li>
+  <li class="header up"><a href="zend.form.html">Zend_Form</a></li>
+  <li><a href="zend.form.introduction.html">Zend_Form</a></li>
+  <li class="active"><a href="zend.form.quickstart.html">Zend_Form 快速起步</a></li>
+  <li><a href="zend.form.elements.html">使用 Zend_Form_Element 生成表单元素</a></li>
+  <li><a href="zend.form.forms.html">使用 Zend_Form 生成表单</a></li>
+  <li><a href="zend.form.decorators.html">使用 Zend_Form_Decorator 生成定制的表单标识（Markup）</a></li>
+  <li><a href="zend.form.standardElements.html">Zend Framework 带有的标准表单元素</a></li>
+  <li><a href="zend.form.standardDecorators.html">Zend Framework 带有的标准表单装饰器（Decorators）</a></li>
+  <li><a href="zend.form.i18n.html">Zend_Form 的国际化</a></li>
+  <li><a href="zend.form.advanced.html">Zend_Form 的高级用法</a></li>
+ </ul>
+ </td>
+    </tr>
+</table>
+</body>
+</html>

@@ -1,0 +1,126 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <title>JSON 对象 - Zend Framework Manual</title>
+
+</head>
+<body>
+<table width="100%">
+    <tr valign="top">
+        <td width="85%">
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.json.basics.html">基本用法</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.json.html">Zend_Json</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.json.xml2json.html">XML 到 JSON 转换</a></div>
+                    </td>
+                </tr>
+            </table>
+<hr />
+<div id="zend.json.objects" class="section"><div class="info"><h1 class="title">JSON 对象</h1></div>
+    
+    <p class="para">
+        当编码PHP对象为JSON时, 它的所有的公有属性将被编码为JSON格式（到JSON对象中）.
+    </p>
+    <p class="para">
+        JSON 不允许 object references，所以注意不要带递归 references 解码对象（ objects）。 如果递归有问题，<code class="code">Zend_Json::encode()</code> 和 <code class="code">Zend_Json_Encoder::encode()</code> 允许一个可选的第二个参数来检查递归；如果对象被系列化两次就抛出异常。
+    </p>
+    <p class="para">
+        解码JSON对象貌似有一点轻微的难度， 因为Javascript对象与PHP的联合数组的结构更相近。 尽管如此， 一些人建议应该传入一个类的定义，然后类的实例应该由JSON的key/value对来被建造和组装； 另外有人这样做会引发一些安全问题。
+    </p>
+    <p class="para">
+        默认情况下， <code class="code">Zend_Json</code> 将解码JSON对象作为关联数组。但是如果你希望它返回一个对象， 以可以这样来指定：
+    </p>
+        <div class="programlisting"><div class="cdata"><pre>
+// 解码 JSON 对象作为 PHP 对象
+$phpNative = Zend_Json::decode($encodedValue, Zend_Json::TYPE_OBJECT);
+
+    </pre></div></div>
+
+    <p class="para">
+        这样任何解码后的对象将被作为一个<code class="code">StdClass</code>的对象来返回，对象带有根据JSON对象的key/value对生成的一系列属性。
+    </p>
+    <p class="para">
+        Zend Framework推荐每个开发者应该决定怎样来解码JSON对象。 如果一个特定类型的对象需要被构建，它可以由开发者的代码创建，然后用 <code class="code">Zend_Json</code> 解码后的值来组装。
+    </p>
+</div>
+        <hr />
+
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.json.basics.html">基本用法</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.json.html">Zend_Json</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.json.xml2json.html">XML 到 JSON 转换</a></div>
+                    </td>
+                </tr>
+            </table>
+</td>
+        <td style="font-size: smaller;" width="15%"> <style type="text/css">
+#leftbar {
+	float: left;
+	width: 186px;
+	padding: 5px;
+	font-size: smaller;
+}
+ul.toc {
+	margin: 0px 5px 5px 5px;
+	padding: 0px;
+}
+ul.toc li {
+	font-size: 85%;
+	margin: 1px 0 1px 1px;
+	padding: 1px 0 1px 11px;
+	list-style-type: none;
+	background-repeat: no-repeat;
+	background-position: center left;
+}
+ul.toc li.header {
+	font-size: 115%;
+	padding: 5px 0px 5px 11px;
+	border-bottom: 1px solid #cccccc;
+	margin-bottom: 5px;
+}
+ul.toc li.active {
+	font-weight: bold;
+}
+ul.toc li a {
+	text-decoration: none;
+}
+ul.toc li a:hover {
+	text-decoration: underline;
+}
+</style>
+ <ul class="toc">
+  <li class="header home"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="reference.html">Zend Framework Reference</a></li>
+  <li class="header up"><a href="zend.json.html">Zend_Json</a></li>
+  <li><a href="zend.json.introduction.html">简介</a></li>
+  <li><a href="zend.json.basics.html">基本用法</a></li>
+  <li class="active"><a href="zend.json.objects.html">JSON 对象</a></li>
+  <li><a href="zend.json.xml2json.html">XML 到 JSON 转换</a></li>
+  <li><a href="zend.json.server.html">Zend_Json_Server - JSON-RPC server</a></li>
+ </ul>
+ </td>
+    </tr>
+</table>
+</body>
+</html>

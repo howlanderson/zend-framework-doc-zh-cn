@@ -1,0 +1,193 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <title>Atom Feed的使用 - Zend Framework Manual</title>
+
+</head>
+<body>
+<table width="100%">
+    <tr valign="top">
+        <td width="85%">
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.feed.consuming-rss.html">RSS Feed的使用</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.feed.html">Zend_Feed</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.feed.consuming-atom-single-entry.html">单个Atom条目的处理</a></div>
+                    </td>
+                </tr>
+            </table>
+<hr />
+<div id="zend.feed.consuming-atom" class="section"><div class="info"><h1 class="title">Atom Feed的使用</h1></div>
+
+
+    <p class="para">
+        <code class="code">Zend_Feed_Atom</code>在使用上有许多方法与<code class="code">Zend_Feed_Rss</code>是大相径庭的。它提供了相同的方法访问Feed中的属性和遍历所有Feed中的所有条目。不同之处在于Atom协议结构自身。Atom作为RSS的继承者，它是一个更广泛的协议，在处理Feed中提供的所有内容方面它被设计的更加容易，RSS中的<code class="code">description</code>标记在Atom中被分割成两个元素<code class="code">summary</code> 和
+         <code class="code">content</code>就是为了这个目的。
+    </p>
+
+    <div class="example"><div class="info"><p><b>Example #1 Atom Feed的基本用法</b></p></div>
+        
+        <div class="example-contents"><p>
+            读取一个Atom Feed并打印出每个条目的<code class="code">title</code> 和 <code class="code">summary</code>：
+        </p></div>
+        <div class="programlisting"><div class="cdata"><pre>&lt;?php
+
+$feed = new Zend_Feed_Atom(&#039;http://atom.example.com/feed/&#039;);
+echo &#039;The feed contains &#039; . $feed-&gt;count() . &#039; entries.&#039; . &quot;\n\n&quot;;
+foreach ($feed as $entry) {
+    echo &#039;标题: &#039; . $entry-&gt;title() . &quot;\n&quot;;
+    echo &#039;摘要: &#039; . $entry-&gt;summary() . &quot;\n\n&quot;;
+}</pre></div></div>
+
+    </div>
+
+    <p class="para">
+        在Atom Feed中你能找到以下Feed属性：
+    </p>
+
+    <p class="para">
+        <ul class="itemizedlist">
+            <li class="listitem">
+                <p class="para"><code class="code">title</code> - Feed的标题, 和RSS中的channel标题一样</p>
+            </li>
+            <li class="listitem">
+                <p class="para"><code class="code">id</code> - 在Atom中的每个Feed和条目都有一个唯一的标识符(id)</p>
+            </li>
+            <li class="listitem">
+                <p class="para"><code class="code">link</code> - Feed可以有多个链接，它们之间用<code class="code">type</code>属性区别</p>
+                <p class="para">
+                    当<code class="code">type=&quot;text/html&quot;</code>时与RSS的channel中的link是一样的。如果这个链接是一个在Feed中相同内容的候选版本，那么它将有一个<code class="code">rel=&quot;alternate&quot;</code>属性。
+                </p>
+            </li>
+            <li class="listitem">
+                <p class="para"><code class="code">subtitle</code> - Feed的描述，等同于RSS中的频道描述
+                </p>
+                <p class="para"><code class="code">author-&gt;name()</code> - Feed作者名</p>
+                <p class="para"><code class="code">author-&gt;email()</code> - Feed作者的email地址</p>
+            </li>
+        </ul>
+    </p>
+
+    <p class="para">
+        Atom 条目通常具有以下属性：
+    </p>
+
+    <p class="para">
+        <ul class="itemizedlist">
+            <li class="listitem">
+                <p class="para"><code class="code">id</code> - 条目唯一标识符</p>
+            </li>
+            <li class="listitem">
+                <p class="para"><code class="code">title</code> - 条目标题，和RSS的item标题相同</p>
+            </li>
+            <li class="listitem">
+                <p class="para"><code class="code">link</code> - 一个到另外一种格式的链接或者当前条目的一个候选观点</p>
+            </li>
+            <li class="listitem">
+                <p class="para"><code class="code">summary</code> - 条目内容摘要</p>
+            </li>
+            <li class="listitem">
+                <p class="para"><code class="code">content</code> - 条目的全部内容；如果feed就包含摘要可以被挑过</p>
+            </li>
+            <li class="listitem">
+                <p class="para"><code class="code">author</code> - 有 <code class="code">name</code> 和 <code class="code">email</code> 子标记就像feed的author一样</p>
+            </li>
+            <li class="listitem">
+                <p class="para"><code class="code">published</code> - 条目的发布日期(RFC 3339格式)</p>
+            </li>
+            <li class="listitem">
+                <p class="para"><code class="code">updated</code> - 条目的最后更新日期(RFC 3339格式)</p>
+            </li>
+        </ul>
+    </p>
+
+    <p class="para">
+        更多关于Atom的信息和丰富的资源，请参看<a href="http://www.atomenabled.org/" class="link external">&raquo; http://www.atomenabled.org/</a>.
+    </p>
+</div>
+        <hr />
+
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.feed.consuming-rss.html">RSS Feed的使用</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.feed.html">Zend_Feed</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.feed.consuming-atom-single-entry.html">单个Atom条目的处理</a></div>
+                    </td>
+                </tr>
+            </table>
+</td>
+        <td style="font-size: smaller;" width="15%"> <style type="text/css">
+#leftbar {
+	float: left;
+	width: 186px;
+	padding: 5px;
+	font-size: smaller;
+}
+ul.toc {
+	margin: 0px 5px 5px 5px;
+	padding: 0px;
+}
+ul.toc li {
+	font-size: 85%;
+	margin: 1px 0 1px 1px;
+	padding: 1px 0 1px 11px;
+	list-style-type: none;
+	background-repeat: no-repeat;
+	background-position: center left;
+}
+ul.toc li.header {
+	font-size: 115%;
+	padding: 5px 0px 5px 11px;
+	border-bottom: 1px solid #cccccc;
+	margin-bottom: 5px;
+}
+ul.toc li.active {
+	font-weight: bold;
+}
+ul.toc li a {
+	text-decoration: none;
+}
+ul.toc li a:hover {
+	text-decoration: underline;
+}
+</style>
+ <ul class="toc">
+  <li class="header home"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="reference.html">Zend Framework Reference</a></li>
+  <li class="header up"><a href="zend.feed.html">Zend_Feed</a></li>
+  <li><a href="zend.feed.introduction.html">介绍</a></li>
+  <li><a href="zend.feed.importing.html">导入Feeds</a></li>
+  <li><a href="zend.feed.findFeeds.html">从网页上获得Feed</a></li>
+  <li><a href="zend.feed.consuming-rss.html">RSS Feed的使用</a></li>
+  <li class="active"><a href="zend.feed.consuming-atom.html">Atom Feed的使用</a></li>
+  <li><a href="zend.feed.consuming-atom-single-entry.html">单个Atom条目的处理</a></li>
+  <li><a href="zend.feed.modifying-feed.html">修改Feed和条目结构</a></li>
+  <li><a href="zend.feed.custom-feed.html">自定义Feed和条目类</a></li>
+  <li><a href="zend.feed.reader.html">Zend_Feed_Reader</a></li>
+  <li><a href="zend.feed.writer.html">Zend_Feed_Writer</a></li>
+  <li><a href="zend.feed.pubsubhubbub.introduction.html">Zend_Feed_Pubsubhubbub</a></li>
+ </ul>
+ </td>
+    </tr>
+</table>
+</body>
+</html>

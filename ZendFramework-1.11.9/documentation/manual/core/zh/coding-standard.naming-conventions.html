@@ -1,0 +1,232 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <title>命名约定 - Zend Framework Manual</title>
+
+</head>
+<body>
+<table width="100%">
+    <tr valign="top">
+        <td width="85%">
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="coding-standard.php-file-formatting.html">PHP File 文件格式</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="coding-standard.html">Zend Framework 的 PHP 编码标准</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="coding-standard.coding-style.html">编码风格</a></div>
+                    </td>
+                </tr>
+            </table>
+<hr />
+<div id="coding-standard.naming-conventions" class="section"><div class="info"><h1 class="title"> 命名约定 </h1></div>
+        
+
+        <div class="section" id="coding-standard.naming-conventions.classes" name="coding-standard.naming-conventions.classes"><div class="info"><h1 class="title"> 类 </h1></div>
+            
+
+            <p class="para">
+                Zend Framework 的类命名总是对应于其所属文件的目录结构的，ZF 标准库的根目录是 “Zend/”，ZF 特别（extras）库的根目录是 &quot;ZendX/&quot;，所有 Zend Framework 的类在其下按等级存放。
+            </p>
+
+            <p class="para">
+                类名只允许有字母数字字符，在大部分情况下不鼓励使用数字。下划线只允许做路径分隔符；例如 Zend/Db/Table.php 文件里对应的类名称是 Zend_Db_Table。
+            </p>
+
+            <p class="para">
+                如果类名包含多个单词，每个单词的第一个字母必须大写，连续的大写是不允许的，例如 “Zend_PDF” 是不允许的，而 &quot;Zend_Pdf&quot; 是可接受的。
+            </p>
+
+            <p class="para">
+                这些约定为 Zend Framework 定义了一个伪命名空间机制。如果对开发者在他们的程序中切实可行，Zend Framework 将采用 PHP 命名空间特性（如果有的话）。
+            </p>
+
+            <p class="para">
+                参见在标准和特别库中类名作为类名约定的例子。
+
+                <em class="emphasis">重要：</em> 依靠 ZF 库展开的代码，但又不是标准或特别库的一部分（例如程序代码或不是 Zend 发行的库），不要以 &quot;Zend_&quot; 或 &quot;ZendX_&quot; 开头。
+            </p>
+        </div>
+
+        <div class="section" id="coding-standard.naming-conventions.filenames" name="coding-standard.naming-conventions.filenames"><div class="info"><h1 class="title"> 文件名 </h1></div>
+            
+
+            <p class="para">
+                对于其它文件，只有字母数字字符、下划线和短横线（&quot;-&quot;）可用，空格是绝对不允许的。
+            </p>
+
+            <p class="para">
+                包含任何 PHP 代码的任何文件应当以 &quot;.php&quot; 扩展名结尾，众所周知的视图脚本除外。下面这些例子给出 Zend Framework 类可接受的文件名：
+
+                <div class="programlisting"><div class="cdata"><pre>
+Zend/Db.php
+
+Zend/Controller/Front.php
+
+Zend/View/Helper/FormRadio.php
+                </pre></div></div>
+
+
+                文件名必须遵循上述的对应类名的规则。
+            </p>
+        </div>
+
+        <div class="section" id="coding-standard.naming-conventions.functions-and-methods" name="coding-standard.naming-conventions.functions-and-methods"><div class="info"><h1 class="title"> 函数和方法 </h1></div>
+            
+
+            <p class="para">
+                函数名只包含字母数字字符，下划线是不允许的。数字是允许的但大多数情况下不鼓励。
+            </p>
+
+            <p class="para">
+                函数名总是以小写开头，当函数名包含多个单词，每个子的首字母必须大写，这就是所谓的 “驼峰” 格式。
+            </p>
+
+            <p class="para">
+                我们一般鼓励使用冗长的名字，函数名应当长到足以说明函数的意图和行为。
+            </p>
+
+            <p class="para">
+                这些是可接受的函数名的例子：
+
+                <div class="programlisting"><div class="cdata"><pre>
+filterInput()
+
+getElementById()
+
+widgetFactory()
+                </pre></div></div>
+
+            </p>
+
+            <p class="para">
+                对于面向对象编程，实例或静态变量的访问器总是以 &quot;get&quot; 或 &quot;set&quot; 为前缀。在设计模式实现方面，如单态模式（singleton）或工厂模式（factory），
+                方法的名字应当包含模式的名字，这样名字更能描述整个行为。
+            </p>
+
+            <p class="para">
+                在对象中的方法，声明为 &quot;private&quot; 或 &quot;protected&quot; 的， 名称的首字符必须是一个单个的下划线，这是唯一的下划线在方法名字中的用法。声明为 &quot;public&quot; 的从不包含下划线。
+            </p>
+
+            <p class="para">
+                全局函数 (如：&quot;floating functions&quot;) 允许但大多数情况下不鼓励，建议把这类函数封装到静态类里。
+
+            </p>
+        </div>
+
+        <div class="section" id="coding-standard.naming-conventions.variables" name="coding-standard.naming-conventions.variables"><div class="info"><h1 class="title"> 变量 </h1></div>
+            
+
+            <p class="para">
+                变量只包含数字字母字符，大多数情况下不鼓励使用数字，下划线不接受。
+            </p>
+
+            <p class="para">
+                声明为 &quot;private&quot; 或 &quot;protected&quot; 的实例变量名必须以一个单个下划线开头，这是唯一的下划线在程序中的用法，声明为 &quot;public&quot; 的不应当以下划线开头。
+            </p>
+
+            <p class="para">
+                对函数名（见上面 3.3 节）一样，变量名总以小写字母开头并遵循“驼峰式”命名约定。
+            </p>
+
+            <p class="para">
+                我们一般鼓励使用冗长的名字，这样容易理解代码，开发者知道把数据存到哪里。除非在小循环里，不鼓励使用简洁的名字如 &quot;$i&quot; 和 &quot;$n&quot; 。如果一个循环超过 20 行代码，索引的变量名必须有个具有描述意义的名字。
+            </p>
+        </div>
+
+        <div class="section" id="coding-standard.naming-conventions.constants" name="coding-standard.naming-conventions.constants"><div class="info"><h1 class="title"> 常量 </h1></div>
+            
+
+            <p class="para">
+                常量包含数字字母字符和下划线，数字允许作为常量名。
+            </p>
+
+            <p class="para">
+                常量名的所有字母必须大写。
+            </p>
+
+            <p class="para">
+                常量中的单词必须以下划线分隔，例如可以这样 <code class="code">EMBED_SUPPRESS_EMBED_EXCEPTION</code> 但不许这样 <code class="code">EMBED_SUPPRESSEMBEDEXCEPTION</code>。
+            </p>
+
+            <p class="para">
+                常量必须通过 &quot;const&quot; 定义为类的成员，强烈不鼓励使用 &quot;define&quot; 定义的全局常量。
+            </p>
+        </div>
+    </div>
+        <hr />
+
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="coding-standard.php-file-formatting.html">PHP File 文件格式</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="coding-standard.html">Zend Framework 的 PHP 编码标准</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="coding-standard.coding-style.html">编码风格</a></div>
+                    </td>
+                </tr>
+            </table>
+</td>
+        <td style="font-size: smaller;" width="15%"> <style type="text/css">
+#leftbar {
+	float: left;
+	width: 186px;
+	padding: 5px;
+	font-size: smaller;
+}
+ul.toc {
+	margin: 0px 5px 5px 5px;
+	padding: 0px;
+}
+ul.toc li {
+	font-size: 85%;
+	margin: 1px 0 1px 1px;
+	padding: 1px 0 1px 11px;
+	list-style-type: none;
+	background-repeat: no-repeat;
+	background-position: center left;
+}
+ul.toc li.header {
+	font-size: 115%;
+	padding: 5px 0px 5px 11px;
+	border-bottom: 1px solid #cccccc;
+	margin-bottom: 5px;
+}
+ul.toc li.active {
+	font-weight: bold;
+}
+ul.toc li a {
+	text-decoration: none;
+}
+ul.toc li a:hover {
+	text-decoration: underline;
+}
+</style>
+ <ul class="toc">
+  <li class="header home"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="coding-standard.html">Zend Framework 的 PHP 编码标准</a></li>
+  <li><a href="coding-standard.overview.html">绪论</a></li>
+  <li><a href="coding-standard.php-file-formatting.html">PHP File 文件格式</a></li>
+  <li class="active"><a href="coding-standard.naming-conventions.html">命名约定</a></li>
+  <li><a href="coding-standard.coding-style.html">编码风格</a></li>
+ </ul>
+ </td>
+    </tr>
+</table>
+</body>
+</html>

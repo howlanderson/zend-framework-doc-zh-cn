@@ -1,0 +1,623 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <title>Zend_XmlRpc_Client - Zend Framework Manual</title>
+
+</head>
+<body>
+<table width="100%">
+    <tr valign="top">
+        <td width="85%">
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.xmlrpc.introduction.html">Introduction</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.xmlrpc.html">Zend_XmlRpc</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.xmlrpc.server.html">Zend_XmlRpc_Server</a></div>
+                    </td>
+                </tr>
+            </table>
+<hr />
+<div id="zend.xmlrpc.client" class="section"><div class="info"><h1 class="title">Zend_XmlRpc_Client</h1></div>
+    
+
+    <div class="section" id="zend.xmlrpc.client.introduction" name="zend.xmlrpc.client.introduction"><div class="info"><h1 class="title">介绍</h1></div>
+        
+
+        <p class="para">
+            Zend Framework 通过 <code class="code">Zend_XmlRpc_Client</code> 作为客户端提供了调用远程
+            XML-RPC 服务的功能。主要功能包括在 PHP 和 XML-RPC 之间进行类型的自动转换，
+            服务代理对象（a server proxy object），和访问服务器的自省功能
+            （introspection capabilities）。
+        </p>
+
+    </div>
+
+
+    <div class="section" id="zend.xmlrpc.client.method-calls" name="zend.xmlrpc.client.method-calls"><div class="info"><h1 class="title">方法调用</h1></div>
+        
+
+        <p class="para">
+            <code class="code">Zend_XmlRpc_Client</code> 的构造函数接受 XML-RPC 服务器端 URL
+            地址作为第一个参数。返回新的实例可以用来调用这个服务器端任意数量的远程方法。
+        </p>
+
+        <p class="para">
+            使用 XML-RPC 客户端调用远程方法，需要实例化它并且使用 <code class="code">call()</code>
+            实力方法。下面的代码演示了调用 Zend Framework 网站上的 XML-RPC 服务。
+            你可以使用它测试和学习 <code class="code">Zend_XmlRpc</code> 组件。
+        </p>
+
+        <div class="example"><div class="info"><p><b>Example #1 XML-RPC 方法调用</b></p></div>
+            
+            <div class="programlisting"><div class="cdata"><pre>
+require_once &#039;Zend/XmlRpc/Client.php&#039;;
+
+$client = new Zend_XmlRpc_Client(&#039;http://framework.zend.com/xmlrpc&#039;);
+
+echo $client-&gt;call(&#039;test.sayHello&#039;);
+
+// hello
+
+            </pre></div></div>
+
+        </div>
+
+        <p class="para">
+            从远程调用返回的 XML-RPC 值将会自动编排和转换为等价的 PHP 原始类型。
+            在上面的例子中，一个 PHP <code class="code">string</code> 会返回并即刻可以使用。
+        </p>
+
+        <p class="para">
+            <code class="code">call()</code> 方法接受远程调用的名字作为第一个参数。如果远程调用需要其他参数，
+            可以通过 <code class="code">call()</code> 的第二个可选参数使用 <code class="code">array</code>
+            的形式传递到远程方法。
+        </p>
+
+        <div class="example"><div class="info"><p><b>Example #2 XML-RPC 带参数的方法调用</b></p></div>
+            
+            <div class="programlisting"><div class="cdata"><pre>
+require_once &#039;Zend/XmlRpc/Client.php&#039;;
+
+$client = new Zend_XmlRpc_Client(&#039;http://framework.zend.com/xmlrpc&#039;);
+
+$arg1 = 1.1;
+$arg2 = &#039;foo&#039;;
+
+$result = $client-&gt;call(&#039;test.sayHello&#039;, array($arg1, $arg2));
+
+// $result is a native PHP type
+
+            </pre></div></div>
+
+        </div>
+
+        <p class="para">
+            如果远程方法不需要任何参数，这个可选参数可以留空或者传递一个空的 <code class="code">array()</code>
+            过去。远程方法的参数数组可以包含原始的 PHP 类型，<code class="code">Zend_XmlRpc_Value</code>
+            对象，或者两种的混合。
+        </p>
+
+        <p class="para">
+            <code class="code">call()</code> 方法会自动转换 XML-PRC 响应并返回等价的 PHP 原始类型。
+            返回值的 <code class="code">Zend_XmlRpc_Response</code> 对象也可以在调用之后使用
+            <code class="code">getLastResponse()</code> 方法获得。
+        </p>
+    </div>
+
+    <div class="section" id="zend.xmlrpc.value.parameters" name="zend.xmlrpc.value.parameters"><div class="info"><h1 class="title">类型及转换</h1></div>
+        
+        <p class="para">
+            一些远程方法调用时需要参数。它们作为数组传递到 <code class="code">Zend_XmlRpc_Client</code>
+            的 <code class="code">call()</code> 方法的第二个参数。每个参数，不论是原始的 PHP 类型，
+            还是一个对象表示的特定的 XML-RPC 类型（一个 <code class="code">Zend_XmlRpc_Value</code>
+            对象）都会自动转换。
+        </p>
+
+        <div class="section" id="zend.xmlrpc.value.parameters.php-native" name="zend.xmlrpc.value.parameters.php-native"><div class="info"><h1 class="title">PHP 原始类型作为参数</h1></div>
+            
+            <p class="para">
+                原始 PHP 变量如 <code class="code">string</code>，<code class="code">integer</code>，
+                <code class="code">float</code>，<code class="code">boolean</code>，<code class="code">array</code> 或者
+                <code class="code">object</code> 都可以作为参数传递到 <code class="code">call()</code>。
+                在这种情况下，每个 PHP 原始类型将会自动检测和转换到一个 XML-RPC 类型，
+                如下表所示：
+            </p>
+
+            <table class="doctable table"><div class="info"><caption><b>PHP 与 XML-RPC 的类型转换</b></caption></div>
+                
+                
+                    <thead valign="middle">
+                        <tr valign="middle">
+                            <th>PHP 原始类型</th>
+                            <th>XML-RPC 类型</th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody valign="middle" class="tbody">
+                        <tr valign="middle">
+                            <td align="left">integer</td>
+                            <td align="left">int</td>
+                        </tr>
+
+                        <tr valign="middle">
+                            <td align="left">double</td>
+                            <td align="left">double</td>
+                        </tr>
+
+                        <tr valign="middle">
+                            <td align="left">boolean</td>
+                            <td align="left">boolean</td>
+                        </tr>
+
+                        <tr valign="middle">
+                            <td align="left">string</td>
+                            <td align="left">string</td>
+                        </tr>
+
+                        <tr valign="middle">
+                            <td align="left">array</td>
+                            <td align="left">array</td>
+                        </tr>
+
+                        <tr valign="middle">
+                            <td align="left">associative array</td>
+                            <td align="left">struct</td>
+                        </tr>
+
+                        <tr valign="middle">
+                            <td align="left">object</td>
+                            <td align="left">array</td>
+                        </tr>
+
+                    </tbody>
+                
+            </table>
+
+
+            <blockquote><p><b class="note">Note</b>: <span class="info"><b>一个空的数组会如何转换？</b><br /></span>
+                
+
+                
+                    传递空数组到 XML-RPC 方法，由于它既可表示为一个数组也可表示为一个结构，
+                    所以会产生问题。<code class="code">Zend_XmlRpc_Client</code> 会监测这种情况并向服务器进行一个
+                    <code class="code">system.methodSignature</code> 请求来决定实际将要转换到的 XML-RPC 类型。
+                <br />
+
+                
+                    不过，这样做本身就可能导致问题出现。首先，服务器不支持 <code class="code">system.methodSignature</code>
+                    将会产生一个失败请求，同时 <code class="code">Zend_XmlRpc_Client</code>
+                    会强制转换这个值为 XML-RPC 数组类型。此外，这意味着任何数组参数都可能导致对远端服务器的一次额外请求。
+                <br />
+
+                
+                    可以在 XML-RPC 调用前调用 <code class="code">setSkipSystemLookup()</code>
+                    方法，以便完全屏蔽这个查询：
+                <br />
+
+                <div class="programlisting"><div class="cdata"><pre>
+$client-&gt;setSkipSystemLookup(true);
+$result = $client-&gt;call(&#039;foo.bar&#039;, array(array()));
+
+                </pre></div></div>
+
+            </p></blockquote>
+        </div>
+
+        <div class="section" id="zend.xmlrpc.value.parameters.xmlrpc-value" name="zend.xmlrpc.value.parameters.xmlrpc-value"><div class="info"><h1 class="title"><code class="code">Zend_XmlRpc_Value</code> 对象作为参数</h1></div>
+            
+            <p class="para">
+                也可以创建 <code class="code">Zend_XmlRpc_Value</code> 实例作为参数，以表示特定的
+                XML-RPC 类型。这样做的主要原因如下：
+                <ul class="itemizedlist">
+                    <li class="listitem">
+                        <p class="para">
+                            当希望确定的参数类型被传递传递时（例如，方法需要一个整型，
+                            而可能从数据库获得的是一个字符串）。
+                        </p>
+                    </li>
+                    <li class="listitem">
+                        <p class="para">
+                            当方法需要 <code class="code">base64</code> 或者 <code class="code">dateTime.iso8601</code>
+                            类型时（这些在 PHP 原始类型中不存在）。
+                        </p>
+                    </li>
+                    <li class="listitem">
+                        <p class="para">
+                            当自动转换失败时（例如，你希望传递一个空的 XML-RPC
+                            结构作为参数。空的结构在 PHP 中应当是一个空的数组，
+                            但是如果传递一个空数组作为参数，它将被自动转换为 XML-RPC
+                            数组，虽然它同数组没有联系）。
+                        </p>
+                    </li>
+                </ul>
+            </p>
+
+            <p class="para">
+                有两种方法创建 <code class="code">Zend_XmlRpc_Value</code> 对象：直接实例化某个
+                <code class="code">Zend_XmlRpc_Value</code> 的子类；或者使用静态工厂方法
+                <code class="code">Zend_XmlRpc_Value::getXmlRpcValue()</code>。
+            </p>
+
+            <table class="doctable table"><div class="info"><caption><b><code class="code">Zend_XmlRpc_Value</code> 对象作为 XML-RPC 类型</b></caption></div>
+                
+                
+                    <thead valign="middle">
+                        <tr valign="middle">
+                            <th>XML-RPC 类型</th>
+                            <th><code class="code">Zend_XmlRpc_Value</code> 常量</th>
+                            <th><code class="code">Zend_XmlRpc_Value</code> 对象</th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody valign="middle" class="tbody">
+                        <tr valign="middle">
+                            <td align="left">int</td>
+                            <td align="left"><code class="code">Zend_XmlRpc_Value::XMLRPC_TYPE_INTEGER</code></td>
+                            <td align="left"><code class="code">Zend_XmlRpc_Value_Integer</code></td>
+                        </tr>
+
+                        <tr valign="middle">
+                            <td align="left">double</td>
+                            <td align="left"><code class="code">Zend_XmlRpc_Value::XMLRPC_TYPE_DOUBLE</code></td>
+                            <td align="left"><code class="code">Zend_XmlRpc_Value_Double</code></td>
+                        </tr>
+
+                        <tr valign="middle">
+                            <td align="left">boolean</td>
+                            <td align="left"><code class="code">Zend_XmlRpc_Value::XMLRPC_TYPE_BOOLEAN</code></td>
+                            <td align="left"><code class="code">Zend_XmlRpc_Value_Boolean</code></td>
+                        </tr>
+
+                        <tr valign="middle">
+                            <td align="left">string</td>
+                            <td align="left"><code class="code">Zend_XmlRpc_Value::XMLRPC_TYPE_STRING</code></td>
+                            <td align="left"><code class="code">Zend_XmlRpc_Value_String</code></td>
+                        </tr>
+
+                        <tr valign="middle">
+                            <td align="left">base64</td>
+                            <td align="left"><code class="code">Zend_XmlRpc_Value::XMLRPC_TYPE_BASE64</code></td>
+                            <td align="left"><code class="code">Zend_XmlRpc_Value_Base64</code></td>
+                        </tr>
+
+                        <tr valign="middle">
+                            <td align="left">dateTime.iso8601</td>
+                            <td align="left"><code class="code">Zend_XmlRpc_Value::XMLRPC_TYPE_DATETIME</code></td>
+                            <td align="left"><code class="code">Zend_XmlRpc_Value_DateTime</code></td>
+                        </tr>
+
+                        <tr valign="middle">
+                            <td align="left">array</td>
+                            <td align="left"><code class="code">Zend_XmlRpc_Value::XMLRPC_TYPE_ARRAY</code></td>
+                            <td align="left"><code class="code">Zend_XmlRpc_Value_Array</code></td>
+                        </tr>
+
+                        <tr valign="middle">
+                            <td align="left">struct</td>
+                            <td align="left"><code class="code">Zend_XmlRpc_Value::XMLRPC_TYPE_STRUCT</code></td>
+                            <td align="left"><code class="code">Zend_XmlRpc_Value_Struct</code></td>
+                        </tr>
+
+                    </tbody>
+                
+            </table>
+
+
+            <p class="para">
+                <blockquote><p><b class="note">Note</b>: <span class="info"><b>自动转换</b><br /></span>
+                    
+                    
+                        当创建新的 <code class="code">Zend_XmlRpc_Value</code> 对象时，它的值通过
+                        PHP 类型设置。PHP 类型将会通过 PHP 类型转换到指定的类型。例如，
+                        如果给 <code class="code">Zend_XmlRpc_Value_Integer</code>
+                        对象提供一个字符串，它将由 <code class="code">(int)$value</code> 转换。
+                    <br />
+                </p></blockquote>
+            </p>
+        </div>
+    </div>
+
+    <div class="section" id="zend.xmlrpc.client.requests-and-responses" name="zend.xmlrpc.client.requests-and-responses"><div class="info"><h1 class="title">服务代理对象</h1></div>
+        
+        <p class="para">
+            另一个使用 XML-RPC 客户端调用远程方法的途径是使用服务代理。这是一个 PHP
+            对象代理远程 XML-RPC 名字空间，使其工作方式尽可能的贴近原始的 PHP 对象。
+        </p>
+
+        <p class="para">
+            调用 <code class="code">Zend_XmlRpc_Client</code> 实例的 <code class="code">getProxy()</code>
+            方法实例化一个服务器代理。该方法将返回一个 <code class="code">Zend_XmlRpc_Client_ServerProxy</code>
+            实例。对服务器代理方法的任何调用将会传递到远程，而参数的传递就如同其他任何
+            PHP 方法一样。
+        </p>
+
+        <div class="example"><div class="info"><p><b>Example #3 代理默认命名空间</b></p></div>
+            
+            <div class="programlisting"><div class="cdata"><pre>
+require_once &#039;Zend/XmlRpc/Client.php&#039;;
+
+$client = new Zend_XmlRpc_Client(&#039;http://framework.zend.com/xmlrpc&#039;);
+
+$server = $client-&gt;getProxy();           // Proxy the default namespace
+
+$hello = $server-&gt;test-&gt;sayHello(1, 2);  // test.Hello(1, 2) returns &quot;hello&quot;
+
+            </pre></div></div>
+
+        </div>
+
+        <p class="para">
+            <code class="code">getProxy()</code> 方法接受一个可选参数作为将要代理的远端服务器的命名空间。
+            如果没有指定这个命名空间，默认的命名空间会被代理。在下面的例子中，命名空间
+            <code class="code">test</code> 将会被代理。
+        </p>
+
+        <div class="example"><div class="info"><p><b>Example #4 代理任意命名空间</b></p></div>
+            
+            <div class="programlisting"><div class="cdata"><pre>
+$client = new Zend_XmlRpc_Client(&#039;http://framework.zend.com/xmlrpc&#039;);
+
+$test  = $client-&gt;getProxy(&#039;test&#039;);     // Proxy the &quot;test&quot; namespace
+
+$hello = $test-&gt;sayHello(1, 2);         // test.Hello(1,2) returns &quot;hello&quot;
+
+            </pre></div></div>
+
+        </div>
+
+        <p class="para">
+            若远端服务器支持任意深度嵌套的命名空间，仍然可以通过服务器代理使用。例如，
+            如果上面的例子有一个方法 <code class="code">test.foo.bar()</code>，则可以使用
+            <code class="code">$test-&gt;foo-&gt;bar()</code> 来调用。
+        </p>
+    </div>
+
+
+    <div class="section" id="zend.xmlrpc.client.error-handling" name="zend.xmlrpc.client.error-handling"><div class="info"><h1 class="title">错误处理</h1></div>
+        
+        <p class="para">
+            在 XML-RPC 方法中可能出现两种错误：HTTP 错误和 XML-RPC 失败。
+            <code class="code">Zend_XmlRpc_Client</code> 可以识别并分别检测并捕获它们。
+        </p>
+
+        <div class="section" id="zend.xmlrpc.client.error-handling.http" name="zend.xmlrpc.client.error-handling.http"><div class="info"><h1 class="title">HTTP 错误</h1></div>
+            
+
+            <p class="para">
+                当 HTTP 错误发生时，例如远端 HTTP 服务器返回
+                <code class="code">404 Not Found</code>，将会抛出一个
+                <code class="code">Zend_XmlRpc_Client_HttpException</code> 异常。
+            </p>
+
+            <div class="example"><div class="info"><p><b>Example #5 处理 HTTP 错误</b></p></div>
+                
+
+                <div class="programlisting"><div class="cdata"><pre>
+$client = new Zend_XmlRpc_Client(&#039;http://foo/404&#039;);
+
+try {
+
+    $client-&gt;call(&#039;bar&#039;, array($arg1, $arg2));
+
+} catch (Zend_XmlRpc_Client_HttpException $e) {
+
+    // $e-&gt;getCode() returns 404
+    // $e-&gt;getMessage() returns &quot;Not Found&quot;
+
+}
+
+                </pre></div></div>
+
+            </div>
+
+            <p class="para">
+                不论是如何使用 XML-RPC 客户端的，当 HTTP 错误发生时，都会抛出
+                <code class="code">Zend_XmlRpc_Client_HttpException</code> 异常。
+            </p>
+        </div>
+
+        <div class="section" id="zend.xmlrpc.client.error-handling.faults" name="zend.xmlrpc.client.error-handling.faults"><div class="info"><h1 class="title">XML-RPC 失败</h1></div>
+            
+
+            <p class="para">
+                XML-RPC 失败类似于 PHP 异常。它是从 XML-RPC 方法调用返回的，有着指定的类型，
+                同时具有错误代码和错误消息。XML-RPC 失败的处理方式随着 <code class="code">Zend_XmlRpc_Client</code>
+                使用方式不同而不同。
+            </p>
+
+            <p class="para">
+                当 <code class="code">call()</code> 方法或者服务器代理对象被使用时，XML-RPC
+                失败会抛出一个 <code class="code">Zend_XmlRpc_Client_FaultException</code>
+                异常。异常代码和消息会直接映射到原始的 XML-RPC 失败相应的内容上去。
+            </p>
+
+            <div class="example"><div class="info"><p><b>Example #6 处理 XML-RPC 失败</b></p></div>
+                
+
+                <div class="programlisting"><div class="cdata"><pre>
+$client = new Zend_XmlRpc_Client(&#039;http://framework.zend.com/xmlrpc&#039;);
+
+try {
+
+    $client-&gt;call(&#039;badMethod&#039;);
+
+} catch (Zend_XmlRpc_Client_FaultException $e) {
+
+    // $e-&gt;getCode() returns 1
+    // $e-&gt;getMessage() returns &quot;Unknown method&quot;
+
+}
+
+                </pre></div></div>
+
+            </div>
+
+            <p class="para">
+                当请求时使用 <code class="code">call()</code> 方法，会在失败的时候抛出
+                <code class="code">Zend_XmlRpc_Client_FaultException</code> 异常。可以调用
+                <code class="code">getLastResponse()</code> 获得包含在 <code class="code">Zend_XmlRpc_Response</code>
+                对象中的异常。
+            </p>
+
+            <p class="para">
+                当请求时使用 <code class="code">doRequest()</code> 方法，则不会抛出异常。将返回一个包含错误信息的
+                <code class="code">Zend_XmlRpc_Response</code> 对象。可以使用 <code class="code">Zend_XmlRpc_Response</code>
+                示例的 <code class="code">isFault()</code> 方法检查。
+            </p>
+        </div>
+
+    </div>
+
+    <div class="section" id="zend.xmlrpc.client.introspection" name="zend.xmlrpc.client.introspection"><div class="info"><h1 class="title">服务器自省（introspection）</h1></div>
+        
+        <p class="para">
+            一些 XML-RPC 服务器支持 <code class="code">system.</code> 命名空间下的自省。<code class="code">Zend_XmlRpc_Client</code>
+            对这些服务器的这种功能特别进行了支持。
+        </p>
+
+        <p class="para">
+            调用 <code class="code">Zend_XmlRpcClient</code> 的 <code class="code">getIntrospector()</code>
+            方法可以获得 <code class="code">Zend_XmlRpc_Client_ServerIntrospection</code> 实例。
+            通过它可以使用服务器的自省功能。
+        </p>
+    </div>
+
+    <div class="section" id="zend.xmlrpc.client.request-to-response" name="zend.xmlrpc.client.request-to-response"><div class="info"><h1 class="title">从请求作出回应</h1></div>
+        
+        <p class="para">
+            本质上说，<code class="code">Zend_XmlRpc_Client</code> 实例的 <code class="code">call()</code>
+            方法创建了请求对象（<code class="code">Zend_XmlRpc_Request</code>）并将其传递给另一个方法
+            <code class="code">doRequest()</code>，<code class="code">doRequest()</code> 方法返回响应对象（<code class="code">Zend_XmlRpc_Response</code>）。
+        </p>
+
+        <p class="para">
+            <code class="code">doRequest()</code> 方法也可直接调用。
+        </p>
+
+        <div class="example"><div class="info"><p><b>Example #7 处理请求作出回应</b></p></div>
+            
+
+            <div class="programlisting"><div class="cdata"><pre>
+$client = new Zend_XmlRpc_Client(&#039;http://framework.zend.com/xmlrpc&#039;);
+
+$request = new Zend_XmlRpc_Request();
+$request-&gt;setMethod(&#039;test.sayHello&#039;);
+$request-&gt;setParams(array(&#039;foo&#039;, &#039;bar&#039;));
+
+$client-&gt;doRequest($request);
+
+// $server-&gt;getLastRequest() returns instanceof Zend_XmlRpc_Request
+// $server-&gt;getLastResponse() returns instanceof Zend_XmlRpc_Response
+
+            </pre></div></div>
+
+        </div>
+
+        <p class="para">
+            无论客户端通过任何方法调用 XML-RPC 方法，如 <code class="code">call()</code> 方法、
+            <code class="code">doRequest()</code> 方法或者服务器代理，最后一个请求对象以及对应的响应对象总是可以分别调用
+            <code class="code">getLastRequest()</code> 和 <code class="code">getLastResponse()</code> 获得。
+        </p>
+    </div>
+
+    <div class="section" id="zend.xmlrpc.client.http-client" name="zend.xmlrpc.client.http-client"><div class="info"><h1 class="title">HTTP 客户端和测试</h1></div>
+        
+
+        <p class="para">
+            在前面所有的例子中，从未指定 HTTP 客户端。这是因为在使用 <code class="code">Zend_XmlRpc_Client</code>
+            时会使用默认配置自动创建一个 <code class="code">Zend_Http_Client</code> 实例。
+        </p>
+
+        <p class="para">
+            可以在任何时候使用 <code class="code">getHttpClient()</code> 方法获得 HTTP 客户端。
+            多数情况下默认的 HTTP 客户端已经足够使用。不过仍然可以使用 <code class="code">setHttpClient()</code>
+            方法设置新的 HTTP 客户端实例。
+        </p>
+
+        <p class="para">
+            <code class="code">setHttpClient()</code> 在单元测试时特别有用。在 <code class="code">Zend_Http_Client_Adapter_Test</code>
+            中测试时可以欺骗远程服务器。阅读 <code class="code">Zend_XmlRpc_Client</code> 的单元测试了解如何这样做。
+        </p>
+    </div>
+
+</div>
+        <hr />
+
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.xmlrpc.introduction.html">Introduction</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.xmlrpc.html">Zend_XmlRpc</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.xmlrpc.server.html">Zend_XmlRpc_Server</a></div>
+                    </td>
+                </tr>
+            </table>
+</td>
+        <td style="font-size: smaller;" width="15%"> <style type="text/css">
+#leftbar {
+	float: left;
+	width: 186px;
+	padding: 5px;
+	font-size: smaller;
+}
+ul.toc {
+	margin: 0px 5px 5px 5px;
+	padding: 0px;
+}
+ul.toc li {
+	font-size: 85%;
+	margin: 1px 0 1px 1px;
+	padding: 1px 0 1px 11px;
+	list-style-type: none;
+	background-repeat: no-repeat;
+	background-position: center left;
+}
+ul.toc li.header {
+	font-size: 115%;
+	padding: 5px 0px 5px 11px;
+	border-bottom: 1px solid #cccccc;
+	margin-bottom: 5px;
+}
+ul.toc li.active {
+	font-weight: bold;
+}
+ul.toc li a {
+	text-decoration: none;
+}
+ul.toc li a:hover {
+	text-decoration: underline;
+}
+</style>
+ <ul class="toc">
+  <li class="header home"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="reference.html">Zend Framework Reference</a></li>
+  <li class="header up"><a href="zend.xmlrpc.html">Zend_XmlRpc</a></li>
+  <li><a href="zend.xmlrpc.introduction.html">Introduction</a></li>
+  <li class="active"><a href="zend.xmlrpc.client.html">Zend_XmlRpc_Client</a></li>
+  <li><a href="zend.xmlrpc.server.html">Zend_XmlRpc_Server</a></li>
+ </ul>
+ </td>
+    </tr>
+</table>
+</body>
+</html>

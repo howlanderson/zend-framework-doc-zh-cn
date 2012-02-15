@@ -1,0 +1,393 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <title>使用对象注册表（Registry） - Zend Framework Manual</title>
+
+</head>
+<body>
+<table width="100%">
+    <tr valign="top">
+        <td width="85%">
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.registry.html">Zend_Registry</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.registry.html">Zend_Registry</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.rest.html">Zend_Rest</a></div>
+                    </td>
+                </tr>
+            </table>
+<hr />
+<div id="zend.registry.using" class="section"><div class="info"><h1 class="title">使用对象注册表（Registry）</h1></div>
+
+    
+
+    <p class="para">
+        对象注册表（或称对象仓库）是一个用于在整个应用空间（application space）内存储对象和值的容器。通过把对象存储在其中，我们可以在整个项目的任何地方使用同一个对象。这种机制相当于一种全局存储。
+    </p>
+
+    <p class="para">
+        我们可以通过Zend_Registry类的静态方法来使用对象注册表，另外，由于该类是一个数组对象，你可以使用数组形式来访问其中的类方法。
+    </p>
+
+    <div class="section" id="zend.registry.using.storing" name="zend.registry.using.storing"><div class="info"><h1 class="title">设置Registry中的值</h1></div>
+
+        
+
+        <p class="para">
+            要保存一项内容到注册表中，我们可以使用静态方法 <code class="code">set()</code>。
+        </p>
+
+        <div class="example"><div class="info"><p><b>Example #1 set() 使用示例：</b></p></div>
+            
+            <div class="programlisting"><div class="cdata"><pre>
+Zend_Registry::set(&#039;index&#039;, $value);
+
+           </pre></div></div>
+
+        </div>
+
+        <p class="para">
+            $value可以是一个对象、数组或者标量。你可以再次使用<code class="code">set()</code>来为注册表中已有的值设置一个新值。
+        </p>
+
+        <p class="para">
+            index参数可以是一个标量，即字符串或整数，就像使用数组一样，类似于数组的索引/键名。
+        </p>
+
+    </div>
+
+    <div class="section" id="zend.registry.using.retrieving" name="zend.registry.using.retrieving"><div class="info"><h1 class="title">获取Registry中的值</h1></div>
+
+        
+
+        <p class="para">
+            可以使用 <code class="code">get()</code>方法来获取Registry中某项内容的值。
+        </p>
+
+        <div class="example"><div class="info"><p><b>Example #2  get() 方法示例：</b></p></div>
+            
+            <div class="programlisting"><div class="cdata"><pre>
+$value = Zend_Registry::get(&#039;index&#039;);
+
+           </pre></div></div>
+
+        </div>
+
+        <p class="para">
+             <code class="code">getInstance()</code>返回静态registry对象。
+        </p>
+
+        <p class="para">
+            registry对象是可迭代的（iterable）。
+        </p>
+
+        <div class="example"><div class="info"><p><b>Example #3 迭代一个registry对象：</b></p></div>
+            
+            <div class="programlisting"><div class="cdata"><pre>
+$registry = Zend_Registry::getInstance();
+
+foreach ($registry as $index =&gt; $value) {
+    echo &quot;Registry index $index contains:\n&quot;;
+    var_dump($value);
+}
+
+           </pre></div></div>
+
+        </div>
+
+    </div>
+
+    <div class="section" id="zend.registry.using.constructing" name="zend.registry.using.constructing"><div class="info"><h1 class="title">创建一个Registry对象</h1></div>
+
+        
+
+        <p class="para">
+            除了可以使用静态方法来访问Registry对象之外，你可以直接实例化它，就像使用普通的对象一样。
+        </p>
+
+        <p class="para">
+
+            如果通过静态方法来访问registry对象的实例，它很方便进行静态存储，你可以在程序中的任何地方访问它。
+        </p>
+
+        <p class="para">
+            如果使用传统的<code class="code">new</code> 方法来创建registry的实例，则你可以使用数组一样的方式来初始化registry中的内容。
+        </p>
+
+        <div class="example"><div class="info"><p><b>Example #4 创建一个registry对象</b></p></div>
+            
+            <div class="programlisting"><div class="cdata"><pre>
+$registry = new Zend_Registry(array(&#039;index&#039; =&gt; $value));
+
+           </pre></div></div>
+
+        </div>
+
+        <p class="para">
+            在创建这个对象实例之后，你可以使用数组对象方法来使用它，或者你可以把这个对象实例通过静态方法<code class="code">setInstance()</code>设置为静态对象实例。
+        </p>
+
+        <div class="example"><div class="info"><p><b>Example #5 Example of initializing the static registry</b></p></div>
+            
+            <div class="programlisting"><div class="cdata"><pre>
+$registry = new Zend_Registry(array(&#039;index&#039; =&gt; $value));
+
+Zend_Registry::setInstance($registry);
+
+           </pre></div></div>
+
+        </div>
+
+        <p class="para">
+            如果静态的注册表对象已经被初始化过，则<code class="code">setInstance()</code>方法会抛出一个Zend_Exception异常。
+        </p>
+
+    </div>
+
+    <div class="section" id="zend.registry.using.array-access" name="zend.registry.using.array-access"><div class="info"><h1 class="title">像访问数组一样访问Registry对象</h1></div>
+
+        
+
+        <p class="para">
+               如果你要一次访问或设置多个值，你会发现使用数组方式是很方便的。
+        </p>
+
+        <div class="example"><div class="info"><p><b>Example #6 array 方式访问示例：</b></p></div>
+            
+            <div class="programlisting"><div class="cdata"><pre>
+$registry = Zend_Registry::getInstance();
+
+$registry[&#039;index&#039;] = $value;
+
+var_dump( $registry[&#039;index&#039;] );
+
+           </pre></div></div>
+
+        </div>
+
+    </div>
+
+    <div class="section" id="zend.registry.using.array-object" name="zend.registry.using.array-object"><div class="info"><h1 class="title">对象方式访问Registry</h1></div>
+
+        
+
+        <p class="para">
+
+            你会发现使用面向对象风格来访问registry对象也是方便的，对象中的属性名称作为索引。
+
+
+            要这样做，你需要使用<code class="code">ArrayObject::ARRAY_AS_PROPS</code>选项来创建registry对象，并初始化静态实例。你要在静态的registry被第一次访问之前就完成这个工作。<em class="emphasis">小心</em>使用这个选项，因为某些版本的PHP在使用这个选项时会有bug。
+        </p>
+
+        <div class="example"><div class="info"><p><b>Example #7 对象形式的访问：</b></p></div>
+            
+            <div class="programlisting"><div class="cdata"><pre>
+//在你的bootstrap代码中：
+$registry = new Zend_Registry(array(), ArrayObject::ARRAY_AS_PROPS)
+Zend_Registry::setInstance($registry);
+$registry-&gt;tree = &#039;apple&#039;;
+
+.
+.
+.
+
+//在程序的任何其它地方：
+$registry = Zend_Registry::getInstance();
+
+echo $registry-&gt;tree; // echo&#039;s &quot;apple&quot;
+
+$registry-&gt;index = $value;
+
+var_dump($registry-&gt;index);
+
+           </pre></div></div>
+
+        </div>
+
+    </div>
+
+    <div class="section" id="zend.registry.using.isset" name="zend.registry.using.isset"><div class="info"><h1 class="title">查询一个索引是否存在</h1></div>
+
+        
+
+        <p class="para">
+             可以使用静态方法<code class="code">isRegistered()</code>来查询是否某个特定的索引已经设置了相应的值。
+        </p>
+
+        <div class="example"><div class="info"><p><b>Example #8 isRegistered() 示例：</b></p></div>
+            
+            <div class="programlisting"><div class="cdata"><pre>
+if (Zend_Registry::isRegistered($index)) {
+    $value = Zend_Registry::get($index);
+}
+
+           </pre></div></div>
+
+        </div>
+
+        <p class="para">
+
+            要确定一个数组对象中的某个特定索引的值是否设定，可以使用isset()函数，就像在普通的数组中那样使用。
+        </p>
+
+        <div class="example"><div class="info"><p><b>Example #9 isset() 示例：</b></p></div>
+            
+            <div class="programlisting"><div class="cdata"><pre>
+$registry = Zend_Registry::getInstance();
+
+// using array-access syntax
+if (isset($registry[&#039;index&#039;])) {
+    var_dump( $registry[&#039;index&#039;] );
+}
+
+// using object-access syntax, if enabled
+if (isset($registry-&gt;index)) {
+    var_dump( $registry-&gt;index );
+}
+
+           </pre></div></div>
+
+        </div>
+
+    </div>
+
+    <div class="section" id="zend.registry.using.subclassing" name="zend.registry.using.subclassing"><div class="info"><h1 class="title">扩展Registry对象</h1></div>
+
+        
+
+        <p class="para">
+            静态registry对象是类Zend_Registry的一个实例。如果你想给它增加功能，你可以继承Zend_Registry类，然后指定使用这个类来访问对象注册表。你可以使用静态方法<code class="code">setClassName()</code>来指定使用这个类。注意这个类一定要是Zend_Registry的子类。
+        </p>
+
+        <div class="example"><div class="info"><p><b>Example #10 指定静态注册表的类名：</b></p></div>
+            
+            <div class="programlisting"><div class="cdata"><pre>
+Zend_Registry::setClassName(&#039;My_Registry&#039;);
+
+Zend_Registry::set(&#039;index&#039;, $value);
+
+           </pre></div></div>
+
+        </div>
+
+        <p class="para">
+
+            如果你在registry已经被访问过后尝试设定该类名，则registry抛出一个异常。建议你在boostrap代码(即index.php)中设置该类名。
+        </p>
+
+    </div>
+
+    <div class="section" id="zend.registry.using.unsetting" name="zend.registry.using.unsetting"><div class="info"><h1 class="title">删除静态注册表</h1></div>
+
+        
+
+        <p class="para">
+            尽管这不是必需的，你可以使用<code class="code">_unsetInstance()</code>方法来删除registry的静态实例。
+        </p>
+
+        <blockquote><p><b class="note">Note</b>: <span class="info"><b>数据丢失的风险</b><br /></span>
+            
+            
+               在使用<code class="code">_unsetInstance()</code>的时候，静态注册表中的所有数据都会丢失并且无法恢复。
+            <br />
+        </p></blockquote>
+
+        <p class="para">
+            有时你可能需要<code class="code">_unsetInstance()</code>这个方法。例如你想在已经初始化过registry对象之后，再使用<code class="code">setInstance()</code>或 <code class="code">setClassName()</code>，那么你可以使用<code class="code">_unsetInstance()</code>先把静态实例删除了，然后才能使用那些方法。
+        </p>
+
+        <div class="example"><div class="info"><p><b>Example #11  _unsetInstance() 示例：</b></p></div>
+            
+            <div class="programlisting"><div class="cdata"><pre>
+Zend_Registry::set(&#039;index&#039;, $value);
+
+Zend_Registry::_unsetInstance();
+
+// 改变我们要使用的类
+Zend_Registry::setClassName(&#039;My_Registry&#039;);
+
+Zend_Registry::set(&#039;index&#039;, $value);
+
+           </pre></div></div>
+
+        </div>
+
+    </div>
+
+</div>
+        <hr />
+
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.registry.html">Zend_Registry</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.registry.html">Zend_Registry</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.rest.html">Zend_Rest</a></div>
+                    </td>
+                </tr>
+            </table>
+</td>
+        <td style="font-size: smaller;" width="15%"> <style type="text/css">
+#leftbar {
+	float: left;
+	width: 186px;
+	padding: 5px;
+	font-size: smaller;
+}
+ul.toc {
+	margin: 0px 5px 5px 5px;
+	padding: 0px;
+}
+ul.toc li {
+	font-size: 85%;
+	margin: 1px 0 1px 1px;
+	padding: 1px 0 1px 11px;
+	list-style-type: none;
+	background-repeat: no-repeat;
+	background-position: center left;
+}
+ul.toc li.header {
+	font-size: 115%;
+	padding: 5px 0px 5px 11px;
+	border-bottom: 1px solid #cccccc;
+	margin-bottom: 5px;
+}
+ul.toc li.active {
+	font-weight: bold;
+}
+ul.toc li a {
+	text-decoration: none;
+}
+ul.toc li a:hover {
+	text-decoration: underline;
+}
+</style>
+ <ul class="toc">
+  <li class="header home"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="reference.html">Zend Framework Reference</a></li>
+  <li class="header up"><a href="zend.registry.html">Zend_Registry</a></li>
+  <li class="active"><a href="zend.registry.using.html">使用对象注册表（Registry）</a></li>
+ </ul>
+ </td>
+    </tr>
+</table>
+</body>
+</html>

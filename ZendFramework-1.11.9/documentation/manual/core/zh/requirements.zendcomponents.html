@@ -1,0 +1,556 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <title>Zend Framework 组件 - Zend Framework Manual</title>
+
+</head>
+<body>
+<table width="100%">
+    <tr valign="top">
+        <td width="85%">
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="requirements.extensions.html">PHP 扩展</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="requirements.html">系统需求</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="migration.html">Zend Framework Migration Notes</a></div>
+                    </td>
+                </tr>
+            </table>
+<hr />
+<div id="requirements.zendcomponents" class="section"><div class="info"><h1 class="title">Zend Framework 组件</h1></div>
+
+        
+
+        <p class="para">
+            下面的表格列出了所有可用的 Zend Framework 组件，以及其所需的 PHP 扩展。这可以帮助了解哪些扩展对于应用来说是必须的。并不是每个应用都需要所有 Zend Framework 使用到的扩展。
+        </p>
+
+        <table class="doctable table"><div class="info"><caption><b>Zend Framework 组件以及其使用到的 PHP 扩展</b></caption></div>
+            
+            
+                <col align="left" width="2" />
+                <col align="left" width="4" />
+                <thead valign="middle">
+                    <tr valign="middle">
+                        <th>Zend Framework 组件</th>
+                        <th>PHP 扩展 （子类 / 使用方式）</th>
+                    </tr>
+
+                </thead>
+
+                <tbody valign="middle" class="tbody">
+                    <tr valign="middle">
+                        <td align="left">所有组件</td>
+                        <td align="left">
+                            <a href="http://www.php.net/manual/zh/ref.pcre.php" class="link external">&raquo; <code class="code">pcre</code></a>
+                            ( 依赖 )
+                            <a href="http://www.php.net/manual/zh/ref.spl.php" class="link external">&raquo; <code class="code">SPL</code></a>
+                            ( 依赖 )
+                            <code class="code">standard</code>
+                            ( 依赖 )
+                        </td>
+                    </tr>
+
+                    <tr valign="middle">
+                        <td align="left"><a href="http://framework.zend.com/manual/en/zend.acl.html" class="link external">&raquo; <code class="code">Zend_Acl</code></a></td>
+                        <td align="left">---</td>
+                    </tr>
+
+                    <tr valign="middle">
+                        <td align="left"><a href="http://framework.zend.com/manual/en/zend.auth.html" class="link external">&raquo; <code class="code">Zend_Auth</code></a></td>
+                        <td align="left">
+                            <a href="http://www.php.net/manual/zh/ref.ctype.php" class="link external">&raquo; <code class="code">ctype</code></a>
+                            ( <a href="http://framework.zend.com/manual/en/zend.auth.adapter.http.html" class="link external">&raquo; <code class="code">Zend_Auth_Adapter_Http</code></a> / 依赖 )
+                            <a href="http://www.php.net/manual/zh/ref.hash.php" class="link external">&raquo; <code class="code">hash</code></a>
+                            ( <a href="http://framework.zend.com/manual/en/zend.auth.adapter.http.html" class="link external">&raquo; <code class="code">Zend_Auth_Adapter_Http</code></a> / 依赖 )
+                        </td>
+                    </tr>
+
+                    <tr valign="middle">
+                        <td align="left"><a href="http://framework.zend.com/manual/en/zend.cache.html" class="link external">&raquo; <code class="code">Zend_Cache</code></a></td>
+                        <td align="left">
+                            <a href="http://www.php.net/manual/zh/ref.apc.php" class="link external">&raquo; <code class="code">apc</code></a>
+                            ( <a href="http://framework.zend.com/manual/en/zend.cache.backends.html" class="link external">&raquo; <code class="code">Zend_Cache_Backend_Apc</code></a> / 依赖 )
+                            <a href="http://www.php.net/manual/zh/ref.memcache.php" class="link external">&raquo; <code class="code">memcache</code></a>
+                            ( <a href="http://framework.zend.com/manual/en/zend.cache.backends.html" class="link external">&raquo; <code class="code">Zend_Cache_Backend_Memcache</code></a> / 依赖 )
+                            <a href="http://www.php.net/manual/en/ref.sqlite.php" class="link external">&raquo; <code class="code">sqlite</code></a>
+                            ( <a href="http://framework.zend.com/manual/en/zend.cache.backends.html" class="link external">&raquo; <code class="code">Zend_Cache_Backend_Sqlite</code></a> / 依赖 )
+                            <a href="http://www.php.net/manual/zh/ref.zlib.php" class="link external">&raquo; <code class="code">zlib</code></a>
+                            ( <a href="http://framework.zend.com/manual/en/zend.cache.backends.html" class="link external">&raquo; <code class="code">Zend_Cache_Backend_Zlib</code></a> / 依赖 )
+                        </td>
+                    </tr>
+
+                    <tr valign="middle">
+                        <td align="left"><a href="http://framework.zend.com/manual/en/zend.config.html" class="link external">&raquo; <code class="code">Zend_Config</code></a></td>
+                        <td align="left">
+                            <a href="http://www.php.net/manual/zh/ref.libxml.php" class="link external">&raquo; <code class="code">libxml</code></a>
+                            ( <a href="http://framework.zend.com/manual/en/zend.config.adapters.xml.html" class="link external">&raquo; <code class="code">Zend_Config_Xml</code></a> / 依赖 )
+                            <a href="http://www.php.net/manual/zh/ref.simplexml.php" class="link external">&raquo; <code class="code">SimpleXML</code></a>
+                            ( <a href="http://framework.zend.com/manual/en/zend.config.adapters.xml.html" class="link external">&raquo; <code class="code">Zend_Config_Xml</code></a> / 依赖 )
+                        </td>
+                    </tr>
+
+                    <tr valign="middle">
+                        <td align="left"><a href="http://framework.zend.com/manual/en/zend.console.getopt.html" class="link external">&raquo; <code class="code">Zend_Console_Getopt</code></a></td>
+                        <td align="left">---</td>
+                    </tr>
+
+                    <tr valign="middle">
+                        <td align="left"><a href="http://framework.zend.com/manual/en/zend.controller.html" class="link external">&raquo; <code class="code">Zend_Controller</code></a></td>
+                        <td align="left">
+                            <a href="http://www.php.net/manual/zh/language.oop5.reflection.php" class="link external">&raquo; <code class="code">Reflection</code></a>
+                            ( 依赖 )
+                            <a href="http://www.php.net/manual/zh/ref.session.php" class="link external">&raquo; <code class="code">session</code></a>
+                            ( <a href="http://framework.zend.com/manual/en/zend.controller.actionhelpers.html" class="link external">&raquo; <code class="code">Zend_Controller_Action_Helper_Redirector</code></a> / 依赖 )
+                        </td>
+                    </tr>
+
+                    <tr valign="middle">
+                        <td align="left"><a href="http://framework.zend.com/manual/en/zend.date.html" class="link external">&raquo; <code class="code">Zend_Date</code></a></td>
+                        <td align="left">---</td>
+                    </tr>
+
+                    <tr valign="middle">
+                        <td align="left"><a href="http://framework.zend.com/manual/en/zend.db.html" class="link external">&raquo; <code class="code">Zend_Db</code></a></td>
+                        <td align="left">
+                            <a href="http://www.php.net/manual/zh/ref.ibm-db2.php" class="link external">&raquo; <code class="code">ibm_db2</code></a>
+                            ( <a href="http://framework.zend.com/manual/en/zend.db.html" class="link external">&raquo; <code class="code">Zend_Db_Adapter_Db2</code></a> / 依赖 )
+                            <a href="http://www.php.net/manual/zh/ref.mysqli.php" class="link external">&raquo; <code class="code">mysqli</code></a>
+                            ( <a href="http://framework.zend.com/manual/en/zend.db.html" class="link external">&raquo; <code class="code">Zend_Db_Adapter_Mysqli</code></a> / 依赖 )
+                            <a href="http://www.php.net/manual/zh/ref.oci8.php" class="link external">&raquo; <code class="code">oci8</code></a>
+                            ( <a href="http://framework.zend.com/manual/en/zend.db.html" class="link external">&raquo; <code class="code">Zend_Db_Adapter_Oracle</code></a> / 依赖 )
+                            <a href="http://www.php.net/manual/zh/ref.pdo.php" class="link external">&raquo; <code class="code">pdo</code></a>
+                            ( All PDO Adapters / 依赖 )
+                            <code class="code">pdo_mssql</code>
+                            ( <a href="http://framework.zend.com/manual/en/zend.db.html" class="link external">&raquo; <code class="code">Zend_Db_Adapter_Pdo_Mssql</code></a> / 依赖 )
+                            <a href="http://www.php.net/manual/zh/ref.pdo-mysql.php" class="link external">&raquo; <code class="code">pdo_mysql</code></a>
+                            ( <a href="http://framework.zend.com/manual/en/zend.db.html" class="link external">&raquo; <code class="code">Zend_Db_Adapter_Pdo_Mysql</code></a> / 依赖 )
+                            <a href="http://www.php.net/manual/zh/ref.pdo-oci.php" class="link external">&raquo; <code class="code">pdo_oci</code></a>
+                            ( <a href="http://framework.zend.com/manual/en/zend.db.html" class="link external">&raquo; <code class="code">Zend_Db_Adapter_Pdo_Oci</code></a> / 依赖 )
+                            <a href="http://www.php.net/manual/zh/ref.pdo-pgsql.php" class="link external">&raquo; <code class="code">pdo_pgsql</code></a>
+                            ( <a href="http://framework.zend.com/manual/en/zend.db.html" class="link external">&raquo; <code class="code">Zend_Db_Adapter_Pdo_Pgsql</code></a> / 依赖 )
+                            <a href="http://www.php.net/manual/zh/ref.pdo-sqlite.php" class="link external">&raquo; <code class="code">pdo_sqlite</code></a>
+                            ( <a href="http://framework.zend.com/manual/en/zend.db.html" class="link external">&raquo; <code class="code">Zend_Db_Adapter_Pdo_Sqlite</code></a> / 依赖 )
+                        </td>
+                    </tr>
+
+                    <tr valign="middle">
+                        <td align="left"><a href="http://framework.zend.com/manual/en/zend.debug.html" class="link external">&raquo; <code class="code">Zend_Debug</code></a></td>
+                        <td align="left">---</td>
+                    </tr>
+
+                    <tr valign="middle">
+                        <td align="left"><a href="http://framework.zend.com/manual/en/zend.exception.html" class="link external">&raquo; <code class="code">Zend_Exception</code></a></td>
+                        <td align="left">---</td>
+                    </tr>
+
+                    <tr valign="middle">
+                        <td align="left"><a href="http://framework.zend.com/manual/en/zend.feed.html" class="link external">&raquo; <code class="code">Zend_Feed</code></a></td>
+                        <td align="left">
+                            <a href="http://www.php.net/manual/zh/ref.dom.php" class="link external">&raquo; <code class="code">dom</code></a>
+                            ( 依赖 )
+                            <a href="http://www.php.net/manual/zh/ref.libxml.php" class="link external">&raquo; <code class="code">libxml</code></a>
+                            ( 依赖 )
+                            <a href="http://www.php.net/manual/zh/ref.mbstring.php" class="link external">&raquo; <code class="code">mbstring</code></a>
+                            ( 依赖 )
+                            <a href="http://www.php.net/manual/zh/ref.simplexml.php" class="link external">&raquo; <code class="code">SimpleXML</code></a>
+                            ( 依赖 )
+                        </td>
+                    </tr>
+
+                    <tr valign="middle">
+                        <td align="left"><a href="http://framework.zend.com/manual/en/zend.filter.html" class="link external">&raquo; <code class="code">Zend_Filter</code></a></td>
+                        <td align="left">
+                            <a href="http://www.php.net/manual/zh/language.oop5.reflection.php" class="link external">&raquo; <code class="code">Reflection</code></a>
+                            ( 依赖 )
+                        </td>
+                    </tr>
+
+                    <tr valign="middle">
+                        <td align="left"><a href="http://framework.zend.com/manual/en/zend.filter.input.html" class="link external">&raquo; <code class="code">Zend_Filter_Input</code></a></td>
+                        <td align="left">
+                            <a href="http://www.php.net/manual/zh/language.oop5.reflection.php" class="link external">&raquo; <code class="code">Reflection</code></a>
+                            ( 依赖 )
+                        </td>
+                    </tr>
+
+                    <tr valign="middle">
+                        <td align="left"><a href="http://framework.zend.com/manual/en/zend.gdata.html" class="link external">&raquo; <code class="code">Zend_Gdata</code></a></td>
+                        <td align="left">
+                            <a href="http://www.php.net/manual/zh/ref.ctype.php" class="link external">&raquo; <code class="code">ctype</code></a>
+                            ( <a href="http://framework.zend.com/manual/en/zend.gdata.html" class="link external">&raquo; <code class="code">Zend_Gdata_App</code></a> / 依赖 )
+                            <a href="http://www.php.net/manual/zh/ref.dom.php" class="link external">&raquo; <code class="code">dom</code></a>
+                            ( 依赖 )
+                            <a href="http://www.php.net/manual/zh/ref.libxml.php" class="link external">&raquo; <code class="code">libxml</code></a>
+                            ( 依赖 )
+                        </td>
+                    </tr>
+
+                    <tr valign="middle">
+                        <td align="left"><a href="http://framework.zend.com/manual/en/zend.http.html" class="link external">&raquo; <code class="code">Zend_Http</code></a></td>
+                        <td align="left">
+                            <a href="http://www.php.net/manual/zh/ref.ctype.php" class="link external">&raquo; <code class="code">ctype</code></a>
+                            ( <a href="http://framework.zend.com/manual/en/zend.http.html" class="link external">&raquo; <code class="code">Zend_Http_Client</code></a> / 依赖 )
+                            <a href="http://www.php.net/manual/zh/ref.curl.php" class="link external">&raquo; <code class="code">curl</code></a>
+                            ( <a href="http://framework.zend.com/manual/en/zend.http.client.adapters.html" class="link external">&raquo; <code class="code">Zend_Http_Client_Adapter_Curl</code></a> / 依赖 )
+                            <a href="http://www.php.net/manual/zh/ref.mime-magic.php" class="link external">&raquo; <code class="code">mime_magic</code></a>
+                            ( <a href="http://framework.zend.com/manual/en/zend.http.html" class="link external">&raquo; <code class="code">Zend_Http_Client</code></a> / 依赖 )
+                        </td>
+                    </tr>
+
+                    <tr valign="middle">
+                        <td align="left"><a href="http://framework.zend.com/manual/en/zend.json.html" class="link external">&raquo; <code class="code">Zend_Json</code></a></td>
+                        <td align="left">
+                            <a href="http://www.php.net/manual/zh/ref.json.php" class="link external">&raquo; <code class="code">json</code></a>
+                            ( 可选 )
+                            <a href="http://www.php.net/manual/zh/language.oop5.reflection.php" class="link external">&raquo; <code class="code">Reflection</code></a>
+                            ( 依赖 )
+                        </td>
+                    </tr>
+
+                    <tr valign="middle">
+                        <td align="left"><a href="http://framework.zend.com/manual/en/zend.loader.html" class="link external">&raquo; <code class="code">Zend_Loader</code></a></td>
+                        <td align="left">---</td>
+                    </tr>
+
+                    <tr valign="middle">
+                        <td align="left"><a href="http://framework.zend.com/manual/en/zend.locale.html" class="link external">&raquo; <code class="code">Zend_Locale</code></a></td>
+                        <td align="left">
+                            <a href="http://www.php.net/manual/zh/ref.bc.php" class="link external">&raquo; <code class="code">bcmath</code></a>
+                            ( <a href="http://framework.zend.com/manual/en/zend.locale.html" class="link external">&raquo; <code class="code">Zend_Locale_Math</code></a> / 可选 )
+                            <a href="http://www.php.net/manual/zh/ref.iconv.php" class="link external">&raquo; <code class="code">iconv</code></a>
+                            ( <a href="http://framework.zend.com/manual/en/zend.locale.parsing.html" class="link external">&raquo; <code class="code">Zend_Locale_Format</code></a> / 依赖 )
+                        </td>
+                    </tr>
+
+                    <tr valign="middle">
+                        <td align="left"><a href="http://framework.zend.com/manual/en/zend.log.html" class="link external">&raquo; <code class="code">Zend_Log</code></a></td>
+                        <td align="left">
+                            <a href="http://www.php.net/manual/zh/ref.dom.php" class="link external">&raquo; <code class="code">dom</code></a>
+                            ( <a href="http://framework.zend.com/manual/en/zend.log.formatters.html" class="link external">&raquo; <code class="code">Zend_Log_Formatter_Xml</code></a> / 依赖 )
+                            <a href="http://www.php.net/manual/zh/ref.libxml.php" class="link external">&raquo; <code class="code">libxml</code></a>
+                            ( <a href="http://framework.zend.com/manual/en/zend.log.formatters.html" class="link external">&raquo; <code class="code">Zend_Log_Formatter_Xml</code></a> / 依赖 )
+                            <a href="http://www.php.net/manual/zh/language.oop5.reflection.php" class="link external">&raquo; <code class="code">Reflection</code></a>
+                            ( 依赖 )
+                        </td>
+                    </tr>
+
+                    <tr valign="middle">
+                        <td align="left"><a href="http://framework.zend.com/manual/en/zend.mail.html" class="link external">&raquo; <code class="code">Zend_Mail</code></a></td>
+                        <td align="left">
+                            <a href="http://www.php.net/manual/zh/ref.posix.php" class="link external">&raquo; <code class="code">posix</code></a>
+                            ( 可选 )
+                        </td>
+                    </tr>
+
+                    <tr valign="middle">
+                        <td align="left"><a href="http://framework.zend.com/manual/en/zend.measure.html" class="link external">&raquo; <code class="code">Zend_Measure</code></a></td>
+                        <td align="left">---</td>
+                    </tr>
+
+                    <tr valign="middle">
+                        <td align="left"><a href="http://framework.zend.com/manual/en/zend.memory.html" class="link external">&raquo; <code class="code">Zend_Memory</code></a></td>
+                        <td align="left">---</td>
+                    </tr>
+
+                    <tr valign="middle">
+                        <td align="left"><a href="http://framework.zend.com/manual/en/zend.mime.html" class="link external">&raquo; <code class="code">Zend_Mime</code></a></td>
+                        <td align="left">
+                            <a href="http://www.php.net/manual/zh/ref.iconv.php" class="link external">&raquo; <code class="code">iconv</code></a>
+                            ( <a href="http://framework.zend.com/manual/en/zend.mime.html" class="link external">&raquo; <code class="code">Zend_Mime_Decode</code></a> / 依赖 )
+                        </td>
+                    </tr>
+
+                    <tr valign="middle">
+                        <td align="left"><a href="http://framework.zend.com/manual/en/zend.pdf.html" class="link external">&raquo; <code class="code">Zend_Pdf</code></a></td>
+                        <td align="left">
+                            <a href="http://www.php.net/manual/zh/ref.ctype.php" class="link external">&raquo; <code class="code">ctype</code></a>
+                            ( 依赖 )
+                            <a href="http://www.php.net/manual/zh/ref.image.php" class="link external">&raquo; <code class="code">gd</code></a>
+                            ( 依赖 )
+                            <a href="http://www.php.net/manual/zh/ref.iconv.php" class="link external">&raquo; <code class="code">iconv</code></a>
+                            ( 依赖 )
+                            <a href="http://www.php.net/manual/zh/ref.zlib.php" class="link external">&raquo; <code class="code">zlib</code></a>
+                            ( 依赖 )
+                        </td>
+                    </tr>
+
+                    <tr valign="middle">
+                        <td align="left"><a href="http://framework.zend.com/manual/en/zend.registry.html" class="link external">&raquo; <code class="code">Zend_Registry</code></a></td>
+                        <td align="left">---</td>
+                    </tr>
+
+                    <tr valign="middle">
+                        <td align="left">Zend_Request</td>
+                        <td align="left">---</td>
+                    </tr>
+
+                    <tr valign="middle">
+                        <td align="left"><a href="http://framework.zend.com/manual/en/zend.rest.html" class="link external">&raquo; <code class="code">Zend_Rest</code></a></td>
+                        <td align="left">
+                            <a href="http://www.php.net/manual/zh/ref.ctype.php" class="link external">&raquo; <code class="code">ctype</code></a>
+                            ( <a href="http://framework.zend.com/manual/en/zend.rest.client.html" class="link external">&raquo; <code class="code">Zend_Rest_Client</code></a> / 依赖 )
+                            ( <a href="http://framework.zend.com/manual/en/zend.rest.server.html" class="link external">&raquo; <code class="code">Zend_Rest_Server</code></a> / 依赖 )
+                            <a href="http://www.php.net/manual/zh/ref.dom.php" class="link external">&raquo; <code class="code">dom</code></a>
+                            ( <a href="http://framework.zend.com/manual/en/zend.rest.server.html" class="link external">&raquo; <code class="code">Zend_Rest_Server</code></a> / 依赖 )
+                            <a href="http://www.php.net/manual/zh/ref.libxml.php" class="link external">&raquo; <code class="code">libxml</code></a>
+                            ( <a href="http://framework.zend.com/manual/en/zend.rest.client.html" class="link external">&raquo; <code class="code">Zend_Rest_Client</code></a> / 依赖 )
+                            ( <a href="http://framework.zend.com/manual/en/zend.rest.server.html" class="link external">&raquo; <code class="code">Zend_Rest_Server</code></a> / 依赖 )
+                            <a href="http://www.php.net/manual/zh/language.oop5.reflection.php" class="link external">&raquo; <code class="code">Reflection</code></a>
+                            ( <a href="http://framework.zend.com/manual/en/zend.rest.server.html" class="link external">&raquo; <code class="code">Zend_Rest_Server</code></a> / 依赖 )
+                            <a href="http://www.php.net/manual/zh/ref.simplexml.php" class="link external">&raquo; <code class="code">SimpleXML</code></a>
+                            ( <a href="http://framework.zend.com/manual/en/zend.rest.client.html" class="link external">&raquo; <code class="code">Zend_Rest_Client</code></a> / 依赖 )
+                        </td>
+                    </tr>
+
+                    <tr valign="middle">
+                        <td align="left"><a href="http://framework.zend.com/manual/en/zend.search.lucene.html" class="link external">&raquo; <code class="code">Zend_Search_Lucene</code></a></td>
+                        <td align="left">
+                            <a href="http://www.php.net/manual/zh/ref.ctype.php" class="link external">&raquo; <code class="code">ctype</code></a>
+                            ( 依赖 )
+                            <a href="http://pecl.php.net/package/Bitset" class="link external">&raquo; <code class="code">bitset</code></a>
+                            ( 可选 )
+                            <a href="http://www.php.net/manual/zh/ref.dom.php" class="link external">&raquo; <code class="code">dom</code></a>
+                            ( 依赖 )
+                            <a href="http://www.php.net/manual/zh/ref.iconv.php" class="link external">&raquo; <code class="code">iconv</code></a>
+                            ( 依赖 )
+                            <a href="http://www.php.net/manual/zh/ref.libxml.php" class="link external">&raquo; <code class="code">libxml</code></a>
+                            ( 依赖 )
+                        </td>
+                    </tr>
+
+                    <tr valign="middle">
+                        <td align="left"><a href="http://framework.zend.com/manual/en/zend.server.reflection.html" class="link external">&raquo; <code class="code">Zend_Server_Reflection</code></a></td>
+                        <td align="left">
+                            <a href="http://www.php.net/manual/zh/language.oop5.reflection.php" class="link external">&raquo; <code class="code">Reflection</code></a>
+                            ( 依赖 )
+                        </td>
+                    </tr>
+
+                    <tr valign="middle">
+                        <td align="left"><a href="http://framework.zend.com/manual/en/zend.service.akismet.html" class="link external">&raquo; <code class="code">Zend_Service_Akismet</code></a></td>
+                        <td align="left">---</td>
+                    </tr>
+
+                    <tr valign="middle">
+                        <td align="left"><a href="http://framework.zend.com/manual/en/zend.service.amazon.html" class="link external">&raquo; <code class="code">Zend_Service_Amazon</code></a></td>
+                        <td align="left">
+                            <a href="http://www.php.net/manual/zh/ref.dom.php" class="link external">&raquo; <code class="code">dom</code></a>
+                            ( 依赖 )
+                            <a href="http://www.php.net/manual/zh/ref.libxml.php" class="link external">&raquo; <code class="code">libxml</code></a>
+                            ( 依赖 )
+                        </td>
+                    </tr>
+
+                    <tr valign="middle">
+                        <td align="left"><a href="http://framework.zend.com/manual/en/zend.service.audioscrobbler.html" class="link external">&raquo; <code class="code">Zend_Service_Audioscrobbler</code></a></td>
+                        <td align="left">
+                            <a href="http://www.php.net/manual/zh/ref.iconv.php" class="link external">&raquo; <code class="code">iconv</code></a>
+                            ( 依赖 )
+                            <a href="http://www.php.net/manual/zh/ref.libxml.php" class="link external">&raquo; <code class="code">libxml</code></a>
+                            ( 依赖 )
+                            <a href="http://www.php.net/manual/zh/ref.simplexml.php" class="link external">&raquo; <code class="code">SimpleXML</code></a>
+                            ( 依赖 )
+                        </td>
+                    </tr>
+
+                    <tr valign="middle">
+                        <td align="left"><a href="http://framework.zend.com/manual/en/zend.service.delicious.html" class="link external">&raquo; <code class="code">Zend_Service_Delicious</code></a></td>
+                        <td align="left">
+                            <a href="http://www.php.net/manual/zh/ref.dom.php" class="link external">&raquo; <code class="code">dom</code></a>
+                            ( 依赖 )
+                            <a href="http://www.php.net/manual/zh/ref.libxml.php" class="link external">&raquo; <code class="code">libxml</code></a>
+                            ( 依赖 )
+                        </td>
+                    </tr>
+
+                    <tr valign="middle">
+                        <td align="left"><a href="http://framework.zend.com/manual/en/zend.service.flickr.html" class="link external">&raquo; <code class="code">Zend_Service_Flickr</code></a></td>
+                        <td align="left">
+                            <a href="http://www.php.net/manual/zh/ref.dom.php" class="link external">&raquo; <code class="code">dom</code></a>
+                            ( 依赖 )
+                            <a href="http://www.php.net/manual/zh/ref.iconv.php" class="link external">&raquo; <code class="code">iconv</code></a>
+                            ( 依赖 )
+                            <a href="http://www.php.net/manual/zh/ref.libxml.php" class="link external">&raquo; <code class="code">libxml</code></a>
+                            ( 依赖 )
+                        </td>
+                    </tr>
+
+                    <tr valign="middle">
+                        <td align="left"><a href="http://framework.zend.com/manual/en/zend.service.simpy.html" class="link external">&raquo; <code class="code">Zend_Service_Simpy</code></a></td>
+                        <td align="left">
+                            <a href="http://www.php.net/manual/zh/ref.dom.php" class="link external">&raquo; <code class="code">dom</code></a>
+                            ( 依赖 )
+                            <a href="http://www.php.net/manual/zh/ref.libxml.php" class="link external">&raquo; <code class="code">libxml</code></a>
+                            ( 依赖 )
+                            <a href="http://www.php.net/manual/zh/ref.libxml.php" class="link external">&raquo; <code class="code">libxml</code></a>
+                            ( 依赖 )
+                        </td>
+                    </tr>
+
+                    <tr valign="middle">
+                        <td align="left"><a href="http://framework.zend.com/manual/en/zend.service.strikeiron.html" class="link external">&raquo; <code class="code">Zend_Service_StrikeIron</code></a></td>
+                        <td align="left">
+                            <a href="http://www.php.net/manual/zh/ref.soap.php" class="link external">&raquo; <code class="code">soap</code></a>
+                            ( 依赖 )
+                        </td>
+                    </tr>
+
+                    <tr valign="middle">
+                        <td align="left"><a href="http://framework.zend.com/manual/en/zend.service.yahoo.html" class="link external">&raquo; <code class="code">Zend_Service_Yahoo</code></a></td>
+                        <td align="left">
+                            <a href="http://www.php.net/manual/zh/ref.dom.php" class="link external">&raquo; <code class="code">dom</code></a>
+                            ( 依赖 )
+                            <a href="http://www.php.net/manual/zh/ref.libxml.php" class="link external">&raquo; <code class="code">libxml</code></a>
+                            ( 依赖 )
+                        </td>
+                    </tr>
+
+                    <tr valign="middle">
+                        <td align="left"><a href="http://framework.zend.com/manual/en/zend.session.html" class="link external">&raquo; <code class="code">Zend_Session</code></a></td>
+                        <td align="left">
+                            <a href="http://www.php.net/manual/zh/ref.session.php" class="link external">&raquo; <code class="code">session</code></a>
+                            ( 依赖 )
+                        </td>
+                    </tr>
+
+                    <tr valign="middle">
+                        <td align="left"><a href="http://framework.zend.com/manual/en/zend.translate.html" class="link external">&raquo; <code class="code">Zend_Translate</code></a></td>
+                        <td align="left">
+                            <a href="http://www.php.net/manual/zh/ref.xml.php" class="link external">&raquo; <code class="code">xml</code></a>
+                            ( <a href="http://framework.zend.com/manual/en/zend.translate.adapter.html" class="link external">&raquo; <code class="code">Zend_Translate_Adapter_Qt</code></a> / 依赖 )
+                            ( <a href="http://framework.zend.com/manual/en/zend.translate.adapter.html" class="link external">&raquo; <code class="code">Zend_Translate_Adapter_Tmx</code></a> / 依赖 )
+                            ( <a href="http://framework.zend.com/manual/en/zend.translate.adapter.html" class="link external">&raquo; <code class="code">Zend_Translate_Adapter_Xliff</code></a> / 依赖 )
+                        </td>
+                    </tr>
+
+                    <tr valign="middle">
+                        <td align="left"><a href="http://framework.zend.com/manual/en/zend.uri.html" class="link external">&raquo; <code class="code">Zend_Uri</code></a></td>
+                        <td align="left">
+                            <a href="http://www.php.net/manual/zh/ref.ctype.php" class="link external">&raquo; <code class="code">ctype</code></a>
+                            ( 依赖 )
+                        </td>
+                    </tr>
+
+                    <tr valign="middle">
+                        <td align="left"><a href="http://framework.zend.com/manual/en/zend.validate.html" class="link external">&raquo; <code class="code">Zend_Validate</code></a></td>
+                        <td align="left">
+                            <a href="http://www.php.net/manual/zh/ref.ctype.php" class="link external">&raquo; <code class="code">ctype</code></a>
+                            ( 依赖 )
+                            <a href="http://www.php.net/manual/zh/language.oop5.reflection.php" class="link external">&raquo; <code class="code">Reflection</code></a>
+                            ( 依赖 )
+                        </td>
+                    </tr>
+
+                    <tr valign="middle">
+                        <td align="left"><a href="http://framework.zend.com/manual/en/zend.version.html" class="link external">&raquo; <code class="code">Zend_Version</code></a></td>
+                        <td align="left">---</td>
+                    </tr>
+
+                    <tr valign="middle">
+                        <td align="left"><a href="http://framework.zend.com/manual/en/zend.view.html" class="link external">&raquo; <code class="code">Zend_View</code></a></td>
+                        <td align="left">
+                            <a href="http://www.php.net/manual/zh/language.oop5.reflection.php" class="link external">&raquo; <code class="code">Reflection</code></a>
+                            ( 依赖 )
+                        </td>
+                    </tr>
+
+                    <tr valign="middle">
+                        <td align="left"><a href="http://framework.zend.com/manual/en/zend.xmlrpc.html" class="link external">&raquo; <code class="code">Zend_XmlRpc</code></a></td>
+                        <td align="left">
+                            <a href="http://www.php.net/manual/zh/ref.dom.php" class="link external">&raquo; <code class="code">dom</code></a>
+                            ( 依赖 )
+                            <a href="http://www.php.net/manual/zh/ref.iconv.php" class="link external">&raquo; <code class="code">iconv</code></a>
+                            ( <a href="http://framework.zend.com/manual/en/zend.xmlrpc.client.html" class="link external">&raquo; <code class="code">Zend_XmlRpc_Client</code></a> / 依赖 )
+                            <a href="http://www.php.net/manual/zh/ref.libxml.php" class="link external">&raquo; <code class="code">libxml</code></a>
+                            ( 依赖 )
+                            <a href="http://www.php.net/manual/zh/language.oop5.reflection.php" class="link external">&raquo; <code class="code">Reflection</code></a>
+                            ( <a href="http://framework.zend.com/manual/en/zend.xmlrpc.server.html" class="link external">&raquo; <code class="code">Zend_XmlRpc_Server</code></a> / 依赖 )
+                            <a href="http://www.php.net/manual/zh/ref.simplexml.php" class="link external">&raquo; <code class="code">SimpleXML</code></a>
+                            ( 依赖 )
+                        </td>
+                    </tr>
+
+                </tbody>
+            
+        </table>
+
+
+    </div>
+        <hr />
+
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="requirements.extensions.html">PHP 扩展</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="requirements.html">系统需求</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="migration.html">Zend Framework Migration Notes</a></div>
+                    </td>
+                </tr>
+            </table>
+</td>
+        <td style="font-size: smaller;" width="15%"> <style type="text/css">
+#leftbar {
+	float: left;
+	width: 186px;
+	padding: 5px;
+	font-size: smaller;
+}
+ul.toc {
+	margin: 0px 5px 5px 5px;
+	padding: 0px;
+}
+ul.toc li {
+	font-size: 85%;
+	margin: 1px 0 1px 1px;
+	padding: 1px 0 1px 11px;
+	list-style-type: none;
+	background-repeat: no-repeat;
+	background-position: center left;
+}
+ul.toc li.header {
+	font-size: 115%;
+	padding: 5px 0px 5px 11px;
+	border-bottom: 1px solid #cccccc;
+	margin-bottom: 5px;
+}
+ul.toc li.active {
+	font-weight: bold;
+}
+ul.toc li a {
+	text-decoration: none;
+}
+ul.toc li a:hover {
+	text-decoration: underline;
+}
+</style>
+ <ul class="toc">
+  <li class="header home"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="requirements.html">系统需求</a></li>
+  <li><a href="requirements.version.html">PHP 版本需求</a></li>
+  <li><a href="requirements.extensions.html">PHP 扩展</a></li>
+  <li class="active"><a href="requirements.zendcomponents.html">Zend Framework 组件</a></li>
+ </ul>
+ </td>
+    </tr>
+</table>
+</body>
+</html>

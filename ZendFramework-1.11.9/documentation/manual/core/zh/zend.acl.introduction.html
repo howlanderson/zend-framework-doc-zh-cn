@@ -1,0 +1,418 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <title>简介 - Zend Framework Manual</title>
+
+</head>
+<body>
+<table width="100%">
+    <tr valign="top">
+        <td width="85%">
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.acl.html">Zend_Acl</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.acl.html">Zend_Acl</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.acl.refining.html">精细的访问控制</a></div>
+                    </td>
+                </tr>
+            </table>
+<hr />
+<div id="zend.acl.introduction" class="section"><div class="info"><h1 class="title">简介</h1></div>
+    
+
+    <p class="para">
+        Zend_Acl 为权限管理提供轻量并灵活的访问控制列表 (ACL,access control list) 的实现。一般地，应用软件可以利用这样的功能限制某些特定对象来访问特定保护的对象。
+    </p>
+
+    <p class="para">
+        在本文档中，
+
+         <ul class="itemizedlist">
+            <li class="listitem">
+                <p class="para">
+                    <em class="emphasis">resource</em> （资源）是一个限制访问的对象。
+                </p>
+            </li>
+            <li class="listitem">
+                <p class="para">
+                    <em class="emphasis">role</em> （角色）是一个可以发出请求去访问Resource的对象。
+                </p>
+            </li>
+        </ul>
+
+        简单地说就是：<em class="emphasis">roles 请求访问 resources</em>。例如，如果停车服务员要进入汽车，那么，这个停车服务员就是发出请求的 role，而这辆汽车就是 resource，因为不是所有人都有权进入汽车。
+    </p>
+
+    <p class="para">
+         通过规范和访问控制列表（ACL）的使用，应用软件可以控制角色（roles）如何来访问资源（resources）。
+    </p>
+
+    <div class="section" id="zend.acl.introduction.resources" name="zend.acl.introduction.resources"><div class="info"><h1 class="title">关于资源(Resource)</h1></div>
+        
+        <p class="para">
+            在 Zend_Acl 中，创建一个 resource 非常简单。Zend_Acl 提供了 resource
+            接口<code class="code">Zend_Acl_Resource_Interface</code> 使开发者在程序中创建 resources 非常容易。
+            为了使Zend_Acl把某个对象当作一个resource，一个类只需要实现这个只包含了一个方法 <code class="code">getResourceId()</code> 的接口。
+            另外，<code class="code">Zend_Acl_Resource</code>是一个包含在 Zend_Acl 里作为一个基本的 resource 实现的类，开发者可以任意扩展它。
+        </p>
+        <p class="para">
+            Zend_Acl 提供了一个树结构，它可以添加多个 resources (或者叫“访问控制下的区域”）。因为 resources 被存储在这样一个树结构，
+            所以它们可以被组织成从一般（树根）到特殊（树叶）。基于特殊resource的查询将自动从resource的等级结构中搜索分配给祖先rResources的规则，
+            它允许简单的规则继承。例如，要把一个缺省的规则应用到一个城市的每个建筑物，就简单地把这个规则分配给这个城市，
+            而不是把规则分配给每个建筑物。然而，有些建筑物也许要求例外的规则，在Zend_Acl里，很容易地通过分配例外规则给每个有这样要求的建筑物来实现。
+            一个 resource 可以从唯一的一个父 resource 继承，而这个父 resource 也有它自己的父 resource，等等。
+         </p>
+        <p class="para">
+            Zend_Acl 也支持基于 resources 的权限（例如：&quot;create&quot;, &quot;read&quot;, &quot;update&quot;, &quot;delete&quot;）， 所以开发者可以根据 resource 分配影响全部或者特殊权限的规则到一个或多个资源。
+        </p>
+    </div>
+
+    <div class="section" id="zend.acl.introduction.roles" name="zend.acl.introduction.roles"><div class="info"><h1 class="title">关于角色(Role)</h1></div>
+        
+        <p class="para">
+            象 Resources 一样，创建一个 role 也非常简单。 Zend_Acl 提供了 <code class="code">Zend_Acl_Role_Interface</code> 使开发者创建 roles 非常容易。
+            为了使Zend_Acl把某个对象当作一个 role，一个类只需要实现这个只包含了一个方法 <code class="code">getRoleId()</code> 的接口。
+            另外，<code class="code">Zend_Acl_Role</code>是一个包含在Zend_Acl里作为一个基本的 role 实现的类，开发者可以任意扩展它。
+        </p>
+        <p class="para">
+            在 Zend_Acl, 一个 role 可以从一个或多个 role 继承，这就是在 role 中支持规则的继承。例如，一个用户 role，如 “sally”，
+            可以属于一个或多个 role，如：“editor”和“administrator”。开发者可以分别给“editor”和“administrator”分配规则，
+            而“sally”将从它们俩继承规则，不需要直接给“sally”分配规则。
+        </p>
+        <p class="para">
+           虽然从多重角色继承的能力非常有用，但是多重继承也带来了一定程度的复杂性。下面的例子来示例含糊情形和Zend_Acl如何解决它。
+        </p>
+        <div class="example"><div class="info"><p><b>Example #1 角色之间的多重继承</b></p></div>
+            
+            <div class="example-contents"><p>
+               下面的代码定义了三个基本角色 - &quot;<code class="code">guest</code>&quot;, &quot;<code class="code">member</code>&quot;, 和 &quot;<code class="code">admin</code>&quot; -
+               其它角色可以从它们继承。接着，创建一个&quot;<code class="code">someUser</code>&quot; 角色并从其它三个基本角色继承。
+               在<code class="code">$parents</code> 数组里这些角色出现的顺序很重要。 必要时，Zend_Acl 不但搜索为被查询的角色
+               （这里指 &quot;<code class="code">someUser</code>&quot;）定义的访问规则，而且搜索为被查询的角色所继承的角色
+               （这里指 &quot;<code class="code">guest</code>&quot;, &quot;<code class="code">member</code>&quot;, and &quot;<code class="code">admin</code>&quot;）定义的访问规则：
+            </p></div>
+            <div class="programlisting"><div class="cdata"><pre>
+$acl = new Zend_Acl();
+
+$acl-&gt;addRole(new Zend_Acl_Role(&#039;guest&#039;))
+    -&gt;addRole(new Zend_Acl_Role(&#039;member&#039;))
+    -&gt;addRole(new Zend_Acl_Role(&#039;admin&#039;));
+
+$parents = array(&#039;guest&#039;, &#039;member&#039;, &#039;admin&#039;);
+$acl-&gt;addRole(new Zend_Acl_Role(&#039;someUser&#039;), $parents);
+
+$acl-&gt;add(new Zend_Acl_Resource(&#039;someResource&#039;));
+
+$acl-&gt;deny(&#039;guest&#039;, &#039;someResource&#039;);
+$acl-&gt;allow(&#039;member&#039;, &#039;someResource&#039;);
+
+echo $acl-&gt;isAllowed(&#039;someUser&#039;, &#039;someResource&#039;) ? &#039;allowed&#039; : &#039;denied&#039;;
+
+            </pre></div></div>
+
+            <div class="example-contents"><p>
+                因为没有明确地为 &quot;<code class="code">someUser</code>&quot;和&quot;<code class="code">someResource</code>&quot; 定义规则，
+                所以Zend_Acl 必须搜索可能为&quot;<code class="code">someUser</code>&quot;所继承的角色定义的规则。
+                首先，&quot;<code class="code">admin</code>&quot;角色被访问，没有给它定义访问规则。
+                接着，&quot;<code class="code">member</code>&quot;角色被访问，Zend_Acl发现有个规则允许&quot;<code class="code">member</code>&quot; 访问&quot;<code class="code">someResource</code>&quot;。
+            </p></div>
+            <div class="example-contents"><p>
+                如果Zend_Acl打算继续检查为父角色所定义的规则，然而，
+                它将发现&quot;<code class="code">guest</code>&quot; 被拒绝访问&quot;<code class="code">someResource</code>&quot; 。
+                这带来了模棱两可的情形， &quot;<code class="code">someUser</code>&quot;即被允许又被禁止访问&quot;<code class="code">someResource</code>&quot;，因为它从不同的父角色继承了冲突的规则。
+            </p></div>
+            <div class="example-contents"><p>
+                Zend_Acl 解决了这个模棱两可的问题，当它发现第一个可用的规则时，就完成了查询。
+                对于这个案例，因为&quot;<code class="code">member</code>&quot;角色先于&quot;<code class="code">guest</code>&quot; 角色被检查，这个例子将打印&quot;<code class="code">allowed</code>&quot;。
+            </p></div>
+        </div>
+
+        <blockquote><p><b class="note">Note</b>: 
+            
+                当为一个角色指定多重父（角色）时，请记住，对于一个授权查询的可用规则，最后列出的父（角色）是首先被搜索的。
+             <br />
+        </p></blockquote>
+    </div>
+
+    <div class="section" id="zend.acl.introduction.creating" name="zend.acl.introduction.creating"><div class="info"><h1 class="title">创建访问控制列表(ACL)</h1></div>
+        
+
+        <p class="para">
+           ACL 可以表示任何一组物理或虚拟对象，然而，作为示范，我们将创建一个基本的内容管理系统的（CMS）ACL，
+           在一个范围很宽的多样化区域里，它将维护若干个等级的组。为创建一个新的 ACL 对象，我们不带参数地实例化这个 ACL：
+        </p>
+
+        <div class="programlisting"><div class="cdata"><pre>
+$acl = new Zend_Acl();
+
+        </pre></div></div>
+
+
+        <blockquote><p><b class="note">Note</b>: 
+            
+               除非开发者指明一个&quot;allow&quot; 规则，Zend_Acl 禁止任何 role 对任何 resource 的任何访问权限。
+            <br />
+        </p></blockquote>
+    </div>
+
+    <div class="section" id="zend.acl.introduction.role_registry" name="zend.acl.introduction.role_registry"><div class="info"><h1 class="title">注册角色(Role)</h1></div>
+        
+
+        <p class="para">
+            CMS 通常需要一个分级的权限系统来决定它的用户的授权能力。
+            作为示范，“Guest”组允许有限的访问，“Staff”适合大多数的执行日常操作的CMS用户，“Editor”组适合于发布、复核、存档和删除内容，
+            最后“Administrator”组的任务包括所有其它组的内容并包括敏感的信息、用户管理、后台配置数据和备份/导出。
+            这组许可可以被表示为一个 role 注册表，允许每个组从“”组继承权限，也可以为单一的组提供独特的权限。这些许可可以表示如下：
+         </p>
+
+        <table class="doctable table"><div class="info"><caption><b>一个CMS范例的访问控制</b></caption></div>
+          
+          
+            <thead valign="middle">
+              <tr valign="middle">
+                <th>名称</th>
+                <th>独特的许可</th>
+                <th>从...继承的许可</th>
+              </tr>
+
+            </thead>
+
+            <tbody valign="middle" class="tbody">
+              <tr valign="middle">
+                <td align="left">Guest</td>
+                <td align="left">View</td>
+                <td align="left">N/A</td>
+              </tr>
+
+              <tr valign="middle">
+                <td align="left">Staff</td>
+                <td align="left">Edit, Submit, Revise</td>
+                <td align="left">Guest</td>
+              </tr>
+
+              <tr valign="middle">
+                <td align="left">Editor</td>
+                <td align="left">Publish, Archive, Delete</td>
+                <td align="left">Staff</td>
+              </tr>
+
+              <tr valign="middle">
+                <td align="left">Administrator</td>
+                <td align="left">(Granted all access)</td>
+                <td align="left">N/A</td>
+              </tr>
+
+            </tbody>
+          
+        </table>
+
+
+        <p class="para">
+            对于这个范例，<code class="code">Zend_Acl_Role</code>  被使用，但任何实现 <code class="code">Zend_Acl_Role_Interface</code>  的对象是可接受的。这些组可以被添加到 role 注册表如下：
+        </p>
+
+        <div class="programlisting"><div class="cdata"><pre>
+$acl = new Zend_Acl();
+
+// 用 Zend_Acl_Role 把组添加到 Role 注册表
+// Guest 不继承访问控制
+$roleGuest = new Zend_Acl_Role(&#039;guest&#039;);
+$acl-&gt;addRole($roleGuest);
+
+// Staff 从 guest 继承
+$acl-&gt;addRole(new Zend_Acl_Role(&#039;staff&#039;), $roleGuest);
+
+/*
+另外, 上面的也可这样来写：
+$acl-&gt;addRole(new Zend_Acl_Role(&#039;staff&#039;), &#039;guest&#039;);
+*/
+
+// Editor 从 staff 继承
+$acl-&gt;addRole(new Zend_Acl_Role(&#039;editor&#039;), &#039;staff&#039;);
+
+// Administrator 不继承访问控制
+$acl-&gt;addRole(new Zend_Acl_Role(&#039;administrator&#039;));
+
+        </pre></div></div>
+
+
+    </div>
+
+    <div class="section" id="zend.acl.introduction.defining" name="zend.acl.introduction.defining"><div class="info"><h1 class="title">定义访问控制</h1></div>
+        
+
+        <p class="para">
+           现在 ACL 包含了相关的 roles，可以建立规则来定义 roles 如何访问 resources。
+           你也许注意到我们在这个范例里没有定义任何特定的 resources， 这简单地表示这些规则适用于所有 resources。
+           Zend_Acl 提供一个实现，籍此，规则只需要被分配从一般到特殊，最小化规则的需求，因为 resources 和 roles 继承由它们祖先定义的规则。
+        </p>
+
+        <blockquote><p><b class="note">Note</b>: 
+            
+                一般来说，当且仅当更具体的规则没有使用， Zend_Acl 就服从已给定的规则。
+            <br />
+        </p></blockquote>
+
+        <p class="para">
+           因此，我们可以用最少量的代码来定义适度复杂的规则。应用上面定义的基本许可：
+        </p>
+
+        <div class="programlisting"><div class="cdata"><pre>
+$acl = new Zend_Acl();
+
+$roleGuest = new Zend_Acl_Role(&#039;guest&#039;);
+$acl-&gt;addRole($roleGuest);
+$acl-&gt;addRole(new Zend_Acl_Role(&#039;staff&#039;), $roleGuest);
+$acl-&gt;addRole(new Zend_Acl_Role(&#039;editor&#039;), &#039;staff&#039;);
+$acl-&gt;addRole(new Zend_Acl_Role(&#039;administrator&#039;));
+
+// Guest 只可以浏览内容
+$acl-&gt;allow($roleGuest, null, &#039;view&#039;);
+
+/*
+另外, 上面也可写为：
+$acl-&gt;allow(&#039;guest&#039;, null, &#039;view&#039;);
+*/
+
+// Staff 从 guest 继承浏览权限，但也要另外的权限
+$acl-&gt;allow(&#039;staff&#039;, null, array(&#039;edit&#039;, &#039;submit&#039;, &#039;revise&#039;));
+
+// Editor 从 Staff 继承 view, edit, submit 和 revise 权限
+// 但也要另外的权限
+$acl-&gt;allow(&#039;editor&#039;, null, array(&#039;publish&#039;, &#039;archive&#039;, &#039;delete&#039;));
+
+// Administrator 不需要继承任何权限，它拥有所有的权限
+$acl-&gt;allow(&#039;administrator&#039;);
+
+        </pre></div></div>
+
+
+        <p class="para">
+          在上面 <code class="code">allow()</code> 中调用中 <code class="code">null</code> 的值用来表明 allow 规则适用于所有的 resources。
+        </p>
+
+    </div>
+
+    <div class="section" id="zend.acl.introduction.querying" name="zend.acl.introduction.querying"><div class="info"><h1 class="title">查询 ACL</h1></div>
+        
+
+        <p class="para">
+           我们现在有一个灵活的 ACL 可以用来决定请求者在整个 web 应用里是否拥有执行功能的许可。用<code class="code">isAllowed()</code>方法来执行查询相当简单：
+        </p>
+
+        <div class="programlisting"><div class="cdata"><pre>
+echo $acl-&gt;isAllowed(&#039;guest&#039;, null, &#039;view&#039;) ?
+     &quot;allowed&quot; : &quot;denied&quot;;
+// allowed
+
+echo $acl-&gt;isAllowed(&#039;staff&#039;, null, &#039;publish&#039;) ?
+     &quot;allowed&quot; : &quot;denied&quot;;
+// denied
+
+echo $acl-&gt;isAllowed(&#039;staff&#039;, null, &#039;revise&#039;) ?
+     &quot;allowed&quot; : &quot;denied&quot;;
+// allowed
+
+echo $acl-&gt;isAllowed(&#039;editor&#039;, null, &#039;view&#039;) ?
+     &quot;allowed&quot; : &quot;denied&quot;;
+// allowed because of inheritance from guest
+
+echo $acl-&gt;isAllowed(&#039;editor&#039;, null, &#039;update&#039;) ?
+     &quot;allowed&quot; : &quot;denied&quot;;
+// denied because no allow rule for &#039;update&#039;
+
+echo $acl-&gt;isAllowed(&#039;administrator&#039;, null, &#039;view&#039;) ?
+     &quot;allowed&quot; : &quot;denied&quot;;
+// allowed because administrator is allowed all privileges
+
+echo $acl-&gt;isAllowed(&#039;administrator&#039;) ?
+     &quot;allowed&quot; : &quot;denied&quot;;
+// allowed because administrator is allowed all privileges
+
+echo $acl-&gt;isAllowed(&#039;administrator&#039;, null, &#039;update&#039;) ?
+     &quot;allowed&quot; : &quot;denied&quot;;
+// allowed because administrator is allowed all privileges
+
+        </pre></div></div>
+
+
+    </div>
+</div>
+        <hr />
+
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.acl.html">Zend_Acl</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.acl.html">Zend_Acl</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.acl.refining.html">精细的访问控制</a></div>
+                    </td>
+                </tr>
+            </table>
+</td>
+        <td style="font-size: smaller;" width="15%"> <style type="text/css">
+#leftbar {
+	float: left;
+	width: 186px;
+	padding: 5px;
+	font-size: smaller;
+}
+ul.toc {
+	margin: 0px 5px 5px 5px;
+	padding: 0px;
+}
+ul.toc li {
+	font-size: 85%;
+	margin: 1px 0 1px 1px;
+	padding: 1px 0 1px 11px;
+	list-style-type: none;
+	background-repeat: no-repeat;
+	background-position: center left;
+}
+ul.toc li.header {
+	font-size: 115%;
+	padding: 5px 0px 5px 11px;
+	border-bottom: 1px solid #cccccc;
+	margin-bottom: 5px;
+}
+ul.toc li.active {
+	font-weight: bold;
+}
+ul.toc li a {
+	text-decoration: none;
+}
+ul.toc li a:hover {
+	text-decoration: underline;
+}
+</style>
+ <ul class="toc">
+  <li class="header home"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="reference.html">Zend Framework Reference</a></li>
+  <li class="header up"><a href="zend.acl.html">Zend_Acl</a></li>
+  <li class="active"><a href="zend.acl.introduction.html">简介</a></li>
+  <li><a href="zend.acl.refining.html">精细的访问控制</a></li>
+  <li><a href="zend.acl.advanced.html">高级用法</a></li>
+ </ul>
+ </td>
+    </tr>
+</table>
+</body>
+</html>

@@ -1,0 +1,266 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <title>搜索索引 - Zend Framework Manual</title>
+
+</head>
+<body>
+<table width="100%">
+    <tr valign="top">
+        <td width="85%">
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.search.lucene.index-creation.html">建立索引</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.search.lucene.html">Zend_Search_Lucene</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.search.lucene.query-language.html">Query Language</a></div>
+                    </td>
+                </tr>
+            </table>
+<hr />
+<div id="zend.search.lucene.searching" class="section"><div class="info"><h1 class="title">搜索索引</h1></div>
+    
+
+    <div class="section" id="zend.search.lucene.searching.query-parser" name="zend.search.lucene.searching.query-parser"><div class="info"><h1 class="title">建立查询</h1></div>
+        
+
+        <p class="para">
+            有两种方式可以在索引中进行搜索。第一个方式是使用查询分析程序(Query Parser)来从字符串中创建查询。第二个方式通过 Zend_Search_Lucene API 提供了创建自己的查询的可能。
+        </p>
+
+        <p class="para">
+        在选择使用查询分析程序之前，请考虑下面问题：
+
+            <ol type="1">
+                <li class="listitem">
+                    <p class="para">
+                    如果你使用程序生成查询字串并传递给查询分析程序，那么你最好考虑直接使用查询 API 来建立查询。换句话说，查询分析程序是为人为输入的文本设计的，而不是为程序生成的文本准备的。
+                    </p>
+                </li>
+                <li class="listitem">
+                    <p class="para">
+                    非记号化字段最好直接加入查询中，而不是通过查询分析程序。如果一个字段的值是应用程序生成的，那么它应该按照这个条款进行查询。查询分析程序使用的机制，是设计来转换人为输入的文本的。像日期、关键词等等，都可以认为是程序生成的信息。
+                    </p>
+                </li>
+                <li class="listitem">
+                    <p class="para">
+                    在查询表单中，用于产生文本的字段应该是用查询分析程序。所有其它的诸如日期范围、关键词等，最好通过查询 API 直接加入查询中。一个具有一组取之范围的字段，可以通过下拉菜单来实现而不应该加入需要被分析的查询字串中，而不是增加一个查询项。
+                    </p>
+                </li>
+            </ol>
+
+        </p>
+
+        <p class="para">
+            两种途径都使用同样的 API 方法来搜索索引：
+
+        <div class="programlisting"><div class="cdata"><pre>&lt;?php
+
+require_once(&#039;Zend/Search/Lucene.php&#039;);
+
+$index = new Zend_Search_Lucene(&#039;/data/my_index&#039;);
+
+$index-&gt;find($query);
+
+?&gt;</pre></div></div>
+
+
+            方法 <code class="code">Zend_Search_Lucene::find()</code> 自动检查输入类型并使用查询分析程序从字符串建立适当的 Zend_Search_Lucene_Search_Query 对象。
+        </p>
+
+        <p class="para">
+            需要特别注意的是 <code class="code">find()</code> 是大小写敏感的。默认的，LuceneIndexCreation.jar
+            标准化所有文档为小写。可以通过命令行来关闭这个设置(输入不带参数的 LuceneIndexCreation.jar
+            命令来获取帮助)。提供给 <code class="code">find()</code> 的文本大小写必须和索引中的相匹配。如果索引被正常设置为全小写，那么提供给
+          <code class="code">find()</code> 的文本必须用 <code class="code">strtolower()</code>处理，否则它可能无法被匹配。
+        </p>
+    </div>
+
+    <div class="section" id="zend.search.lucene.searching.results" name="zend.search.lucene.searching.results"><div class="info"><h1 class="title">搜索结果</h1></div>
+        
+        <p class="para">
+            搜索结果是一个 Zend_Search_Lucene_Search_QueryHit 对象数组。每一个数组元素具有两个属性：
+          <code class="code">$hit-&gt;document</code> 是索引中的文档编号，<code class="code">$hit-&gt;score</code> 是其在搜索结果中的分值。搜索结果是按照分值排序的(最高分的搜索结果位于最前面)。
+        </p>
+
+        <p class="para">
+            Zend_Search_Lucene_Search_QueryHit 对象还能将 Zend_Search_Lucene_Document 中的各个字段作为属性陈列出来。在下面这个例子中，搜索结果相应的文档具有两个字段：title 和 author。
+
+        <div class="programlisting"><div class="cdata"><pre>&lt;?php
+
+require_once(&#039;Zend/Search/Lucene.php&#039;);
+
+$index = new Zend_Search_Lucene(&#039;/data/my_index&#039;);
+
+$hits = $index-&gt;find($query);
+
+foreach ($hits as $hit) {
+    echo $hit-&gt;id;
+    echo $hit-&gt;score;
+
+    echo $hit-&gt;title;
+    echo $hit-&gt;author;
+}
+
+?&gt;</pre></div></div>
+
+        </p>
+
+        <p class="para">
+        可选的，原始的 Zend_Search_Lucene_Document 对象可以从 Zend_Search_Lucene_Search_QueryHit 获得。你可以使用索引对象的 <code class="code">getDocument()</code>
+        方法来获取文档进行了索引的部分并接着使用
+        <code class="code">getFieldValue()</code> 方法。
+        <div class="programlisting"><div class="cdata"><pre>&lt;?php
+
+require_once(&#039;Zend/Search/Lucene.php&#039;);
+
+$index = new Zend_Search_Lucene(&#039;/data/my_index&#039;);
+
+$hits = $index-&gt;find($query);
+foreach ($hits as $hit) {
+    // return Zend_Search_Lucene_Document object for this hit
+    echo $document = $hit-&gt;getDocument();
+
+    // return a Zend_Search_Lucene_Field object
+    // from the Zend_Search_Lucene_Document
+    echo $document-&gt;getField(&#039;title&#039;);
+
+    // return the string value of the Zend_Search_Lucene_Field object
+    echo $document-&gt;getFieldValue(&#039;title&#039;);
+
+    // same as getFieldValue()
+    echo $document-&gt;title;
+}
+
+?&gt;</pre></div></div>
+
+
+        能够获取的 Zend_Search_Lucene_Document 对象的字段是在进行索引的时候决定的。由索引创建程序(例如：LuceneIndexCreation.jar)在文档中建立的文档字段要么是被索引的，要么是被索引并保存的。
+        </p>
+
+        <p class="para">
+        请注意，文档标识(在本例中是&#039;path&#039;)也保存在索引中，它必须被提取出来。
+        </p>
+
+    </div>
+
+
+    <div class="section" id="zend.search.lucene.searching.results-scoring" name="zend.search.lucene.searching.results-scoring"><div class="info"><h1 class="title">结果评分</h1></div>
+        
+        <p class="para">
+            Zend_Search_Lucene 使用和 Java Lucene 一样的评分算法。搜索结果是按照分值进行排序的。分值越大，相应的搜索结果点击排在排位越靠前。
+        </p>
+
+        <p class="para">
+            不同的分值意味着一篇文档相比另一篇更能匹配查询要求。
+        </p>
+
+        <p class="para">
+            粗略的说，包含更多的搜索项或短语的搜索结果，将会具有更高的分值。
+        </p>
+
+        <p class="para">
+            可以通过 score 属性获取一个搜索结果的分值：
+        <div class="programlisting"><div class="cdata"><pre>&lt;?php
+$hits = $index-&gt;find($query);
+
+foreach ($hits as $hit) {
+    echo $hit-&gt;id;
+    echo $hit-&gt;score;
+}
+
+?&gt;</pre></div></div>
+
+        </p>
+
+        <p class="para">
+            类 Zend_Search_Lucene_Search_Similarity 用于计算分值。请参阅<a href="zend.search.lucene.extending.html#zend.search.lucene.extending.scoring" class="link">“扩展性”中“评分算法”</a>一节了解详情。
+        </p>
+
+    </div>
+
+</div>
+        <hr />
+
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.search.lucene.index-creation.html">建立索引</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.search.lucene.html">Zend_Search_Lucene</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.search.lucene.query-language.html">Query Language</a></div>
+                    </td>
+                </tr>
+            </table>
+</td>
+        <td style="font-size: smaller;" width="15%"> <style type="text/css">
+#leftbar {
+	float: left;
+	width: 186px;
+	padding: 5px;
+	font-size: smaller;
+}
+ul.toc {
+	margin: 0px 5px 5px 5px;
+	padding: 0px;
+}
+ul.toc li {
+	font-size: 85%;
+	margin: 1px 0 1px 1px;
+	padding: 1px 0 1px 11px;
+	list-style-type: none;
+	background-repeat: no-repeat;
+	background-position: center left;
+}
+ul.toc li.header {
+	font-size: 115%;
+	padding: 5px 0px 5px 11px;
+	border-bottom: 1px solid #cccccc;
+	margin-bottom: 5px;
+}
+ul.toc li.active {
+	font-weight: bold;
+}
+ul.toc li a {
+	text-decoration: none;
+}
+ul.toc li a:hover {
+	text-decoration: underline;
+}
+</style>
+ <ul class="toc">
+  <li class="header home"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="reference.html">Zend Framework Reference</a></li>
+  <li class="header up"><a href="zend.search.lucene.html">Zend_Search_Lucene</a></li>
+  <li><a href="zend.search.lucene.overview.html">概述</a></li>
+  <li><a href="zend.search.lucene.index-creation.html">建立索引</a></li>
+  <li class="active"><a href="zend.search.lucene.searching.html">搜索索引</a></li>
+  <li><a href="zend.search.lucene.query-language.html">Query Language</a></li>
+  <li><a href="zend.search.lucene.queries.html">查询类型</a></li>
+  <li><a href="zend.search.lucene.charset.html">字符集</a></li>
+  <li><a href="zend.search.lucene.extending.html">扩展性</a></li>
+  <li><a href="zend.search.lucene.java-lucene.html">与 Java Lucene 的互操作性</a></li>
+  <li><a href="zend.search.lucene.advanced.html">Advanced</a></li>
+  <li><a href="zend.search.lucene.best-practice.html">Best Practices</a></li>
+ </ul>
+ </td>
+    </tr>
+</table>
+</body>
+</html>

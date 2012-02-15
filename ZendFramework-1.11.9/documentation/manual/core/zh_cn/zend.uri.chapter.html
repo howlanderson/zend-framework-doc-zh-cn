@@ -1,0 +1,299 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <title>Zend_Uri - Zend Framework Manual</title>
+
+</head>
+<body>
+<table width="100%">
+    <tr valign="top">
+        <td width="85%">
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.uri.html">Zend_Uri</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.uri.html">Zend_Uri</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.validate.html">Zend_Validate</a></div>
+                    </td>
+                </tr>
+            </table>
+<hr />
+<div id="zend.uri.chapter" class="section"><div class="info"><h1 class="title">Zend_Uri</h1></div>
+  
+
+  <div class="section" id="zend.uri.overview" name="zend.uri.overview"><div class="info"><h1 class="title">概述</h1></div>
+    
+
+    <p class="para">
+      <code class="code">Zend_Uri</code> 是一个辅助于操作和验证<a href="http://www.w3.org/Addressing/" class="link external">&raquo; 统一资源标识符</a> (URIs)的组件.
+      <code class="code">Zend_Uri</code> 的存在主要是为其他组件服务的,比如<code class="code">Zend_Http_Client</code>,但是作为一个独立的工具也是有用的.
+    </p>
+
+    <p class="para">
+      URIs 总是以一个schema(模式,协议)开始,后跟一个冒号(colon).<code class="code">Zend_Uri</code>类提供一个工厂,
+       返回一个它本身的 适应于每种模式(scheme)的 子类,子类被命名为<code class="code">Zend_Uri_&lt;scheme&gt;</code>,
+      <code class="code">&lt;scheme&gt;</code>是首字母大写的模式名称.一个例外是HTTPS,它也是由<code class="code">Zend_Uri_Http</code>处理的.
+    </p>
+  </div>
+
+  <div class="section" id="zend.uri.creation" name="zend.uri.creation"><div class="info"><h1 class="title">新建一个URI</h1></div>
+    
+
+    <p class="para">
+      如果仅有一个模式被传递给<code class="code">Zend_Uri::factory()</code>,<code class="code">Zend_Uri</code>将从头构造一个新的URI.
+    </p>
+
+    <div class="example"><div class="info"><p><b>Example #1 使用<code class="code">Zend_Uri::factory()</code>创建一个新的URI</b></p></div>
+      
+
+      <div class="programlisting"><div class="cdata"><pre>
+&lt;?php
+
+require_once &#039;Zend/Uri.php&#039;;
+
+// 重新创建一个新的URI,仅传递模式.
+$uri = Zend_Uri::factory(&#039;http&#039;);
+
+// $uri instanceof Zend_Uri_Http
+
+?&gt;</pre></div></div>
+
+    </div>
+
+    <p class="para">
+      从头创建一个的新的URI,仅仅需要传递模式给<code class="code">Zend_Uri::factory()</code><a href="#fnid1" name="fn1"><sup>[1]</sup></a> .
+      如果传递了一个未支持的模式,<code class="code">Zend_Uri_Exception</code>异常将被抛出.
+    </p>
+
+    <p class="para">
+      如果传递的模式或者URI被支持,<code class="code">Zend_Uri::factory()</code>返回一个它本身的 适应于特定模式(scheme)的 子类
+    </p>
+  </div>
+
+  <div class="section" id="zend.uri.manipulation" name="zend.uri.manipulation"><div class="info"><h1 class="title">操作现有的URI</h1></div>
+    
+
+    <p class="para">
+      要操作一个现有的URL,把整个URI传递给<code class="code">Zend_Uri::factory()</code>.
+    </p>
+
+    <div class="example"><div class="info"><p><b>Example #2 使用<code class="code">Zend_Uri::factory()</code>操作一个现有的URI</b></p></div>
+      
+
+    <div class="programlisting"><div class="cdata"><pre>
+&lt;?php
+
+require_once &#039;Zend/Uri.php&#039;;
+
+// 操作一个现有的URI,把他传入到Zend_Uri::factory().
+$uri = Zend_Uri::factory(&#039;http://www.zend.com&#039;);
+
+// $uri instanceof Zend_Uri_Http
+
+?&gt;</pre></div></div>
+
+    </div>
+
+    <p class="para">
+      这个URI将被解析并且验证.如果发现它是无效的,<code class="code">Zend_Uri_Exception</code>异常立即抛出.否则<code class="code">Zend_Uri::factory()</code>
+      返回一个它本身的 适应于特定模式(scheme)的 子类
+    </p>
+  </div>
+
+  <div class="section" id="zend.uri.validation" name="zend.uri.validation"><div class="info"><h1 class="title">URI 验证</h1></div>
+    
+
+    <p class="para">
+      <code class="code">Zend_Uri::check()</code> 函数仅在需要验证一个现有的URI时使用.
+    </p>
+
+    <div class="example"><div class="info"><p><b>Example #3 使用<code class="code">Zend_Uri::check()</code>进行URI 验证</b></p></div>
+      
+
+    <div class="programlisting"><div class="cdata"><pre>
+&lt;?php
+
+require_once &#039;Zend/Uri.php&#039;;
+
+// 验证一个给定的URI是否是格式良好的
+$valid = Zend_Uri::check(&#039;http://uri.in.question&#039;);
+
+// 对于一个有效的URI,$valid为TRUE,否则为FALSE
+
+?&gt;</pre></div></div>
+
+    </div>
+
+    <p class="para">
+      <code class="code">Zend_Uri::check()</code> 返回布尔值,它比使用<code class="code">Zend_Uri::factory()</code>更便捷,并且能够捕获异常.
+    </p>
+  </div>
+
+  <div class="section" id="zend.uri.instance-methods" name="zend.uri.instance-methods"><div class="info"><h1 class="title">公共实例方法</h1></div>
+    
+
+    <p class="para">
+      每个<code class="code">Zend_Uri</code>子类的实例(如:<code class="code">Zend_Uri_Http</code>)有多个 有用的 处理任何类型的 URI的实例方法.
+    </p>
+
+    <div class="section" id="zend.uri.instance-methods.getscheme" name="zend.uri.instance-methods.getscheme"><div class="info"><h1 class="title">取得URI的Schema</h1></div>
+      
+
+      <p class="para">
+      URI模式是冒号之前的部分.例如<code class="code">http://www.zend.com</code>的模式是<code class="code">http</code>.
+      </p>
+
+      <div class="example"><div class="info"><p><b>Example #4 从<code class="code">Zend_Uri_*</code> 对象取得模式</b></p></div>
+        
+
+        <div class="programlisting"><div class="cdata"><pre>
+&lt;?php
+
+require_once &#039;Zend/Uri.php&#039;;
+
+$uri = Zend_Uri::factory(&#039;http://www.zend.com&#039;);
+
+$scheme = $uri-&gt;getScheme();  // &quot;http&quot;
+
+?&gt;</pre></div></div>
+
+    </div>
+
+      <p class="para">
+        <code class="code">getScheme()</code>实例方法仅返回URI对象的模式部分.
+      </p>
+
+    </div>
+
+    <div class="section" id="zend.uri.instance-methods.geturi" name="zend.uri.instance-methods.geturi"><div class="info"><h1 class="title">取得整个URI</h1></div>
+      
+
+      <div class="example"><div class="info"><p><b>Example #5 从一个<code class="code">Zend_Uri_*</code> 对象取得整个URI</b></p></div>
+        
+
+        <div class="programlisting"><div class="cdata"><pre>
+&lt;?php
+
+require_once &#039;Zend/Uri.php&#039;;
+
+$uri = Zend_Uri::factory(&#039;http://www.zend.com&#039;);
+
+echo $uri-&gt;getUri();  // &quot;http://www.zend.com&quot;
+
+?&gt;</pre></div></div>
+
+      </div>
+
+      <p class="para">
+        <code class="code">getUri()</code>方法返回整个URI的字符串标识.
+      </p>
+    </div>
+
+    <div class="section" id="zend.uri.instance-methods.valid" name="zend.uri.instance-methods.valid"><div class="info"><h1 class="title">验证URI</h1></div>
+      
+
+      <p class="para">
+        <code class="code">Zend_Uri::factory()</code>总是验证传递给它的任何URI,如果给定的URI被认为是无效的,它将不会实例化一个新的<code class="code">Zend_Uri</code> 子类.但是
+        <code class="code">Zend_Uri</code>子类为 一个新URI 或者 一个现有的有效的URL 被实例化后,在操作后 该URI可能会变得无效.
+      </p>
+
+      <div class="example"><div class="info"><p><b>Example #6 验证一个 <code class="code">Zend_Uri_*</code> 对象</b></p></div>
+        
+
+        <div class="programlisting"><div class="cdata"><pre>
+&lt;?php
+
+require_once &#039;Zend/Uri.php&#039;;
+
+$uri = Zend_Uri::factory(&#039;http://www.zend.com&#039;);
+
+$isValid = $uri-&gt;valid();  // TRUE
+
+?&gt;</pre></div></div>
+
+      </div>
+
+      <p class="para">
+        <code class="code">valid()</code>实例方法检查URI对象是否仍是有效的.
+      </p>
+    </div>
+
+  </div>
+<div class="footnote"><a name="fnid1" href="#fn1"><sup>[1]</sup></a><span class="para footnote">
+      在撰写本文时,Zend_Uri仅支持HTTP和HTTPS模式.</span></div>
+</div>
+        <hr />
+
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.uri.html">Zend_Uri</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.uri.html">Zend_Uri</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.validate.html">Zend_Validate</a></div>
+                    </td>
+                </tr>
+            </table>
+</td>
+        <td style="font-size: smaller;" width="15%"> <style type="text/css">
+#leftbar {
+	float: left;
+	width: 186px;
+	padding: 5px;
+	font-size: smaller;
+}
+ul.toc {
+	margin: 0px 5px 5px 5px;
+	padding: 0px;
+}
+ul.toc li {
+	font-size: 85%;
+	margin: 1px 0 1px 1px;
+	padding: 1px 0 1px 11px;
+	list-style-type: none;
+	background-repeat: no-repeat;
+	background-position: center left;
+}
+ul.toc li.header {
+	font-size: 115%;
+	padding: 5px 0px 5px 11px;
+	border-bottom: 1px solid #cccccc;
+	margin-bottom: 5px;
+}
+ul.toc li.active {
+	font-weight: bold;
+}
+ul.toc li a {
+	text-decoration: none;
+}
+ul.toc li a:hover {
+	text-decoration: underline;
+}
+</style>
+ <ul class="toc">
+  <li class="header home"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="reference.html">Zend Framework Reference</a></li>
+  <li class="header up"><a href="zend.uri.html">Zend_Uri</a></li>
+  <li class="active"><a href="zend.uri.chapter.html">Zend_Uri</a></li>
+ </ul>
+ </td>
+    </tr>
+</table>
+</body>
+</html>

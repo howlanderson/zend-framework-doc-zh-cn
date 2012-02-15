@@ -1,0 +1,536 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <title>视图脚本 - Zend Framework Manual</title>
+
+</head>
+<body>
+<table width="100%">
+    <tr valign="top">
+        <td width="85%">
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.view.controllers.html">控制器脚本</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.view.html">Zend_View</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.view.helpers.html">视图助手（View Helper）</a></div>
+                    </td>
+                </tr>
+            </table>
+<hr />
+<div id="zend.view.scripts" class="section"><div class="info"><h1 class="title">视图脚本</h1></div>
+
+    
+
+    <p class="para">
+        Controller完成变量赋值和调用render()之后，Zend_View就会调用视图脚本并在Zend_View的实例内部执行。因此，在你的视图脚本内，$this指向Zend_View的实例。
+    </p>
+
+    <p class="para">
+        从控制器传递到视图的变量以Zend_View实例属性的形式来调用。例如，控制器有一个变量&quot;something&quot; ，那么视图代码中就要用$this-&gt;something来调用。这样的作法可以让你分清哪些是来自Zend_View实例的变量，哪些是视图自身的变量。
+    </p>
+
+    <p class="para">
+        为了说明，这里有一个例子：
+    </p>
+
+    <div class="programlisting"><div class="cdata"><pre>&lt;?php if ($this-&gt;books): ?&gt;
+
+    &lt;!-- A table of some books. --&gt;
+    &lt;table&gt;
+        &lt;tr&gt;
+            &lt;th&gt;Author&lt;/th&gt;
+            &lt;th&gt;Title&lt;/th&gt;
+        &lt;/tr&gt;
+
+        &lt;?php foreach ($this-&gt;books as $key =&gt; $val): ?&gt;
+        &lt;tr&gt;
+            &lt;td&gt;&lt;?php echo $this-&gt;escape($val[&#039;author&#039;]) ?&gt;&lt;/td&gt;
+            &lt;td&gt;&lt;?php echo $this-&gt;escape($val[&#039;title&#039;]) ?&gt;&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;?php endforeach; ?&gt;
+
+    &lt;/table&gt;
+
+&lt;?php else: ?&gt;
+
+    &lt;p&gt;There are no books to display.&lt;/p&gt;
+
+&lt;?php endif; 
+    </pre></div></div>
+
+
+    <div class="section" id="zend.view.scripts.escaping" name="zend.view.scripts.escaping"><div class="info"><h1 class="title">转义输出（Escaping Output）</h1></div>
+
+        
+
+        <p class="para">
+            View脚本的最重要的工作之一是保证输出的内容是合适的，比如需要避免跨站攻击漏洞(XSS)。除非你已经使用一个函数、类方法或助手类（helper）来转义内容，你需要在输出时对变量进行转义。
+        </p>
+
+        <p class="para">
+            Zend_View带有一个escape()方法来提供这个功能：
+        </p>
+
+        <div class="programlisting"><div class="cdata"><pre>&lt;?php
+// 不好的做法：
+echo $this-&gt;variable;
+
+// 好的做法：
+echo $this-&gt;escape($this-&gt;variable);
+
+        </pre></div></div>
+
+
+        <p class="para">
+            默认地，escape()方法使用PHP函数htmlspecialchars()来过滤，但你也可以通过setEscape()方法来在Controller内告诉Zend_View需要怎么过滤。
+        </p>
+
+        <div class="programlisting"><div class="cdata"><pre>&lt;?php
+//创建一个Zend_View实例
+$view = new Zend_View();
+
+//设定要使用的转义回调函数(callback)
+$view-&gt;setEscape(&#039;htmlentities&#039;);
+
+//或者使用一个静态类方法作为回调函数
+$view-&gt;setEscape(array(&#039;SomeClass&#039;, &#039;methodName&#039;));
+
+//或者是一个对象实例的类方法
+$obj = new SomeClass();
+$view-&gt;setEscape(array($obj, &#039;methodName&#039;));
+
+//最后输出你的视图
+echo $view-&gt;render(...);
+
+        </pre></div></div>
+
+
+        <p class="para">
+
+            设定的转义函数会将需要转义的变量作为其第一个参数，其它参数是可选的。
+        </p>
+
+    </div>
+
+    <div class="section" id="zend.view.scripts.templates" name="zend.view.scripts.templates"><div class="info"><h1 class="title">使用模板系统</h1></div>
+        
+
+        <p class="para">
+            尽管许多开发者觉得PHP本身就是一个强大的模板系统，但对模板设计师来说，使用PHP标签过于复杂。Zend_View提供了两套机制来同时满足这两种要求，一种是直接通过通过视图脚本，另一种是实现Zend_View_Interface接口。
+        </p>
+
+        <div class="section" id="zend.view.scripts.templates.scripts" name="zend.view.scripts.templates.scripts"><div class="info"><h1 class="title">使用View脚本的模板系统</h1></div>
+            
+
+            <p class="para">
+                              View脚本可能要被用来初始化和操作一个其它模板对象的实例，例如PHPLIB风格的模板。这时View脚本可能是这样的：
+            </p>
+
+            <div class="programlisting"><div class="cdata"><pre>&lt;?php
+include_once &#039;template.inc&#039;;
+$tpl = new Template();
+
+if ($this-&gt;books) {
+    $tpl-&gt;setFile(array(
+        &quot;booklist&quot; =&gt; &quot;booklist.tpl&quot;,
+        &quot;eachbook&quot; =&gt; &quot;eachbook.tpl&quot;,
+    ));
+
+    foreach ($this-&gt;books as $key =&gt; $val) {
+        $tpl-&gt;set_var(&#039;author&#039;, $this-&gt;escape($val[&#039;author&#039;]);
+        $tpl-&gt;set_var(&#039;title&#039;, $this-&gt;escape($val[&#039;title&#039;]);
+        $tpl-&gt;parse(&quot;books&quot;, &quot;eachbook&quot;, true);
+    }
+
+    $tpl-&gt;pparse(&quot;output&quot;, &quot;booklist&quot;);
+} else {
+    $tpl-&gt;setFile(&quot;nobooks&quot;, &quot;nobooks.tpl&quot;)
+    $tpl-&gt;pparse(&quot;output&quot;, &quot;nobooks&quot;);
+}
+</pre></div></div>
+
+
+            <p class="para">
+                下面是相关的模板文件：
+            </p>
+
+            <div class="programlisting"><div class="cdata"><pre>
+&lt;!-- booklist.tpl --&gt;
+&lt;table&gt;
+    &lt;tr&gt;
+        &lt;th&gt;Author&lt;/th&gt;
+        &lt;th&gt;Title&lt;/th&gt;
+    &lt;/tr&gt;
+    {books}
+&lt;/table&gt;
+
+&lt;!-- eachbook.tpl --&gt;
+    &lt;tr&gt;
+        &lt;td&gt;{author}&lt;/td&gt;
+        &lt;td&gt;{title}&lt;/td&gt;
+    &lt;/tr&gt;
+
+&lt;!-- nobooks.tpl --&gt;
+&lt;p&gt;There are no books to display.&lt;/p&gt;&gt;
+           </pre></div></div>
+
+
+        </div>
+
+        <div class="section" id="zend.view.scripts.templates.interface" name="zend.view.scripts.templates.interface"><div class="info"><h1 class="title">通过Zend_View_Interface接口使用模板系统</h1></div>
+            
+
+            <p class="para">
+
+                实现一个与Zend_View兼容的模板系统是很简单的。你只需要实现<code class="code">Zend_View_Interface</code>接口即可，该接口定义了要实现兼容的最低要求。
+            </p>
+
+            <div class="programlisting"><div class="cdata"><pre>
+/**
+ * Return the actual template engine object
+ * 返回实际模板系统的对象
+ */
+public function getEngine();
+
+/**
+ * Set the path to view scripts/templates
+ * 设置视图脚本/模板的路径
+ */
+public function setScriptPath($path);
+
+/**
+ * Set a base path to all view resources
+ * 给所有视图资源设置基本路径
+ */
+public function setBasePath($path, $prefix = &#039;Zend_View&#039;);
+
+/**
+ * Add an additional base path to view resources
+ * 给视图资源添加另外的基本路径
+ */
+public function addBasePath($path, $prefix = &#039;Zend_View&#039;);
+
+/**
+ * Retrieve the current script paths
+ * 获取当前脚本路径
+ */
+public function getScriptPaths();
+
+/**
+ * Overloading methods for assigning template variables as object properties
+ * 重载方法，用于将赋值给模板变量，以对象属性的形式
+ */
+public function __set($key, $value);
+public function __get($key);
+public function __isset($key);
+public function __unset($key);
+
+/**
+ * Manual assignment of template variables, or ability to assign multiple
+ * variables en masse.
+ * 手动设置模板变量，或者一次赋值多个变量的功能
+ */
+public function assign($spec, $value = null);
+
+/**
+ * Unset all assigned template variables
+ * 消除所有已赋值的变量
+ */
+public function clearVars();
+
+/**
+ * Render the template named $name
+ * 输出参数$name指定的某个模板
+ */
+public function render($name);
+            </pre></div></div>
+
+
+            <p class="para">
+               使用这个接口，把第三方的模板系统封装成Zend_View兼容的类是相当容易的。例如，下面是封装Smarty的示例代码：
+            </p>
+
+            <div class="programlisting"><div class="cdata"><pre>
+require_once &#039;Zend/View/Interface.php&#039;;
+require_once &#039;Smarty.class.php&#039;;
+
+class Zend_View_Smarty implements Zend_View_Interface
+{
+    /**
+     * Smarty object
+     * @var Smarty
+     */
+    protected $_smarty;
+
+    /**
+     * Constructor
+     *
+     * @param string $tmplPath
+     * @param array $extraParams
+     * @return void
+     */
+    public function __construct($tmplPath = null, $extraParams = array())
+    {
+        $this-&gt;_smarty = new Smarty;
+
+        if (null !== $tmplPath) {
+            $this-&gt;setScriptPath($tmplPath);
+        }
+
+        foreach ($extraParams as $key =&gt; $value) {
+            $this-&gt;_smarty-&gt;$key = $value;
+        }
+    }
+
+    /**
+     * Return the template engine object
+     *
+     * @return Smarty
+     */
+    public function getEngine()
+    {
+        return $this-&gt;_smarty;
+    }
+
+    /**
+     * Set the path to the templates
+     *
+     * @param string $path The directory to set as the path.
+     * @return void
+     */
+    public function setScriptPath($path)
+    {
+        if (is_readable($path)) {
+            $this-&gt;_smarty-&gt;template_dir = $path;
+            return;
+        }
+
+        throw new Exception(&#039;Invalid path provided&#039;);
+    }
+
+    /**
+     * Retrieve the current template directory
+     *
+     * @return string
+     */
+    public function getScriptPaths()
+    {
+        return array($this-&gt;_smarty-&gt;template_dir);
+    }
+
+    /**
+     * Alias for setScriptPath
+     *
+     * @param string $path
+     * @param string $prefix Unused
+     * @return void
+     */
+    public function setBasePath($path, $prefix = &#039;Zend_View&#039;)
+    {
+        return $this-&gt;setScriptPath($path);
+    }
+
+    /**
+     * Alias for setScriptPath
+     *
+     * @param string $path
+     * @param string $prefix Unused
+     * @return void
+     */
+    public function addBasePath($path, $prefix = &#039;Zend_View&#039;)
+    {
+        return $this-&gt;setScriptPath($path);
+    }
+
+    /**
+     * Assign a variable to the template
+     *
+     * @param string $key The variable name.
+     * @param mixed $val The variable value.
+     * @return void
+     */
+    public function __set($key, $val)
+    {
+        $this-&gt;_smarty-&gt;assign($key, $val);
+    }
+
+    /**
+     * Retrieve an assigned variable
+     *
+     * @param string $key The variable name.
+     * @return mixed The variable value.
+     */
+    public function __get($key)
+    {
+        return $this-&gt;_smarty-&gt;get_template_vars($key);
+    }
+
+    /**
+     * Allows testing with empty() and isset() to work
+     *
+     * @param string $key
+     * @return boolean
+     */
+    public function __isset($key)
+    {
+         return (null !== $this-&gt;_smarty-&gt;get_template_vars($key));
+    }
+
+    /**
+     * Allows unset() on object properties to work
+     *
+     * @param string $key
+     * @return void
+     */
+    public function __unset($key)
+    {
+        $this-&gt;_smarty-&gt;clear_assign($key);
+    }
+
+    /**
+     * Assign variables to the template
+     *
+     * Allows setting a specific key to the specified value, OR passing an array
+     * of key =&gt; value pairs to set en masse.
+     *
+     * @see __set()
+     * @param string|array $spec The assignment strategy to use (key or array of key
+     * =&gt; value pairs)
+     * @param mixed $value (Optional) If assigning a named variable, use this
+     * as the value.
+     * @return void
+     */
+    public function assign($spec, $value = null)
+    {
+        if (is_array($spec)) {
+            $this-&gt;_smarty-&gt;assign($spec);
+            return;
+        }
+
+        $this-&gt;_smarty-&gt;assign($spec, $value);
+    }
+
+    /**
+     * Clear all assigned variables
+     *
+     * Clears all variables assigned to Zend_View either via {@link assign()} or
+     * property overloading ({@link __get()}/{@link __set()}).
+     *
+     * @return void
+     */
+    public function clearVars()
+    {
+        $this-&gt;_smarty-&gt;clear_all_assign();
+    }
+
+    /**
+     * Processes a template and returns the output.
+     *
+     * @param string $name The template to process.
+     * @return string The output.
+     */
+    public function render($name)
+    {
+        return $this-&gt;_smarty-&gt;fetch($name);
+    }
+}
+            </pre></div></div>
+
+
+            <p class="para">
+                在这个示例中，实例化<code class="code">Zend_View_Smarty</code>而不是<code class="code">Zend_View</code>，然后就像使用 <code class="code">Zend_View</code>一样地使用它。
+            </p>
+
+            <div class="programlisting"><div class="cdata"><pre>
+$view = new Zend_View_Smarty();
+$view-&gt;setScriptPath(&#039;/path/to/templates&#039;);
+$view-&gt;book = &#039;Zend PHP 5 Certification Study Guide&#039;;
+$view-&gt;author = &#039;Davey Shafik and Ben Ramsey&#039;
+$rendered = $view-&gt;render(&#039;bookinfo.tpl&#039;);
+            </pre></div></div>
+
+
+        </div>
+    </div>
+
+</div>
+        <hr />
+
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.view.controllers.html">控制器脚本</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.view.html">Zend_View</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.view.helpers.html">视图助手（View Helper）</a></div>
+                    </td>
+                </tr>
+            </table>
+</td>
+        <td style="font-size: smaller;" width="15%"> <style type="text/css">
+#leftbar {
+	float: left;
+	width: 186px;
+	padding: 5px;
+	font-size: smaller;
+}
+ul.toc {
+	margin: 0px 5px 5px 5px;
+	padding: 0px;
+}
+ul.toc li {
+	font-size: 85%;
+	margin: 1px 0 1px 1px;
+	padding: 1px 0 1px 11px;
+	list-style-type: none;
+	background-repeat: no-repeat;
+	background-position: center left;
+}
+ul.toc li.header {
+	font-size: 115%;
+	padding: 5px 0px 5px 11px;
+	border-bottom: 1px solid #cccccc;
+	margin-bottom: 5px;
+}
+ul.toc li.active {
+	font-weight: bold;
+}
+ul.toc li a {
+	text-decoration: none;
+}
+ul.toc li a:hover {
+	text-decoration: underline;
+}
+</style>
+ <ul class="toc">
+  <li class="header home"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="reference.html">Zend Framework Reference</a></li>
+  <li class="header up"><a href="zend.view.html">Zend_View</a></li>
+  <li><a href="zend.view.introduction.html">简介</a></li>
+  <li><a href="zend.view.controllers.html">控制器脚本</a></li>
+  <li class="active"><a href="zend.view.scripts.html">视图脚本</a></li>
+  <li><a href="zend.view.helpers.html">视图助手（View Helper）</a></li>
+  <li><a href="zend.view.abstract.html">Zend_View_Abstract</a></li>
+ </ul>
+ </td>
+    </tr>
+</table>
+</body>
+</html>

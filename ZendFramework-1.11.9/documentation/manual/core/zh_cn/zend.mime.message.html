@@ -1,0 +1,158 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <title>Zend_Mime_Message - Zend Framework Manual</title>
+
+</head>
+<body>
+<table width="100%">
+    <tr valign="top">
+        <td width="85%">
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.mime.mime.html">Zend_Mime</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.mime.html">Zend_Mime</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.mime.part.html">Zend_Mime_Part</a></div>
+                    </td>
+                </tr>
+            </table>
+<hr />
+<div id="zend.mime.message" class="section"><div class="info"><h1 class="title">Zend_Mime_Message</h1></div>
+    
+
+    <div class="section" id="zend.mime.message.introduction" name="zend.mime.message.introduction"><div class="info"><h1 class="title">简介</h1></div>
+      
+
+      <p class="para"><code class="code">Zend_Mime_Message</code>表示一个包含一个或多个段（段以<a href="zend.mime.part.html" class="link"><code class="code">Zend_Mime_Part</code></a>对象表示）的符合MIME标准的消息。
+      在<code class="code">Zend_Mime_Message</code>中，符合MIME标准的多段消息由<code class="code">Zend_Mime_Part</code>对象产生。
+      编码和分段也是在Zend_Mime_Message中被处理。<code class="code">Zend_Mime_Message</code>对象也可从给定的字符串中重构出来（实验性的）。
+      Zend_Mime_Message也被<a href="zend.mail.html" class="link"><code class="code">Zend_Mail</code></a>使用（译注：Zend_Mail继承了Zend_Mime_Message）。
+      </p>
+    </div>
+
+    <div class="section" id="zend.mime.message.instantiation" name="zend.mime.message.instantiation"><div class="info"><h1 class="title">实例化</h1></div>
+        
+        <p class="para">
+            <code class="code">Zend_Mime_Message</code>没有构造函数。
+        </p>
+    </div>
+
+    <div class="section" id="zend.mime.message.addparts" name="zend.mime.message.addparts"><div class="info"><h1 class="title">增加MIME消息段</h1></div>
+        
+
+        <p class="para">
+            <code class="code">Zend_Mime_Message</code>对象通过调用<code class="code">addPart($part)</code>方法，
+            可以添加<a href="zend.mime.part.html" class="link"><code class="code">Zend_Mime_Part</code></a>对象。
+        </p>
+     <p class="para">
+         调用<code class="code">Zend_Mime_Message</code>对象的<code class="code">getParts()</code>方法，
+         返回<a href="zend.mime.part.html" class="link"><code class="code">Zend_Mime_Part</code></a> 对象数组。
+        Zend_Mime_Part对象可以被更改，因为他们以引用的方式存储在Zend_Mime_Message对象的数组中。
+         如果数组中有新的段加入或者改变了段的顺序，该数组需通过调用<code class="code">setParts($partsArray)</code>方法，反馈到<code class="code">Zend_Mime_Message</code>中去。
+        </p>
+
+        <p class="para">
+          当<code class="code">Zend_Mime_Message</code>中存在多个段，方法<code class="code">isMultiPart()</code>将返回TRUE。
+         <code class="code">Zend_Mime_Message</code>在产生实际输出产生多段的MIME消息。
+     </p>
+    </div>
+
+    <div class="section" id="zend.mime.message.bondary" name="zend.mime.message.bondary"><div class="info"><h1 class="title">分界线处理</h1></div>
+        
+        <p class="para">
+          <code class="code">Zend_Mime_Message</code>通常创建和使用自身的<code class="code">Zend_Mime</code>对象来产生MINE分界线。
+          如果你想自己定义分界线或想更改<code class="code">Zend_Mime_Message</code>自身的<code class="code">Zend_Mime</code>对象的缺省的行为，
+          你可以自己实例化<code class="code">Zend_Mime</code>对象，然后通过<code class="code">setMime(Zend_Mime $mime)</code>方法注册到<code class="code">Zend_Mime_Message</code>对象中去，通常你不需要这么做。
+     </p>
+        <p class="para"><code class="code">-&gt;getMime()</code>方法，返回<code class="code">Zend_Mime</code>实例，当<code class="code">generateMessage()</code>被调用时<code class="code">Zend_Mime</code>实例用来渲染MIME消息。</p>
+        <p class="para"><code class="code">-&gt;generateMessage()</code>方法，渲染<code class="code">Zend_Mime_Message</code>的内容为字符串。</p>
+   </div>
+
+    <div class="section" id="zend.mime.message.parse" name="zend.mime.message.parse"><div class="info"><h1 class="title">解析字符串，创建Zend_Mime_Message对象（实验性的）</h1></div>
+        
+
+        <p class="para">给定一个字符串形式的符合MIME标准的消息，可以重构出<code class="code">Zend_Mime_Message</code>对象。
+        <code class="code">Zend_Mime_Message</code>有一个静态的工厂方法，解析字符串，返回<code class="code">Zend_Mime_Message</code>对象。</p>
+
+        <p class="para"><code class="code">Zend_Mime_Message::createFromMessage($str, $boundary)</code>将给定的字符串解码，
+            返回<code class="code">Zend_Mime_Message</code>对象，可以用<code class="code">getParts()</code>方法来检验一下。</p>
+    </div>
+</div>
+        <hr />
+
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.mime.mime.html">Zend_Mime</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.mime.html">Zend_Mime</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.mime.part.html">Zend_Mime_Part</a></div>
+                    </td>
+                </tr>
+            </table>
+</td>
+        <td style="font-size: smaller;" width="15%"> <style type="text/css">
+#leftbar {
+	float: left;
+	width: 186px;
+	padding: 5px;
+	font-size: smaller;
+}
+ul.toc {
+	margin: 0px 5px 5px 5px;
+	padding: 0px;
+}
+ul.toc li {
+	font-size: 85%;
+	margin: 1px 0 1px 1px;
+	padding: 1px 0 1px 11px;
+	list-style-type: none;
+	background-repeat: no-repeat;
+	background-position: center left;
+}
+ul.toc li.header {
+	font-size: 115%;
+	padding: 5px 0px 5px 11px;
+	border-bottom: 1px solid #cccccc;
+	margin-bottom: 5px;
+}
+ul.toc li.active {
+	font-weight: bold;
+}
+ul.toc li a {
+	text-decoration: none;
+}
+ul.toc li a:hover {
+	text-decoration: underline;
+}
+</style>
+ <ul class="toc">
+  <li class="header home"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="reference.html">Zend Framework Reference</a></li>
+  <li class="header up"><a href="zend.mime.html">Zend_Mime</a></li>
+  <li><a href="zend.mime.mime.html">Zend_Mime</a></li>
+  <li class="active"><a href="zend.mime.message.html">Zend_Mime_Message</a></li>
+  <li><a href="zend.mime.part.html">Zend_Mime_Part</a></li>
+ </ul>
+ </td>
+    </tr>
+</table>
+</body>
+</html>

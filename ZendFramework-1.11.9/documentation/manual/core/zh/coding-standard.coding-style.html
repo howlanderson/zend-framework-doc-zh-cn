@@ -1,0 +1,600 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <title>编码风格 - Zend Framework Manual</title>
+
+</head>
+<body>
+<table width="100%">
+    <tr valign="top">
+        <td width="85%">
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="coding-standard.naming-conventions.html">命名约定</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="coding-standard.html">Zend Framework 的 PHP 编码标准</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="doc-standard.html">Zend Framework Documentation Standard</a></div>
+                    </td>
+                </tr>
+            </table>
+<hr />
+<div id="coding-standard.coding-style" class="section"><div class="info"><h1 class="title"> 编码风格 </h1></div>
+        
+
+        <div class="section" id="coding-standard.coding-style.php-code-demarcation" name="coding-standard.coding-style.php-code-demarcation"><div class="info"><h1 class="title">PHP 代码划分（Demarcation）</h1></div>
+            
+
+            <p class="para">
+                PHP 代码总是用完整的标准的 PHP 标签定界：
+
+                <div class="programlisting"><div class="cdata"><pre>&lt;?php
+
+?&gt;</pre></div></div>
+
+            </p>
+
+            <p class="para">
+                短标签（ ）是不允许的，只包含 PHP 代码的文件，不要结束标签 （参见 <a href="coding-standard.php-file-formatting.html#coding-standard.php-file-formatting.general" class="xref">常规</a>）。
+            </p>
+        </div>
+
+        <div class="section" id="coding-standard.coding-style.strings" name="coding-standard.coding-style.strings"><div class="info"><h1 class="title"> 字符串 </h1></div>
+            
+
+            <div class="section" id="coding-standard.coding-style.strings.literals" name="coding-standard.coding-style.strings.literals"><div class="info"><h1 class="title"> 字符串文字 </h1></div>
+                
+
+                <p class="para">
+                    当字符串是文字(不包含变量)，应当用单引号（ apostrophe ）来括起来：
+
+                    <div class="programlisting"><div class="cdata"><pre>
+$a = &#039;Example String&#039;;
+                    </pre></div></div>
+
+                </p>
+            </div>
+
+            <div class="section" id="coding-standard.coding-style.strings.literals-containing-apostrophes" name="coding-standard.coding-style.strings.literals-containing-apostrophes"><div class="info"><h1 class="title"> 包含单引号（&#039;）的字符串文字 </h1></div>
+                
+
+                <p class="para">
+                    当文字字符串包含单引号（apostrophe ）就用双引号括起来，特别在 SQL 语句中有用：
+
+                    <div class="programlisting"><div class="cdata"><pre>
+$sql = &quot;SELECT `id`, `name` from `people` WHERE `name`=&#039;Fred&#039; OR `name`=&#039;Susan&#039;&quot;;
+                    </pre></div></div>
+
+
+                    在转义单引号时，上述语法是首选的，因为很容易阅读。
+                </p>
+            </div>
+
+            <div class="section" id="coding-standard.coding-style.strings.variable-substitution" name="coding-standard.coding-style.strings.variable-substitution"><div class="info"><h1 class="title"> 变量替换 </h1></div>
+                
+
+                <p class="para">
+                    变量替换有下面这些形式：
+
+                    <div class="programlisting"><div class="cdata"><pre>
+$greeting = &quot;Hello $name, welcome back!&quot;;
+
+$greeting = &quot;Hello {$name}, welcome back!&quot;;
+                    </pre></div></div>
+
+                </p>
+
+                <p class="para">
+                    为保持一致，这个形式不允许：
+
+                    <div class="programlisting"><div class="cdata"><pre>
+$greeting = &quot;Hello ${name}, welcome back!&quot;;
+                    </pre></div></div>
+
+                </p>
+            </div>
+
+            <div class="section" id="coding-standard.coding-style.strings.string-concatenation" name="coding-standard.coding-style.strings.string-concatenation"><div class="info"><h1 class="title"> 字符串连接 </h1></div>
+                
+
+                <p class="para">
+                    字符串必需用 &quot;.&quot; 操作符连接，在它的前后加上空格以提高可读性：
+
+                    <div class="programlisting"><div class="cdata"><pre>
+$company = &#039;Zend&#039; . &#039; &#039; . &#039;Technologies&#039;;
+                    </pre></div></div>
+
+                </p>
+
+                <p class="para">
+                    当用 &quot;.&quot; 操作符连接字符串，鼓励把代码可以分成多个行，也是为提高可读性。在这些例子中，每个连续的行应当由 whitespace 来填补，例如 &quot;.&quot; 和 &quot;=&quot; 对齐：
+
+                    <div class="programlisting"><div class="cdata"><pre>
+$sql = &quot;SELECT `id`, `name` FROM `people` &quot;
+     . &quot;WHERE `name` = &#039;Susan&#039; &quot;
+     . &quot;ORDER BY `name` ASC &quot;;
+                    </pre></div></div>
+
+                </p>
+            </div>
+        </div>
+
+        <div class="section" id="coding-standard.coding-style.arrays" name="coding-standard.coding-style.arrays"><div class="info"><h1 class="title"> 数组 </h1></div>
+            
+
+            <div class="section" id="coding-standard.coding-style.arrays.numerically-indexed" name="coding-standard.coding-style.arrays.numerically-indexed"><div class="info"><h1 class="title"> 数字索引数组 </h1></div>
+                
+
+                <p class="para"> 索引不能为负数 </p>
+
+                <p class="para">
+                    建议数组索引从 0 开始。
+                </p>
+
+                <p class="para">
+                    当用 <code class="code">array</code> 函数声明有索引的数组，在每个逗号的后面间隔空格以提高可读性：
+
+                    <div class="programlisting"><div class="cdata"><pre>
+$sampleArray = array(1, 2, 3, &#039;Zend&#039;, &#039;Studio&#039;);
+                    </pre></div></div>
+
+                </p>
+
+                <p class="para">
+                    可以用 &quot;array&quot; 声明多行有索引的数组，在每个连续行的开头要用空格填补对齐：
+
+                    <div class="programlisting"><div class="cdata"><pre>
+$sampleArray = array(1, 2, 3, &#039;Zend&#039;, &#039;Studio&#039;,
+                     $a, $b, $c,
+                     56.44, $d, 500);
+                    </pre></div></div>
+
+                </p>
+            </div>
+
+            <div class="section" id="coding-standard.coding-style.arrays.associative" name="coding-standard.coding-style.arrays.associative"><div class="info"><h1 class="title"> 关联数组 </h1></div>
+                
+
+                <p class="para">
+                    当用声明关联数组，<code class="code">array</code> 我们鼓励把代码分成多行，在每个连续行的开头用空格填补来对齐键和值：
+
+                    <div class="programlisting"><div class="cdata"><pre>
+$sampleArray = array(&#039;firstKey&#039;  =&gt; &#039;firstValue&#039;,
+                     &#039;secondKey&#039; =&gt; &#039;secondValue&#039;);
+                    </pre></div></div>
+
+                </p>
+            </div>
+        </div>
+
+        <div class="section" id="coding-standard.coding-style.classes" name="coding-standard.coding-style.classes"><div class="info"><h1 class="title"> 类 </h1></div>
+            
+
+            <div class="section" id="coding-standard.coding-style.classes.declaration" name="coding-standard.coding-style.classes.declaration"><div class="info"><h1 class="title"> 类的声明 </h1></div>
+                
+
+                <p class="para">
+                    用 Zend Framework 的命名约定来命名类。
+                </p><p class="para">
+                    花括号应当从类名下一行开始(the &quot;one true brace&quot; form)。
+                </p><p class="para">
+                    每个类必须有一个符合 PHPDocumentor 标准的文档块。
+                </p><p class="para">
+                    类中所有代码必需用四个空格的缩进。
+                </p><p class="para">
+                    每个 PHP 文件中只有一个类。
+                </p><p class="para">
+                    放另外的代码到类里允许但不鼓励。在这样的文件中，用两行空格来分隔类和其它代码。
+                </p><p class="para">
+                    下面是个可接受的类的例子：
+// 459 9506 － 441 9658 下次从这里开始
+                    <div class="programlisting"><div class="cdata"><pre>
+/**
+ * Documentation Block Here
+ */
+class SampleClass
+{
+    // 类的所有内容
+    // 必需缩进四个空格
+}
+                    </pre></div></div>
+
+                </p>
+            </div>
+
+            <div class="section" id="coding-standard.coding-style.classes.member-variables" name="coding-standard.coding-style.classes.member-variables"><div class="info"><h1 class="title"> 类成员变量 </h1></div>
+                
+
+                <p class="para">
+                    必须用Zend Framework的变量名约定来命名类成员变量。
+                </p><p class="para">
+                    变量的声明必须在类的顶部，在方法的上方声明。
+                </p><p class="para">
+                    不允许使用 <code class="code">var</code> （因为 ZF 是基于 PHP 5 的 ），要用 <code class="code">private</code>、 <code class="code">protected</code> 或  <code class="code">public</code>。
+                    直接访问 public 变量是允许的但不鼓励，最好使用访问器 （set/get）。
+                </p>
+            </div>
+        </div>
+
+        <div class="section" id="coding-standard.coding-style.functions-and-methods" name="coding-standard.coding-style.functions-and-methods"><div class="info"><h1 class="title"> 函数和方法 </h1></div>
+            
+
+            <div class="section" id="coding-standard.coding-style.functions-and-methods.declaration" name="coding-standard.coding-style.functions-and-methods.declaration"><div class="info"><h1 class="title"> 函数和方法声明 </h1></div>
+                
+
+                <p class="para">
+                    必须用Zend Framework的函数名约定来命名函数。
+                </p><p class="para">
+                    在类中的函数必须用 <code class="code">private</code>、 <code class="code">protected</code> 或 <code class="code">public</code> 声明它们的可见性。
+                </p><p class="para">
+                    象类一样，花括号从函数名的下一行开始(the &quot;one true brace&quot; form)。
+                </p><p class="para">
+                    函数名和括参数的圆括号中间没有空格。
+                </p>
+                <p class="para">
+                    强烈反对使用全局函数。
+                </p><p class="para">
+                    下面是可接受的在类中的函数声明的例子：
+
+                    <div class="programlisting"><div class="cdata"><pre>
+/**
+ * Documentation Block Here
+ */
+class Foo
+{
+    /**
+     * Documentation Block Here
+     */
+    public function bar()
+    {
+        // 函数的所有内容
+        // 必需缩进四个空格
+    }
+}
+                    </pre></div></div>
+
+                </p>
+
+                <p class="para">
+                    <em class="emphasis">注：</em> 传址（Pass-by-reference）是在方法声明中允许的唯一的参数传递机制。
+
+                    <div class="programlisting"><div class="cdata"><pre>
+/**
+ * Documentation Block Here
+ */
+class Foo
+{
+    /**
+     * Documentation Block Here
+     */
+    public function bar(&amp;$baz)
+    {}
+}
+                    </pre></div></div>
+
+                </p>
+
+                <p class="para">
+                    传址在调用时是严格禁止的。
+                </p>
+
+
+                <p class="para">
+                    返回值不能在圆括号中，这妨碍可读性而且如果将来方法被修改成传址方式，代码会有问题。
+
+                    <div class="programlisting"><div class="cdata"><pre>
+/**
+ * Documentation Block Here
+ */
+class Foo
+{
+    /**
+     * WRONG
+     */
+    public function bar()
+    {
+        return($this-&gt;bar);
+    }
+
+    /**
+     * RIGHT
+     */
+    public function bar()
+    {
+        return $this-&gt;bar;
+    }
+}
+                    </pre></div></div>
+
+                </p>
+
+            </div>
+
+            <div class="section" id="coding-standard.coding-style.functions-and-methods.usage" name="coding-standard.coding-style.functions-and-methods.usage"><div class="info"><h1 class="title"> 函数和方法的用法 </h1></div>
+                
+
+                <p class="para">
+                    函数的参数应当用逗号和紧接着的空格分开，下面可接受的调用的例子中的函数带有三个参数：
+
+                    <div class="programlisting"><div class="cdata"><pre>
+threeArguments(1, 2, 3);
+                    </pre></div></div>
+
+                </p>
+
+                <p class="para">
+                    传址方式在调用的时候是严格禁止的，参见函数的声明一节如何正确使用函数的传址方式。
+                </p>
+                <p class="para">
+                    带有数组参数的函数，函数的调用可包括 &quot;array&quot; 提示并可以分成多行来提高可读性，同时，书写数组的标准仍然适用：
+
+                    <div class="programlisting"><div class="cdata"><pre>
+threeArguments(array(1, 2, 3), 2, 3);
+
+threeArguments(array(1, 2, 3, &#039;Zend&#039;, &#039;Studio&#039;,
+                     $a, $b, $c,
+                     56.44, $d, 500), 2, 3);
+                    </pre></div></div>
+
+                </p>
+            </div>
+        </div>
+
+        <div class="section" id="coding-standard.coding-style.control-statements" name="coding-standard.coding-style.control-statements"><div class="info"><h1 class="title"> 控制语句 </h1></div>
+            
+
+            <div class="section" id="coding-standard.coding-style.control-statements.if-else-elseif" name="coding-standard.coding-style.control-statements.if-else-elseif"><div class="info"><h1 class="title">if/Else/Elseif</h1></div>
+                
+
+                <p class="para">
+                    使用 <code class="code">if</code> and <code class="code">elseif</code> 的控制语句在条件语句的圆括号前后都必须有一个空格。
+                </p>
+
+                <p class="para">
+                    在圆括号里的条件语句，操作符必须用空格分开，鼓励使用多重圆括号以提高在复杂的条件中划分逻辑组合。
+                </p>
+
+                <p class="para">
+                    前花括号必须和条件语句在同一行，后花括号单独在最后一行，其中的内容用四个空格缩进。
+
+                    <div class="programlisting"><div class="cdata"><pre>
+if ($a != 2) {
+    $a = 2;
+}
+                    </pre></div></div>
+
+                </p>
+
+                <p class="para">
+                      对包括&quot;elseif&quot; 或 &quot;else&quot;的 &quot;if&quot; 语句，和 &quot;if&quot; 结构的格式类似，
+                      下面的例子示例 &quot;if&quot; 语句， 包括 &quot;elseif&quot; 或 &quot;else&quot; 的格式约定：
+
+                    <div class="programlisting"><div class="cdata"><pre>
+if ($a != 2) {
+    $a = 2;
+} else {
+    $a = 7;
+}
+
+
+if ($a != 2) {
+    $a = 2;
+} elseif ($a == 3) {
+    $a = 4;
+} else {
+    $a = 7;
+}
+                    </pre></div></div>
+
+                    在有些情况下， PHP 允许这些语句不用花括号，但在(ZF) 代码标准里，它们（&quot;if&quot;、 &quot;elseif&quot; 或 &quot;else&quot; 语句）必须使用花括号。
+                </p>
+
+                <p class="para">
+                    &quot;elseif&quot; 是允许的但强烈不鼓励，我们支持 &quot;else if&quot; 组合。
+                </p>
+            </div>
+
+            <div class="section" id="coding-standards.coding-style.control-statements.switch" name="coding-standards.coding-style.control-statements.switch"><div class="info"><h1 class="title">Switch</h1></div>
+                
+
+                <p class="para">
+                    在 &quot;switch&quot; 结构里的控制语句在条件语句的圆括号前后必须都有一个单个的空格。
+                </p>
+
+                <p class="para">
+                    &quot;switch&quot; 里的代码必须有四个空格缩进，在&quot;case&quot;里的代码再缩进四个空格。
+                </p>
+
+                <div class="programlisting"><div class="cdata"><pre>
+switch ($numPeople) {
+    case 1:
+        break;
+
+    case 2:
+        break;
+
+    default:
+        break;
+}
+                </pre></div></div>
+
+
+                <p class="para">
+                    <code class="code">switch</code> 语句应当有 <code class="code">default</code>。
+                </p>
+
+                <p class="para">
+                    <em class="emphasis">注：</em> 有时候，在 falls through 到下个 case 的 <code class="code">case</code> 语句中不写 <code class="code">break</code> or <code class="code">return</code> 很有用。
+                    为了区别于 bug，任何 <code class="code">case</code> 语句中，所有不写 <code class="code">break</code> or <code class="code">return</code> 的地方应当有一个 &quot;// break intentionally omitted&quot; 这样的注释来表明 break 是故意忽略的。
+                </p>
+            </div>
+        </div>
+
+        <div class="section" id="coding-standards.inline-documentation" name="coding-standards.inline-documentation"><div class="info"><h1 class="title"> 注释文档 </h1></div>
+            
+
+            <div class="section" id="coding-standards.inline-documentation.documentation-format" name="coding-standards.inline-documentation.documentation-format"><div class="info"><h1 class="title"> 格式 </h1></div>
+                
+
+                <p class="para">
+                    所有文档块 (&quot;docblocks&quot;) 必须和 phpDocumentor 格式兼容，phpDocumentor 格式的描述超出了本文档的范围，关于它的详情，参考：<a href="http://phpdoc.org/" class="link external">&raquo; http://phpdoc.org/</a>。
+                </p>
+
+                <p class="para">
+                    所有类文件必须在文件的顶部包含文件级 （&quot;file-level&quot;）的 docblock ，在每个类的顶部放置一个 &quot;class-level&quot; 的 docblock。下面是一些例子：
+                </p>
+            </div>
+
+            <div class="section" id="coding-standards.inline-documentation.files" name="coding-standards.inline-documentation.files"><div class="info"><h1 class="title"> 文件 </h1></div>
+                
+
+                <p class="para">
+                    每个包含 PHP 代码的文件必须至少在文件顶部的 docblock 包含这些 phpDocumentor 标签：
+
+                    <div class="programlisting"><div class="cdata"><pre>
+/**
+ * 文件的简短描述
+ *
+ * 文件的详细描述（如果有的话）... ...
+ *
+ * LICENSE: 一些 license 信息
+ *
+ * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @license    http://framework.zend.com/license/3_0.txt   BSD License
+ * @version    $Id:$
+ * @link       http://framework.zend.com/package/PackageName
+ * @since      File available since Release 1.5.0
+*/
+                    </pre></div></div>
+
+                </p>
+            </div>
+
+            <div class="section" id="coding-standards.inline-documentation.classes" name="coding-standards.inline-documentation.classes"><div class="info"><h1 class="title"> 类 </h1></div>
+                
+
+                <p class="para">
+                    每个类必须至少包含这些 phpDocumentor 标签：
+
+                    <div class="programlisting"><div class="cdata"><pre>
+/**
+ * 类的简述
+ *
+ * 类的详细描述 （如果有的话）... ...
+ *
+ * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @license    http://framework.zend.com/license/   BSD License
+ * @version    Release: @package_version@
+ * @link       http://framework.zend.com/package/PackageName
+ * @since      Class available since Release 1.5.0
+ * @deprecated Class deprecated in Release 2.0.0
+ */
+                    </pre></div></div>
+
+                </p>
+            </div>
+
+            <div class="section" id="coding-standards.inline-documentation.functions" name="coding-standards.inline-documentation.functions"><div class="info"><h1 class="title"> 函数 </h1></div>
+                
+
+                <p class="para">
+                    每个函数，包括对象方法，必须有最少包含下列内容的文档块（docblock）：
+
+                    <ul class="itemizedlist">
+                        <li class="listitem"><p class="para"> 函数的描述 </p></li>
+                        <li class="listitem"><p class="para"> 所有参数 </p></li>
+                        <li class="listitem"><p class="para"> 所有可能的返回值 </p></li>
+                    </ul>
+                </p>
+
+                <p class="para">
+                    因为访问级已经通过 &quot;public&quot;、 &quot;private&quot; 或 &quot;protected&quot; 声明， 不需要使用 &quot;@access&quot;。
+                </p>
+
+                <p class="para">
+                    如果函数/方法抛出一个异常，使用 @throws 于所有已知的异常类：
+
+                    <div class="programlisting"><div class="cdata"><pre>
+@throws exceptionclass [description]
+                    </pre></div></div>
+
+                </p>
+            </div>
+        </div>
+    </div>
+        <hr />
+
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="coding-standard.naming-conventions.html">命名约定</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="coding-standard.html">Zend Framework 的 PHP 编码标准</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="doc-standard.html">Zend Framework Documentation Standard</a></div>
+                    </td>
+                </tr>
+            </table>
+</td>
+        <td style="font-size: smaller;" width="15%"> <style type="text/css">
+#leftbar {
+	float: left;
+	width: 186px;
+	padding: 5px;
+	font-size: smaller;
+}
+ul.toc {
+	margin: 0px 5px 5px 5px;
+	padding: 0px;
+}
+ul.toc li {
+	font-size: 85%;
+	margin: 1px 0 1px 1px;
+	padding: 1px 0 1px 11px;
+	list-style-type: none;
+	background-repeat: no-repeat;
+	background-position: center left;
+}
+ul.toc li.header {
+	font-size: 115%;
+	padding: 5px 0px 5px 11px;
+	border-bottom: 1px solid #cccccc;
+	margin-bottom: 5px;
+}
+ul.toc li.active {
+	font-weight: bold;
+}
+ul.toc li a {
+	text-decoration: none;
+}
+ul.toc li a:hover {
+	text-decoration: underline;
+}
+</style>
+ <ul class="toc">
+  <li class="header home"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="coding-standard.html">Zend Framework 的 PHP 编码标准</a></li>
+  <li><a href="coding-standard.overview.html">绪论</a></li>
+  <li><a href="coding-standard.php-file-formatting.html">PHP File 文件格式</a></li>
+  <li><a href="coding-standard.naming-conventions.html">命名约定</a></li>
+  <li class="active"><a href="coding-standard.coding-style.html">编码风格</a></li>
+ </ul>
+ </td>
+    </tr>
+</table>
+</body>
+</html>

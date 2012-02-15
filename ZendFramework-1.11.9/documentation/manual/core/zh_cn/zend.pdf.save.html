@@ -1,0 +1,138 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <title>保存修改到 PDF 文档 - Zend Framework Manual</title>
+
+</head>
+<body>
+<table width="100%">
+    <tr valign="top">
+        <td width="85%">
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.pdf.create.html">生成和加载 PDF 文档</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.pdf.html">Zend_Pdf</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.pdf.pages.html">文档页面</a></div>
+                    </td>
+                </tr>
+            </table>
+<hr />
+<div id="zend.pdf.save" class="section"><div class="info"><h1 class="title"> 保存修改到 PDF 文档 </h1></div>
+    
+    <p class="para">
+        有两个方法来保存修改到 PDF 文档：<code class="code">Zend_Pdf::save()</code> 和 <code class="code">Zend_Pdf::render()</code>。
+    </p>
+
+    <p class="para">
+        <code class="code">Zend_Pdf::save($filename, $updateOnly = false)</code> 保存 PDF 文档到一个文件。如果 $updateOnly 是 true，那么只有新的 PDF 文件段被追加到文件，否则，重写文件。
+    </p>
+
+    <p class="para">
+        <code class="code">Zend_Pdf::render($newSegmentOnly = false)</code> 把 PDF 文档当作字符串返回。如果 $newSegmentOnly 是 true，那么只有新的 PDF 文件段返回。
+    </p>
+
+    <div class="example"><div class="info"><p><b>Example #1 Save PDF document.</b></p></div>
+        
+        <div class="programlisting"><div class="cdata"><pre>
+...
+// Load PDF document.
+$pdf = Zend_Pdf::load($fileName);
+...
+// Update document
+$pdf-&gt;save($fileName, true);
+// Save document as a new file
+$pdf-&gt;save($newFileName);
+
+// Return PDF document as a string.
+$pdfString = $pdf-&gt;render();
+
+...
+
+        </pre></div></div>
+
+    </div>
+
+</div>
+        <hr />
+
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.pdf.create.html">生成和加载 PDF 文档</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.pdf.html">Zend_Pdf</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.pdf.pages.html">文档页面</a></div>
+                    </td>
+                </tr>
+            </table>
+</td>
+        <td style="font-size: smaller;" width="15%"> <style type="text/css">
+#leftbar {
+	float: left;
+	width: 186px;
+	padding: 5px;
+	font-size: smaller;
+}
+ul.toc {
+	margin: 0px 5px 5px 5px;
+	padding: 0px;
+}
+ul.toc li {
+	font-size: 85%;
+	margin: 1px 0 1px 1px;
+	padding: 1px 0 1px 11px;
+	list-style-type: none;
+	background-repeat: no-repeat;
+	background-position: center left;
+}
+ul.toc li.header {
+	font-size: 115%;
+	padding: 5px 0px 5px 11px;
+	border-bottom: 1px solid #cccccc;
+	margin-bottom: 5px;
+}
+ul.toc li.active {
+	font-weight: bold;
+}
+ul.toc li a {
+	text-decoration: none;
+}
+ul.toc li a:hover {
+	text-decoration: underline;
+}
+</style>
+ <ul class="toc">
+  <li class="header home"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="reference.html">Zend Framework Reference</a></li>
+  <li class="header up"><a href="zend.pdf.html">Zend_Pdf</a></li>
+  <li><a href="zend.pdf.introduction.html">简介</a></li>
+  <li><a href="zend.pdf.create.html">生成和加载 PDF 文档</a></li>
+  <li class="active"><a href="zend.pdf.save.html">保存修改到 PDF 文档</a></li>
+  <li><a href="zend.pdf.pages.html">文档页面</a></li>
+  <li><a href="zend.pdf.drawing.html">Drawing</a></li>
+  <li><a href="zend.pdf.interactive-features.html">Interactive Features</a></li>
+  <li><a href="zend.pdf.info.html">Document Info and Metadata</a></li>
+  <li><a href="zend.pdf.usage.html">Zend_Pdf module usage example</a></li>
+ </ul>
+ </td>
+    </tr>
+</table>
+</body>
+</html>

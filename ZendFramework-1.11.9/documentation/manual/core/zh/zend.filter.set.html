@@ -1,0 +1,203 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <title>标准过滤器类 - Zend Framework Manual</title>
+
+</head>
+<body>
+<table width="100%">
+    <tr valign="top">
+        <td width="85%">
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.filter.introduction.html">简介</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.filter.html">Zend_Filter</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.filter.filter_chains.html">过滤器链</a></div>
+                    </td>
+                </tr>
+            </table>
+<hr />
+<div id="zend.filter.set" class="section"><div class="info"><h1 class="title"> 标准过滤器类 </h1></div>
+
+    
+
+    <p class="para">
+        Zend Framework 带有一组标准的过滤器。
+    </p>
+
+    <div class="section" id="zend.filter.set.alnum" name="zend.filter.set.alnum"><div class="info"><h1 class="title">Alnum</h1></div>
+        
+        <p class="para">
+            返回只保留字母和数字的字符串 <code class="code">$value</code>，这个过滤器包括一个允许空白字符的选项。
+        </p>
+    </div>
+
+    <div class="section" id="zend.filter.set.alpha" name="zend.filter.set.alpha"><div class="info"><h1 class="title">Alpha</h1></div>
+        
+        <p class="para">
+            返回只保留字母的字符串 <code class="code">$value</code>，这个过滤器包括一个允许空白字符的选项。
+        </p>
+    </div>
+
+    <div class="section" id="zend.filter.set.basename" name="zend.filter.set.basename"><div class="info"><h1 class="title">BaseName</h1></div>
+        
+        <p class="para">
+            给定包含一个文件的路径字符串，这个过路器将返回这个文件的基本名（base name）。
+        </p>
+    </div>
+
+    <div class="section" id="zend.filter.set.digits" name="zend.filter.set.digits"><div class="info"><h1 class="title">Digits</h1></div>
+        
+        <p class="para">
+            返回只保留数字的字符串 <code class="code">$value</code>。
+        </p>
+    </div>
+
+    <div class="section" id="zend.filter.set.dir" name="zend.filter.set.dir"><div class="info"><h1 class="title">Dir</h1></div>
+        
+        <p class="para">
+            返回路径的名字部分。
+        </p>
+    </div>
+
+    <div class="section" id="zend.filter.set.htmlentities" name="zend.filter.set.htmlentities"><div class="info"><h1 class="title">HtmlEntities</h1></div>
+        
+        <p class="para">
+            返回转换成它们对应 HTML 实体的字符串 <code class="code">$value</code>。
+        </p>
+    </div>
+
+    <div class="section" id="zend.filter.set.int" name="zend.filter.set.int"><div class="info"><h1 class="title">Int</h1></div>
+        
+        <p class="para">
+            返回整数 <code class="code">$value</code>。
+        </p>
+    </div>
+
+    <div class="section" id="zend.filter.set.stripnewlines" name="zend.filter.set.stripnewlines"><div class="info"><h1 class="title">StripNewlines</h1></div>
+        
+        <p class="para">
+            返回不带任何新行控制符的字符串 <code class="code">$value</code> 。
+        </p>
+    </div>
+
+    <div class="section" id="zend.filter.set.realpath" name="zend.filter.set.realpath"><div class="info"><h1 class="title">RealPath</h1></div>
+        
+        <p class="para">
+            扩展所有符号的链接和解析指向在输入路径里的 &#039;/./&#039;, &#039;/../&#039; 和额外的 &#039;/&#039; 字符并且返回规范化后的绝对路径名，返回的结果路径将没有符号链接 &#039;/./&#039; 或 &#039;/../&#039; 部分。
+        </p>
+        <p class="para">
+            如果失败，例如文件不存在，<code class="code">Zend_Filter_RealPath</code> 将返回 <code class="code">FALSE</code>。在 BSD 系统，如果只有路径最后部分不存在， <code class="code">Zend_Filter_RealPath</code> 不会失败，但其它系统返回 <code class="code">FALSE</code>。
+        </p>
+    </div>
+
+    <div class="section" id="zend.filter.set.stringtolower" name="zend.filter.set.stringtolower"><div class="info"><h1 class="title">StringToLower</h1></div>
+        
+        <p class="para">
+            返回按需转换字母成小写的字符串 <code class="code">$value</code>。
+        </p>
+    </div>
+
+    <div class="section" id="zend.filter.set.stringtoupper" name="zend.filter.set.stringtoupper"><div class="info"><h1 class="title">StringToUpper</h1></div>
+        
+        <p class="para">
+            返回按需转换字母成大写的字符串 <code class="code">$value</code>。
+        </p>
+    </div>
+
+    <div class="section" id="zend.filter.set.stringtrim" name="zend.filter.set.stringtrim"><div class="info"><h1 class="title">StringTrim</h1></div>
+        
+        <p class="para">
+            返回从头到尾整理过的字符串 <code class="code">$value</code>。
+        </p>
+    </div>
+
+    <div class="section" id="zend.filter.set.striptags" name="zend.filter.set.striptags"><div class="info"><h1 class="title">StripTags</h1></div>
+        
+        <p class="para">
+            返回把 HTML 和 PHP 标签已剥离的（声明为允许的标签不会剥离）输入的字符串。除了能指定允许哪个标签，开发者也可以在所有允许的标签（或只对特定的标签）中指定哪个属性被允许。最后，这个过滤器提供控制是否注释（如 <code class="code">&lt;!-- ... --&gt;</code>）被删除或允许。
+        </p>
+    </div>
+
+</div>
+        <hr />
+
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.filter.introduction.html">简介</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.filter.html">Zend_Filter</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.filter.filter_chains.html">过滤器链</a></div>
+                    </td>
+                </tr>
+            </table>
+</td>
+        <td style="font-size: smaller;" width="15%"> <style type="text/css">
+#leftbar {
+	float: left;
+	width: 186px;
+	padding: 5px;
+	font-size: smaller;
+}
+ul.toc {
+	margin: 0px 5px 5px 5px;
+	padding: 0px;
+}
+ul.toc li {
+	font-size: 85%;
+	margin: 1px 0 1px 1px;
+	padding: 1px 0 1px 11px;
+	list-style-type: none;
+	background-repeat: no-repeat;
+	background-position: center left;
+}
+ul.toc li.header {
+	font-size: 115%;
+	padding: 5px 0px 5px 11px;
+	border-bottom: 1px solid #cccccc;
+	margin-bottom: 5px;
+}
+ul.toc li.active {
+	font-weight: bold;
+}
+ul.toc li a {
+	text-decoration: none;
+}
+ul.toc li a:hover {
+	text-decoration: underline;
+}
+</style>
+ <ul class="toc">
+  <li class="header home"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="reference.html">Zend Framework Reference</a></li>
+  <li class="header up"><a href="zend.filter.html">Zend_Filter</a></li>
+  <li><a href="zend.filter.introduction.html">简介</a></li>
+  <li class="active"><a href="zend.filter.set.html">标准过滤器类</a></li>
+  <li><a href="zend.filter.filter_chains.html">过滤器链</a></li>
+  <li><a href="zend.filter.writing_filters.html">编写过滤器</a></li>
+  <li><a href="zend.filter.input.html">Zend_Filter_Input</a></li>
+  <li><a href="zend.filter.inflector.html">Zend_Filter_Inflector</a></li>
+ </ul>
+ </td>
+    </tr>
+</table>
+</body>
+</html>

@@ -1,0 +1,161 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <title>修改Feed和条目结构 - Zend Framework Manual</title>
+
+</head>
+<body>
+<table width="100%">
+    <tr valign="top">
+        <td width="85%">
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.feed.consuming-atom-single-entry.html">单个Atom条目的处理</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.feed.html">Zend_Feed</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.feed.custom-feed.html">自定义Feed和条目类</a></div>
+                    </td>
+                </tr>
+            </table>
+<hr />
+<div id="zend.feed.modifying-feed" class="section"><div class="info"><h1 class="title">修改Feed和条目结构</h1></div>
+    
+
+    <p class="para">
+        <code class="code">Zend_Feed</code>自然的语法既能扩展用于构建和修改Feed以及条目又能非常容易的读取它们。你能容易的把你的新的或者修改过的对象转化成一个结构完整的XML格式保存到文件或者发送到服务器。
+    </p>
+
+    <div class="example"><div class="info"><p><b>Example #1 修改一个已存在的条目</b></p></div>
+        
+        <div class="programlisting"><div class="cdata"><pre>
+$feed = new Zend_Feed_Atom(&#039;http://atom.example.com/feed/1&#039;);
+$entry = $feed-&gt;current();
+
+$entry-&gt;title = &#039;This is a new title&#039;;
+$entry-&gt;author-&gt;email = &#039;my_email@example.com&#039;;
+
+echo $entry-&gt;saveXML();
+
+        </pre></div></div>
+
+        <div class="example-contents"><p>
+            这段代码将输出一个新条目完整(包括<code class="code">&lt;?xml ... &gt;</code> 声明)的包含所有必要命名空间的XML格式。
+        </p></div>
+        <div class="example-contents"><p>
+            注意上面的代码即使条目中不存在一个author标记也能工作。在开始赋值之前你就能用多层的<code class="code">-&gt;</code>访问你想要访问的内容了，如果必要程序将自动为你创建所有中间节点。
+        </p></div>
+    </div>
+
+    <p class="para">
+        如果你想在你的条目中用一个与<code class="code">atom:</code>, <code class="code">rss:</code>, 或 <code class="code">osrss:</code>不同的命名空间，你必须用<code class="code">Zend_Feed</code>类的<code class="code">Zend_Feed::registerNamespace()</code>方法注册你的命名空间。当你修改一个已存在的元素时，它将维持最初的命名空间。当添加一个新元素时，如果你不特别地指定别的命名空间则程序将使用默认的命名空间。
+    </p>
+
+    <div class="example"><div class="info"><p><b>Example #2 用自定义的命名空间创建一个Atom条目元素</b></p></div>
+        
+        <div class="programlisting"><div class="cdata"><pre>
+$entry = new Zend_Feed_Entry_Atom();
+// Atom的id总是由服务器分配
+$entry-&gt;title = &#039;my custom entry&#039;;
+$entry-&gt;author-&gt;name = &#039;Example Author&#039;;
+$entry-&gt;author-&gt;email = &#039;me@example.com&#039;;
+
+// 完成自定义部分
+Zend_Feed::registerNamespace(&#039;myns&#039;, &#039;http://www.example.com/myns/1.0&#039;);
+
+$entry-&gt;{&#039;myns:myelement_one&#039;} = &#039;my first custom value&#039;;
+$entry-&gt;{&#039;myns:container_elt&#039;}-&gt;part1 = &#039;first nested custom part&#039;;
+$entry-&gt;{&#039;myns:container_elt&#039;}-&gt;part2 = &#039;second nested custom part&#039;;
+
+echo $entry-&gt;saveXML();
+
+?&gt;
+
+        </pre></div></div>
+
+    </div>
+</div>
+        <hr />
+
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.feed.consuming-atom-single-entry.html">单个Atom条目的处理</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.feed.html">Zend_Feed</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.feed.custom-feed.html">自定义Feed和条目类</a></div>
+                    </td>
+                </tr>
+            </table>
+</td>
+        <td style="font-size: smaller;" width="15%"> <style type="text/css">
+#leftbar {
+	float: left;
+	width: 186px;
+	padding: 5px;
+	font-size: smaller;
+}
+ul.toc {
+	margin: 0px 5px 5px 5px;
+	padding: 0px;
+}
+ul.toc li {
+	font-size: 85%;
+	margin: 1px 0 1px 1px;
+	padding: 1px 0 1px 11px;
+	list-style-type: none;
+	background-repeat: no-repeat;
+	background-position: center left;
+}
+ul.toc li.header {
+	font-size: 115%;
+	padding: 5px 0px 5px 11px;
+	border-bottom: 1px solid #cccccc;
+	margin-bottom: 5px;
+}
+ul.toc li.active {
+	font-weight: bold;
+}
+ul.toc li a {
+	text-decoration: none;
+}
+ul.toc li a:hover {
+	text-decoration: underline;
+}
+</style>
+ <ul class="toc">
+  <li class="header home"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="reference.html">Zend Framework Reference</a></li>
+  <li class="header up"><a href="zend.feed.html">Zend_Feed</a></li>
+  <li><a href="zend.feed.introduction.html">介绍</a></li>
+  <li><a href="zend.feed.importing.html">导入Feeds</a></li>
+  <li><a href="zend.feed.findFeeds.html">从网页上获得Feed</a></li>
+  <li><a href="zend.feed.consuming-rss.html">RSS Feed的使用</a></li>
+  <li><a href="zend.feed.consuming-atom.html">Atom Feed的使用</a></li>
+  <li><a href="zend.feed.consuming-atom-single-entry.html">单个Atom条目的处理</a></li>
+  <li class="active"><a href="zend.feed.modifying-feed.html">修改Feed和条目结构</a></li>
+  <li><a href="zend.feed.custom-feed.html">自定义Feed和条目类</a></li>
+  <li><a href="zend.feed.reader.html">Zend_Feed_Reader</a></li>
+  <li><a href="zend.feed.writer.html">Zend_Feed_Writer</a></li>
+  <li><a href="zend.feed.pubsubhubbub.introduction.html">Zend_Feed_Pubsubhubbub</a></li>
+ </ul>
+ </td>
+    </tr>
+</table>
+</body>
+</html>

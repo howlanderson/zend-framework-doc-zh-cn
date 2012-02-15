@@ -1,0 +1,271 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <title>配置 Zend_Console_Getopt - Zend Framework Manual</title>
+
+</head>
+<body>
+<table width="100%">
+    <tr valign="top">
+        <td width="85%">
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.console.getopt.fetching.html">读取（Fetching）选项和参数</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.console.getopt.html">Zend_Console_Getopt</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.controller.html">Zend_Controller</a></div>
+                    </td>
+                </tr>
+            </table>
+<hr />
+<div id="zend.console.getopt.configuration" class="section"><div class="info"><h1 class="title"> 配置 Zend_Console_Getopt</h1></div>
+    
+
+    <div class="section" id="zend.console.getopt.configuration.addrules" name="zend.console.getopt.configuration.addrules"><div class="info"><h1 class="title"> 添加选项规则 </h1></div>
+        
+        <p class="para">
+            使用<code class="code">addRules()</code>方法，可以添加更多除了在<code class="code">Zend_Console_Getopt</code>构造器中指定的选项规则。<code class="code">addRules()</code> 的参数和给这个类的构造器的第一个参数相同。它可以是符合短语法选项规范的字符串，也可以是符合长选项语法的联合数组。关于选项规范语法的细节参见<a href="zend.console.getopt.rules.html" class="link"> 声明 Getopt 规则 </a>。
+        </p>
+        <div class="example"><div class="info"><p><b>Example #1  使用 addRules()</b></p></div>
+            
+            <div class="programlisting"><div class="cdata"><pre>
+$opts = new Zend_Console_Getopt(&#039;abp:&#039;);
+$opts-&gt;addRules(
+  array(
+    &#039;verbose|v&#039; =&gt; &#039;Print verbose output&#039;
+  )
+);
+
+            </pre></div></div>
+
+        </div>
+        <p class="para">
+            上述例子示例添加带有 &quot;<code class="code">-v</code>&quot; 别名的 &quot;<code class="code">--verbose</code>&quot; 选项给在定义在调用构造器的一组选项。注意你可以在<code class="code">Zend_Console_Getopt</code>的同一实例中混合使用短格式选项和长格式选项。
+        </p>
+    </div>
+
+    <div class="section" id="zend.console.getopt.configuration.addhelp" name="zend.console.getopt.configuration.addhelp"><div class="info"><h1 class="title"> 添加帮助信息 </h1></div>
+        
+        <p class="para">
+            除了当声明选项规则为长（语法）格式时指定帮助字符串（帮助信息），也可以用<code class="code">setHelp()</code>方法来联系帮助字符串和选项规则。<code class="code">setHelp()</code>方法的参数时一个联合数组，它的键是一个flag，值是一个相应的帮助字符串。
+        </p>
+        <div class="example"><div class="info"><p><b>Example #2  使用 setHelp()</b></p></div>
+            
+            <div class="programlisting"><div class="cdata"><pre>
+$opts = new Zend_Console_Getopt(&#039;abp:&#039;);
+$opts-&gt;setHelp(
+    array(
+        &#039;a&#039; =&gt; &#039;apple option, with no parameter&#039;,
+        &#039;b&#039; =&gt; &#039;banana option, with required integer parameter&#039;,
+        &#039;p&#039; =&gt; &#039;pear option, with optional string parameter&#039;
+    )
+);
+
+            </pre></div></div>
+
+        </div>
+        <p class="para">
+            如果被声明的选项带有别名，可使用任何一个别名来作为联合数组的键。
+        </p>
+        <p class="para">
+            如果使用短语法声明选项，<code class="code">setHelp()</code>方法是定义帮助信息的唯一办法。
+        </p>
+    </div>
+
+    <div class="section" id="zend.console.getopt.configuration.addaliases" name="zend.console.getopt.configuration.addaliases"><div class="info"><h1 class="title"> 添加选项别名 </h1></div>
+        
+        <p class="para">
+            你可以使用<code class="code">setAliases</code>方法为选项声明别名。参数是一个联合数组，它的键为一个先前声明的字符串，值是一个相应于那个 flag 的新的别名。这些别名和已存在的别名合并。换句话说，早先声明的别名仍然有效。
+        </p>
+        <p class="para">
+            一个别名只能声明一次。如果企图重新定义一个别名，<code class="code">Zend_Console_Getopt_Exception</code> 将被抛出。
+        </p>
+        <div class="example"><div class="info"><p><b>Example #3  使用 setAliases()</b></p></div>
+            
+            <div class="programlisting"><div class="cdata"><pre>
+$opts = new Zend_Console_Getopt(&#039;abp:&#039;);
+$opts-&gt;setAliases(
+    array(
+        &#039;a&#039; =&gt; &#039;apple&#039;,
+        &#039;a&#039; =&gt; &#039;apfel&#039;,
+        &#039;p&#039; =&gt; &#039;pear&#039;
+    )
+);
+
+            </pre></div></div>
+
+        </div>
+        <p class="para">
+            在上面的例子中，在声明这些别名后，&quot;<code class="code">-a</code>&quot;、 &quot;<code class="code">--apple</code>&quot; 和 &quot;<code class="code">--apfel</code>&quot; 互为别名。&quot;<code class="code">-p</code>&quot; 和 &quot;<code class="code">--pear</code>&quot; 互为别名。
+        </p>
+        <p class="para">
+            如果使用短语法声明选项，<code class="code">setAliases()</code>方法是定义帮助信息的唯一办法。
+        </p>
+    </div>
+
+    <div class="section" id="zend.console.getopt.configuration.addargs" name="zend.console.getopt.configuration.addargs"><div class="info"><h1 class="title"> 添加参数列表 </h1></div>
+        
+        <p class="para">
+            缺省地，<code class="code">Zend_Console_Getopt</code> 使用 <code class="code">$_SERVER[&#039;argv&#039;]</code> 作为用来解析的命令行参数数组。你可以另外指定参数数组作为第二个构造器参数。最后，你可以用 <code class="code">addArguments()</code> 方法追加更多的参数给这些已经使用的参数，或者你可以使用 <code class="code">setArguments()</code> 方法替换当前的参数数组。对于这两种情况，这些方法的参数是简单的字符串数组。前者追加数组到当前参数，后者替换当前参数的数组。
+        </p>
+        <div class="example"><div class="info"><p><b>Example #4  使用 addArguments() 和 setArguments()</b></p></div>
+            
+            <div class="programlisting"><div class="cdata"><pre>
+// 缺省地，构造器使用 $_SERVER[&#039;argv&#039;]
+$opts = new Zend_Console_Getopt(&#039;abp:&#039;);
+
+// 追加数组给当前参数
+$opts-&gt;addArguments(array(&#039;-a&#039;, &#039;-p&#039;, &#039;p_parameter&#039;, &#039;non_option_arg&#039;));
+
+// 替换当前的参数
+$opts-&gt;setArguments(array(&#039;-a&#039;, &#039;-p&#039;, &#039;p_parameter&#039;, &#039;non_option_arg&#039;));
+
+            </pre></div></div>
+
+        </div>
+    </div>
+
+    <div class="section" id="zend.console.getopt.configuration.config" name="zend.console.getopt.configuration.config"><div class="info"><h1 class="title"> 添加配置 </h1></div>
+        
+        <p class="para">
+            <code class="code">Zend_Console_Getopt</code> 构造器的第三个参数是个影响返回的对象实例行为的配置选项数组。也可以使用 <code class="code">setOptions()</code> 方法指定配置选项， 或者用 <code class="code">setOption()</code> 方法设置一个独立的选项。
+        </p>
+        <blockquote><p><b class="note">Note</b>: <span class="info"><b> 阐明术语 &quot;option&quot; </b><br /></span>
+            
+            
+                <code class="code">Zend_Console_Getopt</code>类的配置使用术语 &quot;option&quot; 来匹配在Zend Framework 其它地方使用的术语。这些和<code class="code">Zend_Console_Getopt</code> 类解析的命令行选项不是一回事。
+            <br />
+        </p></blockquote>
+        <p class="para">
+            当前支持的选项在类中有常量定义。它们的常量标识符（在括号中的文字）列表如下：
+        </p>
+        <ul class="itemizedlist">
+            <li class="listitem">
+                <p class="para">
+                    <code class="code">Zend_Console_Getopt::CONFIG_DASHDASH</code> (&quot;dashDash&quot;)，如果为 true，允许特殊 flag  &quot;<code class="code">--</code>&quot; 表示 flag 的结尾。带有双短横线的符号不被翻译为选项，即使参数以一个短横线开头。这个配置选项缺省为 true。
+                </p>
+            </li>
+            <li class="listitem">
+                <p class="para">
+                    <code class="code">Zend_Console_Getopt::CONFIG_IGNORECASE</code> (&quot;ignoreCase&quot;)，如果为 true，如果它们不同，使 flags 互为别名。这样，&quot;<code class="code">-a</code>&quot; 和 &quot;<code class="code">-A</code>&quot; 将被认为是同义 flags。这个配置选项缺省为 false。
+                </p>
+            </li>
+            <li class="listitem">
+                <p class="para">
+                    <code class="code">Zend_Console_Getopt::CONFIG_RULEMODE</code>(&quot;ruleMode&quot;) 可以有 <code class="code">Zend_Console_Getopt::MODE_ZEND</code> (&quot;zend&quot;) 和 <code class="code">Zend_Console_Getopt::MODE_GNU</code> (&quot;gnu&quot;) 的值。使用这个选项不是必须的除非你用另外的语法形式扩展这个类。这两个方法在 <code class="code">Zend_Console_Getopt</code> 类中明确地支持。如果指定器是字符串， 这个类就假定为 <code class="code">MODE_GNU</code> ，否则它就假定为 <code class="code">MODE_ZEND</code> 。但如果你扩展这个类并添加更多语法形式， 你需要用这个选项来指定模式。
+                </p>
+            </li>
+        </ul>
+        <p class="para">
+            更多的选项可以将被添加为这个类的增强。
+        </p>
+        <p class="para">
+            <code class="code">setOption()</code> 方法的两个参数是配置选项名称和选项值。
+        </p>
+        <div class="example"><div class="info"><p><b>Example #5  使用 setOption()</b></p></div>
+            
+            <div class="programlisting"><div class="cdata"><pre>
+$opts = new Zend_Console_Getopt(&#039;abp:&#039;);
+$opts-&gt;setOption(&#039;ignoreCase&#039;, true);
+
+            </pre></div></div>
+
+        </div>
+        <p class="para">
+            <code class="code">setOptions()</code> 方法的参数是一个联合数组。这个数组的键是配置选项名称，（数组的）值是配置（选项）的值。这也是用于类构造器的数组格式。你指定的配置的值和当前配置合并，不需要列出所有的选项。
+        </p>
+        <div class="example"><div class="info"><p><b>Example #6  使用 setOptions()</b></p></div>
+            
+            <div class="programlisting"><div class="cdata"><pre>
+$opts = new Zend_Console_Getopt(&#039;abp:&#039;);
+$opts-&gt;setOptions(
+    array(
+        &#039;ignoreCase&#039; =&gt; true,
+        &#039;dashDash&#039;   =&gt; false
+    )
+);
+
+            </pre></div></div>
+
+        </div>
+    </div>
+
+</div>
+        <hr />
+
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.console.getopt.fetching.html">读取（Fetching）选项和参数</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.console.getopt.html">Zend_Console_Getopt</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.controller.html">Zend_Controller</a></div>
+                    </td>
+                </tr>
+            </table>
+</td>
+        <td style="font-size: smaller;" width="15%"> <style type="text/css">
+#leftbar {
+	float: left;
+	width: 186px;
+	padding: 5px;
+	font-size: smaller;
+}
+ul.toc {
+	margin: 0px 5px 5px 5px;
+	padding: 0px;
+}
+ul.toc li {
+	font-size: 85%;
+	margin: 1px 0 1px 1px;
+	padding: 1px 0 1px 11px;
+	list-style-type: none;
+	background-repeat: no-repeat;
+	background-position: center left;
+}
+ul.toc li.header {
+	font-size: 115%;
+	padding: 5px 0px 5px 11px;
+	border-bottom: 1px solid #cccccc;
+	margin-bottom: 5px;
+}
+ul.toc li.active {
+	font-weight: bold;
+}
+ul.toc li a {
+	text-decoration: none;
+}
+ul.toc li a:hover {
+	text-decoration: underline;
+}
+</style>
+ <ul class="toc">
+  <li class="header home"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="reference.html">Zend Framework Reference</a></li>
+  <li class="header up"><a href="zend.console.getopt.html">Zend_Console_Getopt</a></li>
+  <li><a href="zend.console.getopt.introduction.html">Getopt 简介</a></li>
+  <li><a href="zend.console.getopt.rules.html">声明 Getopt 规则</a></li>
+  <li><a href="zend.console.getopt.fetching.html">读取（Fetching）选项和参数</a></li>
+  <li class="active"><a href="zend.console.getopt.configuration.html">配置 Zend_Console_Getopt</a></li>
+ </ul>
+ </td>
+    </tr>
+</table>
+</body>
+</html>

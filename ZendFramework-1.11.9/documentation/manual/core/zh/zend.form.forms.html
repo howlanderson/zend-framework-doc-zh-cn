@@ -1,0 +1,1705 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <title>使用 Zend_Form 生成表单 - Zend Framework Manual</title>
+
+</head>
+<body>
+<table width="100%">
+    <tr valign="top">
+        <td width="85%">
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.form.elements.html">使用 Zend_Form_Element 生成表单元素</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.form.html">Zend_Form</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.form.decorators.html">使用 Zend_Form_Decorator 生成定制的表单标识（Markup）</a></div>
+                    </td>
+                </tr>
+            </table>
+<hr />
+<div id="zend.form.forms" class="section"><div class="info"><h1 class="title"> 使用 Zend_Form 生成表单 </h1></div>
+    
+
+    <p class="para">
+        <code class="code">Zend_Form</code> 类用来聚合表单元素，显示组和子表单。它可以在这些条目中执行下列动作：
+    </p>
+
+    <ul class="itemizedlist">
+        <li class="listitem"><p class="para">
+            校验，包括读取错误代码和消息
+        </p></li>
+
+        <li class="listitem"><p class="para">
+            值聚合，包括组装（populating）条目和从所有条目读取过滤的和未过滤的值
+        </p></li>
+
+        <li class="listitem"><p class="para">
+            迭代所有条目，按它们键入的顺序或者从每个条目中读取的顺序提示来进行
+        </p></li>
+
+        <li class="listitem"><p class="para">
+            解析（rendering）整个表单，通过执行定制解析的单个装饰器（decorator）或者迭代（iterating）表单中的所有条目
+        </p></li>
+    </ul>
+
+    <p class="para">
+        虽然由 <code class="code">Zend_Form</code> 生成的表单可能复杂，可能最好的用法是做简单的表单，但是对于快速程序开发和生成原型（prototyping），它是最好的。
+    </p>
+
+    <p class="para">
+        最基本的事情是实例化一个表单对象：
+    </p>
+
+    <div class="programlisting"><div class="cdata"><pre>&lt;?php
+// Generic form object:
+$form = new Zend_Form();
+
+// Custom form object:
+$form = new My_Form()
+?&gt;</pre></div></div>
+
+
+    <p class="para">
+        你可以可选地传递配置参数，它用来设置对象状态以及可能生成新元素：
+    </p>
+
+    <div class="programlisting"><div class="cdata"><pre>&lt;?php
+// Passing in configuration options:
+$form = new Zend_Form($config);
+?&gt;</pre></div></div>
+
+
+    <p class="para">
+        <code class="code">Zend_Form</code> 是可迭代的（iterable），它将按照它们注册的顺序和任何拥有的索引迭代所有元素、显示组和子表单。当你想手动地按适当的顺序解析（render）元素的时候，这个很有用。
+    </p>
+
+    <p class="para">
+        <code class="code">Zend_Form</code> 的魔法在于它能够为元素和显示组提供工厂服务（serve as a factory），并且通过装饰器来解析（render）自己。
+    </p>
+
+    <div class="section" id="zend.form.forms.plugins" name="zend.form.forms.plugins"><div class="info"><h1 class="title"> 插件加载器 </h1></div>
+        
+        <p class="para">
+            <code class="code">Zend_Form</code> 利用 <code class="code">Zend_Loader_PluginLoader</code> 使开发者指定替代元素和装饰器的位置。每个表单有和它一起伴随的插件加载器，总访问器用来读取和修改每个表单。
+        </p>
+
+        <p class="para">
+            下列加载器类型和不同的插件加载器方法 &#039;element&#039; 和 &#039;decorator&#039; 一起来使用。类型名大小写敏感。
+        </p>
+
+        <p class="para">
+            用来和插件加载器结合使用的方法如下：
+        </p>
+
+        <ul class="itemizedlist">
+            <li class="listitem"><p class="para">
+                <code class="code">setPluginLoader($loader, $type)</code>: $loader 是插件加载器对象自己，type 是上述的类型之一。该方法为给定的类型设置插件加载器为新指定的加载器对象。
+            </p></li>
+
+            <li class="listitem"><p class="para">
+                <code class="code">getPluginLoader($type)</code>: 按类型（$type）来获取插件加载器。
+            </p></li>
+
+            <li class="listitem"><p class="para">
+                <code class="code">addPrefixPath($prefix, $path, $type = null)</code>: 添加一个 prefix/path 结合对给由 $type 指定的加载器。如果 $type 是 null，通过追加前缀给 &quot;_Element&quot; 和 &quot;_Decorator&quot;，它将尝试添加路径给所有的加载器，并用 &quot;Element/&quot; 和 &quot;Decorator/&quot; 追加路径。如果在通用的等级下有所有额外的表单元素类，这是个很方便的给它们设置基础前缀的方法。
+            </p></li>
+
+            <li class="listitem"><p class="para">
+                <code class="code">addPrefixPaths(array $spec)</code>: 允许一次性添加多个路径给一个或多个插件加载器。它需要每个数组元素（item）是一个带有&#039;path&#039;、&#039;prefix&#039;和&#039;type&#039;键的数组。
+            </p></li>
+        </ul>
+
+        <p class="para">
+            另外，也可以用下列方法为所有通过<code class="code">Zend_Form</code>实例生成元素和显示组指定前缀路径：
+        </p>
+
+        <ul class="itemizedlist">
+            <li class="listitem"><p class="para">
+                <code class="code">addElementPrefixPath($prefix, $path, $type = null)</code>: 就象 <code class="code">addPrefixPath()</code> 一样，必需指定一个类的前缀和路径。当指定 <code class="code">$type</code>，必需是由 <code class="code">Zend_Form_Element</code> 指定的插件加载器类型之一，更多关于有效 <code class="code">$type</code>值的信息参见 <a href="zend.form.elements.html#zend.form.elements.loaders" class="link">element plugins section</a>。如果没有指定 <code class="code">$type</code>，该方法假定它是一个用于所有类型的总的前缀。
+            </p></li>
+
+            <li class="listitem"><p class="para">
+                <code class="code">addDisplayGroupPrefixPath($prefix, $path)</code>: 就象 <code class="code">addPrefixPath()</code> 一样，必需指定一个类的前缀和路径，然而，显示组只支持装饰器作为插件，<code class="code">$type</code> 不是必需的。
+            </p></li>
+        </ul>
+
+        <p class="para">
+            定制元素和装饰器是在表单和封装定制函数之间共享功能的简便方法。在元素文档（elements documentation）中参见 <a href="zend.form.elements.html#zend.form.elements.loaders.customLabel" class="link">Custom Label example</a> ，看定制元素如何用来替换标准类。
+        </p>
+    </div>
+
+    <div class="section" id="zend.form.forms.elements" name="zend.form.forms.elements"><div class="info"><h1 class="title"> 元素（Elements）</h1></div>
+        
+        <p class="para">
+            <code class="code">Zend_Form</code> 提供了若干访问器用来从表单中添加和删除元素。这些可以获得元素对象实例或以工厂模式来为实例化元素对象自己服务。
+        </p>
+
+        <p class="para">
+            添加元素的最基本的方法是 <code class="code">addElement()</code>。该方法可以或者带有 <code class="code">Zend_Form_Element</code> （或者继承 <code class="code">Zend_Form_Element</code> 的类 ）类型对象的参数，或者用于建立新元素的参数 － 包括元素类型、名称和任何配置选项。
+        </p>
+
+        <p class="para">
+            如一些例子：
+        </p>
+
+        <div class="programlisting"><div class="cdata"><pre>&lt;?php
+// Using an element instance:
+$element = new Zend_Form_Element_Text(&#039;foo&#039;);
+$form-&gt;addElement($element);
+
+// Using a factory
+//
+// Creates an element of type Zend_Form_Element_Text with the
+// name of &#039;foo&#039;:
+$form-&gt;addElement(&#039;text&#039;, &#039;foo&#039;);
+
+// Pass label option to the element:
+$form-&gt;addElement(&#039;text&#039;, &#039;foo&#039;, array(&#039;label&#039; =&gt; &#039;Foo:&#039;));
+?&gt;</pre></div></div>
+
+
+        <blockquote><p><b class="note">Note</b>: <span class="info"><b>addElement() 实现 Fluent Interface</b><br /></span>
+            
+
+            
+                <code class="code">addElement()</code> 实现一个 fluent interface，就是说，它返回 <code class="code">Zend_Form</code> 对象，而不是元素。这样做来允许你把多个 addElement()方法或者其它实现 fluent interface 的表单方法链接起来（所有 Zend_Form 中的设置器（ setters） 都实现这个模式）。
+            <br />
+
+            
+                如果你想返回元素，使用 <code class="code">createElement()</code>，下面是要点。然而请注意，<code class="code">createElement()</code> 不把元素加到表单上。
+            <br />
+
+            
+                在内部，<code class="code">addElement()</code> 实际上用 <code class="code">createElement()</code> 来生成元素之后把它加到表单上。
+            <br />
+        </p></blockquote>
+
+        <p class="para">
+            一旦元素被添加到表单，可以用名字来读取。通过使用 <code class="code">getElement()</code> 方法或者通过重载（overloading）使元素作为对象属性来访问：
+        </p>
+
+        <div class="programlisting"><div class="cdata"><pre>&lt;?php
+// getElement():
+$foo = $form-&gt;getElement(&#039;foo&#039;);
+
+// As object property:
+$foo = $form-&gt;foo;
+?&gt;</pre></div></div>
+
+
+        <p class="para">
+            偶尔地，你只想生成一个元素并不想把它加到表单上（例如，你想利用众多的用表单注册的插件路径，但稍后把这些对象加到子表单上）。<code class="code">createElement()</code> 方法可以完成这些：
+        </p>
+
+        <div class="programlisting"><div class="cdata"><pre>&lt;?php
+// $username becomes a Zend_Form_Element_Text object:
+$username = $form-&gt;createElement(&#039;text&#039;, &#039;username&#039;);
+?&gt;</pre></div></div>
+
+
+        <div class="section" id="zend.form.forms.elements.values" name="zend.form.forms.elements.values"><div class="info"><h1 class="title"> 组装和读取数值 </h1></div>
+            
+
+            <p class="para">
+                校验表单之后，你一般需要读取它的数值以便执行其它操作，如更新数据库或通知一个 web 服务。你可以通过 <code class="code">getValues()</code> 来读取所有元素的值，<code class="code">getValue($name)</code> 可以通过名字来读取一个单个的值：
+            </p>
+
+            <div class="programlisting"><div class="cdata"><pre>&lt;?php
+// Get all values:
+$values = $form-&gt;getValues();
+
+// Get only &#039;foo&#039; element&#039;s value:
+$value = $form-&gt;getValue(&#039;foo&#039;);
+?&gt;</pre></div></div>
+
+
+            <p class="para">
+                有时候，在解析之前，你想用特定的值来组装表单，可以通过 <code class="code">setDefaults()</code> 或 <code class="code">populate()</code> 方法来完成：
+            </p>
+
+            <div class="programlisting"><div class="cdata"><pre>&lt;?php
+$form-&gt;setDefaults($data);
+$form-&gt;populate($data);
+?&gt;</pre></div></div>
+
+
+            <p class="para">
+                在另一面，你可能想在组装和校验之前清除一个表单，可使用 <code class="code">reset()</code> 方法来完成：
+            </p>
+
+            <div class="programlisting"><div class="cdata"><pre>
+$form-&gt;reset();
+</pre></div></div>
+
+        </div>
+
+        <div class="section" id="zend.form.forms.elements.global" name="zend.form.forms.elements.global"><div class="info"><h1 class="title"> 全局操作 </h1></div>
+            
+
+            <p class="para">
+                偶尔，你想用对所有元素进行特定的操作，一般的情形包括需要为所有元素设置插件前缀路径、装饰器和过滤器，如下例：
+            </p>
+
+            <div class="example"><div class="info"><p><b>Example #1  为所有元素设置前缀路径 </b></p></div>
+                
+
+                <div class="example-contents"><p>
+                    可以通过类型来为所有的元素设置前缀路径，或者使用全局前缀，如这些例子：
+                </p></div>
+
+                <div class="programlisting"><div class="cdata"><pre>&lt;?php
+// Set global prefix path:
+// Creates paths for prefixes My_Foo_Filter, My_Foo_Validate,
+// and My_Foo_Decorator
+$form-&gt;addElementPrefixPath(&#039;My_Foo&#039;, &#039;My/Foo/&#039;);
+
+// Just filter paths:
+$form-&gt;addElementPrefixPath(&#039;My_Foo_Filter&#039;, &#039;My/Foo/Filter&#039;, &#039;filter&#039;);
+
+// Just validator paths:
+$form-&gt;addElementPrefixPath(&#039;My_Foo_Validate&#039;, &#039;My/Foo/Validate&#039;, &#039;validate&#039;);
+
+// Just decorator paths:
+$form-&gt;addElementPrefixPath(&#039;My_Foo_Decorator&#039;, &#039;My/Foo/Decorator&#039;, &#039;decorator&#039;);
+?&gt;</pre></div></div>
+
+            </div>
+
+            <div class="example"><div class="info"><p><b>Example #2  为所有元素设置装饰器（Decorators）</b></p></div>
+                
+
+                <div class="example-contents"><p>
+                    你可以为所有元素设置装饰器。<code class="code">setElementDecorators()</code> 接受一个装饰器数组， 就象 <code class="code">setDecorators()</code> 一样，并对每个元素重写（overwrite）先前设置的装饰器。在本例中，我们为 ViewHelper 和一个 Label 设置装饰器：
+                </p></div>
+
+                <div class="programlisting"><div class="cdata"><pre>&lt;?php
+$form-&gt;setElementDecorators(array(
+    &#039;ViewHelper&#039;,
+    &#039;Label&#039;
+));
+?&gt;</pre></div></div>
+
+            </div>
+
+            <div class="example"><div class="info"><p><b>Example #3  为某些元素设置装饰器 </b></p></div>
+                
+
+                <div class="example-contents"><p>
+                    你也可以对一个元素的子集设置装饰器，包含和排除都可以。
+                    <code class="code">setElementDecorators()</code> 的第二个参数可以是元素名数组；
+                    缺省地，指定这样一个数组将只对这些元素设置指定的装饰器。
+                    你也可以传递第三个参数，用来指示是包含还是排除这个元素列表的标志。
+                    如果是 false，它将装饰 <em class="emphasis">除了</em> 这些在列表中的元素 <em class="emphasis">之外</em>
+                    的所有元素。使用方法的标准用法，在每个元素中，任何传递的装饰器将覆盖任何先前设置的装饰器。
+                </p></div>
+
+                <div class="example-contents"><p>
+                    在下面的片段中，我们只对 &#039;foo&#039; 和 &#039;bar&#039; 元素使用视图助手和标签装饰器：
+                </p></div>
+
+                <div class="programlisting"><div class="cdata"><pre>
+$form-&gt;setElementDecorators(
+    array(
+        &#039;ViewHelper&#039;,
+        &#039;Label&#039;
+    ),
+    array(
+        &#039;foo&#039;,
+        &#039;bar&#039;
+    )
+);
+</pre></div></div>
+
+
+                <div class="example-contents"><p>
+                    另一方面，在这个片段中，我们对<em class="emphasis">除了</em>&#039;foo&#039; 元素 &#039;bar&#039;<em class="emphasis">之外</em>的所以元素使用视图助手和标签装饰器：
+                </p></div>
+
+                <div class="programlisting"><div class="cdata"><pre>
+$form-&gt;setElementDecorators(
+    array(
+        &#039;ViewHelper&#039;,
+        &#039;Label&#039;
+    ),
+    array(
+        &#039;foo&#039;,
+        &#039;bar&#039;
+    ),
+    false
+);
+</pre></div></div>
+
+            </div>
+
+                <blockquote><p><b class="note">Note</b>: <span class="info"><b> 有些装饰器不适合某些元素 </b><br /></span>
+                    
+
+                    
+                        虽然 <code class="code">setElementDecorators()</code> 可能是个好方案，但有时候不会得到所期望的结果。例如，各种各样的按钮元素（Submit, Button, Reset）。当前使用标签（label）作为按钮（button）的值（value），并只使用 ViewHelper 和 DtDdWrapper 装饰器 －－ 防止解析另外的标签、错误、和提示，上述例子可能重复（duplicate）一些内容（标签）。
+                    <br />
+
+                    
+                        你可以使用 包含/排除 数组来克服在前面例子中所述的问题。
+                    <br />
+
+                    
+                        所以，要灵活使用这个方法，你需要排除或手工修改一些元素的装饰器来防止不希望的输出。
+                    <br />
+                </p></blockquote>
+
+            <div class="example"><div class="info"><p><b>Example #4  为所有元素设置过滤器 </b></p></div>
+                
+
+                <div class="example-contents"><p>
+                    大多数情况下，你想对所有元素应用同一个过滤器，一个通常的用法是 <code class="code">修整（trim()）</code> 所有的值：
+                </p></div>
+
+        <div class="programlisting"><div class="cdata"><pre>&lt;?php
+$form-&gt;setElementFilters(array(&#039;StringTrim&#039;));
+?&gt;</pre></div></div>
+
+            </div>
+        </div>
+
+        <div class="section" id="zend.form.forms.elements.methods" name="zend.form.forms.elements.methods"><div class="info"><h1 class="title"> 和元素交互使用的方法 </h1></div>
+            
+
+            <p class="para">
+                下面的方法用来和元素交互使用：
+            </p>
+
+            <ul class="itemizedlist">
+                <li class="listitem"><p class="para">
+                    <code class="code">createElement($element, $name = null, $options = null)</code>
+                </p></li>
+
+                <li class="listitem"><p class="para">
+                    <code class="code">addElement($element, $name = null, $options = null)</code>
+                </p></li>
+
+                <li class="listitem"><p class="para">
+                    <code class="code">addElements(array $elements)</code>
+                </p></li>
+
+                <li class="listitem"><p class="para">
+                    <code class="code">setElements(array $elements)</code>
+                </p></li>
+
+                <li class="listitem"><p class="para">
+                    <code class="code">getElement($name)</code>
+                </p></li>
+
+                <li class="listitem"><p class="para">
+                    <code class="code">getElements()</code>
+                </p></li>
+
+                <li class="listitem"><p class="para">
+                    <code class="code">removeElement($name)</code>
+                </p></li>
+
+                <li class="listitem"><p class="para">
+                    <code class="code">clearElements()</code>
+                </p></li>
+
+                <li class="listitem"><p class="para">
+                    <code class="code">setDefaults(array $defaults)</code>
+                </p></li>
+
+                <li class="listitem"><p class="para">
+                    <code class="code">setDefault($name, $value)</code>
+                </p></li>
+
+                <li class="listitem"><p class="para">
+                    <code class="code">getValue($name)</code>
+                </p></li>
+
+                <li class="listitem"><p class="para">
+                    <code class="code">getValues()</code>
+                </p></li>
+
+                <li class="listitem"><p class="para">
+                    <code class="code">getUnfilteredValue($name)</code>
+                </p></li>
+
+                <li class="listitem"><p class="para">
+                    <code class="code">getUnfilteredValues()</code>
+                </p></li>
+
+                <li class="listitem"><p class="para">
+                    <code class="code">setElementFilters(array $filters)</code>
+                </p></li>
+
+                <li class="listitem"><p class="para">
+                    <code class="code">setElementDecorators(array $decorators)</code>
+                </p></li>
+
+                <li class="listitem"><p class="para">
+                    <code class="code">addElementPrefixPath($prefix, $path, $type = null)</code>
+                </p></li>
+
+                <li class="listitem"><p class="para">
+                    <code class="code">addElementPrefixPaths(array $spec)</code>
+                </p></li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="section" id="zend.form.forms.displaygroups" name="zend.form.forms.displaygroups"><div class="info"><h1 class="title"> 显示组（Display Groups）</h1></div>
+        
+
+        <p class="para">
+            显示组是生成要显示的虚拟元素组的一种方法。所有元素在表单中保持用名字可访问，但是当迭代或解析（rendering）所有表单的时候，任何在显示组中的元素将被一起解析（rendered）。最普通的用例是把（数据库表中的）字段组成一组元素。
+        </p>
+
+        <p class="para">
+            显示组的基本类是 <code class="code">Zend_Form_DisplayGroup</code>。虽然它可以直接实例化，但是一般最好是用 <code class="code">Zend_Form</code> 的 <code class="code">addDisplayGroup()</code> 方法来做。该方法带有一个元素数组作为第一个参数，和一个显示组的名称作为第二个参数。也可以传递一个选项数组或 <code class="code">Zend_Config</code> 对象作为第三个参数。
+        </p>
+
+        <p class="para">
+            假定元素 &#039;username&#039; 和 &#039;password&#039;已经在表单中，下面的代码将把它们组成一个 &#039;login&#039;显示组：
+        </p>
+
+        <div class="programlisting"><div class="cdata"><pre>&lt;?php
+$form-&gt;addDisplayGroup(array(&#039;username&#039;, &#039;password&#039;), &#039;login&#039;);
+?&gt;</pre></div></div>
+
+
+        <p class="para">
+            你可以用 <code class="code">getDisplayGroup()</code> 方法来访问显示组，或用显示组的名称来重载（overloading）：
+        </p>
+
+        <div class="programlisting"><div class="cdata"><pre>&lt;?php
+// Using getDisplayGroup():
+$login = $form-&gt;getDisplayGroup(&#039;login&#039;);
+
+// Using overloading:
+$login = $form-&gt;login;
+?&gt;</pre></div></div>
+
+
+        <blockquote><p><b class="note">Note</b>: <span class="info"><b> 不需要加载缺省的装饰器 </b><br /></span>
+            
+
+            
+                缺省地，缺省的装饰器在对象初始化过程中加载。你可以在生成显示组的时候通过传递 &#039;disableLoadDefaultDecorators&#039; 选项来关闭（disable）它。
+            <br />
+
+            <div class="programlisting"><div class="cdata"><pre>&lt;?php
+$form-&gt;addDisplayGroup(
+    array(&#039;foo&#039;, &#039;bar&#039;),
+    &#039;foobar&#039;,
+    array(&#039;disableLoadDefaultDecorators&#039; =&gt; true)
+);
+</pre></div></div>
+
+
+            
+                该选项可以和其它选项混合，它们都是数组或者 <code class="code">Zend_Config</code> 对象。
+            <br />
+        </p></blockquote>
+
+        <div class="section" id="zend.form.forms.displaygroups.global" name="zend.form.forms.displaygroups.global"><div class="info"><h1 class="title"> 全局操作 </h1></div>
+            
+
+            <p class="para">
+                就像对元素一样，一些操作可能影响所有的显示组，包括设置装饰器和寻找装饰器的插件路径。
+            </p>
+
+            <div class="example"><div class="info"><p><b>Example #5  为所有的显示组设置装饰器前缀路径 </b></p></div>
+                
+
+                <div class="example-contents"><p>
+                    缺省地，显示组继承表单所使用的任何一个装饰器的路径，然而，如果它们在另外的位置，可以使用这个方法：<code class="code">addDisplayGroupPrefixPath()</code>。
+                </p></div>
+
+                <div class="programlisting"><div class="cdata"><pre>&lt;?php
+$form-&gt;addDisplayGroupPrefixPath(&#039;My_Foo_Decorator&#039;, &#039;My/Foo/Decorator&#039;);
+?&gt;</pre></div></div>
+
+            </div>
+
+            <div class="example"><div class="info"><p><b>Example #6  为所有显示组设置装饰器 </b></p></div>
+                
+
+                <div class="example-contents"><p>
+                    你可以为所有的显示组设置装饰器。<code class="code">setDisplayGroupDecorators()</code> 接受一个装饰器数组，就像 <code class="code">setDecorators()</code> 一样，并将在每个显示组重写（overwrite）先前设置的装饰器。在这个例子中，我们给字段（为确保元素被迭代，FormElements 装饰器是必需的）设置装饰器：
+                </p></div>
+
+                <div class="programlisting"><div class="cdata"><pre>&lt;?php
+$form-&gt;setDisplayGroupDecorators(array(
+    &#039;FormElements&#039;,
+    &#039;Fieldset&#039;
+));
+?&gt;</pre></div></div>
+
+            </div>
+        </div>
+
+        <div class="section" id="zend.form.forms.displaygroups.customClasses" name="zend.form.forms.displaygroups.customClasses"><div class="info"><h1 class="title"> 使用定制的显示组类 </h1></div>
+            
+
+            <p class="para">
+                缺省地，<code class="code">Zend_Form</code> 为显示组使用 <code class="code">Zend_Form_DisplayGroup</code> 类，你可能需要继承这个类来提供定制的功能。<code class="code">addDisplayGroup()</code> 不允许传递一个具体的实例，但确实允许用 &#039;displayGroupClass&#039; 键来指定一个类来作为它的一个选项：
+            </p>
+
+            <div class="programlisting"><div class="cdata"><pre>&lt;?php
+// Use the &#039;My_DisplayGroup&#039; class
+$form-&gt;addDisplayGroup(
+    array(&#039;username&#039;, &#039;password&#039;),
+    &#039;user&#039;,
+    array(&#039;displayGroupClass&#039; =&gt; &#039;My_DisplayGroup&#039;)
+);
+?&gt;</pre></div></div>
+
+
+            <p class="para">
+                如果类没有加载，<code class="code">Zend_Form</code> 将用 <code class="code">Zend_Loader</code> 来加载。
+            </p>
+
+            <p class="para">
+                你也可以指定一个缺省的显示组类来和表单一起使用，这样所有用这个表单对象生成的显示组将使用那个类：
+            </p>
+
+            <div class="programlisting"><div class="cdata"><pre>&lt;?php
+// Use the &#039;My_DisplayGroup&#039; class for all display groups:
+$form-&gt;setDefaultDisplayGroupClass(&#039;My_DisplayGroup&#039;);
+?&gt;</pre></div></div>
+
+
+            <p class="para">
+                这个设置可能在配置中指定为 &#039;defaultDisplayGroupClass&#039;，并在早期加载以确保所有的显示组使用那个类。
+            </p>
+        </div>
+
+        <div class="section" id="zend.form.forms.displaygroups.interactionmethods" name="zend.form.forms.displaygroups.interactionmethods"><div class="info"><h1 class="title"> 和显示组交互使用的方法 </h1></div>
+            
+
+            <p class="para">
+                下列方法用来和显示组一起交互使用：
+            </p>
+
+            <ul class="itemizedlist">
+                <li class="listitem"><p class="para">
+                    <code class="code">addDisplayGroup(array $elements, $name, $options = null)</code>
+                </p></li>
+
+                <li class="listitem"><p class="para">
+                    <code class="code">addDisplayGroups(array $groups)</code>
+                </p></li>
+
+                <li class="listitem"><p class="para">
+                    <code class="code">setDisplayGroups(array $groups)</code>
+                </p></li>
+
+                <li class="listitem"><p class="para">
+                    <code class="code">getDisplayGroup($name)</code>
+                </p></li>
+
+                <li class="listitem"><p class="para">
+                    <code class="code">getDisplayGroups()</code>
+                </p></li>
+
+                <li class="listitem"><p class="para">
+                    <code class="code">removeDisplayGroup($name)</code>
+                </p></li>
+
+                <li class="listitem"><p class="para">
+                    <code class="code">clearDisplayGroups()</code>
+                </p></li>
+
+                <li class="listitem"><p class="para">
+                    <code class="code">setDisplayGroupDecorators(array $decorators)</code>
+                </p></li>
+
+                <li class="listitem"><p class="para">
+                    <code class="code">addDisplayGroupPrefixPath($prefix, $path)</code>
+                </p></li>
+
+                <li class="listitem"><p class="para">
+                    <code class="code">setDefaultDisplayGroupClass($class)</code>
+                </p></li>
+
+                <li class="listitem"><p class="para">
+                    <code class="code">getDefaultDisplayGroupClass($class)</code>
+                </p></li>
+            </ul>
+        </div>
+
+        <div class="section" id="zend.form.forms.displaygroups.methods" name="zend.form.forms.displaygroups.methods"><div class="info"><h1 class="title">Zend_Form_DisplayGroup 方法 </h1></div>
+            
+
+            <p class="para">
+                <code class="code">Zend_Form_DisplayGroup</code> 有下列方法，以类来分组：
+            </p>
+
+            <ul class="itemizedlist">
+                <li class="listitem"><p class="para">Configuration:</p>
+                    <ul class="itemizedlist">
+                        <li class="listitem"><p class="para"><code class="code">setOptions(array $options)</code></p></li>
+
+                        <li class="listitem"><p class="para"><code class="code">setConfig(Zend_Config $config)</code></p></li>
+                    </ul>
+                </li>
+
+                <li class="listitem"><p class="para">Metadata:</p>
+                    <ul class="itemizedlist">
+                        <li class="listitem"><p class="para"><code class="code">setAttrib($key, $value)</code></p></li>
+
+                        <li class="listitem"><p class="para"><code class="code">addAttribs(array $attribs)</code></p></li>
+
+                        <li class="listitem"><p class="para"><code class="code">setAttribs(array $attribs)</code></p></li>
+
+                        <li class="listitem"><p class="para"><code class="code">getAttrib($key)</code></p></li>
+
+                        <li class="listitem"><p class="para"><code class="code">getAttribs()</code></p></li>
+
+                        <li class="listitem"><p class="para"><code class="code">removeAttrib($key)</code></p></li>
+
+                        <li class="listitem"><p class="para"><code class="code">clearAttribs()</code></p></li>
+
+                        <li class="listitem"><p class="para"><code class="code">setName($name)</code></p></li>
+
+                        <li class="listitem"><p class="para"><code class="code">getName()</code></p></li>
+
+                        <li class="listitem"><p class="para"><code class="code">setDescription($value)</code></p></li>
+
+                        <li class="listitem"><p class="para"><code class="code">getDescription()</code></p></li>
+
+                        <li class="listitem"><p class="para"><code class="code">setLegend($legend)</code></p></li>
+
+                        <li class="listitem"><p class="para"><code class="code">getLegend()</code></p></li>
+
+                        <li class="listitem"><p class="para"><code class="code">setOrder($order)</code></p></li>
+
+                        <li class="listitem"><p class="para"><code class="code">getOrder()</code></p></li>
+                    </ul>
+                </li>
+
+                <li class="listitem"><p class="para">Elements:</p>
+                    <ul class="itemizedlist">
+                        <li class="listitem"><p class="para"><code class="code">createElement($type, $name, array $options = array())</code></p></li>
+
+                        <li class="listitem"><p class="para"><code class="code">addElement($typeOrElement, $name, array $options = array())</code></p></li>
+
+                        <li class="listitem"><p class="para"><code class="code">addElements(array $elements)</code></p></li>
+
+                        <li class="listitem"><p class="para"><code class="code">setElements(array $elements)</code></p></li>
+
+                        <li class="listitem"><p class="para"><code class="code">getElement($name)</code></p></li>
+
+                        <li class="listitem"><p class="para"><code class="code">getElements()</code></p></li>
+
+                        <li class="listitem"><p class="para"><code class="code">removeElement($name)</code></p></li>
+
+                        <li class="listitem"><p class="para"><code class="code">clearElements()</code></p></li>
+                    </ul>
+                </li>
+
+                <li class="listitem"><p class="para">Plugin loaders:</p>
+                    <ul class="itemizedlist">
+                        <li class="listitem"><p class="para"><code class="code">setPluginLoader(Zend_Loader_PluginLoader $loader)</code></p></li>
+
+                        <li class="listitem"><p class="para"><code class="code">getPluginLoader()</code></p></li>
+
+                        <li class="listitem"><p class="para"><code class="code">addPrefixPath($prefix, $path)</code></p></li>
+
+                        <li class="listitem"><p class="para"><code class="code">addPrefixPaths(array $spec)</code></p></li>
+                    </ul>
+                </li>
+
+                <li class="listitem"><p class="para">Decorators:</p>
+                    <ul class="itemizedlist">
+                        <li class="listitem"><p class="para"><code class="code">addDecorator($decorator, $options = null)</code></p></li>
+
+                        <li class="listitem"><p class="para"><code class="code">addDecorators(array $decorators)</code></p></li>
+
+                        <li class="listitem"><p class="para"><code class="code">setDecorators(array $decorators)</code></p></li>
+
+                        <li class="listitem"><p class="para"><code class="code">getDecorator($name)</code></p></li>
+
+                        <li class="listitem"><p class="para"><code class="code">getDecorators()</code></p></li>
+
+                        <li class="listitem"><p class="para"><code class="code">removeDecorator($name)</code></p></li>
+
+                        <li class="listitem"><p class="para"><code class="code">clearDecorators()</code></p></li>
+                    </ul>
+                </li>
+
+                <li class="listitem"><p class="para">Rendering:</p>
+                    <ul class="itemizedlist">
+                        <li class="listitem"><p class="para"><code class="code">setView(Zend_View_Interface $view = null)</code></p></li>
+
+                        <li class="listitem"><p class="para"><code class="code">getView()</code></p></li>
+
+                        <li class="listitem"><p class="para"><code class="code">render(Zend_View_Interface $view = null)</code></p></li>
+                    </ul>
+                </li>
+
+                <li class="listitem"><p class="para">I18n:</p>
+                    <ul class="itemizedlist">
+                        <li class="listitem"><p class="para"><code class="code">setTranslator(Zend_Translate_Adapter $translator = null)</code></p></li>
+
+                        <li class="listitem"><p class="para"><code class="code">getTranslator()</code></p></li>
+
+                        <li class="listitem"><p class="para"><code class="code">setDisableTranslator($flag)</code></p></li>
+
+                        <li class="listitem"><p class="para"><code class="code">translatorIsDisabled()</code></p></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="section" id="zend.form.forms.subforms" name="zend.form.forms.subforms"><div class="info"><h1 class="title"> 子表单 </h1></div>
+        
+
+        <p class="para">
+            子表单服务于如干目的：
+        </p>
+
+        <ul class="itemizedlist">
+            <li class="listitem"><p class="para">
+                生成逻辑元素组。因为子表单只是个表单，你可以把它当作独立的实体来校验。
+            </p></li>
+
+            <li class="listitem"><p class="para">
+                生成多页表单。因为子表单只是个表单，你可以在每页上显示一个子表单，建立每个子表单都有自己的校验逻辑的多页表单。只有一旦所有的子表单校验了，整个表单才算完整。
+            </p></li>
+
+            <li class="listitem"><p class="para">
+                成组地显示。像显示组一样，当子表单作为大表单的一部分解析，可以被用做组元素。然而要小心，主表单对象不知道子表单中的元素。
+            </p></li>
+        </ul>
+
+        <p class="para">
+            子表单可以是 <code class="code">Zend_Form</code> 对象，或者更一般地是 <code class="code">Zend_Form_SubForm</code> 对象。后者包含适合包含在大表单（例如，它不解析另外的 HTML 表单标签，但解析组元素）里的装饰器。为了加上子表单，简单地把它添加到一个表单并给出名字：
+        </p>
+
+        <div class="programlisting"><div class="cdata"><pre>&lt;?php
+$form-&gt;addSubForm($subForm, &#039;subform&#039;);
+?&gt;</pre></div></div>
+
+
+        <p class="para">
+            可以用 <code class="code">getSubForm($name)</code> 或用子表单名重载（overloading）它来读取子表单：
+        </p>
+
+        <div class="programlisting"><div class="cdata"><pre>&lt;?php
+// Using getSubForm():
+$subForm = $form-&gt;getSubForm(&#039;subform&#039;);
+
+// Using overloading:
+$subForm = $form-&gt;subform;
+?&gt;</pre></div></div>
+
+
+        <p class="para">
+            虽然子表单包含的元素不包含在表单迭代中，但子表单包含在其中。
+        </p>
+
+        <div class="section" id="zend.form.forms.subforms.global" name="zend.form.forms.subforms.global"><div class="info"><h1 class="title"> 全局操作 </h1></div>
+            
+
+            <p class="para">
+                像元素和显示组一样，有些操作可以影响所有的子表单。然而不像显示组和元素，子表单从主表单对象继承了最多的功能，并且唯一的需要全局执行的操作是为子表单设置装饰器，<code class="code">setSubFormDecorators()</code> 方法来完成此任务。在下一个例子中，我们将为所有作为字段（为确保迭代它的元素，FormElements 装饰器是必需的）的子表单设置装饰器：
+            </p>
+
+            <div class="programlisting"><div class="cdata"><pre>&lt;?php
+$form-&gt;setSubFormDecorators(array(
+    &#039;FormElements&#039;,
+    &#039;Fieldset&#039;
+));
+?&gt;</pre></div></div>
+
+        </div>
+
+        <div class="section" id="zend.form.forms.subforms.methods" name="zend.form.forms.subforms.methods"><div class="info"><h1 class="title"> 和子表单交互使用的方法 </h1></div>
+            
+
+            <p class="para">
+                下列方法用来和子表单交互使用：
+            </p>
+
+            <ul class="itemizedlist">
+                <li class="listitem"><p class="para">
+                    <code class="code">addSubForm(Zend_Form $form, $name, $order = null)</code>
+                </p></li>
+
+                <li class="listitem"><p class="para">
+                    <code class="code">addSubForms(array $subForms)</code>
+                </p></li>
+
+                <li class="listitem"><p class="para">
+                    <code class="code">setSubForms(array $subForms)</code>
+                </p></li>
+
+                <li class="listitem"><p class="para">
+                    <code class="code">getSubForm($name)</code>
+                </p></li>
+
+                <li class="listitem"><p class="para">
+                    <code class="code">getSubForms()</code>
+                </p></li>
+
+                <li class="listitem"><p class="para">
+                    <code class="code">removeSubForm($name)</code>
+                </p></li>
+
+                <li class="listitem"><p class="para">
+                    <code class="code">clearSubForms()</code>
+                </p></li>
+
+                <li class="listitem"><p class="para">
+                    <code class="code">setSubFormDecorators(array $decorators)</code>
+                </p></li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="section" id="zend.form.forms.metadata" name="zend.form.forms.metadata"><div class="info"><h1 class="title"> 元数据（Metadata）和属性（Attributes）</h1></div>
+        
+
+        <p class="para">
+            虽然表单的有效性基本源于它所包含的元素，但它也可以包含其它元数据，如名称（在 HTML 标记语言中经常用作唯一的 ID）、表单动作和方法、许多元素、组、它所包含的子表单和属性元数据（通常用做为表单标签自己设置 HTML 属性）。
+        </p>
+
+        <p class="para">
+            可以使用名字访问器来设置和读取表单的名字：
+        </p>
+
+        <div class="programlisting"><div class="cdata"><pre>&lt;?php
+// Set the name:
+$form-&gt;setName(&#039;registration&#039;);
+
+// Retrieve the name:
+$name = $form-&gt;getName();
+?&gt;</pre></div></div>
+
+
+        <p class="para">
+            为了设置动作（到表单提交的 url ）和方法（提交的方法如 &#039;POST&#039; 或 &#039;GET&#039;），使用动作和方法访问器：
+        </p>
+
+        <div class="programlisting"><div class="cdata"><pre>&lt;?php
+// Set the action and method:
+$form-&gt;setAction(&#039;/user/login&#039;)
+     -&gt;setMethod(&#039;post&#039;);
+?&gt;</pre></div></div>
+
+
+        <p class="para">
+            你也可以指定特别使用 enctype 访问器的表单编码类型。
+            Zend_Form 定义了两个常量，
+            <code class="code">Zend_Form::ENCTYPE_URLENCODED</code> 和
+            <code class="code">Zend_Form::ENCTYPE_MULTIPART</code>，分别对应值为
+            &#039;application/x-www-form-urlencoded&#039; 和
+            &#039;multipart/form-data&#039;；
+             然而，你可以把它设置为任意的编码类型。
+        </p>
+
+        <div class="programlisting"><div class="cdata"><pre>&lt;?php
+// Set the action, method, and enctype:
+$form-&gt;setAction(&#039;/user/login&#039;)
+     -&gt;setMethod(&#039;post&#039;)
+     -&gt;setEnctype(Zend_Form::ENCTYPE_MULTIPART);
+?&gt;</pre></div></div>
+
+
+        <blockquote><p><b class="note">Note</b>: 
+            
+                方法、动作和 enctype 只用来内部解析，不用于任何校验。
+            <br />
+        </p></blockquote>
+
+        <p class="para">
+            <code class="code">Zend_Form</code> 实现 <code class="code">Countable</code> 接口，允许把它当作参数传递给计数器（count）：
+        </p>
+
+        <div class="programlisting"><div class="cdata"><pre>&lt;?php
+$numItems = count($form);
+?&gt;</pre></div></div>
+
+
+        <p class="para">
+            设置任意元数据可通过属性访问器来完成。因为在 <code class="code">Zend_Form</code> 中重载用于访问元素、显示组和子表单，这是唯一的访问元数据的方法。
+        </p>
+
+        <div class="programlisting"><div class="cdata"><pre>&lt;?php
+// Setting attributes:
+$form-&gt;setAttrib(&#039;class&#039;, &#039;zend-form&#039;)
+     -&gt;addAttribs(array(
+         &#039;id&#039;       =&gt; &#039;registration&#039;,
+         &#039;onSubmit&#039; =&gt; &#039;validate(this)&#039;,
+     ));
+
+// Retrieving attributes:
+$class = $form-&gt;getAttrib(&#039;class&#039;);
+$attribs = $form-&gt;getAttribs();
+
+// Remove an attribute:
+$form-&gt;removeAttrib(&#039;onSubmit&#039;);
+
+// Clear all attributes:
+$form-&gt;clearAttribs();
+?&gt;</pre></div></div>
+
+    </div>
+
+    <div class="section" id="zend.form.forms.decorators" name="zend.form.forms.decorators"><div class="info"><h1 class="title"> 装饰器 </h1></div>
+        
+
+        <p class="para">
+            为表单生成 markup 通常是一件耗时的任务，特别是如果打算重复使用同一个 markup 来显示校验错误、提交的值等。<code class="code">Zend_Form</code> 的解决办法是<em class="emphasis"> 装饰器（decorators）</em>。
+        </p>
+
+        <p class="para">
+            <code class="code">Zend_Form</code> 对象的装饰器可用来解析表单。FormElements 装饰器将迭代所有在表单中的条目 －－元素、显示组、子表单 －－并解析它们和返回结果。另外，装饰器可以用来封装内容、或追加、或预先准备它。
+        </p>
+
+        <p class="para">
+            <code class="code">Zend_Form</code> 的缺省装饰器是 FormElements，HtmlTag（ 封装在定义列表 ）和 Form，生成它们的等同的代码如下：
+        </p>
+
+        <div class="programlisting"><div class="cdata"><pre>&lt;?php
+$form-&gt;setDecorators(array(
+    &#039;FormElements&#039;,
+    array(&#039;HtmlTag&#039;, array(&#039;tag&#039; =&gt; &#039;dl&#039;)),
+    &#039;Form&#039;
+));
+?&gt;</pre></div></div>
+
+
+        <p class="para">
+            生成输出如下：
+        </p>
+
+        <div class="programlisting"><div class="cdata"><pre>
+&lt;form action=&quot;/form/action&quot; method=&quot;post&quot;&gt;
+&lt;dl&gt;
+...
+&lt;/dl&gt;
+&lt;/form&gt;
+</pre></div></div>
+
+
+        <p class="para">
+            在表单对象中的任何属性设置将用做 <code class="code">&lt;form&gt;</code> 标签的 HTML 属性。
+        </p>
+
+        <blockquote><p><b class="note">Note</b>: <span class="info"><b> 不需要加载缺省的装饰器 </b><br /></span>
+            
+
+            
+                缺省地，缺省的装饰器在对象初始化过程中加载。可通过传递 &#039;disableLoadDefaultDecorators&#039; 选项给构造器来关闭（disable）它：
+            <br />
+
+            <div class="programlisting"><div class="cdata"><pre>&lt;?php
+$form = new Zend_Form(array(&#039;disableLoadDefaultDecorators&#039; =&gt; true));
+</pre></div></div>
+
+
+            
+                该选项可以和其它任何选项混合，它们都是数组或在一个 <code class="code">Zend_Config</code> 对象里。
+            <br />
+        </p></blockquote>
+
+        <blockquote><p><b class="note">Note</b>: <span class="info"><b> 使用同类型的多个装饰器 </b><br /></span>
+            
+
+            
+                在内部，当读取装饰器时，<code class="code">Zend_Form</code> 使用装饰器的类做为查找机制。结果，可以注册同类型的多个装饰器，后来的装饰器将重些以前的（装饰器）。
+            <br />
+
+            
+                To get around this,可以使用别名。不用传递装饰器或装饰器名称为第一个参数给 <code class="code">addDecorator()</code>，而是传递一个带有单个元素的、带有指向装饰器对象或名字的别名的数组：
+            <br />
+
+            <div class="programlisting"><div class="cdata"><pre>&lt;?php
+// Alias to &#039;FooBar&#039;:
+$form-&gt;addDecorator(array(&#039;FooBar&#039; =&gt; &#039;HtmlTag&#039;), array(&#039;tag&#039; =&gt; &#039;div&#039;));
+
+// And retrieve later:
+$form = $element-&gt;getDecorator(&#039;FooBar&#039;);
+?&gt;</pre></div></div>
+
+
+            
+                在 <code class="code">addDecorators()</code> 和 <code class="code">setDecorators()</code> 方法中，需要传递在表示装饰器的数组中的 &#039;decorator&#039; 选项：
+            <br />
+
+            <div class="programlisting"><div class="cdata"><pre>&lt;?php
+// Add two &#039;HtmlTag&#039; decorators, aliasing one to &#039;FooBar&#039;:
+$form-&gt;addDecorators(
+    array(&#039;HtmlTag&#039;, array(&#039;tag&#039; =&gt; &#039;div&#039;)),
+    array(
+        &#039;decorator&#039; =&gt; array(&#039;FooBar&#039; =&gt; &#039;HtmlTag&#039;),
+        &#039;options&#039; =&gt; array(&#039;tag&#039; =&gt; &#039;dd&#039;)
+    ),
+);
+
+// And retrieve later:
+$htmlTag = $form-&gt;getDecorator(&#039;HtmlTag&#039;);
+$fooBar  = $form-&gt;getDecorator(&#039;FooBar&#039;);
+?&gt;</pre></div></div>
+
+        </p></blockquote>
+
+        <p class="para">
+            为生成表单，你可以生成自己的装饰器。一个通常的用例是如果你知道额外的你想用的 HTML，你的装饰器可以潜在地使用从独立的元素或显示组来的装饰器生成额外的 HTML 并返回它。
+
+        </p>
+
+        <p class="para">
+            下列方法可以用来和装饰器交互使用：
+        </p>
+
+        <ul class="itemizedlist">
+                <li class="listitem"><p class="para">
+                    <code class="code">addDecorator($decorator, $options = null)</code>
+                </p></li>
+
+                <li class="listitem"><p class="para">
+                    <code class="code">addDecorators(array $decorators)</code>
+                </p></li>
+
+                <li class="listitem"><p class="para">
+                    <code class="code">setDecorators(array $decorators)</code>
+                </p></li>
+
+                <li class="listitem"><p class="para">
+                    <code class="code">getDecorator($name)</code>
+                </p></li>
+
+                <li class="listitem"><p class="para">
+                    <code class="code">getDecorators()</code>
+                </p></li>
+
+                <li class="listitem"><p class="para">
+                    <code class="code">removeDecorator($name)</code>
+                </p></li>
+
+                <li class="listitem"><p class="para">
+                    <code class="code">clearDecorators()</code>
+                </p></li>
+        </ul>
+    </div>
+
+    <div class="section" id="zend.form.forms.validation" name="zend.form.forms.validation"><div class="info"><h1 class="title"> 校验 </h1></div>
+        
+
+        <p class="para">
+            表单的一个基本用例是校验提交的数据。<code class="code">Zend_Form</code> 让你一次性校验整个表单或部分表单，还有对 XmlHttpRequests (AJAX)的自动校验响应。如果提交的数据无效，它有一些方法用来为元素和子表单校验失败而读取各种各样的错误代码和消息。
+        </p>
+
+        <p class="para">
+            为了校验整个表单，使用  <code class="code">isValid()</code> 方法：
+        </p>
+
+        <div class="programlisting"><div class="cdata"><pre>&lt;?php
+if (!$form-&gt;isValid($_POST)) {
+    // failed validation
+}
+?&gt;</pre></div></div>
+
+
+        <p class="para">
+            <code class="code">isValid()</code> 校验每个必需的元素和任何包括在提交的数据中的非必需的元素。
+        </p>
+
+        <p class="para">
+            有时候你可能只需要校验数据的一个子集，可以使用 <code class="code">isValidPartial($data)</code>：
+        </p>
+
+        <div class="programlisting"><div class="cdata"><pre>&lt;?php
+if (!$form-&gt;isValidPartial($data)) {
+    // failed validation
+}
+?&gt;</pre></div></div>
+
+
+        <p class="para">
+            <code class="code">isValidPartial()</code> 只尝试校验那些数据中匹配的元素，如果某个元素不在数据中，那就跳过。
+        </p>
+
+        <p class="para">
+            当为 AJAX 请求校验元素或元素组，你一般要校验表单的一个子集，并想要响应返回到 JSON。用 <code class="code">processAjax()</code> 正好：
+        </p>
+
+        <div class="programlisting"><div class="cdata"><pre>&lt;?php
+$json = $form-&gt;processAjax($data);
+?&gt;</pre></div></div>
+
+
+        <p class="para">
+            你可以发送 JSON 响应到客户端。如果表单有效，这将是个布尔 true 响应，如果表单无效，则是个包含 key/message 对的 javascript 对象，这里，每个 &#039;message&#039; 是校验错误消息的数组。
+        </p>
+
+        <p class="para">
+            对于校验失败的表单，你可以分别使用 <code class="code">getErrors()</code> 和 <code class="code">getMessages()</code> 获取错误代码和错误消息：
+        </p>
+
+        <div class="programlisting"><div class="cdata"><pre>&lt;?php
+$codes = $form-&gt;getErrors();
+$messages = $form-&gt;getMessage();
+?&gt;</pre></div></div>
+
+
+        <blockquote><p><b class="note">Note</b>: 
+            
+                因为由 <code class="code">getMessages()</code> 返回的消息是 error code/message 对的数组，一般不需要 <code class="code">getErrors()</code>。
+            <br />
+        </p></blockquote>
+
+        <p class="para">
+            你可以通过传递元素名为单个元素来获取代码和错误消息；
+        </p>
+
+        <div class="programlisting"><div class="cdata"><pre>&lt;?php
+$codes = $form-&gt;getErrors(&#039;username&#039;);
+$messages = $form-&gt;getMessages(&#039;username&#039;);
+?&gt;</pre></div></div>
+
+
+        <blockquote><p><b class="note">Note</b>: 
+            
+                注意：当校验元素时，<code class="code">Zend_Form</code> 发送第二个参数给每个元素的 <code class="code">isValid()</code> 方法：被校验的数据的数组。当确定数据和合法性时，单个的校验器可以用这个来让它们来利用其它提交的值。一个典型的例子是注册表单，密码和密码确认都是必需的；密码元素可以使用密码确认做为它的校验的一部分。
+            <br />
+        </p></blockquote>
+
+        <div class="section" id="zend.form.forms.validation.errors" name="zend.form.forms.validation.errors"><div class="info"><h1 class="title"> 定制错误消息 </h1></div>
+            
+
+            <p class="para">
+                有时，你想定制一条或多条特定的错误消息来替代由附加到元素上的校验器所带的错误消息。
+                另外，有时候你想自己标记表单无效，从 1.6.0 版开始，通过下列方法来实现这个功能。
+            </p>
+
+            <ul class="itemizedlist">
+                <li class="listitem"><p class="para">
+                    <code class="code">addErrorMessage($message)</code>: 添加一条来显示当校验失败时的错误消息。
+                    可以多次调用，新消息就追加到堆栈。
+                </p></li>
+
+                <li class="listitem"><p class="para">
+                    <code class="code">addErrorMessages(array $messages)</code>: 添加多条错误消息来显示校验错误。
+                </p></li>
+
+                <li class="listitem"><p class="para">
+                    <code class="code">setErrorMessages(array $messages)</code>: 添加多条错误消息来显示校验错误，并覆盖先前的错误消息。
+                </p></li>
+
+                <li class="listitem"><p class="para">
+                    <code class="code">getErrorMessages()</code>: 读取已定义的定制的错误消息列表。
+                </p></li>
+
+                <li class="listitem"><p class="para">
+                    <code class="code">clearErrorMessages()</code>: 删除已定义的定制的错误消息。
+                </p></li>
+
+                <li class="listitem"><p class="para">
+                    <code class="code">markAsError()</code>: 标记表单已经有失败的校验。
+                </p></li>
+
+                <li class="listitem"><p class="para">
+                    <code class="code">addError($message)</code>: 添加一条消息给定制错误消息栈并标记表单无效。
+                </p></li>
+
+                <li class="listitem"><p class="para">
+                    <code class="code">addErrors(array $messages)</code>: 添加数条消息给定制错误消息栈并标记表单无效。
+                </p></li>
+
+                <li class="listitem"><p class="para">
+                    <code class="code">setErrors(array $messages)</code>: 覆盖定制的错误消息堆栈并标记表单无效。
+                </p></li>
+            </ul>
+
+            <p class="para">
+                所有用这个方式设置的错误可以被翻译。
+          另外，你可以插入占位符 &quot;%value%&quot; 来表示元素的值；当读取到错误消息时，这个当前元素值将被替换。
+            </p>
+        </div>
+    </div>
+
+    <div class="section" id="zend.form.forms.methods" name="zend.form.forms.methods"><div class="info"><h1 class="title"> 方法 </h1></div>
+        
+
+        <p class="para">
+            下面是 <code class="code">Zend_Form</code> 的方法大全，按类分组：
+        </p>
+
+        <ul class="itemizedlist">
+            <li class="listitem"><p class="para"> 配置和选项：</p>
+                <ul class="itemizedlist">
+                    <li class="listitem"><p class="para"><code class="code">setOptions(array $options)</code></p></li>
+
+                    <li class="listitem"><p class="para"><code class="code">setConfig(Zend_Config $config)</code></p></li>
+                </ul>
+            </li>
+
+            <li class="listitem"><p class="para"> 插件加载器和路径：</p>
+                <ul class="itemizedlist">
+                    <li class="listitem"><p class="para"><code class="code">setPluginLoader(Zend_Loader_PluginLoader_Interface $loader, $type = null)</code></p></li>
+
+                    <li class="listitem"><p class="para"><code class="code">getPluginLoader($type = null)</code></p></li>
+
+                    <li class="listitem"><p class="para"><code class="code">addPrefixPath($prefix, $path, $type = null) </code></p></li>
+
+                    <li class="listitem"><p class="para"><code class="code">addPrefixPaths(array $spec)</code></p></li>
+
+                    <li class="listitem"><p class="para"><code class="code">addElementPrefixPath($prefix, $path, $type = null)</code></p></li>
+
+                    <li class="listitem"><p class="para"><code class="code">addElementPrefixPaths(array $spec)</code></p></li>
+
+                    <li class="listitem"><p class="para"><code class="code">addDisplayGroupPrefixPath($prefix, $path)</code></p></li>
+                </ul>
+            </li>
+
+            <li class="listitem"><p class="para"> 元数据: </p>
+                <ul class="itemizedlist">
+                    <li class="listitem"><p class="para"><code class="code">setAttrib($key, $value)</code></p></li>
+
+                    <li class="listitem"><p class="para"><code class="code">addAttribs(array $attribs)</code></p></li>
+
+                    <li class="listitem"><p class="para"><code class="code">setAttribs(array $attribs)</code></p></li>
+
+                    <li class="listitem"><p class="para"><code class="code">getAttrib($key)</code></p></li>
+
+                    <li class="listitem"><p class="para"><code class="code">getAttribs()</code></p></li>
+
+                    <li class="listitem"><p class="para"><code class="code">removeAttrib($key)</code></p></li>
+
+                    <li class="listitem"><p class="para"><code class="code">clearAttribs()</code></p></li>
+
+                    <li class="listitem"><p class="para"><code class="code">setAction($action)</code></p></li>
+
+                    <li class="listitem"><p class="para"><code class="code">getAction()</code></p></li>
+
+                    <li class="listitem"><p class="para"><code class="code">setMethod($method)</code></p></li>
+
+                    <li class="listitem"><p class="para"><code class="code">getMethod()</code></p></li>
+
+                    <li class="listitem"><p class="para"><code class="code">setName($name)</code></p></li>
+
+                    <li class="listitem"><p class="para"><code class="code">getName()</code></p></li>
+                </ul>
+            </li>
+
+            <li class="listitem"><p class="para"> 元素：</p>
+                <ul class="itemizedlist">
+                    <li class="listitem"><p class="para"><code class="code">addElement($element, $name = null, $options = null)</code></p></li>
+
+                    <li class="listitem"><p class="para"><code class="code">addElements(array $elements)</code></p></li>
+
+                    <li class="listitem"><p class="para"><code class="code">setElements(array $elements)</code></p></li>
+
+                    <li class="listitem"><p class="para"><code class="code">getElement($name)</code></p></li>
+
+                    <li class="listitem"><p class="para"><code class="code">getElements()</code></p></li>
+
+                    <li class="listitem"><p class="para"><code class="code">removeElement($name)</code></p></li>
+
+                    <li class="listitem"><p class="para"><code class="code">clearElements()</code></p></li>
+
+                    <li class="listitem"><p class="para"><code class="code">setDefaults(array $defaults)</code></p></li>
+
+                    <li class="listitem"><p class="para"><code class="code">setDefault($name, $value)</code></p></li>
+
+                    <li class="listitem"><p class="para"><code class="code">getValue($name)</code></p></li>
+
+                    <li class="listitem"><p class="para"><code class="code">getValues()</code></p></li>
+
+                    <li class="listitem"><p class="para"><code class="code">getUnfilteredValue($name)</code></p></li>
+
+                    <li class="listitem"><p class="para"><code class="code">getUnfilteredValues()</code></p></li>
+
+                    <li class="listitem"><p class="para"><code class="code">setElementFilters(array $filters)</code></p></li>
+
+                    <li class="listitem"><p class="para"><code class="code">setElementDecorators(array $decorators)</code></p></li>
+                </ul>
+            </li>
+
+            <li class="listitem"><p class="para"> 子表单：</p>
+                <ul class="itemizedlist">
+                    <li class="listitem"><p class="para"><code class="code">addSubForm(Zend_Form $form, $name, $order = null)</code></p></li>
+
+                    <li class="listitem"><p class="para"><code class="code">addSubForms(array $subForms)</code></p></li>
+
+                    <li class="listitem"><p class="para"><code class="code">setSubForms(array $subForms)</code></p></li>
+
+                    <li class="listitem"><p class="para"><code class="code">getSubForm($name)</code></p></li>
+
+                    <li class="listitem"><p class="para"><code class="code">getSubForms()</code></p></li>
+
+                    <li class="listitem"><p class="para"><code class="code">removeSubForm($name)</code></p></li>
+
+                    <li class="listitem"><p class="para"><code class="code">clearSubForms()</code></p></li>
+
+                    <li class="listitem"><p class="para"><code class="code">setSubFormDecorators(array $decorators)</code></p></li>
+                </ul>
+            </li>
+
+            <li class="listitem"><p class="para"> 显示组：</p>
+                <ul class="itemizedlist">
+                    <li class="listitem"><p class="para"><code class="code">addDisplayGroup(array $elements, $name, $options = null)</code></p></li>
+
+                    <li class="listitem"><p class="para"><code class="code">addDisplayGroups(array $groups)</code></p></li>
+
+                    <li class="listitem"><p class="para"><code class="code">setDisplayGroups(array $groups)</code></p></li>
+
+                    <li class="listitem"><p class="para"><code class="code">getDisplayGroup($name)</code></p></li>
+
+                    <li class="listitem"><p class="para"><code class="code">getDisplayGroups()</code></p></li>
+
+                    <li class="listitem"><p class="para"><code class="code">removeDisplayGroup($name)</code></p></li>
+
+                    <li class="listitem"><p class="para"><code class="code">clearDisplayGroups()</code></p></li>
+
+                    <li class="listitem"><p class="para"><code class="code">setDisplayGroupDecorators(array $decorators)</code></p></li>
+                </ul>
+            </li>
+
+            <li class="listitem"><p class="para"> 校验 </p>
+                <ul class="itemizedlist">
+                    <li class="listitem"><p class="para"><code class="code">populate(array $values)</code></p></li>
+
+                    <li class="listitem"><p class="para"><code class="code">isValid(array $data)</code></p></li>
+
+                    <li class="listitem"><p class="para"><code class="code">isValidPartial(array $data)</code></p></li>
+
+                    <li class="listitem"><p class="para"><code class="code">processAjax(array $data)</code></p></li>
+
+                    <li class="listitem"><p class="para"><code class="code">persistData()</code></p></li>
+
+                    <li class="listitem"><p class="para"><code class="code">getErrors($name = null)</code></p></li>
+
+                    <li class="listitem"><p class="para"><code class="code">getMessages($name = null)</code></p></li>
+                </ul>
+            </li>
+
+            <li class="listitem"><p class="para"> 解析：</p>
+                <ul class="itemizedlist">
+                    <li class="listitem"><p class="para"><code class="code">setView(Zend_View_Interface $view = null)</code></p></li>
+
+                    <li class="listitem"><p class="para"><code class="code">getView()</code></p></li>
+
+                    <li class="listitem"><p class="para"><code class="code">addDecorator($decorator, $options = null)</code></p></li>
+
+                    <li class="listitem"><p class="para"><code class="code">addDecorators(array $decorators)</code></p></li>
+
+                    <li class="listitem"><p class="para"><code class="code">setDecorators(array $decorators)</code></p></li>
+
+                    <li class="listitem"><p class="para"><code class="code">getDecorator($name)</code></p></li>
+
+                    <li class="listitem"><p class="para"><code class="code">getDecorators()</code></p></li>
+
+                    <li class="listitem"><p class="para"><code class="code">removeDecorator($name)</code></p></li>
+
+                    <li class="listitem"><p class="para"><code class="code">clearDecorators()</code></p></li>
+
+                    <li class="listitem"><p class="para"><code class="code">render(Zend_View_Interface $view = null)</code></p></li>
+                </ul>
+            </li>
+
+            <li class="listitem"><p class="para">I18n:</p>
+                <ul class="itemizedlist">
+                    <li class="listitem"><p class="para"><code class="code">setTranslator(Zend_Translate_Adapter $translator = null)</code></p></li>
+
+                    <li class="listitem"><p class="para"><code class="code">getTranslator()</code></p></li>
+
+                    <li class="listitem"><p class="para"><code class="code">setDisableTranslator($flag)</code></p></li>
+
+                    <li class="listitem"><p class="para"><code class="code">translatorIsDisabled()</code></p></li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+
+    <div class="section" id="zend.form.forms.config" name="zend.form.forms.config"><div class="info"><h1 class="title"> 配置 </h1></div>
+        
+
+        <p class="para">
+            <code class="code">Zend_Form</code> 可以通过 <code class="code">setOptions()</code> 和 <code class="code">setConfig()</code> （或者通过传递选项或 <code class="code">Zend_Config</code> 对象 ） 进行全面配置。使用这些方法，你可以指定表单元素、显示组、装饰器和元数据。
+        </p>
+
+        <p class="para">
+            作为通用的规则，如果 &#039;set&#039; + 选项键涉及 <code class="code">Zend_Form</code> 方法，那么提供的值将传递给那个方法。
+            如果访问器不存在，键被假定引用一个属性并将传递给 <code class="code">setAttrib()</code> 。
+        </p>
+
+        <p class="para">
+            规则的异常包括下列这些：
+        </p>
+
+        <ul class="itemizedlist">
+            <li class="listitem"><p class="para">
+                    <code class="code">prefixPaths</code> 将传递给 <code class="code">addPrefixPaths()</code>
+            </p></li>
+
+            <li class="listitem"><p class="para">
+                <code class="code">elementPrefixPaths</code> 将传递给 <code class="code">addElementPrefixPaths()</code>
+            </p></li>
+
+            <li class="listitem"><p class="para">
+                <code class="code">displayGroupPrefixPaths</code> 将传递给 <code class="code">addDisplayGroupPrefixPaths()</code>
+            </p></li>
+
+            <li class="listitem">
+                <p class="para"> 下列设置器不能用这个方法设置：</p>
+
+                <ul class="itemizedlist">
+                    <li class="listitem"><p class="para"><code class="code">setAttrib (though setAttribs *will* work)</code></p></li>
+
+                    <li class="listitem"><p class="para"><code class="code">setConfig</code></p></li>
+
+                    <li class="listitem"><p class="para"><code class="code">setDefault</code></p></li>
+
+                    <li class="listitem"><p class="para"><code class="code">setOptions</code></p></li>
+
+                    <li class="listitem"><p class="para"><code class="code">setPluginLoader</code></p></li>
+
+                    <li class="listitem"><p class="para"><code class="code">setSubForms</code></p></li>
+
+                    <li class="listitem"><p class="para"><code class="code">setTranslator</code></p></li>
+
+                    <li class="listitem"><p class="para"><code class="code">setView</code></p></li>
+                </ul>
+            </li>
+        </ul>
+
+        <p class="para">
+            作为一个例子，这里是一个为每个可配置数据传递配置的配置文件：
+        </p>
+
+        <div class="programlisting"><div class="cdata"><pre>
+[element]
+name = &quot;registration&quot;
+action = &quot;/user/register&quot;
+method = &quot;post&quot;
+attribs.class = &quot;zend_form&quot;
+attribs.onclick = &quot;validate(this)&quot;
+
+disableTranslator = 0
+
+prefixPath.element.prefix = &quot;My_Element&quot;
+prefixPath.element.path = &quot;My/Element/&quot;
+elementPrefixPath.validate.prefix = &quot;My_Validate&quot;
+elementPrefixPath.validate.path = &quot;My/Validate/&quot;
+displayGroupPrefixPath.prefix = &quot;My_Group&quot;
+displayGroupPrefixPath.path = &quot;My/Group/&quot;
+
+elements.username.type = &quot;text&quot;
+elements.username.options.label = &quot;Username&quot;
+elements.username.options.validators.alpha.validator = &quot;Alpha&quot;
+elements.username.options.filters.lcase = &quot;StringToLower&quot;
+; more elements, of course...
+
+elementFilters.trim = &quot;StringTrim&quot;
+;elementDecorators.trim = &quot;StringTrim&quot;
+
+displayGroups.login.elements.username = &quot;username&quot;
+displayGroups.login.elements.password = &quot;password&quot;
+displayGroupDecorators.elements.decorator = &quot;FormElements&quot;
+displayGroupDecorators.fieldset.decorator = &quot;Fieldset&quot;
+
+decorators.elements.decorator = &quot;FormElements&quot;
+decorators.fieldset.decorator = &quot;FieldSet&quot;
+decorators.fieldset.decorator.options.class = &quot;zend_form&quot;
+decorators.form.decorator = &quot;Form&quot;
+?&gt;</pre></div></div>
+
+
+        <p class="para">
+            上述可以很容易被抽象成 XML 或 PHP 基于数组的配置文件。
+        </p>
+    </div>
+
+    <div class="section" id="zend.form.forms.custom" name="zend.form.forms.custom"><div class="info"><h1 class="title"> 定制表单 </h1></div>
+        
+
+        <p class="para">
+            一个使用基于配置的表单的替代方法是继承 <code class="code">Zend_Form</code> 类，有若干优点：
+        </p>
+
+        <ul class="itemizedlist">
+            <li class="listitem"><p class="para">
+                可以容易进行单元测试来确保校验和解析如愿执行。
+            </p></li>
+
+            <li class="listitem"><p class="para">
+                精细地控制每个元素。
+            </p></li>
+
+            <li class="listitem"><p class="para">
+                重使用表单对象，最大化可移植性（不需要跟踪配置文件）。
+            </p></li>
+
+            <li class="listitem"><p class="para">
+                实现定制功能。
+            </p></li>
+        </ul>
+
+        <p class="para">
+            最典型的用例是使用 <code class="code">init()</code> 方法来设置指定的表单元素和配置：
+        </p>
+
+        <div class="programlisting"><div class="cdata"><pre>&lt;?php
+class My_Form_Login extends Zend_Form
+{
+    public function init()
+    {
+        $username = new Zend_Form_Element_Text(&#039;username&#039;);
+        $username-&gt;class = &#039;formtext&#039;;
+        $username-&gt;setLabel(&#039;Username:&#039;)
+                 -&gt;setDecorators(array(
+                     array(&#039;ViewHelper&#039;, array(&#039;helper&#039; =&gt; &#039;formText&#039;)),
+                     array(&#039;Label&#039;, array(&#039;class&#039; =&gt; &#039;label&#039;))
+                 ));
+
+        $password = new Zend_Form_Element_Password(&#039;password&#039;);
+        $password-&gt;class = &#039;formtext&#039;;
+        $password-&gt;setLabel(&#039;Username:&#039;)
+                 -&gt;setDecorators(array(
+                     array(&#039;ViewHelper&#039;, array(&#039;helper&#039; =&gt; &#039;formPassword&#039;)),
+                     array(&#039;Label&#039;, array(&#039;class&#039; =&gt; &#039;label&#039;))
+                 ));
+
+        $submit = new Zend_Form_Element_Submit(&#039;login&#039;);
+        $submit-&gt;class = &#039;formsubmit&#039;;
+        $submit-&gt;setValue(&#039;Login&#039;)
+               -&gt;setDecorators(array(
+                   array(&#039;ViewHelper&#039;, array(&#039;helper&#039; =&gt; &#039;formSubmit&#039;))
+               ));
+
+        $this-&gt;addElements(array(
+            $username,
+            $password,
+            $submit
+        ));
+
+        $this-&gt;setDecorators(array(
+            &#039;FormElements&#039;,
+            &#039;Fieldset&#039;,
+            &#039;Form&#039;
+        ));
+    }
+}
+?&gt;</pre></div></div>
+
+
+        <p class="para">
+            这个表单可以简单地实例化：
+        </p>
+
+        <div class="programlisting"><div class="cdata"><pre>&lt;?php
+$form = new My_Form_Login();
+?&gt;</pre></div></div>
+
+
+        <p class="para">
+            所有的功能已经设置并准备好了，不需要配置文件。（注意这个例子非常简化，因为它没有为元素包含校验器和过滤器。）
+        </p>
+
+        <p class="para">
+            另一个普通的扩展原因是定义一组缺省的装饰器，可以通过覆盖（overriding）<code class="code">loadDefaultDecorators()</code> 方法来完成：
+        </p>
+
+        <div class="programlisting"><div class="cdata"><pre>&lt;?php
+class My_Form_Login extends Zend_Form
+{
+    public function loadDefaultDecorators()
+    {
+        $this-&gt;setDecorators(array(
+            &#039;FormElements&#039;,
+            &#039;Fieldset&#039;,
+            &#039;Form&#039;
+        ));
+    }
+}
+</pre></div></div>
+
+    </div>
+</div>
+        <hr />
+
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.form.elements.html">使用 Zend_Form_Element 生成表单元素</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.form.html">Zend_Form</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.form.decorators.html">使用 Zend_Form_Decorator 生成定制的表单标识（Markup）</a></div>
+                    </td>
+                </tr>
+            </table>
+</td>
+        <td style="font-size: smaller;" width="15%"> <style type="text/css">
+#leftbar {
+	float: left;
+	width: 186px;
+	padding: 5px;
+	font-size: smaller;
+}
+ul.toc {
+	margin: 0px 5px 5px 5px;
+	padding: 0px;
+}
+ul.toc li {
+	font-size: 85%;
+	margin: 1px 0 1px 1px;
+	padding: 1px 0 1px 11px;
+	list-style-type: none;
+	background-repeat: no-repeat;
+	background-position: center left;
+}
+ul.toc li.header {
+	font-size: 115%;
+	padding: 5px 0px 5px 11px;
+	border-bottom: 1px solid #cccccc;
+	margin-bottom: 5px;
+}
+ul.toc li.active {
+	font-weight: bold;
+}
+ul.toc li a {
+	text-decoration: none;
+}
+ul.toc li a:hover {
+	text-decoration: underline;
+}
+</style>
+ <ul class="toc">
+  <li class="header home"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="reference.html">Zend Framework Reference</a></li>
+  <li class="header up"><a href="zend.form.html">Zend_Form</a></li>
+  <li><a href="zend.form.introduction.html">Zend_Form</a></li>
+  <li><a href="zend.form.quickstart.html">Zend_Form 快速起步</a></li>
+  <li><a href="zend.form.elements.html">使用 Zend_Form_Element 生成表单元素</a></li>
+  <li class="active"><a href="zend.form.forms.html">使用 Zend_Form 生成表单</a></li>
+  <li><a href="zend.form.decorators.html">使用 Zend_Form_Decorator 生成定制的表单标识（Markup）</a></li>
+  <li><a href="zend.form.standardElements.html">Zend Framework 带有的标准表单元素</a></li>
+  <li><a href="zend.form.standardDecorators.html">Zend Framework 带有的标准表单装饰器（Decorators）</a></li>
+  <li><a href="zend.form.i18n.html">Zend_Form 的国际化</a></li>
+  <li><a href="zend.form.advanced.html">Zend_Form 的高级用法</a></li>
+ </ul>
+ </td>
+    </tr>
+</table>
+</body>
+</html>

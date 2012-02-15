@@ -1,0 +1,252 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <title>概述 - Zend Framework Manual</title>
+
+</head>
+<body>
+<table width="100%">
+    <tr valign="top">
+        <td width="85%">
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.memory.html">Zend_Memory</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.memory.html">Zend_Memory</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.memory.memory-manager.html">内存管理器</a></div>
+                    </td>
+                </tr>
+            </table>
+<hr />
+<div id="zend.memory.overview" class="section"><div class="info"><h1 class="title">概述</h1></div>
+    
+
+    <div class="section" id="zend.memory.introduction" name="zend.memory.introduction"><div class="info"><h1 class="title"> 简介 </h1></div>
+        
+        <p class="para">
+            Zend_Memory组件用于在一个受限制的内存环境下管理数据.
+        </p>
+
+        <p class="para">
+            内存对象(内存容器)是由内存管理器按照请求生成并在需要的时候透明地交换/加载的.
+        </p>
+
+        <p class="para">
+            例如,如果由于受管理对象的创建或加载导致内存使用量超过你所指定的限制,一些管理对象将被复制到内存以外的缓存存储中.
+            用这种方法,受管理对象的总内存使用量不会超过强制的限制.
+        </p>
+
+        <p class="para">
+            内存管理器使用<a href="zend.cache.backends.html" class="link">Zend_Cache backends</a>作为存储提供者
+        </p>
+
+        <div class="example"><div class="info"><p><b>Example #1 使用 Zend_Memory 组件</b></p></div>
+            
+            <div class="example-contents"><p>
+                <code class="code">Zend_Memory::factory()</code> 用指定的后端选项实例化内存管理器对象.
+            </p></div>
+                <div class="programlisting"><div class="cdata"><pre>
+require_once &#039;Zend/Memory.php&#039;;
+
+$backendOptions = array(
+    &#039;cache_dir&#039; =&gt; &#039;./tmp/&#039; // Directory where to put the swapped memory blocks
+);
+
+$memoryManager = Zend_Memory::factory(&#039;File&#039;, $backendOptions);
+
+$loadedFiles = array();
+
+for ($count = 0; $count &lt; 10000; $count++) {
+    $f = fopen($fileNames[$count], &#039;rb&#039;);
+    $data = fread($f, filesize($fileNames[$count]));
+    $fclose($f);
+
+    $loadedFiles[] = $memoryManager-&gt;create($data);
+}
+
+echo $loadedFiles[$index1]-&gt;value;
+
+$loadedFiles[$index2]-&gt;value = $newValue;
+
+$loadedFiles[$index3]-&gt;value[$charIndex] = &#039;_&#039;;
+
+                </pre></div></div>
+
+        </div>
+    </div>
+
+    <div class="section" id="zend.memory.theory-of-operation" name="zend.memory.theory-of-operation"><div class="info"><h1 class="title">操作原理</h1></div>
+
+        
+
+        <p class="para">
+            Zend_Memory 组件操作有如下的概念:
+            <ul class="itemizedlist">
+                <li class="listitem">
+                    <p class="para">内存管理器</p>
+                </li>
+                <li class="listitem">
+                    <p class="para">内存容器</p>
+                </li>
+                <li class="listitem">
+                    <p class="para">锁定的内存对象</p>
+                </li>
+                <li class="listitem">
+                    <p class="para">可移动的内存对象</p>
+                </li>
+            </ul>
+        </p>
+
+        <div class="section" id="zend.memory.theory-of-operation.manager" name="zend.memory.theory-of-operation.manager"><div class="info"><h1 class="title">内存管理器</h1></div>
+
+            
+
+            <p class="para">
+                内存管理器按照用户应用程序的请求生成内存对象(锁定的或可移动的)并返回已交换到内存容器对象中的那些.
+            </p>
+
+        </div>
+
+        <div class="section" id="zend.memory.theory-of-operation.container" name="zend.memory.theory-of-operation.container"><div class="info"><h1 class="title">内存容器</h1></div>
+
+            
+
+            <p class="para">
+                内存容器有一个虚拟的或者实际的字符串类型的<code class="code">值</code>.
+                这个属性包含了在内存对象创建时指定的数据值.
+            </p>
+
+            <p class="para">
+                你可以作为对象属性操作这个<code class="code">值</code>属性:
+
+                <div class="programlisting"><div class="cdata"><pre>
+$memObject = $memoryManager-&gt;create($data);
+
+echo $memObject-&gt;value;
+
+$memObject-&gt;value = $newValue;
+
+$memObject-&gt;value[$index] = &#039;_&#039;;
+
+echo ord($memObject-&gt;value[$index1]);
+
+$memObject-&gt;value = substr($memObject-&gt;value, $start, $length);
+
+                </pre></div></div>
+
+            </p>
+
+            <blockquote><p><b class="note">Note</b>: 
+                
+                    如果你使用的PHP版本小于5.2,使用<a href="zend.memory.memory-objects.html#zend.memory.memory-objects.api.getRef" class="link">getRef()</a>
+                    方法而不是直接访问属性值.
+                <br />
+            </p></blockquote>
+
+        </div>
+
+        <div class="section" id="zend.memory.theory-of-operation.locked" name="zend.memory.theory-of-operation.locked"><div class="info"><h1 class="title">锁定的内存</h1></div>
+
+            
+
+            <p class="para">
+                锁定的内存对象总是存储在内存中.存储在锁定内存对象中的数据绝不会被交换到缓存后端中去.
+            </p>
+
+        </div>
+
+        <div class="section" id="zend.memory.theory-of-operation.movable" name="zend.memory.theory-of-operation.movable"><div class="info"><h1 class="title">可移动内存</h1></div>
+
+            
+
+            <p class="para">
+                当需要时,可移动内存对象由Zend_Memory透明的交换到缓存后端或则从缓存后端加载.
+            </p>
+
+            <p class="para">
+                由于性能的考虑,内存管理器不会交换小于指定大小的内存对象.细节请查看
+                <a href="zend.memory.memory-manager.html#zend.memory.memory-manager.settings.min-size" class="xref">MinSize</a>
+            </p>
+
+        </div>
+
+    </div>
+
+</div>
+        <hr />
+
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.memory.html">Zend_Memory</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.memory.html">Zend_Memory</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.memory.memory-manager.html">内存管理器</a></div>
+                    </td>
+                </tr>
+            </table>
+</td>
+        <td style="font-size: smaller;" width="15%"> <style type="text/css">
+#leftbar {
+	float: left;
+	width: 186px;
+	padding: 5px;
+	font-size: smaller;
+}
+ul.toc {
+	margin: 0px 5px 5px 5px;
+	padding: 0px;
+}
+ul.toc li {
+	font-size: 85%;
+	margin: 1px 0 1px 1px;
+	padding: 1px 0 1px 11px;
+	list-style-type: none;
+	background-repeat: no-repeat;
+	background-position: center left;
+}
+ul.toc li.header {
+	font-size: 115%;
+	padding: 5px 0px 5px 11px;
+	border-bottom: 1px solid #cccccc;
+	margin-bottom: 5px;
+}
+ul.toc li.active {
+	font-weight: bold;
+}
+ul.toc li a {
+	text-decoration: none;
+}
+ul.toc li a:hover {
+	text-decoration: underline;
+}
+</style>
+ <ul class="toc">
+  <li class="header home"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="reference.html">Zend Framework Reference</a></li>
+  <li class="header up"><a href="zend.memory.html">Zend_Memory</a></li>
+  <li class="active"><a href="zend.memory.overview.html">概述</a></li>
+  <li><a href="zend.memory.memory-manager.html">内存管理器</a></li>
+  <li><a href="zend.memory.memory-objects.html">内存对象</a></li>
+ </ul>
+ </td>
+    </tr>
+</table>
+</body>
+</html>

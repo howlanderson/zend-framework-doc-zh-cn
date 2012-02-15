@@ -1,0 +1,403 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <title>Zend_Cache后端 - Zend Framework Manual</title>
+
+</head>
+<body>
+<table width="100%">
+    <tr valign="top">
+        <td width="85%">
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.cache.frontends.html">Zend_Cache前端</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.cache.html">Zend_Cache</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.cache.cache.manager.html">The Cache Manager</a></div>
+                    </td>
+                </tr>
+            </table>
+<hr />
+<div id="zend.cache.backends" class="section"><div class="info"><h1 class="title">Zend_Cache后端</h1></div>
+    
+
+    <div class="section" id="zend.cache.backends.file" name="zend.cache.backends.file"><div class="info"><h1 class="title">Zend_Cache_Backend_File</h1></div>
+        
+        <p class="para">
+            此后端把缓存纪录存储到文件中去(在一个选定的目录中).
+        </p>
+        <p class="para">
+            可用的选项有 :
+        </p>
+        <table class="doctable table"><div class="info"><caption><b>文件后端选项</b></caption></div>
+            
+            
+                 <thead valign="middle">
+                      <tr valign="middle">
+                        <th>选项</th>
+                        <th>数据类型</th>
+                        <th>默认值</th>
+                        <th>描述</th>
+                    </tr>
+
+                 </thead>
+
+                 <tbody valign="middle" class="tbody">
+                      <tr valign="middle">
+                          <td align="left"><code class="code">cache_dir</code></td>
+                          <td align="left"><code class="code">string</code></td>
+                          <td align="left"><code class="code">&#039;/tmp/&#039;</code></td>
+                          <td align="left">
+                              存放缓存文件的目录
+                          </td>
+                      </tr>
+
+                      <tr valign="middle">
+                          <td align="left"><code class="code">file_locking</code></td>
+                          <td align="left"><code class="code">boolean</code></td>
+                          <td align="left"><code class="code">true</code></td>
+                          <td align="left">
+                            启用/禁用文件锁定 :
+                            在比较坏的情况下,能够避免缓存中断,但在多线程Web服务器或者NFS文件系统中没有任何帮助.
+                          </td>
+                      </tr>
+
+                      <tr valign="middle">
+                          <td align="left"><code class="code">read_control</code></td>
+                          <td align="left"><code class="code">boolean</code></td>
+                          <td align="left"><code class="code">true</code></td>
+                          <td align="left">
+                            启用/禁用读控制:
+                            如果启用,控制键被嵌入到缓存文件中,并且这个键将与读取后计算出的值进行比较.
+                          </td>
+                      </tr>
+
+                      <tr valign="middle">
+                          <td align="left"><code class="code">read_control_type</code></td>
+                          <td align="left"><code class="code">string</code></td>
+                          <td align="left"><code class="code">&#039;crc32&#039;</code></td>
+                          <td align="left">
+                            读控制类型 (仅在读控制启用时). 可用的值有: &#039;md5&#039; (最好但最慢),
+                            &#039;crc32&#039; (安全性稍差,但更快,更好的选择),
+                            &#039;adler32&#039; (新选择，比 crc32 快),
+                            &#039;strlen&#039; for a length only test (最快).
+                        </td>
+                      </tr>
+
+                      <tr valign="middle">
+                          <td align="left"><code class="code">hashed_directory_level</code></td>
+                          <td align="left"><code class="code">int</code></td>
+                          <td align="left"><code class="code">0</code></td>
+                          <td align="left">
+                            Hash目录结构层次: 0 表示&quot;不使用hash的目录结构&quot;, 1 表示&quot;一级目录结构&quot;
+                            , 2表示&quot;二级目录&quot;...
+                            次选项在你有成千上万的缓存文件是能够加速缓存.只有相关的基准测试才能帮助你选择合适的值.也许1或2是一个好的开始.
+                          </td>
+                      </tr>
+
+                      <tr valign="middle">
+                          <td align="left"><code class="code">hashed_directory_umask</code></td>
+                          <td align="left"><code class="code">int</code></td>
+                          <td align="left"><code class="code">0700</code></td>
+                          <td align="left">
+                              目录结构的Unix 掩码
+                        </td>
+                      </tr>
+
+                      <tr valign="middle">
+                          <td align="left"><code class="code">file_name_prefix</code></td>
+                          <td align="left"><code class="code">string</code></td>
+                          <td align="left"><code class="code">&#039;zend_cache&#039;</code></td>
+                          <td align="left">
+                              缓存文件前缀;小心使用此选项,因为当清除缓存时,在系统缓存目录(像 /tmp)中一个太generic的值将导致灾难.
+                        </td>
+                      </tr>
+
+                        <tr valign="middle">
+                          <td align="left"><code class="code">cache_file_umask</code></td>
+                          <td align="left"><code class="code">int</code></td>
+                          <td align="left"><code class="code">0700</code></td>
+                          <td align="left">
+                              缓存文件掩码
+                          </td>
+                      </tr>
+
+                       <tr valign="middle">
+                          <td align="left"><code class="code">metatadatas_array_max_size</code></td>
+                          <td align="left"><code class="code">int</code></td>
+                          <td align="left"><code class="code">100</code></td>
+                          <td align="left">
+                              metadatas 数组的内部最大尺寸（除非你知道你在做什么，不要更改这个值）
+                          </td>
+                      </tr>
+
+                  </tbody>
+              
+          </table>
+
+    </div>
+    <div class="section" id="zend.cache.backends.sqlite" name="zend.cache.backends.sqlite"><div class="info"><h1 class="title">Zend_Cache_Backend_Sqlite</h1></div>
+        
+        <p class="para">
+            此后端把缓存纪录存储到SQLite数据库中.
+        </p>
+        <p class="para">
+            可用的选项有:
+        </p>
+        <table class="doctable table"><div class="info"><caption><b>Sqlite 后端选项</b></caption></div>
+            
+            
+                 <thead valign="middle">
+                      <tr valign="middle">
+                           <th>选项</th>
+                        <th>数据类型</th>
+                        <th>默认值</th>
+                        <th>描述</th>
+                    </tr>
+
+                 </thead>
+
+                 <tbody valign="middle" class="tbody">
+                      <tr valign="middle">
+                          <td align="left"><code class="code">cache_db_complete_path (mandatory)</code></td>
+                          <td align="left"><code class="code">string</code></td>
+                          <td align="left"><code class="code">null</code></td>
+                          <td align="left">
+                              SQLite数据库的完整和路径(包括文件名)
+                          </td>
+                      </tr>
+
+                      <tr valign="middle">
+                          <td align="left"><code class="code">automatic_vacuum_factor</code></td>
+                          <td align="left"><code class="code">int</code></td>
+                          <td align="left"><code class="code">10</code></td>
+                          <td align="left">
+                              禁用 / 调整自动清理过程. 自动清理过程将对数据库文件进行碎片整理(and make
+                            it smaller) 当clean() 或则 delete() 被调用时 : 0
+                            表示不自动清理; 1 表示自动清理(当调用 delete() 或者 clean()
+                            方法时) ; x (整数) &gt; 1 =&gt; 当调用 delete() 或者 clean()
+                            方法时随机清理1到x次.
+                          </td>
+                      </tr>
+
+                  </tbody>
+              
+          </table>
+
+    </div>
+    <div class="section" id="zend.cache.backends.memcached" name="zend.cache.backends.memcached"><div class="info"><h1 class="title">Zend_Cache_Backend_Memcached</h1></div>
+        
+        <p class="para">
+            本后端把缓存纪录存储到memcached服务器. <a href="http://www.danga.com/memcached/" class="link external">&raquo; memcached</a>
+            是一个高性能的,分布式内存对象缓存系统.要使用此后端,你需要一个memecached守护进程(daemon)和
+             <a href="http://pecl.php.net/package/memcache" class="link external">&raquo; memcache PECL 扩展</a>.
+        </p>
+        <p class="para">
+            注意 : 使用此后端当设置&quot;doNotTestCacheValidity=true&quot;参数时,不支持&quot;tags&quot;
+        </p>
+        <p class="para">
+            可用的选项有:
+        </p>
+        <table class="doctable table"><div class="info"><caption><b>Memcached 后端选项</b></caption></div>
+            
+            
+                 <thead valign="middle">
+                      <tr valign="middle">
+                        <th>选项</th>
+                        <th>数据类型</th>
+                        <th>默认值</th>
+                        <th>描述</th>
+                    </tr>
+
+                 </thead>
+
+                 <tbody valign="middle" class="tbody">
+                      <tr valign="middle">
+                          <td align="left"><code class="code">servers</code></td>
+                          <td align="left"><code class="code">array</code></td>
+                          <td align="left"><code class="code">array(array(&#039;host&#039; =&gt; &#039;localhost&#039;,&#039;port&#039; =&gt; 11211, &#039;persistent&#039; =&gt; true))</code></td>
+                          <td align="left">
+                               一个memcached服务器数组;其中每个memcached服务器描述为一个关联数组:
+                            &#039;host&#039; =&gt; (string) : memcached服务器的名称, &#039;port&#039;
+                            =&gt; (int) : memcached服务器端口, &#039;persistent&#039; =&gt;
+                            (bool) : 是否使用到memcached服务器的持久连接
+                          </td>
+                      </tr>
+
+                      <tr valign="middle">
+                          <td align="left"><code class="code">compression</code></td>
+                          <td align="left"><code class="code">boolean</code></td>
+                          <td align="left"><code class="code">false</code></td>
+                          <td align="left">
+                             如果你想使用数据压缩,设置为true
+                          </td>
+                      </tr>
+
+                  </tbody>
+              
+          </table>
+
+    </div>
+    <div class="section" id="zend.cache.backends.apc" name="zend.cache.backends.apc"><div class="info"><h1 class="title">Zend_Cache_Backend_Apc</h1></div>
+        
+        <p class="para">
+            此后端通过
+            <a href="http://pecl.php.net/package/APC" class="link external">&raquo; APC</a>
+            (Alternative PHP Cache) 扩展把缓存纪录存储于共享内存中 (当然为使用此后端,APC是需要的).
+        </p>
+        <p class="para">
+            注意 : 使用此后端当设置&quot;doNotTestCacheValidity=true&quot;参数时,不支持&quot;tags&quot;
+        </p>
+        <p class="para">
+            此后端没有选项.
+        </p>
+    </div>
+        <div class="section" id="zend.cache.backends.xcache" name="zend.cache.backends.xcache"><div class="info"><h1 class="title">Zend_Cache_Backend_Xcache</h1></div>
+        
+        <p class="para">
+            整个后端通过 <a href="http://xcache.lighttpd.net/" class="link external">&raquo; XCache</a> 扩展（它当然需要使用这个后端）
+            在共享内存里存储了缓存记录。
+        </p>
+        <p class="para">
+            小心：用这个后端，目前不支持 ”tags“，因为 &quot;doNotTestCacheValidity=true&quot; 参数。
+        </p>
+        <p class="para">
+            可用的选项如下：
+        </p>
+        <table class="doctable table"><div class="info"><caption><b>Xcache backend 选项</b></caption></div>
+            
+            
+                 <thead valign="middle">
+                      <tr valign="middle">
+                        <th>选项</th>
+                        <th>数据类型</th>
+                        <th>缺省值</th>
+                        <th>描述</th>
+                    </tr>
+
+                 </thead>
+
+                 <tbody valign="middle" class="tbody">
+                      <tr valign="middle">
+                          <td align="left"><code class="code">user</code></td>
+                          <td align="left"><code class="code">string</code></td>
+                          <td align="left"><code class="code">null</code></td>
+                          <td align="left">
+                              xcache.admin.user, necessary for the clean() method
+                          </td>
+                      </tr>
+
+                      <tr valign="middle">
+                          <td align="left"><code class="code">password</code></td>
+                          <td align="left"><code class="code">string</code></td>
+                          <td align="left"><code class="code">null</code></td>
+                          <td align="left">
+                              xcache.admin.pass (in clear form, not MD5), necessary for the clean() method
+                          </td>
+                      </tr>
+
+                  </tbody>
+              
+          </table>
+
+    </div>
+    <div class="section" id="zend.cache.backends.platform" name="zend.cache.backends.platform"><div class="info"><h1 class="title">Zend_Cache_Backend_ZendPlatform</h1></div>
+        
+        <p class="para">
+            本后端使用 <a href="http://www.zend.com/products/platform" class="link external">&raquo; Zend Platform</a>产品的内容缓存API. 要使用此后端必须安装Zend Platform.
+        </p>
+        <p class="para">
+    本后端支持标记(tags),但不支持 <code class="code">CLEANING_MODE_NOT_MATCHING_TAG</code>清除模式.
+        </p>
+        <p class="para">
+            当使用<code class="code">Zend_Cache::factory()</code>方法时,在字 &#039;Zend&#039; 和 &#039;Platform&#039;之间使用字分隔符-- &#039;-&#039;, &#039;.&#039;, &#039; &#039;, or &#039;_&#039;指定此后端:
+        </p>
+        <div class="programlisting"><div class="cdata"><pre>
+$cache = Zend_Cache::factory(&#039;Core&#039;, &#039;Zend Platform&#039;);
+
+        </pre></div></div>
+
+        <p class="para">
+            此后端没有选项.
+        </p>
+    </div>
+</div>
+        <hr />
+
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.cache.frontends.html">Zend_Cache前端</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.cache.html">Zend_Cache</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.cache.cache.manager.html">The Cache Manager</a></div>
+                    </td>
+                </tr>
+            </table>
+</td>
+        <td style="font-size: smaller;" width="15%"> <style type="text/css">
+#leftbar {
+	float: left;
+	width: 186px;
+	padding: 5px;
+	font-size: smaller;
+}
+ul.toc {
+	margin: 0px 5px 5px 5px;
+	padding: 0px;
+}
+ul.toc li {
+	font-size: 85%;
+	margin: 1px 0 1px 1px;
+	padding: 1px 0 1px 11px;
+	list-style-type: none;
+	background-repeat: no-repeat;
+	background-position: center left;
+}
+ul.toc li.header {
+	font-size: 115%;
+	padding: 5px 0px 5px 11px;
+	border-bottom: 1px solid #cccccc;
+	margin-bottom: 5px;
+}
+ul.toc li.active {
+	font-weight: bold;
+}
+ul.toc li a {
+	text-decoration: none;
+}
+ul.toc li a:hover {
+	text-decoration: underline;
+}
+</style>
+ <ul class="toc">
+  <li class="header home"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="reference.html">Zend Framework Reference</a></li>
+  <li class="header up"><a href="zend.cache.html">Zend_Cache</a></li>
+  <li><a href="zend.cache.introduction.html">简介</a></li>
+  <li><a href="zend.cache.theory.html">缓存原理</a></li>
+  <li><a href="zend.cache.frontends.html">Zend_Cache前端</a></li>
+  <li class="active"><a href="zend.cache.backends.html">Zend_Cache后端</a></li>
+  <li><a href="zend.cache.cache.manager.html">The Cache Manager</a></li>
+ </ul>
+ </td>
+    </tr>
+</table>
+</body>
+</html>

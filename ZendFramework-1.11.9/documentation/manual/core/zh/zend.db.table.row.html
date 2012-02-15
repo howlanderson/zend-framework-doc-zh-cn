@@ -1,0 +1,236 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <title>Zend_Db_Table_Row - Zend Framework Manual</title>
+
+</head>
+<body>
+<table width="100%">
+    <tr valign="top">
+        <td width="85%">
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.db.table.html">Zend_Db_Table</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.db.html">Zend_Db</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.db.tablerowset.html">Zend_Db_Table_Rowset</a></div>
+                    </td>
+                </tr>
+            </table>
+<hr />
+<div id="zend.db.table.row" class="section"><div class="info"><h1 class="title">Zend_Db_Table_Row</h1></div>
+
+    
+
+    <div class="section" id="zend.db.table.row.introduction" name="zend.db.table.row.introduction"><div class="info"><h1 class="title">简介</h1></div>
+
+        
+
+        <p class="para">
+            Zend_Db_Table_Row是Zend Framework的行数据网关.通常来说,你不可以自己实例化Zend_Db_Table_Row,
+            而是通过调用Zend_Db_Table::find()方法或者Zend_Db_Table::fetchRow()方法将Zend_Db_Table_Row作为
+            结果数据返回过来.一旦你得到来一个Zend_Db_Table_Row对象,你可以修改记录值(体现为类的属性)然后
+            调用save()方法可以将更改保存到原表上.
+        </p>
+
+    </div>
+
+    <div class="section" id="zend.db.table.row.fetch" name="zend.db.table.row.fetch"><div class="info"><h1 class="title">取回一条记录</h1></div>
+
+        
+
+        <p class="para">
+            首先,需要实例化一个Zend_Db_Table类.
+        </p>
+
+        <div class="programlisting"><div class="cdata"><pre>&lt;?php
+// 设置一个 adapter
+require_once &#039;Zend/Db.php&#039;;
+$params = array (
+    &#039;host&#039;     =&gt; &#039;127.0.0.1&#039;,
+    &#039;username&#039; =&gt; &#039;malory&#039;,
+    &#039;password&#039; =&gt; &#039;******&#039;,
+    &#039;dbname&#039;   =&gt; &#039;camelot&#039;
+);
+
+$db = Zend_Db::factory(&#039;PDO_MYSQL&#039;, $params);
+
+// 为所有的Zend_Db_Table对象设置默认adapter
+require_once &#039;Zend/Db/Table.php&#039;;
+Zend_Db_Table::setDefaultAdapter($db);
+
+// 连接到数据库中的某一个表
+class RoundTable extends Zend_Db_Table {}
+$table = new RoundTable();
+?&gt;
+        </pre></div></div>
+
+
+        <p class="para">
+            接下来,使用Zend_Db_Table::find()方法和主键进行查询,或者使
+            用Zend_Db_Table::fetchRow()方法查询.得到的返回结果是一个Zend_Db_Table_Row
+            对象,该对象的属性名采用camelCaps的形式对应数据库中带下划线的表名.例如,表名
+            若为first_name,那么类中的改属性则为firstName.
+        </p>
+
+        <div class="programlisting"><div class="cdata"><pre>&lt;?php
+// 从表中取回的结果数据是一个Zend_Db_Table_Row对象
+$row = $table-&gt;fetchRow(&#039;first_name = &quot;Robin&quot;&#039;);
+
+//
+// $row现在是一个带有多种公有属性的Zend_Db_Table_Row对象
+// that map to table columns:
+//
+// $row-&gt;id = &#039;3&#039;
+// $row-&gt;nobleTitle = &#039;Sir&#039;
+// $row-&gt;firstName = &#039;Robin&#039;
+// $row-&gt;favoriteColor = &#039;yellow&#039;
+//
+
+?&gt;
+        </pre></div></div>
+
+
+    </div>
+
+    <div class="section" id="zend.db.table.row.modify" name="zend.db.table.row.modify"><div class="info"><h1 class="title">修改数据</h1></div>
+
+        
+
+        <p class="para">
+            修改行数据是一件很轻松的事情:只需要按照常规的方法修改类属性.然后调用save()方法
+            就将改变的结果保存到了数据表中.
+        </p>
+
+        <div class="programlisting"><div class="cdata"><pre>&lt;?php
+// 连接到数据库中的表
+class RoundTable extends Zend_Db_Table {}
+$table = new RoundTable();
+
+// 从表中取回的结果数据是一个Zend_Db_Table_Row对象
+$row = $table-&gt;fetchRow(&#039;first_name = &quot;Robin&quot;&#039;);
+
+//
+// $row现在是一个带有多种公有属性的Zend_Db_Table_Row对象
+// that map to table columns:
+//
+// $row-&gt;id = &#039;3&#039;
+// $row-&gt;nobleTitle = &#039;Sir&#039;
+// $row-&gt;firstName = &#039;Robin&#039;
+// $row-&gt;favoriteColor = &#039;yellow&#039;
+//
+// 改变favorite color字段,并且将变动存储到数据表中.
+$row-&gt;favoriteColor = &#039;blue&#039;;&#039;
+$row-&gt;save();
+?&gt;
+        </pre></div></div>
+
+
+        <p class="para">
+            但是,你不能够修改主键的值.假如你试图进行改操作, Zend_Db_Table_Row将抛出一个异常.
+        </p>
+
+        <div class="programlisting"><div class="cdata"><pre>&lt;?php
+// 连接到数据库中的表
+class RoundTable extends Zend_Db_Table {}
+$table = new RoundTable();
+
+// fetch a record from the table as a Zend_Db_Table_Row object
+$row = $table-&gt;fetchRow(&#039;first_name = &quot;Robin&quot;&#039;);
+
+// 我们尝试修改主键值
+try {
+    $row-&gt;id = 5;
+    echo &quot;We should not see this message, as an exception was thrown.&quot;;
+} catch (Zend_Db_Table_RowException $e) {
+    echo $e-&gt;getMessage();
+}
+?&gt;
+        </pre></div></div>
+
+    </div>
+
+</div>
+        <hr />
+
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.db.table.html">Zend_Db_Table</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.db.html">Zend_Db</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.db.tablerowset.html">Zend_Db_Table_Rowset</a></div>
+                    </td>
+                </tr>
+            </table>
+</td>
+        <td style="font-size: smaller;" width="15%"> <style type="text/css">
+#leftbar {
+	float: left;
+	width: 186px;
+	padding: 5px;
+	font-size: smaller;
+}
+ul.toc {
+	margin: 0px 5px 5px 5px;
+	padding: 0px;
+}
+ul.toc li {
+	font-size: 85%;
+	margin: 1px 0 1px 1px;
+	padding: 1px 0 1px 11px;
+	list-style-type: none;
+	background-repeat: no-repeat;
+	background-position: center left;
+}
+ul.toc li.header {
+	font-size: 115%;
+	padding: 5px 0px 5px 11px;
+	border-bottom: 1px solid #cccccc;
+	margin-bottom: 5px;
+}
+ul.toc li.active {
+	font-weight: bold;
+}
+ul.toc li a {
+	text-decoration: none;
+}
+ul.toc li a:hover {
+	text-decoration: underline;
+}
+</style>
+ <ul class="toc">
+  <li class="header home"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="reference.html">Zend Framework Reference</a></li>
+  <li class="header up"><a href="zend.db.html">Zend_Db</a></li>
+  <li><a href="zend.db.adapter.html">Zend_Db_Adapter</a></li>
+  <li><a href="zend.db.statement.html">Zend_Db_Statement</a></li>
+  <li><a href="zend.db.profiler.html">Zend_Db_Profiler</a></li>
+  <li><a href="zend.db.select.html">Zend_Db_Select</a></li>
+  <li><a href="zend.db.table.html">Zend_Db_Table</a></li>
+  <li class="active"><a href="zend.db.table.row.html">Zend_Db_Table_Row</a></li>
+  <li><a href="zend.db.tablerowset.html">Zend_Db_Table_Rowset</a></li>
+  <li><a href="zend.db.table.relationships.html">Zend_Db_Table Relationships</a></li>
+  <li><a href="zend.db.table.definition.html">Zend_Db_Table_Definition</a></li>
+ </ul>
+ </td>
+    </tr>
+</table>
+</body>
+</html>

@@ -1,0 +1,140 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <title>输出变量的值 (Dumping Variables) - Zend Framework Manual</title>
+
+</head>
+<body>
+<table width="100%">
+    <tr valign="top">
+        <td width="85%">
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.debug.html">Zend_Debug</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.debug.html">Zend_Debug</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.dojo.html">Zend_Dojo</a></div>
+                    </td>
+                </tr>
+            </table>
+<hr />
+<div id="zend.debug.dumping" class="section"><div class="info"><h1 class="title"> 输出变量的值 (Dumping Variables) </h1></div>
+
+    
+
+    <p class="para">
+        静态方法 <code class="code">Zend_Debug::dump()</code> 打印或返回某个表达式或变量的信息。这个简单的调试技术很常用，因为在特别时髦和要求没有初始化、特殊工具或调试环境时很容易使用。
+    </p>
+
+    <div class="example"><div class="info"><p><b>Example #1  dump()方法使用示例 </b></p></div>
+        
+        <div class="programlisting"><div class="cdata"><pre>
+
+Zend_Debug::dump($var, $label=null, $echo=true);
+
+        </pre></div></div>
+
+    </div>
+
+    <p class="para">
+        <code class="code">$var</code> 参数指定了 <code class="code">Zend_Debug::dump()</code> 输出信息的表达式或变量。
+    </p>
+
+    <p class="para">
+        <code class="code">$label</code> 标签参数是用来加在 <code class="code">Zend_Debug::dump()</code> 输出信息之前的一段文本。这非常有用，例如你一次要查看多个变量的信息。（你可以为不同变量设置不同label，如“user”，“password”等等，这样不会弄乱--Haohappy注)
+    </p>
+
+    <p class="para">
+        <code class="code">Zend_Debug::dump()</code> 是否输出，这取决于<code class="code">$echo</code>参数，如果为<code class="code">true</code>，则会输出结果。无论是否指定<code class="code">$echo</code>参数的值，该方法的返回值都包含表达式或变量的信息。
+    </p>
+
+    <p class="para">
+        深入地理解它很有帮助，<code class="code">Zend_Debug::dump()</code> 方法封装 PHP 函数<a href="http://php.net/var_dump" class="link external">&raquo; <code class="code">var_dump()</code></a>。如果输出流被检测为 web 表达，<code class="code">var_dump()</code> 的输出结果使用 <a href="http://php.net/htmlspecialchars" class="link external">&raquo; <code class="code">htmlspecialchars()</code></a>转义，并封装(X)HTML <code class="code">&lt;pre&gt;</code>标签。
+    </p>
+
+    <div class="tip"><b class="tip">Tip</b><div class="info"><h1 class="title"> 使用 Zend_Log 进行调试 </h1></div>
+        
+        <p class="para">
+            使用 <code class="code">Zend_Debug::dump()</code> 很方便在开发项目时Debug，你可以很容易地增加或移除它。
+        </p>
+        <p class="para">
+            你也可以考虑使用 <a href="zend.log.overview.html" class="link">Zend_Log</a> 来调试，用于更长期的非短暂性的调试和监控。例如，你可以使用 <code class="code">DEBUG</code> 记录级别和 Stream 记录器来输出 <code class="code">Zend_Debug::dump()</code> 返回的信息。
+        </p>
+    </div>
+
+</div>
+        <hr />
+
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.debug.html">Zend_Debug</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.debug.html">Zend_Debug</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.dojo.html">Zend_Dojo</a></div>
+                    </td>
+                </tr>
+            </table>
+</td>
+        <td style="font-size: smaller;" width="15%"> <style type="text/css">
+#leftbar {
+	float: left;
+	width: 186px;
+	padding: 5px;
+	font-size: smaller;
+}
+ul.toc {
+	margin: 0px 5px 5px 5px;
+	padding: 0px;
+}
+ul.toc li {
+	font-size: 85%;
+	margin: 1px 0 1px 1px;
+	padding: 1px 0 1px 11px;
+	list-style-type: none;
+	background-repeat: no-repeat;
+	background-position: center left;
+}
+ul.toc li.header {
+	font-size: 115%;
+	padding: 5px 0px 5px 11px;
+	border-bottom: 1px solid #cccccc;
+	margin-bottom: 5px;
+}
+ul.toc li.active {
+	font-weight: bold;
+}
+ul.toc li a {
+	text-decoration: none;
+}
+ul.toc li a:hover {
+	text-decoration: underline;
+}
+</style>
+ <ul class="toc">
+  <li class="header home"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="reference.html">Zend Framework Reference</a></li>
+  <li class="header up"><a href="zend.debug.html">Zend_Debug</a></li>
+  <li class="active"><a href="zend.debug.dumping.html">输出变量的值 (Dumping Variables)</a></li>
+ </ul>
+ </td>
+    </tr>
+</table>
+</body>
+</html>

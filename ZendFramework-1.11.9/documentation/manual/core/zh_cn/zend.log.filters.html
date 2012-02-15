@@ -1,0 +1,164 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <title>过滤器 - Zend Framework Manual</title>
+
+</head>
+<body>
+<table width="100%">
+    <tr valign="top">
+        <td width="85%">
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.log.formatters.html">Formatters</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.log.html">Zend_Log</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.log.factory.html">Using the Factory to Create a Log</a></div>
+                    </td>
+                </tr>
+            </table>
+<hr />
+<div id="zend.log.filters" class="section"><div class="info"><h1 class="title">过滤器</h1></div>
+    
+
+    <p class="para">
+      一个Filter对象阻塞一个消息被写入到日志.
+    </p>
+
+    <div class="section" id="zend.log.filters.all-writers" name="zend.log.filters.all-writers"><div class="info"><h1 class="title">对所有Writer过滤</h1></div>
+      
+
+      <p class="para">
+        要在所有writer之前过滤消息,你可以使用<code class="code">addFilter()</code>方法添加任意数量的Filter到Log对象:
+
+        <div class="programlisting"><div class="cdata"><pre>
+$logger = new Zend_Log();
+
+$writer = new Zend_Log_Writer_Stream(&#039;php://output&#039;);
+$logger-&gt;addWriter($writer);
+
+$filter = new Zend_Log_Filter_Priority(Zend_Log::CRIT);
+$logger-&gt;addFilter($filter);
+
+// blocked
+$logger-&gt;info(&#039;Informational message&#039;);
+
+// logged
+$logger-&gt;emerg(&#039;Emergency message&#039;);
+
+        </pre></div></div>
+
+
+        当你添加一个或多个Filter到Log对象后,消息在任何Writer接收之前必须通过所有的Filter.
+      </p>
+    </div>
+
+    <div class="section" id="zend.log.filters.single-writer" name="zend.log.filters.single-writer"><div class="info"><h1 class="title">过滤一个Writer实例</h1></div>
+      
+
+      <p class="para">
+        要在一个特定的Writer上进行消息过滤,使用该Writer对象的<code class="code">addFilter()</code>方法:
+
+        <div class="programlisting"><div class="cdata"><pre>
+$logger = new Zend_Log();
+
+$writer1 = new Zend_Log_Writer_Stream(&#039;/path/to/first/logfile&#039;);
+$logger-&gt;addWriter($writer1);
+
+$writer2 = new Zend_Log_Writer_Stream(&#039;/path/to/second/logfile&#039;);
+$logger-&gt;addWriter($writer2);
+
+// add a filter only to writer2
+$filter = new Zend_Log_Filter_Priority(Zend_Log::CRIT);
+$writer2-&gt;addFilter($filter);
+
+// logged to writer1, blocked from writer2
+$logger-&gt;info(&#039;Informational message&#039;);
+
+// logged by both writers
+$logger-&gt;emerg(&#039;Emergency message&#039;);
+
+        </pre></div></div>
+
+    </p>
+  </div>
+</div>
+        <hr />
+
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.log.formatters.html">Formatters</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.log.html">Zend_Log</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.log.factory.html">Using the Factory to Create a Log</a></div>
+                    </td>
+                </tr>
+            </table>
+</td>
+        <td style="font-size: smaller;" width="15%"> <style type="text/css">
+#leftbar {
+	float: left;
+	width: 186px;
+	padding: 5px;
+	font-size: smaller;
+}
+ul.toc {
+	margin: 0px 5px 5px 5px;
+	padding: 0px;
+}
+ul.toc li {
+	font-size: 85%;
+	margin: 1px 0 1px 1px;
+	padding: 1px 0 1px 11px;
+	list-style-type: none;
+	background-repeat: no-repeat;
+	background-position: center left;
+}
+ul.toc li.header {
+	font-size: 115%;
+	padding: 5px 0px 5px 11px;
+	border-bottom: 1px solid #cccccc;
+	margin-bottom: 5px;
+}
+ul.toc li.active {
+	font-weight: bold;
+}
+ul.toc li a {
+	text-decoration: none;
+}
+ul.toc li a:hover {
+	text-decoration: underline;
+}
+</style>
+ <ul class="toc">
+  <li class="header home"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="reference.html">Zend Framework Reference</a></li>
+  <li class="header up"><a href="zend.log.html">Zend_Log</a></li>
+  <li><a href="zend.log.overview.html">概述</a></li>
+  <li><a href="zend.log.writers.html">Writers</a></li>
+  <li><a href="zend.log.formatters.html">Formatters</a></li>
+  <li class="active"><a href="zend.log.filters.html">过滤器</a></li>
+  <li><a href="zend.log.factory.html">Using the Factory to Create a Log</a></li>
+ </ul>
+ </td>
+    </tr>
+</table>
+</body>
+</html>

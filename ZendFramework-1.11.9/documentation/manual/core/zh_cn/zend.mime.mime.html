@@ -1,0 +1,213 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <title>Zend_Mime - Zend Framework Manual</title>
+
+</head>
+<body>
+<table width="100%">
+    <tr valign="top">
+        <td width="85%">
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.mime.html">Zend_Mime</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.mime.html">Zend_Mime</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.mime.message.html">Zend_Mime_Message</a></div>
+                    </td>
+                </tr>
+            </table>
+<hr />
+<div id="zend.mime.mime" class="section"><div class="info"><h1 class="title">Zend_Mime</h1></div>
+    
+
+    <div class="section" id="zend.mime.mime.introduction" name="zend.mime.mime.introduction"><div class="info"><h1 class="title">简介</h1></div>
+        
+        <p class="para">
+            <code class="code">Zend_Mime</code>是一个用来处理多段MIME消息的辅助类，
+             在<a href="zend.mail.html" class="link"><code class="code">Zend_Mail</code></a>和<a href="zend.mime.message.html" class="link"><code class="code">Zend_Mime_Message</code></a>中使用了它，
+             也可在需要MIME支持的应用程序中使用。
+        </p>
+    </div>
+
+    <div class="section" id="zend.mime.mime.static" name="zend.mime.mime.static"><div class="info"><h1 class="title">静态方法和常量</h1></div>
+    
+    <p class="para">
+        <code class="code">Zend_Mime</code>提供了一系列静态辅助方法来处理MIME：
+        <ul class="itemizedlist">
+            <li class="listitem">
+                <p class="para">
+                    <code class="code">Zend_Mime::isPrintable()</code>: 给定的字符串中不含不可打印(unprintable)的字符，则返回TRUE，否则返回FALSE。
+                </p>
+            </li>
+            <li class="listitem">
+                <p class="para">
+                    <code class="code">Zend_Mime::encodeBase64()</code>: 将一个字符串用base64编码。
+                </p>
+            </li>
+            <li class="listitem">
+                <p class="para">
+                    <code class="code">Zend_Mime::encodeQuotedPrintable()</code>: 将一个字符串以quoted-printable机制编码。
+                </p>
+            </li>
+        </ul>
+    </p>
+    <p class="para">
+        <code class="code">Zend_Mime</code>定义了一系列通常在处理MIME消息的时候要用到的常量：
+        <ul class="itemizedlist">
+            <li class="listitem">
+                <p class="para">
+                    <code class="code">Zend_Mime::TYPE_OCTETSTREAM</code>: &#039;application/octet-stream&#039;
+                </p>
+            </li>
+            <li class="listitem">
+                <p class="para">
+                    <code class="code">Zend_Mime::TYPE_TEXT</code>: &#039;text/plain&#039;
+                </p>
+            </li>
+            <li class="listitem">
+                <p class="para">
+                    <code class="code">Zend_Mime::TYPE_HTML</code>: &#039;text/html&#039;
+                </p>
+            </li>
+            <li class="listitem">
+                <p class="para">
+                    <code class="code">Zend_Mime::ENCODING_7BIT</code>: &#039;7bit&#039;
+                </p>
+            </li>
+            <li class="listitem">
+                <p class="para">
+                    <code class="code">Zend_Mime::ENCODING_8BIT</code>: &#039;8bit&#039;
+                </p>
+            </li>
+            <li class="listitem">
+                <p class="para">
+                    <code class="code">Zend_Mime::ENCODING_QUOTEDPRINTABLE</code>: &#039;quoted-printable&#039;
+                </p>
+            </li>
+            <li class="listitem">
+                <p class="para">
+                    <code class="code">Zend_Mime::ENCODING_BASE64</code>: &#039;base64&#039;
+                </p>
+            </li>
+            <li class="listitem">
+                <p class="para">
+                    <code class="code">Zend_Mime::DISPOSITION_ATTACHMENT</code>: &#039;attachment&#039;
+                </p>
+            </li>
+            <li class="listitem">
+                <p class="para">
+                    <code class="code">Zend_Mime::DISPOSITION_INLINE</code>: &#039;inline&#039;
+                </p>
+            </li>
+        </ul>
+    </p>
+    </div>
+
+    <div class="section" id="zend.mime.mime.instantiation" name="zend.mime.mime.instantiation"><div class="info"><h1 class="title">实例化Zend_Mime</h1></div>
+    
+    <p class="para">
+        在实例化<code class="code">Zend_Mime</code> 对象时，指定了MIME分界线(MIME boundary)，
+         在调用下面的非静态函数都会用到它(MIME分界线)。
+        如果传递给构造函数一个字符串参数，那么这个参数就用来指定MIME分界线；
+        如果没有给出参数，那么构造器在调用的时候会随机产生一个MIME分界线。
+    </p>
+    <p class="para">
+        <code class="code">Zend_Mime</code>对象拥有以下方法：
+        <ul class="itemizedlist">
+            <li class="listitem">
+                <p class="para">
+                    <code class="code">boundary()</code>: 返回MIME分界线字符串。
+                </p>
+            </li>
+            <li class="listitem">
+                <p class="para">
+                    <code class="code">boundaryLine()</code>: 返回完整的MIME分界线行。
+                </p>
+            </li>
+            <li class="listitem">
+                <p class="para">
+                    <code class="code">mimeEnd()</code>: 返回完整的MIME结束的分界线行。
+                </p>
+            </li>
+        </ul>
+    </p>
+    </div>
+</div>
+        <hr />
+
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.mime.html">Zend_Mime</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.mime.html">Zend_Mime</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.mime.message.html">Zend_Mime_Message</a></div>
+                    </td>
+                </tr>
+            </table>
+</td>
+        <td style="font-size: smaller;" width="15%"> <style type="text/css">
+#leftbar {
+	float: left;
+	width: 186px;
+	padding: 5px;
+	font-size: smaller;
+}
+ul.toc {
+	margin: 0px 5px 5px 5px;
+	padding: 0px;
+}
+ul.toc li {
+	font-size: 85%;
+	margin: 1px 0 1px 1px;
+	padding: 1px 0 1px 11px;
+	list-style-type: none;
+	background-repeat: no-repeat;
+	background-position: center left;
+}
+ul.toc li.header {
+	font-size: 115%;
+	padding: 5px 0px 5px 11px;
+	border-bottom: 1px solid #cccccc;
+	margin-bottom: 5px;
+}
+ul.toc li.active {
+	font-weight: bold;
+}
+ul.toc li a {
+	text-decoration: none;
+}
+ul.toc li a:hover {
+	text-decoration: underline;
+}
+</style>
+ <ul class="toc">
+  <li class="header home"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="reference.html">Zend Framework Reference</a></li>
+  <li class="header up"><a href="zend.mime.html">Zend_Mime</a></li>
+  <li class="active"><a href="zend.mime.mime.html">Zend_Mime</a></li>
+  <li><a href="zend.mime.message.html">Zend_Mime_Message</a></li>
+  <li><a href="zend.mime.part.html">Zend_Mime_Part</a></li>
+ </ul>
+ </td>
+    </tr>
+</table>
+</body>
+</html>

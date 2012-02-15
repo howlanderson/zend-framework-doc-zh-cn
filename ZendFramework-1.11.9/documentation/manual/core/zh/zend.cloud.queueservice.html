@@ -1,0 +1,658 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <title>Queue Service Introduction - Zend Framework Manual</title>
+
+</head>
+<body>
+<table width="100%">
+    <tr valign="top">
+        <td width="85%">
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.cloud.documentservice.html">Document Service Introduction</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.cloud.html">SimpleCloud API: Zend_Cloud</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.cloud.storageservice.html">StorageService Introduction</a></div>
+                    </td>
+                </tr>
+            </table>
+<hr />
+<div id="zend.cloud.queueservice" class="section"><div class="info"><h1 class="title">Queue Service Introduction</h1></div>
+    
+
+    <p class="para">
+        The QueueService implements access to message queues available as local or remote services.
+        The simple queues that QueueService supports implement a messaging pattern that enables
+        different processes to exchange messages in a reliable and scalable way. One common use case
+        for such message queues is job dispatching, in which a frontend web server adds a complex
+        job to a queue for a backend worker to do the expensive processing. The frontend web server
+        can then return the page without waiting for the work to be completed.
+    </p>
+
+    <p class="para">
+        The interface <span class="classname">Zend_Cloud_QueueService_Adapter</span> defines the methods
+        which concrete queue service adapters must implement. The following adapters are shipped
+        with the Simple Cloud API: 
+    </p>
+    
+    <ul class="itemizedlist">
+        <li class="listitem">
+            <p class="para">
+                <a href="http://aws.amazon.com/sqs/" class="link external">&raquo; <span class="classname">Zend_Cloud_QueueService_Adapter_Sqs</span></a>
+            </p>
+        </li>
+
+        <li class="listitem">
+            <p class="para">
+                <a href="http://msdn.microsoft.com/en-us/library/dd179363.aspx" class="link external">&raquo; <span class="classname">Zend_Cloud_QueueService_Adapter_WindowsAzure</span></a>
+            </p>
+        </li>
+
+        <li class="listitem">
+            <p class="para">
+                <a href="http://aws.amazon.com/sqs/" class="link external">&raquo; <span class="classname">Zend_Cloud_QueueService_Adapter_ZendQueue</span></a>
+            </p>
+        </li>
+    </ul>
+    
+    <div class="section" id="zend.cloud.queueservice.adapters" name="zend.cloud.queueservice.adapters"><div class="info"><h1 class="title">Instantiating and Configuring QueueService Adapters</h1></div>
+        
+
+        <p class="para">
+            To instantiate a QueueService adapter, use the static method 
+             <span class="methodname">Zend_Cloud_QueueService_Factory::getAdapter()</span>, which accepts
+            either an array or a <span class="classname">Zend_Config</span> object. Three parameters apply
+            to all adapters, while the remaining
+            parameters are adapter-specific properties; these adapter-specific properties often
+            contain access details.
+        </p>
+
+        <p class="para">
+            The general parameters are as follows:
+        </p>
+
+        <ul class="itemizedlist">
+            <li class="listitem">
+                <p class="para"><var class="varname">queue_adapter</var> specifies the concrete adapter class;</p>
+            </li>
+
+            <li class="listitem">
+                <p class="para">
+                    <var class="varname">message_class</var> specifies the class to use to
+                    represent queue messages; defaults to
+                    <span class="classname">Zend_Cloud_QueueService_Message</span>; and
+                </p>
+            </li>
+
+            <li class="listitem">
+                <p class="para">
+                    <var class="varname">messageset_class</var> specifies the class to use
+                    to represent collections of queue messages; defaults to
+                    <span class="classname">Zend_Cloud_QueueService_MesageSet</span>.
+                </p>
+            </li>
+        </ul>
+        
+        <div class="example"><div class="info"><p><b>Example #1 Instantiating an Amazon SQS adapter via the factory</b></p></div>
+            
+
+            <div class="programlisting php"><div class="phpcode"><div class="php" style="font-family: monospace;"><ol><li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #0000ff;">$queues</span> = Zend_Cloud_QueueService_Factory::<span style="color: #006600;">getAdapter</span><span style="color: #66cc66;">&#40;</span><a href="http://www.php.net/array"><span style="color: #000066;">array</span></a><span style="color: #66cc66;">&#40;</span></div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; Zend_Cloud_QueueService_Factory::<span style="color: #006600;">QUEUE_ADAPTER_KEY</span>&nbsp; =&gt; <span style="color: #ff0000;">'Zend_Cloud_QueueService_Adapter_Sqs'</span>,</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; Zend_Cloud_QueueService_Adapter_Sqs::<span style="color: #006600;">AWS_ACCESS_KEY</span> =&gt; <span style="color: #0000ff;">$amazonKey</span>,</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; Zend_Cloud_QueueService_Adapter_Sqs::<span style="color: #006600;">AWS_SECRET_KEY</span> =&gt; <span style="color: #0000ff;">$amazonSecret</span>,</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #66cc66;">&#41;</span><span style="color: #66cc66;">&#41;</span>;</div></li></ol></div></div></div>
+
+        </div>
+        
+        <div class="section" id="zend.cloud.queueservice.adapters.options" name="zend.cloud.queueservice.adapters.options"><div class="info"><h1 class="title">Service-Specific Options</h1></div>
+            
+           
+            <table class="doctable table"><div class="info"><caption><b>Zend_Cloud_QueueService_Adapter_Sqs Options</b></caption></div>
+                
+
+                
+                    <thead valign="middle">
+                        <tr valign="middle">
+                            <th>Option key</th>
+                            <th>Description</th>
+                            <th>Used in</th>
+                            <th>Required</th>
+                            <th>Default</th>
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody valign="middle" class="tbody">
+                        <tr valign="middle">
+                            <td align="left">aws_accesskey</td>
+                            <td align="left">Your Amazon AWS access key</td>
+                            <td align="left">Constructor</td>
+                            <td align="left">Yes</td>
+                            <td align="left">None</td>
+                        </tr>
+
+
+                        <tr valign="middle">
+                            <td align="left">aws_secretkey</td>
+                            <td align="left">Your Amazon AWS secret key</td>
+                            <td align="left">Constructor</td>
+                            <td align="left">Yes</td>
+                            <td align="left">None</td>
+                        </tr>
+
+
+                        <tr valign="middle">
+                            <td align="left">http_adapter</td>
+                            <td align="left">HTTP adapter to use in all access operations</td>
+                            <td align="left">Constructor</td>
+                            <td align="left">No</td>
+                            <td align="left"><span class="classname">Zend_Http_Client_Adapter_Socket</span></td>
+                        </tr>
+
+                        
+                        <tr valign="middle">
+                            <td align="left">http_adapter</td>
+                            <td align="left">HTTP adapter to use in all access operations</td>
+                            <td align="left">Constructor</td>
+                            <td align="left">No</td>
+                            <td align="left"><span class="classname">Zend_Http_Client_Adapter_Socket</span></td>
+                        </tr>
+
+
+                        <tr valign="middle">
+                            <td align="left">visibility_timeout</td>
+                            <td align="left">Message visibility timeout</td>
+                            <td align="left"> <span class="methodname">receiveMessages()</span></td>
+                            <td align="left">No</td>
+                            <td align="left">60</td>
+                        </tr>
+
+                    </tbody>
+                
+            </table>
+    
+
+            <table class="doctable table"><div class="info"><caption><b>Zend_Cloud_QueueService_Adapter_WindowsAzure Options</b></caption></div>
+                
+
+                
+                    <thead valign="middle">
+                        <tr valign="middle">
+                            <th>Option key</th>
+                            <th>Description</th>
+                            <th>Used in</th>
+                            <th>Required</th>
+                            <th>Default</th>
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody valign="middle" class="tbody">
+                        <tr valign="middle">
+                            <td align="left">storage_accountname</td>
+                            <td align="left">Windows Azure account name</td>
+                            <td align="left">Constructor</td>
+                            <td align="left">Yes</td>
+                            <td align="left">None</td>
+                        </tr>
+
+
+                        <tr valign="middle">
+                            <td align="left">storage_accountkey</td>
+                            <td align="left">Windows Azure account key</td>
+                            <td align="left">Constructor</td>
+                            <td align="left">Yes</td>
+                            <td align="left">None</td>
+                        </tr>
+
+
+                        <tr valign="middle">
+                            <td align="left">storage_host</td>
+                            <td align="left">Windows Azure access host</td>
+                            <td align="left">Constructor</td>
+                            <td align="left">No</td>
+                            <td align="left"><var class="varname">queue.core.windows.net</var></td>
+                        </tr>
+
+
+                        <tr valign="middle">
+                            <td align="left">storage_proxy_host</td>
+                            <td align="left">Proxy hostname</td>
+                            <td align="left">Constructor</td>
+                            <td align="left">No</td>
+                            <td align="left">None</td>
+                        </tr>
+
+
+                        <tr valign="middle">
+                            <td align="left">storage_proxy_port</td>
+                            <td align="left">Proxy port</td>
+                            <td align="left">Constructor</td>
+                            <td align="left">No</td>
+                            <td align="left">8080</td>
+                        </tr>
+
+
+                        <tr valign="middle">
+                            <td align="left">storage_proxy_credentials</td>
+                            <td align="left">Proxy credentials</td>
+                            <td align="left">Constructor</td>
+                            <td align="left">No</td>
+                            <td align="left">None</td>
+                        </tr>
+
+
+                        <tr valign="middle">
+                            <td align="left">http_adapter</td>
+                            <td align="left">HTTP adapter to use in all access operations</td>
+                            <td align="left">Constructor</td>
+                            <td align="left">No</td>
+                            <td align="left"><span class="classname">Zend_Http_Client_Adapter_Socket</span></td>
+                        </tr>
+
+
+                        <tr valign="middle">
+                            <td align="left">visibility_timeout</td>
+                            <td align="left">Message visibility timeout</td>
+                            <td align="left"> <span class="methodname">receiveMessages()</span></td>
+                            <td align="left">No</td>
+                            <td align="left">60</td>
+                        </tr>
+
+
+                        <tr valign="middle">
+                            <td align="left">prefix</td>
+                            <td align="left">
+                                Filter the results to only queue names beginning with given prefix
+                            </td>
+                            <td align="left"> <span class="methodname">listQueues()</span></td>
+                            <td align="left">No</td>
+                            <td align="left">None</td>
+                        </tr>
+
+
+                        <tr valign="middle">
+                            <td align="left">max_results</td>
+                            <td align="left">Limit queue list to certain number of results</td>
+                            <td align="left"> <span class="methodname">listQueues()</span></td>
+                            <td align="left">No</td>
+                            <td align="left">5,000</td>
+                        </tr>
+
+
+                        <tr valign="middle">
+                            <td align="left">ttl</td>
+                            <td align="left">Set time-to-live for message</td>
+                            <td align="left"> <span class="methodname">sendMessage()</span></td>
+                            <td align="left">No</td>
+                            <td align="left">7 days</td>
+                        </tr>
+
+                    </tbody>
+                
+            </table>
+
+
+            <table class="doctable table"><div class="info"><caption><b>Zend_Cloud_QueueService_Adapter_ZendQueue Options</b></caption></div>
+                
+
+                
+                    <thead valign="middle">
+                        <tr valign="middle">
+                            <th>Option key</th>
+                            <th>Description</th>
+                            <th>Used in</th>
+                            <th>Required</th>
+                            <th>Default</th>
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody valign="middle" class="tbody">
+                        <tr valign="middle">
+                            <td align="left">adapter</td>
+                            <td align="left">
+                                Concrete <span class="classname">Zend_Queue</span> adapter to use. See the
+                                <a href="zend.queue.html" class="link">Zend_Queue</a> documentation for supported
+                                adapters and their options.</td>
+                            <td align="left">Constructor</td>
+                            <td align="left">No</td>
+                            <td align="left">Filesystem</td>
+                        </tr>
+
+
+                        <tr valign="middle">
+                            <td align="left">timeout</td>
+                            <td align="left">Visibility timeout for messages</td>
+                            <td align="left">
+                                 <span class="methodname">createQueue()</span>,
+                                 <span class="methodname">receiveMessages()</span>
+                            </td>
+                            <td align="left">No</td>
+                            <td align="left">30</td>
+                        </tr>
+
+                    </tbody>
+                
+            </table>
+
+        </div>
+    </div>
+
+    <div class="section" id="zend.cloud.queueservice.concepts" name="zend.cloud.queueservice.concepts"><div class="info"><h1 class="title">Basic concepts</h1></div>
+        
+
+        <p class="para">
+            Every queue service typically offers one or more <em class="emphasis">queues</em>. Each queue
+            can store zero or more <em class="emphasis">messages</em>. A process can send a message to a
+            queue, and another process can remove it. Usually processes remove the oldest message in
+            the queue, observing a first in, first out (FIFO) queue-style interface.
+        </p>
+    </div>
+    
+    <div class="section" id="zend.cloud.queueservice.exceptions" name="zend.cloud.queueservice.exceptions"><div class="info"><h1 class="title">Exceptions</h1></div>
+        
+
+        <p class="para">
+            If some error occurs inside the storage service, a
+            <span class="classname">Zend_Cloud_QueueService_Exception</span> is thrown. If the exception was
+            caused by underlying service driver, you can use the
+             <span class="methodname">getClientException()</span> method to retrieve the original exception. 
+        </p>
+
+        <p class="para">
+            Since different cloud providers implement different sets of services, some adapters do
+            not implement certain features. In this case, the
+            <span class="classname">Zend_Cloud_OperationNotAvailableException</span> exception is thrown.
+        </p>
+    </div>
+    
+    <div class="section" id="zend.cloud.queueservice.create-queue" name="zend.cloud.queueservice.create-queue"><div class="info"><h1 class="title">Create a queue</h1></div>
+        
+
+        <p class="para">
+            The  <span class="methodname">createQueue()</span> method creates a message queue with the given
+            name.  It returns a queue identifier, the format of which is service-dependent.  Some
+            services return a URL for the queue identifier, while others return a GUID to use in
+            future operations.
+        </p>
+
+        <div class="example"><div class="info"><p><b>Example #2 Creating a queue</b></p></div>
+            
+
+            <div class="programlisting php"><div class="phpcode"><div class="php" style="font-family: monospace;"><ol><li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #0000ff;">$queueId</span> = <span style="color: #0000ff;">$queues</span>-&gt;<span style="color: #006600;">createQueue</span><span style="color: #66cc66;">&#40;</span><span style="color: #ff0000;">'my-queue'</span><span style="color: #66cc66;">&#41;</span>;</div></li></ol></div></div></div>
+
+        </div>
+    </div>
+
+    <div class="section" id="zend.cloud.queueservice.delete-queue" name="zend.cloud.queueservice.delete-queue"><div class="info"><h1 class="title">Delete a queue</h1></div>
+        
+
+        <p class="para">
+            The  <span class="methodname">deleteQueue()</span> method removes the queue from the service.
+            You must use the identifier received from  <span class="methodname">createQueue()</span> when
+            calling  <span class="methodname">deleteQueue()</span>.
+        </p>
+
+        <div class="example"><div class="info"><p><b>Example #3 Deleting a queue</b></p></div>
+              
+
+            <div class="programlisting php"><div class="phpcode"><div class="php" style="font-family: monospace;"><ol><li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #0000ff;">$queueId</span> = <span style="color: #0000ff;">$queues</span>-&gt;<span style="color: #006600;">createQueue</span><span style="color: #66cc66;">&#40;</span><span style="color: #ff0000;">'my-queue'</span><span style="color: #66cc66;">&#41;</span>;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #808080; font-style: italic;">// ... do stuff ...</span></div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #0000ff;">$queues</span>-&gt;<span style="color: #006600;">deleteQueue</span><span style="color: #66cc66;">&#40;</span><span style="color: #0000ff;">$queueId</span><span style="color: #66cc66;">&#41;</span>;</div></li></ol></div></div></div>
+
+        </div>
+
+        <blockquote><p><b class="note">Note</b>: 
+            
+                Deleting a queue can take significant time for some services. Typically, you cannot
+                re-create a queue with the same name until the original queue is fully removed.
+            <br />
+        </p></blockquote>
+    </div>
+
+    <div class="section" id="zend.cloud.queueservice.list" name="zend.cloud.queueservice.list"><div class="info"><h1 class="title">List queues</h1></div>
+        
+
+        <p class="para">
+            To retrieve the list of all queues in the system, use the
+             <span class="methodname">listQueues()</span> method.
+        </p>
+
+        <div class="example"><div class="info"><p><b>Example #4 Listing queues</b></p></div>
+              
+
+            <div class="programlisting php"><div class="phpcode"><div class="php" style="font-family: monospace;"><ol><li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #0000ff;">$names</span> = <span style="color: #0000ff;">$queues</span>-&gt;<span style="color: #006600;">listQueues</span><span style="color: #66cc66;">&#40;</span><span style="color: #66cc66;">&#41;</span>;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #b1b100;">foreach</span> <span style="color: #66cc66;">&#40;</span><span style="color: #0000ff;">$names</span> <span style="color: #b1b100;">as</span> <span style="color: #0000ff;">$name</span><span style="color: #66cc66;">&#41;</span> <span style="color: #66cc66;">&#123;</span></div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; <a href="http://www.php.net/echo"><span style="color: #000066;">echo</span></a> <span style="color: #ff0000;">&quot;Found queue $name<span style="color: #000099; font-weight: bold;">\n</span>&quot;</span>;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #66cc66;">&#125;</span></div></li></ol></div></div></div>
+
+        </div>
+    </div>
+
+    <div class="section" id="zend.cloud.queueservice.store-metadata" name="zend.cloud.queueservice.store-metadata"><div class="info"><h1 class="title">Set queue metadata</h1></div>
+        
+
+        <p class="para">
+            In some services, you can associate a set of key-value pairs with the queue as queue
+            metadata. To set queue metadata, use the  <span class="methodname">storeQueueMetadata()</span>
+            method:
+        </p>
+
+        <div class="example"><div class="info"><p><b>Example #5 Setting queue metadata</b></p></div>
+              
+
+            <div class="programlisting php"><div class="phpcode"><div class="php" style="font-family: monospace;"><ol><li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #0000ff;">$queues</span>-&gt;<span style="color: #006600;">storeQueueMetadata</span><span style="color: #66cc66;">&#40;</span><span style="color: #0000ff;">$queueId</span>, <a href="http://www.php.net/array"><span style="color: #000066;">array</span></a><span style="color: #66cc66;">&#40;</span></div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; <span style="color: #ff0000;">'purpose'</span>&nbsp; &nbsp; &nbsp; &nbsp;=&gt; <span style="color: #ff0000;">'Operations'</span>, </div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; <span style="color: #ff0000;">'administrator'</span> =&gt; <span style="color: #ff0000;">'joe@example.com'</span>,</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #66cc66;">&#41;</span><span style="color: #66cc66;">&#41;</span>;</div></li></ol></div></div></div>
+
+        </div>
+    </div>
+
+    <div class="section" id="zend.cloud.queueservice.fetch-metadata" name="zend.cloud.queueservice.fetch-metadata"><div class="info"><h1 class="title">Fetch queue metadata</h1></div>
+        
+
+        <p class="para">
+            To retrieve queue metadata, use the  <span class="methodname">fetchQueueMetadata()</span>
+            method.
+        </p>
+
+        <div class="example"><div class="info"><p><b>Example #6 Fetching queue metadata</b></p></div>
+            
+
+            <div class="programlisting php"><div class="phpcode"><div class="php" style="font-family: monospace;"><ol><li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #0000ff;">$metadata</span> = <span style="color: #0000ff;">$queues</span>-&gt;<span style="color: #006600;">fetchQueueMetadata</span><span style="color: #66cc66;">&#40;</span><span style="color: #0000ff;">$queueId</span><span style="color: #66cc66;">&#41;</span>;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">foreac h<span style="color: #66cc66;">&#40;</span><span style="color: #0000ff;">$metadata</span> <span style="color: #b1b100;">as</span> <span style="color: #0000ff;">$key</span> =&gt; <span style="color: #0000ff;">$value</span><span style="color: #66cc66;">&#41;</span> <span style="color: #66cc66;">&#123;</span></div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; <a href="http://www.php.net/echo"><span style="color: #000066;">echo</span></a> <span style="color: #ff0000;">&quot;Metadata $key: $value<span style="color: #000099; font-weight: bold;">\n</span>&quot;</span>;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #66cc66;">&#125;</span></div></li></ol></div></div></div>
+
+        </div>
+    </div>
+
+    <div class="section" id="zend.cloud.queueservice.send" name="zend.cloud.queueservice.send"><div class="info"><h1 class="title">Send a message</h1></div>
+        
+
+        <p class="para">
+            To add a message to a queue, use the  <span class="methodname">sendMessage()</span> method.  The
+            message is passed as an unstructured string.
+        </p>
+
+        <div class="example"><div class="info"><p><b>Example #7 Sending a message</b></p></div>
+              
+
+            <div class="programlisting php"><div class="phpcode"><div class="php" style="font-family: monospace;"><ol><li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #0000ff;">$queues</span>-&gt;<span style="color: #006600;">sendMessage</span><span style="color: #66cc66;">&#40;</span><span style="color: #0000ff;">$queueId</span>, <span style="color: #ff0000;">&quot;Hello world!&quot;</span><span style="color: #66cc66;">&#41;</span>;</div></li></ol></div></div></div>
+
+        </div>
+    </div>
+
+    <div class="section" id="zend.cloud.queueservice.receive" name="zend.cloud.queueservice.receive"><div class="info"><h1 class="title">Receive a message</h1></div>
+        
+
+        <p class="para">
+            To receive one or more messages from the queue, use the
+             <span class="methodname">receiveMessages()</span> method. This method returns a
+            <span class="classname">Zend_Cloud_QueueService_MessageSet</span> instance by default, unless
+            configured otherwise. Each element of the MessageSet is an instance of
+            <span class="classname">Zend_Cloud_QueueService_Message</span> by default, unless configuired
+            otherwise.
+        </p>
+
+        <div class="example"><div class="info"><p><b>Example #8 Receiving a message</b></p></div>
+              
+            <div class="programlisting php"><div class="phpcode"><div class="php" style="font-family: monospace;"><ol><li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #808080; font-style: italic;">// Get the first message</span></div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #0000ff;">$messages</span> = <span style="color: #0000ff;">$queues</span>-&gt;<span style="color: #006600;">receiveMessages</span><span style="color: #66cc66;">&#40;</span><span style="color: #0000ff;">$queueId</span><span style="color: #66cc66;">&#41;</span>;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #b1b100;">if</span> <span style="color: #66cc66;">&#40;</span><a href="http://www.php.net/count"><span style="color: #000066;">count</span></a><span style="color: #66cc66;">&#40;</span><span style="color: #0000ff;">$messages</span><span style="color: #66cc66;">&#41;</span><span style="color: #66cc66;">&#41;</span> <span style="color: #66cc66;">&#123;</span></div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; <span style="color: #b1b100;">foreach</span> <span style="color: #66cc66;">&#40;</span><span style="color: #0000ff;">$messages</span> <span style="color: #b1b100;">as</span> <span style="color: #0000ff;">$message</span><span style="color: #66cc66;">&#41;</span> <span style="color: #66cc66;">&#123;</span></div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; &nbsp; &nbsp; <a href="http://www.php.net/echo"><span style="color: #000066;">echo</span></a> <span style="color: #ff0000;">&quot;Message: &quot;</span> . <span style="color: #0000ff;">$message</span>-&gt;<span style="color: #006600;">getBody</span><span style="color: #66cc66;">&#40;</span><span style="color: #66cc66;">&#41;</span>;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; &nbsp; &nbsp; <span style="color: #b1b100;">break</span>;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; <span style="color: #66cc66;">&#125;</span></div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #66cc66;">&#125;</span></div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #808080; font-style: italic;">// Get two messages&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span></div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #0000ff;">$messages</span> = <span style="color: #0000ff;">$queues</span>-&gt;<span style="color: #006600;">receiveMessages</span><span style="color: #66cc66;">&#40;</span><span style="color: #0000ff;">$queueId</span>, <span style="color: #cc66cc;">2</span><span style="color: #66cc66;">&#41;</span>;</div></li></ol></div></div></div>
+
+        </div>
+
+        <p class="para">
+            When a message is received, it is not visible to other clients. It is not deleted from
+            the queue, however, until the client that has received the message calls the
+             <span class="methodname">deleteMessage()</span> method. If it is not deleted during the
+            specfied visibility timeout, it will become visible to all other clients again. In other
+            words, all clients will be able to retrieve the message with the
+             <span class="methodname">receiveMessages()</span> method if the visibility timeout is exceeded.
+        </p>
+    </div>
+
+    <div class="section" id="zend.cloud.queueservice.delete" name="zend.cloud.queueservice.delete"><div class="info"><h1 class="title">Delete a message</h1></div>
+        
+
+        <p class="para">
+            In order to delete the message from the queue, use the
+             <span class="methodname">deleteMessage()</span> method.  This method deletes the specified
+            message.
+        </p>
+
+        <div class="example"><div class="info"><p><b>Example #9 Deleting a message</b></p></div>
+              
+
+            <div class="programlisting php"><div class="phpcode"><div class="php" style="font-family: monospace;"><ol><li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #808080; font-style: italic;">// process and delete $max messages&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span></div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #0000ff;">$messages</span> = <span style="color: #0000ff;">$queues</span>-&gt;<span style="color: #006600;">receiveMessages</span><span style="color: #66cc66;">&#40;</span><span style="color: #0000ff;">$queueId</span>, <span style="color: #0000ff;">$max</span><span style="color: #66cc66;">&#41;</span>;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #b1b100;">if</span> <span style="color: #66cc66;">&#40;</span><a href="http://www.php.net/count"><span style="color: #000066;">count</span></a><span style="color: #66cc66;">&#40;</span><span style="color: #0000ff;">$messages</span><span style="color: #66cc66;">&#41;</span><span style="color: #66cc66;">&#41;</span> <span style="color: #66cc66;">&#123;</span></div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; <span style="color: #b1b100;">foreach</span> <span style="color: #66cc66;">&#40;</span><span style="color: #0000ff;">$messages</span> <span style="color: #b1b100;">as</span> <span style="color: #0000ff;">$message</span><span style="color: #66cc66;">&#41;</span> <span style="color: #66cc66;">&#123;</span></div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; &nbsp; &nbsp; process<span style="color: #66cc66;">&#40;</span><span style="color: #0000ff;">$message</span><span style="color: #66cc66;">&#41;</span>;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; &nbsp; &nbsp; <span style="color: #0000ff;">$queues</span>-&gt;<span style="color: #006600;">deleteMessage</span><span style="color: #66cc66;">&#40;</span><span style="color: #0000ff;">$queueId</span>, <span style="color: #0000ff;">$message</span><span style="color: #66cc66;">&#41;</span>;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">&nbsp; &nbsp; <span style="color: #66cc66;">&#125;</span></div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #66cc66;">&#125;</span></div></li></ol></div></div></div>
+
+        </div>
+    </div>
+
+    <div class="section" id="zend.cloud.queueservice.concreteadapters" name="zend.cloud.queueservice.concreteadapters"><div class="info"><h1 class="title">Accessing concrete adapters</h1></div>
+        
+
+        <p class="para">
+            Sometimes it is necessary to retrieve the concrete adapter for the service that the
+            Queue API is working with. This can be achieved by using the
+             <span class="methodname">getAdapter()</span> method.
+        </p>
+
+        <blockquote><p><b class="note">Note</b>: 
+            
+                Accessing the underlying adapter breaks portability among services, so it should be
+                reserved for exceptional circumstances only.
+            <br />
+        </p></blockquote>
+
+        <div class="example"><div class="info"><p><b>Example #10 Using a concrete adapter</b></p></div>
+            
+
+            <div class="programlisting php"><div class="phpcode"><div class="php" style="font-family: monospace;"><ol><li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #808080; font-style: italic;">// send the message directly with the SQS client library</span></div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #0000ff;">$sqs</span> = <span style="color: #0000ff;">$queues</span>-&gt;<span style="color: #006600;">getAdapter</span><span style="color: #66cc66;">&#40;</span><span style="color: #66cc66;">&#41;</span>;</div></li>
+<li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;"><span style="color: #0000ff;">$sqs</span>-&gt;<span style="color: #006600;">sendMessage</span><span style="color: #66cc66;">&#40;</span><span style="color: #ff0000;">&quot;myQueue&quot;</span>, <span style="color: #ff0000;">&quot;hello!&quot;</span><span style="color: #66cc66;">&#41;</span>;</div></li></ol></div></div></div>
+
+        </div>
+    </div>
+</div>
+        <hr />
+
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.cloud.documentservice.html">Document Service Introduction</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.cloud.html">SimpleCloud API: Zend_Cloud</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.cloud.storageservice.html">StorageService Introduction</a></div>
+                    </td>
+                </tr>
+            </table>
+</td>
+        <td style="font-size: smaller;" width="15%"> <style type="text/css">
+#leftbar {
+	float: left;
+	width: 186px;
+	padding: 5px;
+	font-size: smaller;
+}
+ul.toc {
+	margin: 0px 5px 5px 5px;
+	padding: 0px;
+}
+ul.toc li {
+	font-size: 85%;
+	margin: 1px 0 1px 1px;
+	padding: 1px 0 1px 11px;
+	list-style-type: none;
+	background-repeat: no-repeat;
+	background-position: center left;
+}
+ul.toc li.header {
+	font-size: 115%;
+	padding: 5px 0px 5px 11px;
+	border-bottom: 1px solid #cccccc;
+	margin-bottom: 5px;
+}
+ul.toc li.active {
+	font-weight: bold;
+}
+ul.toc li a {
+	text-decoration: none;
+}
+ul.toc li a:hover {
+	text-decoration: underline;
+}
+</style>
+ <ul class="toc">
+  <li class="header home"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="reference.html">Zend Framework Reference</a></li>
+  <li class="header up"><a href="zend.cloud.html">SimpleCloud API: Zend_Cloud</a></li>
+  <li><a href="zend.cloud.documentservice.html">Document Service Introduction</a></li>
+  <li class="active"><a href="zend.cloud.queueservice.html">Queue Service Introduction</a></li>
+  <li><a href="zend.cloud.storageservice.html">StorageService Introduction</a></li>
+ </ul>
+ </td>
+    </tr>
+</table>
+</body>
+</html>

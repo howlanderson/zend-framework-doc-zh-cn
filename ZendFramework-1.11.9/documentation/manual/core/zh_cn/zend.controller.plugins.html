@@ -1,0 +1,638 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <title>插件 - Zend Framework Manual</title>
+
+</head>
+<body>
+<table width="100%">
+    <tr valign="top">
+        <td width="85%">
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.controller.response.html">响应对象</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.controller.html">Zend_Controller</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.controller.modular.html">使用传统的模块目录结构</a></div>
+                    </td>
+                </tr>
+            </table>
+<hr />
+<div id="zend.controller.plugins" class="section"><div class="info"><h1 class="title">插件</h1></div>
+    
+
+    <div class="section" id="zend.controller.plugins.introduction" name="zend.controller.plugins.introduction"><div class="info"><h1 class="title">简介</h1></div>
+        
+
+        <p class="para">
+            控制器（Controller）结构包含一个可以在控制器周期内确定事件发生时调用用户代码的插件系统。
+            前端控制器（Front controller）使用插件 broker 作为用户插件注册，同时插件 broker
+            确保前端控制器中注册的每个插件都在事件发生时调用相应的事件方法。
+        </p>
+
+        <p class="para">
+            事件方法定义在虚类 <code class="code">Zend_Controller_Plugin_Abstract</code>，用户插件应当从这个类继承：
+        </p>
+
+        <ul class="itemizedlist">
+            <li class="listitem">
+                <p class="para">
+                    <code class="code">routeStartup()</code> 在 <code class="code">Zend_Controller_Front</code>
+                    向注册的 <a href="zend.controller.router.html" class="link">路由器</a> 发送请求前被调用。
+                </p>
+            </li>
+
+            <li class="listitem">
+                <p class="para">
+                    <code class="code">routeShutdown()</code> 在 <a href="zend.controller.router.html" class="link">路由器</a>
+                    完成请求的路由后被调用。
+                </p>
+            </li>
+            
+            <li class="listitem">
+                <p class="para">
+                    <code class="code">dispatchLoopStartup()</code> 在 <code class="code">Zend_Controller_Front</code>
+                    进入其分发循环（dispatch loop）前被调用。
+                </p>
+            </li>
+
+            <li class="listitem">
+                <p class="para">
+                    <code class="code">preDispatch()</code> 在动作由 <a href="zend.controller.dispatcher.html" class="link">分发器</a>
+                    分发前被调用。该回调方法允许代理或者过滤行为。通过修改请求和重设分发标志位（利用
+                    <code class="code">Zend_Controller_Request_Abstract::setDispatched(false)</code>
+                    ）当前动作可以跳过或者被替换。
+                </p>
+            </li>
+
+            <li class="listitem">
+                <p class="para">
+                    <code class="code">postDispatch()</code> 在动作由 <a href="zend.controller.dispatcher.html" class="link">分发器</a>
+                    分发后被调用。该回调方法允许代理或者过滤行为。通过修改请求和重设分发标志位（利用
+                    <code class="code">Zend_Controller_Request_Abstract::setDispatched(false)</code>
+                    ）可以指定新动作进行分发。
+                </p>
+            </li>
+
+            <li class="listitem">
+                <p class="para">
+                    <code class="code">dispatchLoopShutdown()</code> 在 <code class="code">Zend_Controller_Front</code>
+                    推出其分发循环后调用。
+                </p>
+            </li>
+        </ul>
+    </div>
+
+    <div class="section" id="zend.controller.plugins.writing" name="zend.controller.plugins.writing"><div class="info"><h1 class="title">编写插件</h1></div>
+        
+
+        <p class="para">
+            只需要包含并扩展抽象类 <code class="code">Zend_Controller_Plugin_Abstract</code>
+            即可编写插件类。
+        </p>
+
+        <div class="programlisting"><div class="cdata"><pre>
+class MyPlugin extends Zend_Controller_Plugin_Abstract
+{
+    // ...
+}
+
+
+        </pre></div></div>
+
+
+        <p class="para">
+            <code class="code">Zend_Controller_Plugin_Abstract</code> 的全部方法都不是抽象的，
+            这意味着插件类并不是一定要去实现前面列出的每一个事件方法。
+            插件的开发者只要实现需要用到的方法即可。
+        </p>
+
+        <p class="para">
+            <code class="code">Zend_Controller_Plugin_Abstract</code> 也可以通过调用
+            <code class="code">getRequest()</code> 和 <code class="code">getResponse()</code>
+            方法从控制器中分别获取 request 对象和 response 对象.
+        </p>
+    </div>
+
+    <div class="section" id="zend.controller.plugins.using" name="zend.controller.plugins.using"><div class="info"><h1 class="title">使用插件</h1></div>
+        
+
+        <p class="para">
+            可以使用 <code class="code">Zend_Controller_Front::registerPlugin()</code> 在任何时候注册插件类。
+            下面的代码片段说明了如何在控制器链条中使用插件。
+        </p>
+
+        <div class="programlisting"><div class="cdata"><pre>
+class MyPlugin extends Zend_Controller_Plugin_Abstract
+{
+    public function routeStartup(Zend_Controller_Request_Abstract $request)
+    {
+        $this-&gt;getResponse()-&gt;appendBody(&quot;&lt;p&gt;routeStartup() called&lt;/p&gt;\n&quot;);
+    }
+
+    public function routeShutdown(Zend_Controller_Request_Abstract $request)
+    {
+        $this-&gt;getResponse()-&gt;appendBody(&quot;&lt;p&gt;routeShutdown() called&lt;/p&gt;\n&quot;);
+    }
+
+    public function dispatchLoopStartup(Zend_Controller_Request_Abstract $request)
+    {
+        $this-&gt;getResponse()-&gt;appendBody(&quot;&lt;p&gt;dispatchLoopStartup() called&lt;/p&gt;\n&quot;);
+    }
+
+    public function preDispatch(Zend_Controller_Request_Abstract $request)
+    {
+        $this-&gt;getResponse()-&gt;appendBody(&quot;&lt;p&gt;preDispatch() called&lt;/p&gt;\n&quot;);
+    }
+
+    public function postDispatch(Zend_Controller_Request_Abstract $request)
+    {
+        $this-&gt;getResponse()-&gt;appendBody(&quot;&lt;p&gt;postDispatch() called&lt;/p&gt;\n&quot;);
+    }
+
+    public function dispatchLoopShutdown()
+    {
+        $this-&gt;getResponse()-&gt;appendBody(&quot;&lt;p&gt;dispatchLoopShutdown() called&lt;/p&gt;\n&quot;);
+    }
+}
+
+$front = Zend_Controller_Front::getInstance();
+$front-&gt;setControllerDirectory(&#039;/path/to/controllers&#039;)
+      -&gt;setRouter(new Zend_Controller_Router_Rewrite())
+      -&gt;registerPlugin(new MyPlugin());
+$front-&gt;dispatch();
+
+        </pre></div></div>
+
+
+        <p class="para">
+            假设没有动作产生任何输出，而只有一个动作被调用，前面演示的插件仍然会产生下面的输出：
+        </p>
+
+        <div class="programlisting"><div class="cdata"><pre>
+&lt;p&gt;routeStartup() called&lt;/p&gt;
+&lt;p&gt;routeShutdown() called&lt;/p&gt;
+&lt;p&gt;dispatchLoopStartup() called&lt;/p&gt;
+&lt;p&gt;preDispatch() called&lt;/p&gt;
+&lt;p&gt;postDispatch() called&lt;/p&gt;
+&lt;p&gt;dispatchLoopShutdown() called&lt;/p&gt;
+
+        </pre></div></div>
+
+
+        <blockquote><p><b class="note">Note</b>: 
+            
+                插件可以在前端控制器（Front controller）执行的任何时候被被注册，
+                如果一个事件在注册时已经完成，则这个事件对应的事件方法不会被触发。
+            <br />
+        </p></blockquote>
+    </div>
+
+    <div class="section" id="zend.controller.plugins.manipulating" name="zend.controller.plugins.manipulating"><div class="info"><h1 class="title">获取和控制插件</h1></div>
+        
+
+        <p class="para">
+            有时，可能需要取消注册或者获取一个插件。下面列出的前端控制器中的方法可以实现这个功能：
+        </p>
+
+        <ul class="itemizedlist">
+            <li class="listitem"><p class="para">
+                    <code class="code">getPlugin($class)</code> 允许获取指定类名的一个插件。
+                    如果没有插件匹配，将返回 false。如果有多个指定类的插件被注册，则返回一个数组。
+            </p></li>
+
+            <li class="listitem"><p class="para">
+                    <code class="code">getPlugins()</code> 返回全部插件。
+            </p></li>
+
+            <li class="listitem"><p class="para">
+                    <code class="code">unregisterPlugin($plugin)</code> 允许从插件列表中移除一个插件。
+                    传递一个插件件对象，或者需要移除的插件的类名。如果传递类名，任何该类的插件都将被移除。
+            </p></li>
+        </ul>
+    </div>
+
+    <div class="section" id="zend.controller.plugins.standard" name="zend.controller.plugins.standard"><div class="info"><h1 class="title">包含在标准发行包中的插件</h1></div>
+        
+
+        <p class="para">
+            Zend Framework 在其标准发行包中包含错误处理插件。
+        </p>
+
+        <div class="section" id="zend.controller.plugins.standard.actionstack" name="zend.controller.plugins.standard.actionstack"><div class="info"><h1 class="title">动作堆栈</h1></div>
+    
+
+    <p class="para">
+        <code class="code">动作堆栈</code>插件可以管理一个请求堆栈，其操作象<code class="code">postDispatch</code>插件。如果一个转发（例如，对另一个动作的调用）在当前请求对象中已经检测到，它不做任何事情。然而，如果没有检测到，它就检查堆栈并把最上面的一个取出，然后转发给由那个请求指定的动作。堆栈按照LIFO（后进先出）顺序处理。
+    </p>
+
+    <p class="para">
+        你可以在任何时候用 <code class="code">Zend_Controller_Front::getPlugin(&#039;Zend_Controller_Plugin_ActionStack&#039;)</code>从前端控制器获取插件。一旦你有插件对象，有很多机制你可以用来操作。
+    </p>
+
+    <ul class="itemizedlist">
+        <li class="listitem"><p class="para">
+                <code class="code">getRegistry()</code> 和 <code class="code">setRegistry()</code>。在内部， <code class="code">动作堆栈</code> 使用一个<code class="code">Zend_Registry</code> 实例来存储堆栈。你可以用不同的注册表实例来代替或在这些访问器里获取。
+        </p></li>
+
+        <li class="listitem"><p class="para">
+                <code class="code">getRegistryKey()</code> 和 <code class="code">setRegistryKey()</code>。当弹出堆栈时，这些可以用来识别使用哪个注册表键。缺省地值是&#039;Zend_Controller_Plugin_ActionStack&#039;。
+        </p></li>
+
+        <li class="listitem"><p class="para">
+                <code class="code">getStack()</code> 允许你全面地获取动作堆栈。
+        </p></li>
+
+        <li class="listitem"><p class="para">
+                <code class="code">pushStack()</code>  和 <code class="code">popStack()</code> 分别允许你弹出和压栈。<code class="code">pushStack()</code> 接受请求对象。
+        </p></li>
+    </ul>
+
+    <p class="para">
+        一个附加的方法，<code class="code">forward()</code>，准备一个请求对象，并在前端控制器设置当前请求状态给提供的请求对象的状态，使它不可派遣（强制另一个派遣循环迭代）。
+    </p>
+</div>
+        <div class="section" id="zend.controller.plugins.standard.errorhandler" name="zend.controller.plugins.standard.errorhandler"><div class="info"><h1 class="title">Zend_Controller_Plugin_ErrorHandler</h1></div>
+    
+
+    <p class="para">
+        <code class="code">Zend_Controller_Plugin_ErrorHandler</code>提供了一个活动的插件，用来处理从程序抛出的异常，包括那些从缺控制器或动作的来的结果；它是一个列在<a href="zend.controller.exceptions.html" class="link">MVC Exceptions section</a>里的方法的一个替代。
+    </p>
+
+    <p class="para">
+        插件的基本目标是：
+    </p>
+
+    <ul class="itemizedlist">
+        <li class="listitem">
+            <p class="para">
+                监视由于缺失控制器或动作方法而产生的异常
+            </p>
+        </li>
+
+        <li class="listitem">
+            <p class="para">监视动作控制器里产生的异常</p>
+        </li>
+    </ul>
+
+    <p class="para">
+        换句话说，<code class="code">ErrorHandler</code> 插件设计用来处理HTTP 404 类型的错误（找不到页面）和 500 类型错误（内部错误）。它不打算抓取有其它插件或路由产生的异常。
+    </p>
+
+    <p class="para">
+        缺省地，在缺省模块中，<code class="code">Zend_Controller_Plugin_ErrorHandler</code>将转发给<code class="code">ErrorController::errorAction()</code>。你可以通过使用在插件中不同的访问器给它们设置替代的值：
+    </p>
+
+    <ul class="itemizedlist">
+        <li class="listitem">
+            <p class="para">
+                <code class="code">setErrorHandlerModule()</code> 设置控制器模块来使用。
+            </p>
+        </li>
+
+        <li class="listitem">
+            <p class="para">
+                <code class="code">setErrorHandlerController()</code> 设置控制器来用。
+            </p>
+        </li>
+
+        <li class="listitem">
+            <p class="para">
+                <code class="code">setErrorHandlerAction()</code> 设置控制器动作来用。
+            </p>
+        </li>
+
+        <li class="listitem">
+            <p class="para">
+                <code class="code">setErrorHandler()</code>接受联合数组，它可以包含任何键，如&#039;module&#039;、 &#039;controller&#039; 或 &#039;action&#039;，以及要给它们设置的合适的值。
+            </p>
+        </li>
+    </ul>
+
+    <p class="para">
+        另外，你可以传递一个可选的联合数组给可以代理<code class="code">setErrorHandler()</code>的构造函数。
+    </p>
+
+    <p class="para">
+        <code class="code">Zend_Controller_Plugin_ErrorHandler</code>注册一个<code class="code">postDispatch()</code>钩子和检查注册在<a href="zend.controller.response.html" class="link">响应对象</a>里的异常。如果发现有异常，它试图转发给注册的错误处理器（handler）动作。
+    </p>
+
+    <p class="para">
+        如果在派遣错误处理器时发生异常，这插件将告诉前端控制器抛出异常，并重新抛出和带响应对象注册的最后一个异常。
+    </p>
+
+    <div class="section" id="zend.controller.plugins.standard.errorhandler.fourohfour" name="zend.controller.plugins.standard.errorhandler.fourohfour"><div class="info"><h1 class="title">使用 ErrorHandler 作为一个 404 处理器（handler）</h1></div>
+        
+
+        <p class="para">
+            因为<code class="code">ErrorHandler</code>插件不仅抓取程序错误，而且也抓取在控制器链里的由于缺失控制器类和/或动作方法而产生的错误，它可以用作一个404处理器。这样做，需要让错误控制器检查异常类型。
+        </p>
+
+        <p class="para">
+            异常的抓取被记录在一个对象里，这个对象注册在请求里。使用<code class="code">Zend_Controller_Action::_getParam(&#039;error_handler&#039;)</code>来读取它：
+        </p>
+
+        <div class="programlisting"><div class="cdata"><pre>
+class ErrorController extends Zend_Controller_Action
+{
+    public function errorAction()
+    {
+        $errors = $this-&gt;_getParam(&#039;error_handler&#039;);
+    }
+}
+
+        </pre></div></div>
+
+
+        <p class="para">
+            一旦有错误对象，可通过<code class="code">$errors-&gt;type</code>来获得类型。它将是下面其中之一：
+        </p>
+
+        <ul class="itemizedlist">
+            <li class="listitem">
+                <p class="para">
+                    <code class="code">Zend_Controller_Plugin_ErrorHandler::EXCEPTION_NO_CONTROLLER</code>，指示控制器没有被发现。
+                </p>
+            </li>
+
+            <li class="listitem">
+                <p class="para">
+                    <code class="code">Zend_Controller_Plugin_ErrorHandler::EXCEPTION_NO_ACTION</code>，指示请求动作没有被发现。
+                </p>
+            </li>
+
+            <li class="listitem">
+                <p class="para">
+                    <code class="code">Zend_Controller_Plugin_ErrorHandler::EXCEPTION_OTHER</code>，指示其它异常。
+                </p>
+            </li>
+        </ul>
+
+        <p class="para">
+            然后可以测试头两个类型中的任意一个，并且，如果这样，显示一个404页面：
+        </p>
+
+        <div class="programlisting"><div class="cdata"><pre>
+class ErrorController extends Zend_Controller_Action
+{
+    public function errorAction()
+    {
+        $errors = $this-&gt;_getParam(&#039;error_handler&#039;);
+
+        switch ($errors-&gt;type) {
+            case Zend_Controller_Plugin_ErrorHandler::EXCEPTION_NO_CONTROLLER:
+            case Zend_Controller_Plugin_ErrorHandler::EXCEPTION_NO_ACTION:
+                // 404 error -- controller or action not found
+                $this-&gt;getResponse()
+                     -&gt;setRawHeader(&#039;HTTP/1.1 404 Not Found&#039;);
+
+                // ... get some output to display...
+                break;
+            default:
+                // application error; display error page, but don&#039;t
+                // change status code
+                break;
+        }
+    }
+}
+
+        </pre></div></div>
+
+
+        <p class="para">
+            最后，你可以读取异常，这个异常由错误管理器通过抓取<code class="code">error_handler</code>对象的<code class="code">exception</code>属性来触发的：
+        </p>
+
+        <div class="programlisting"><div class="cdata"><pre>
+
+public function errorAction()
+{
+        $errors = $this-&gt;_getParam(&#039;error_handler&#039;);
+
+
+        switch ($errors-&gt;type) {
+            case Zend_Controller_Plugin_ErrorHandler::EXCEPTION_NO_CONTROLLER:
+            case Zend_Controller_Plugin_ErrorHandler::EXCEPTION_NO_ACTION:
+                // 404 error -- controller or action not found
+                $this-&gt;getResponse()
+                      -&gt;setRawHeader(&#039;HTTP/1.1 404 Not Found&#039;);
+
+                // ... get some output to display...
+                break;
+            default:
+                // application error; display error page, but don&#039;t change
+                // status code
+
+                // ...
+
+                // Log the exception:
+                $exception = $errors-&gt;exception;
+                $log = new Zend_Log(
+                    new Zend_Log_Writer_Stream(
+                        &#039;/tmp/applicationException.log&#039;
+                    )
+                );
+                $log-&gt;debug($exception-&gt;getMessage() . &quot;\n&quot; .
+                            $exception-&gt;getTraceAsString());
+                break;
+        }
+}
+
+        </pre></div></div>
+
+    </div>
+
+    <div class="section" id="zend.controller.plugins.standard.errorhandler.buffer" name="zend.controller.plugins.standard.errorhandler.buffer"><div class="info"><h1 class="title">处理以前呈现的(rendered)输出</h1></div>
+        
+
+        <p class="para">
+            如果你在一个请求里派遣多个动作，或者你的动作对<code class="code">render()</code>做多次调用，很可能响应对象已经有存储在它里面的内容。这可以导致呈显期望的内容和错误的内容的混合体。
+        </p>
+
+        <p class="para">
+            如果你希望呈现错误内嵌到这样的页面，不需要修改。如果你不希望呈现这样的内容，你应该在呈现任何视图之前清除响应体：
+        </p>
+
+        <div class="programlisting"><div class="cdata"><pre>
+$this-&gt;getResponse()-&gt;clearBody();
+
+        </pre></div></div>
+
+    </div>
+
+    <div class="section" id="zend.controller.plugins.standard.errorhandler.examples" name="zend.controller.plugins.standard.errorhandler.examples"><div class="info"><h1 class="title">插件用法示例</h1></div>
+        
+
+        <div class="example"><div class="info"><p><b>Example #1 Standard usage</b></p></div>
+            
+            <div class="programlisting"><div class="cdata"><pre>
+$front = Zend_Controller_Front::getInstance();
+$front-&gt;registerPlugin(new Zend_Controller_Plugin_ErrorHandler());
+
+            </pre></div></div>
+
+        </div>
+
+        <div class="example"><div class="info"><p><b>Example #2 Setting a different error handler</b></p></div>
+            
+            <div class="programlisting"><div class="cdata"><pre>
+$front = Zend_Controller_Front::getInstance();
+$front-&gt;registerPlugin(new Zend_Controller_Plugin_ErrorHandler(array(
+    &#039;module&#039;     =&gt; &#039;mystuff&#039;,
+    &#039;controller&#039; =&gt; &#039;static&#039;,
+    &#039;action&#039;     =&gt; &#039;error&#039;
+)));
+
+            </pre></div></div>
+
+        </div>
+
+        <div class="example"><div class="info"><p><b>Example #3 Using accessors</b></p></div>
+            
+            <div class="programlisting"><div class="cdata"><pre>
+$plugin = new Zend_Controller_Plugin_ErrorHandler();
+$plugin-&gt;setErrorHandlerModule(&#039;mystuff&#039;)
+       -&gt;setErrorHandlerController(&#039;static&#039;)
+       -&gt;setErrorHandlerAction(&#039;error&#039;);
+
+$front = Zend_Controller_Front::getInstance();
+$front-&gt;registerPlugin($plugin);
+
+            </pre></div></div>
+
+        </div>
+    </div>
+
+    <div class="section" id="zend.controller.plugins.standard.errorhandler.controllerexamples" name="zend.controller.plugins.standard.errorhandler.controllerexamples"><div class="info"><h1 class="title">错误控制器示例</h1></div>
+        
+
+        <p class="para">
+            为了使用错误处理器插件，你需要错误控制器。下面是个简单的例子。
+        </p>
+
+        <div class="programlisting"><div class="cdata"><pre>
+class ErrorController extends Zend_Controller_Action
+{
+    public function errorAction()
+    {
+        $errors = $this-&gt;_getParam(&#039;error_handler&#039;);
+
+        switch ($errors-&gt;type) {
+            case Zend_Controller_Plugin_ErrorHandler::EXCEPTION_NO_CONTROLLER:
+            case Zend_Controller_Plugin_ErrorHandler::EXCEPTION_NO_ACTION:
+                // 404 error -- controller or action not found
+                $this-&gt;getResponse()-&gt;setRawHeader(&#039;HTTP/1.1 404 Not Found&#039;);
+
+                $content =&lt;&lt;&lt;EOH
+&lt;h1&gt;Error!&lt;/h1&gt;
+&lt;p&gt;The page you requested was not found.&lt;/p&gt;
+EOH;
+                break;
+            default:
+                // application error
+                $content =&lt;&lt;&lt;EOH
+&lt;h1&gt;Error!&lt;/h1&gt;
+&lt;p&gt;An unexpected error occurred. Please try again later.&lt;/p&gt;
+EOH;
+                break;
+        }
+
+        // Clear previous content
+        $this-&gt;getResponse()-&gt;clearBody();
+
+        $this-&gt;view-&gt;content = $content;
+    }
+}
+
+        </pre></div></div>
+
+    </div>
+</div>
+    </div>
+</div>
+        <hr />
+
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.controller.response.html">响应对象</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.controller.html">Zend_Controller</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.controller.modular.html">使用传统的模块目录结构</a></div>
+                    </td>
+                </tr>
+            </table>
+</td>
+        <td style="font-size: smaller;" width="15%"> <style type="text/css">
+#leftbar {
+	float: left;
+	width: 186px;
+	padding: 5px;
+	font-size: smaller;
+}
+ul.toc {
+	margin: 0px 5px 5px 5px;
+	padding: 0px;
+}
+ul.toc li {
+	font-size: 85%;
+	margin: 1px 0 1px 1px;
+	padding: 1px 0 1px 11px;
+	list-style-type: none;
+	background-repeat: no-repeat;
+	background-position: center left;
+}
+ul.toc li.header {
+	font-size: 115%;
+	padding: 5px 0px 5px 11px;
+	border-bottom: 1px solid #cccccc;
+	margin-bottom: 5px;
+}
+ul.toc li.active {
+	font-weight: bold;
+}
+ul.toc li a {
+	text-decoration: none;
+}
+ul.toc li a:hover {
+	text-decoration: underline;
+}
+</style>
+ <ul class="toc">
+  <li class="header home"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="reference.html">Zend Framework Reference</a></li>
+  <li class="header up"><a href="zend.controller.html">Zend_Controller</a></li>
+  <li><a href="zend.controller.quickstart.html">Zend_Controller 快速入门</a></li>
+  <li><a href="zend.controller.basics.html">Zend_Controller 基础</a></li>
+  <li><a href="zend.controller.front.html">前端控制器</a></li>
+  <li><a href="zend.controller.request.html">请求对象</a></li>
+  <li><a href="zend.controller.router.html">标准路由器</a></li>
+  <li><a href="zend.controller.dispatcher.html">分发器</a></li>
+  <li><a href="zend.controller.action.html">动作控制器</a></li>
+  <li><a href="zend.controller.actionhelpers.html">动作助手</a></li>
+  <li><a href="zend.controller.response.html">响应对象</a></li>
+  <li class="active"><a href="zend.controller.plugins.html">插件</a></li>
+  <li><a href="zend.controller.modular.html">使用传统的模块目录结构</a></li>
+  <li><a href="zend.controller.exceptions.html">MVC 异常</a></li>
+ </ul>
+ </td>
+    </tr>
+</table>
+</body>
+</html>

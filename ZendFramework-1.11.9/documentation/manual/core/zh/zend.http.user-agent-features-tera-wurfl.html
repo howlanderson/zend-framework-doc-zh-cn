@@ -1,0 +1,201 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <title>The TeraWurfl UserAgent Features Adapter - Zend Framework Manual</title>
+
+</head>
+<body>
+<table width="100%">
+    <tr valign="top">
+        <td width="85%">
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.http.user-agent-features-device-atlas.html">The DeviceAtlas UserAgent Features Adapter</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.http.html">Zend_Http</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.http.user-agent-storage.html">The UserAgent Storage Interface</a></div>
+                    </td>
+                </tr>
+            </table>
+<hr />
+<div id="zend.http.user-agent-features-tera-wurfl" class="section"><div class="info"><h1 class="title">The TeraWurfl UserAgent Features Adapter</h1></div>
+    
+
+    <div class="section" id="zend.http.user-agent-features-tera-wurfl.intro" name="zend.http.user-agent-features-tera-wurfl.intro"><div class="info"><h1 class="title">Overview</h1></div>
+        
+
+        <p class="para">
+            <a href="" class="link external">&raquo; TeraWurfl</a> parses the <a href="zend.http.user-agent-features-wurfl.html" class="link">WURFL</a> database into a MySQL
+            database, and provides an API for querying that database for mobile device capabilies.
+            The API also performs rigorous caching, leading to excellent performance.
+        </p>
+    </div>
+
+    <div class="section" id="zend.http.user-agent-features-tera-wurfl.quick-start" name="zend.http.user-agent-features-tera-wurfl.quick-start"><div class="info"><h1 class="title">Quick Start</h1></div>
+        
+
+        <p class="para">
+            You will need to <a href="http://www.tera-wurfl.com/wiki/index.php/Downloads" class="link external">&raquo; download</a> and <a href="http://www.tera-wurfl.com/wiki/index.php/Installation" class="link external">&raquo; install</a>
+            TeraWurfl. Make a note of where you install the library
+            (<var class="filename">TeraWurfl.php</var>); we recommend installing it in your application&#039;s
+            <var class="filename">library</var> directory.
+        </p>
+
+        <p class="para">
+            Once installed, the easiest way to use TeraWurfl is to configure it via the application
+            resource.
+        </p>
+
+        <div class="programlisting ini"><div class="inicode"><div class="ini" style="font-family: monospace;"><ol><li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">resources.useragent.terawurfl.<span style="color: #000099;">terawurfl_lib_dir </span>=<span style="color: #660066;"> APPLICATION_PATH </span><span style="color: #933;">&quot;/../library/&quot;</span></div></li></ol></div></div></div>
+
+
+        <p class="para">
+            If the file is autoloadable, you can also specify an empty configuration in order to
+            utilize the adapter.
+        </p>
+
+        <div class="programlisting ini"><div class="inicode"><div class="ini" style="font-family: monospace;"><ol><li style="font-family: 'Courier New', Courier, monospace; color: black; font-weight: normal; font-style: normal;"><div style="font-family: 'Courier New', Courier, monospace; font-weight: normal;">resources.useragent.terawurfl<span style="">&#91;</span><span style="">&#93;</span> =</div></li></ol></div></div></div>
+
+    </div>
+
+    <div class="section" id="zend.http.user-agent-features-tera-wurfl.options" name="zend.http.user-agent-features-tera-wurfl.options"><div class="info"><h1 class="title">Configuration Options</h1></div>
+        
+
+        <dl>
+<div class="info"><h1 class="title">TeraWurfl API Options</h1></div>
+            
+
+            <dt>
+
+                <dt class="term">terawurfl.terawurfl_lib_dir</dt>
+
+                <dd>
+
+                    <p class="para">
+                        If using the TeraWurfl API, use this key to specify in which
+                        directory the <var class="filename">TeraWurfl.php</var> file exists.
+                    </p>
+                </dd>
+
+            </dt>
+
+        </dl>
+
+    </div>
+
+    <div class="section" id="zend.http.user-agent-features-tera-wurfl.methods" name="zend.http.user-agent-features-tera-wurfl.methods"><div class="info"><h1 class="title">Available Methods</h1></div>
+        
+
+        <dl>
+
+            <dt id="zend.http.user-agent-features-tera-wurfl.methods.get-from-request">
+                <dt class="term">
+                    <div class="methodsynopsis dc-description">
+                         <span class="methodname">getFromRequest</span>
+                        <span class="methodparam">( 
+                            <code_funcparams class="funcparams">array $request, array $config</code_funcparams>
+                         )</span>
+                    </div>
+
+                </dt>
+
+                <dd>
+
+                    <p class="para">
+                        Decompose the request in order to return an array of device capabilities.
+                    </p>
+                </dd>
+
+            </dt>
+
+        </dl>
+
+    </div>
+</div>
+        <hr />
+
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.http.user-agent-features-device-atlas.html">The DeviceAtlas UserAgent Features Adapter</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.http.html">Zend_Http</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.http.user-agent-storage.html">The UserAgent Storage Interface</a></div>
+                    </td>
+                </tr>
+            </table>
+</td>
+        <td style="font-size: smaller;" width="15%"> <style type="text/css">
+#leftbar {
+	float: left;
+	width: 186px;
+	padding: 5px;
+	font-size: smaller;
+}
+ul.toc {
+	margin: 0px 5px 5px 5px;
+	padding: 0px;
+}
+ul.toc li {
+	font-size: 85%;
+	margin: 1px 0 1px 1px;
+	padding: 1px 0 1px 11px;
+	list-style-type: none;
+	background-repeat: no-repeat;
+	background-position: center left;
+}
+ul.toc li.header {
+	font-size: 115%;
+	padding: 5px 0px 5px 11px;
+	border-bottom: 1px solid #cccccc;
+	margin-bottom: 5px;
+}
+ul.toc li.active {
+	font-weight: bold;
+}
+ul.toc li a {
+	text-decoration: none;
+}
+ul.toc li a:hover {
+	text-decoration: underline;
+}
+</style>
+ <ul class="toc">
+  <li class="header home"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="reference.html">Zend Framework Reference</a></li>
+  <li class="header up"><a href="zend.http.html">Zend_Http</a></li>
+  <li><a href="zend.http.client.html">Zend_Http_Client - 介绍</a></li>
+  <li><a href="zend.http.client.advanced.html">Zend_Http_Client - Advanced Usage</a></li>
+  <li><a href="zend.http.client.adapters.html">Zend_Http_Client - Connection Adapters</a></li>
+  <li><a href="zend.http.cookies.html">Zend_Http_Cookie and Zend_Http_CookieJar</a></li>
+  <li><a href="zend.http.response.html">Zend_Http_Response</a></li>
+  <li><a href="zend.http.user-agent.html">Zend_Http_UserAgent</a></li>
+  <li><a href="zend.http.user-agent-device.html">The UserAgent Device Interface</a></li>
+  <li><a href="zend.http.user-agent-features.html">The UserAgent Features Adapter</a></li>
+  <li><a href="zend.http.user-agent-features-wurfl.html">The WURFL UserAgent Features Adapter</a></li>
+  <li><a href="zend.http.user-agent-features-device-atlas.html">The DeviceAtlas UserAgent Features Adapter</a></li>
+  <li class="active"><a href="zend.http.user-agent-features-tera-wurfl.html">The TeraWurfl UserAgent Features Adapter</a></li>
+  <li><a href="zend.http.user-agent-storage.html">The UserAgent Storage Interface</a></li>
+  <li><a href="zend.http.user-agent-storage-session.html">The Session UserAgent Storage Adapter</a></li>
+ </ul>
+ </td>
+    </tr>
+</table>
+</body>
+</html>

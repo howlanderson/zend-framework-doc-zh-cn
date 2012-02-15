@@ -1,0 +1,157 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <title>字符集 - Zend Framework Manual</title>
+
+</head>
+<body>
+<table width="100%">
+    <tr valign="top">
+        <td width="85%">
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.search.lucene.queries.html">查询类型</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.search.lucene.html">Zend_Search_Lucene</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.search.lucene.extending.html">扩展性</a></div>
+                    </td>
+                </tr>
+            </table>
+<hr />
+<div id="zend.search.lucene.charset" class="section"><div class="info"><h1 class="title">字符集</h1></div>
+    
+
+    <div class="section" id="zend.search.lucene.charset.description" name="zend.search.lucene.charset.description"><div class="info"><h1 class="title"> UTF-8 和单字节字符集支持</h1></div>
+        
+
+        <p class="para">
+            被设计于工作在 UTF-8 字符集下。索引文件在 Java 的&quot;modified UTF-8 encoding&quot;编码下保存文件。Zend_Search_Lucene 内核完全支持它，只有一处例外。
+            <a href="#fnid1" name="fn1"><sup>[1]</sup></a>
+               
+               
+               
+            
+
+        </p>
+
+        <p class="para">
+            然而，各类文本和查询分析程序使用 ctype_alpha() 来进行文本和查询的记号化处理。而 ctype_alpha() 不支持 UTF-8，在不久的将来需要被替换为别的什么机制。
+        </p>
+
+        <p class="para">
+            在此之前我们强烈推荐将你的数据转化成 ASCII 表示
+            <a href="#fnid2" name="fn2"><sup>[2]</sup></a>
+               
+            
+            (不管是存储原始文档，或者进行搜索)：
+        </p>
+
+        <div class="programlisting"><div class="cdata"><pre>&lt;?php
+$doc = new Zend_Search_Lucene_Document();
+...
+$docText = iconv(&#039;ISO-8859-1&#039;, &#039;ASCII//TRANSLIT&#039;, $docText);
+$doc-&gt;addField(Zend_Search_Lucene_Field::UnStored(&#039;contents&#039;, $docText));
+
+...
+
+$query = iconv(&#039;&#039;, &#039;ASCII//TRANSLIT&#039;, $query);
+$hits = $index-&gt;find($query);
+?&gt;</pre></div></div>
+
+
+    </div>
+<div class="footnote"><a name="fnid1" href="#fn1"><sup>[1]</sup></a><span class="para footnote">
+                   Zend_Search_Lucene 只支持基本多语言平面(Basic Multilingual Plane, BMP)字符集(从 0x0000 到 0xFFFF)，不支持辅助字符集(supplementary characters)(那些代码指针大于 0xFFFF 的字符)
+               </span><span class="para footnote">
+                   Java 2 通过一对两个 16 位字符的值来表示这些字符，第一个来自高半代理(high-surrogates)区(0xD800-0xDBFF)，第二个来自低半代理(low- surrogates)区(0xDC00-0xDFFF)。它们将常用的 UTF-8 字符编码为 6 个字节。而标准的 UTF-8 通过四个字节来表示附加的字符。
+               </span><span class="para footnote">
+                  (译注：有关信息请参考 Unicode 标准。可能大家更想知道的是 BMP 中是否支持中文，答案是肯定的。事实上 BMP 中 CJK 字符集所占的比例最高。)
+               </span></div>
+<div class="footnote"><a name="fnid2" href="#fn2"><sup>[2]</sup></a><span class="para footnote">
+                   如果数据包含非 ASCII 字符或者来自 UTF-8。
+               </span></div>
+</div>
+        <hr />
+
+            <table width="100%">
+                <tr>
+                    <td width="25%" style="text-align: left;">
+                    <a href="zend.search.lucene.queries.html">查询类型</a>
+                    </td>
+
+                    <td width="50%" style="text-align: center;">
+                        <div class="up"><span class="up"><a href="zend.search.lucene.html">Zend_Search_Lucene</a></span><br />
+                        <span class="home"><a href="manual.html">Programmer's Reference Guide</a></span></div>
+                    </td>
+
+                    <td width="25%" style="text-align: right;">
+                        <div class="next" style="text-align: right; float: right;"><a href="zend.search.lucene.extending.html">扩展性</a></div>
+                    </td>
+                </tr>
+            </table>
+</td>
+        <td style="font-size: smaller;" width="15%"> <style type="text/css">
+#leftbar {
+	float: left;
+	width: 186px;
+	padding: 5px;
+	font-size: smaller;
+}
+ul.toc {
+	margin: 0px 5px 5px 5px;
+	padding: 0px;
+}
+ul.toc li {
+	font-size: 85%;
+	margin: 1px 0 1px 1px;
+	padding: 1px 0 1px 11px;
+	list-style-type: none;
+	background-repeat: no-repeat;
+	background-position: center left;
+}
+ul.toc li.header {
+	font-size: 115%;
+	padding: 5px 0px 5px 11px;
+	border-bottom: 1px solid #cccccc;
+	margin-bottom: 5px;
+}
+ul.toc li.active {
+	font-weight: bold;
+}
+ul.toc li a {
+	text-decoration: none;
+}
+ul.toc li a:hover {
+	text-decoration: underline;
+}
+</style>
+ <ul class="toc">
+  <li class="header home"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="manual.html">Programmer's Reference Guide</a></li>
+  <li class="header up"><a href="reference.html">Zend Framework Reference</a></li>
+  <li class="header up"><a href="zend.search.lucene.html">Zend_Search_Lucene</a></li>
+  <li><a href="zend.search.lucene.overview.html">概述</a></li>
+  <li><a href="zend.search.lucene.index-creation.html">建立索引</a></li>
+  <li><a href="zend.search.lucene.searching.html">搜索索引</a></li>
+  <li><a href="zend.search.lucene.query-language.html">Query Language</a></li>
+  <li><a href="zend.search.lucene.queries.html">查询类型</a></li>
+  <li class="active"><a href="zend.search.lucene.charset.html">字符集</a></li>
+  <li><a href="zend.search.lucene.extending.html">扩展性</a></li>
+  <li><a href="zend.search.lucene.java-lucene.html">与 Java Lucene 的互操作性</a></li>
+  <li><a href="zend.search.lucene.advanced.html">Advanced</a></li>
+  <li><a href="zend.search.lucene.best-practice.html">Best Practices</a></li>
+ </ul>
+ </td>
+    </tr>
+</table>
+</body>
+</html>
